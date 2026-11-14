@@ -33,7 +33,26 @@ Re-running the exporter reads the live DB read-only, so it can be used to snapsh
 - API: Fastify + Drizzle + Postgres + Redis · Auth: Better Auth
 - 10 Indian languages: Hindi, Bengali, Marathi, Telugu, Tamil, Kannada, Malayalam, Gujarati, Punjabi, Odia — requires a per-locale font pipeline, morphology-aware distractor generation, transliteration toggle, native numerals, and locale-aware collation
 - Original art/characters and original or open-licensed course content only
+- Mascot: **Speeko the fox** (original character; see `apps/web/public/fox.svg`)
+
+## Build status (verified)
+
+| Package | Typecheck | Build | Tests |
+| --- | --- | --- | --- |
+| `@speeko/core` | ✅ | ✅ (tsc) | ✅ 16/16 |
+| `@speeko/api` | ✅ | ✅ (tsc) | — |
+| `@speeko/web` | ✅ | ✅ (Next.js) | — |
+| `@speeko/mobile` | ✅ | ✅ (Expo web export) | — |
+
+Run everything: `pnpm typecheck && pnpm build && pnpm test` (and `pnpm --filter @speeko/mobile run build` for the mobile bundle).
+
+## How to run
+
+- Web: `pnpm --filter @speeko/web dev` → http://localhost:3000
+- API: copy `apps/api/.env.example` to `apps/api/.env`, set `DATABASE_URL`, then `pnpm --filter @speeko/api dev` → http://localhost:3001
+- Mobile: `pnpm --filter @speeko/mobile start` (Expo Go / emulator). APK builds later via EAS (`eas build --platform android`).
+- Mobile web bundle: `pnpm --filter @speeko/mobile run build` → `apps/mobile/dist`
 
 ## Current status
 
-Planning complete, nothing implemented yet. Phase P0 (foundation) is the next step.
+P0 foundation scaffolded and green: monorepo, core domain engine (locale, content schema, gamification, SRS, session state machine, morphology hooks), Fastify+Drizzle API skeleton, Next.js web shell, Expo mobile shell. Next: auth (Better Auth), content authoring, lesson player UI, and the fox mascot in Rive.

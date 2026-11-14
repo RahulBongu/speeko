@@ -1,0 +1,16 @@
+node_modules
+.pnpm-store
+data
+dist
+.next
+.turbo
+.env
+.env.*
+*.log
+.DS_Store
+.expo
+.expo-shared
+android/.gradle
+ios/Pods
+*.tsbuildinfo
+coverage

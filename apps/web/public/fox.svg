@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Speeko the fox">
+  <defs>
+    <linearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff8a3d"/>
+      <stop offset="1" stop-color="#e05a1f"/>
+    </linearGradient>
+    <linearGradient id="belly" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff4e6"/>
+      <stop offset="1" stop-color="#fde6c8"/>
+    </linearGradient>
+  </defs>
+  <!-- ears -->
+  <polygon points="40,70 60,20 80,60" fill="url(#fur)" stroke="#8a3a12" stroke-width="2"/>
+  <polygon points="120,60 140,20 160,70" fill="url(#fur)" stroke="#8a3a12" stroke-width="2"/>
+  <polygon points="52,62 62,34 72,58" fill="#ffb08a"/>
+  <polygon points="128,58 138,34 148,62" fill="#ffb08a"/>
+  <!-- head -->
+  <ellipse cx="100" cy="110" rx="62" ry="58" fill="url(#fur)" stroke="#8a3a12" stroke-width="2"/>
+  <!-- white muzzle -->
+  <ellipse cx="100" cy="132" rx="34" ry="26" fill="url(#belly)"/>
+  <!-- eyes -->
+  <ellipse cx="78" cy="102" rx="9" ry="11" fill="#1f1f1f"/>
+  <ellipse cx="122" cy="102" rx="9" ry="11" fill="#1f1f1f"/>
+  <circle cx="75" cy="99" r="3" fill="#ffffff"/>
+  <circle cx="119" cy="99" r="3" fill="#ffffff"/>
+  <!-- nose -->
+  <polygon points="94,128 106,128 100,136" fill="#1f1f1f"/>
+  <!-- mouth -->
+  <path d="M100,136 Q92,144 86,140" stroke="#1f1f1f" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M100,136 Q108,144 114,140" stroke="#1f1f1f" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- whisker dots -->
+  <circle cx="62" cy="128" r="2" fill="#8a3a12"/>
+  <circle cx="62" cy="136" r="2" fill="#8a3a12"/>
+  <circle cx="138" cy="128" r="2" fill="#8a3a12"/>
+  <circle cx="138" cy="136" r="2" fill="#8a3a12"/>
+</svg>
