@@ -8,13 +8,26 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "scheme": "speeko",
-    "web": { "bundler": "metro", "output": "static" },
-    "plugins": ["expo-router"],
-    "experiments": { "typedRoutes": true },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-asset"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
     "android": {
-      "adaptiveIcon": { "backgroundColor": "#16a34a", "foregroundImage": "./assets/icon.png" },
+      "adaptiveIcon": {
+        "backgroundColor": "#16a34a",
+        "foregroundImage": "./assets/icon.png"
+      },
       "package": "com.speeko.app"
     },
-    "ios": { "bundleIdentifier": "com.speeko.app" }
+    "ios": {
+      "bundleIdentifier": "com.speeko.app"
+    }
   }
 }
