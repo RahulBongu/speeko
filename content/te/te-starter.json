@@ -294,6 +294,104 @@
           ]
         }
       ]
+    },
+    {
+      "id": "te-starter-u4",
+      "title": "Beyond Five",
+      "description": "Numbers 6 to 10",
+      "order": 3,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "te-starter-u4-l1",
+          "title": "Six to Eight",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "exercises": [
+            {
+              "id": "te-starter-u4-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Six",
+              "options": [
+                "ఆరు",
+                "ఏడు",
+                "ఎనిమిది",
+                "తొమ్మిది"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u4-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Seven",
+              "options": [
+                "ఏడు",
+                "ఆరు",
+                "ఎనిమిది",
+                "పది"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u4-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"six\"",
+              "expected": [
+                "ఆరు"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "te-starter-u4-l2",
+          "title": "Nine & Ten",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "exercises": [
+            {
+              "id": "te-starter-u4-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Nine",
+              "options": [
+                "తొమ్మిది",
+                "పది",
+                "ఆరు",
+                "ఏడు"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u4-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Ten",
+              "options": [
+                "పది",
+                "తొమ్మిది",
+                "ఎనిమిది",
+                "ఆరు"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u4-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Nine",
+                  "తొమ్మిది"
+                ],
+                [
+                  "Ten",
+                  "పది"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

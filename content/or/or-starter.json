@@ -294,6 +294,104 @@
           ]
         }
       ]
+    },
+    {
+      "id": "or-starter-u4",
+      "title": "Beyond Five",
+      "description": "Numbers 6 to 10",
+      "order": 3,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "or-starter-u4-l1",
+          "title": "Six to Eight",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "exercises": [
+            {
+              "id": "or-starter-u4-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Six",
+              "options": [
+                "ଛଅ",
+                "ସାତ",
+                "ଆଠ",
+                "ନଅ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "or-starter-u4-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Seven",
+              "options": [
+                "ସାତ",
+                "ଛଅ",
+                "ଆଠ",
+                "ଦଶ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "or-starter-u4-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"six\"",
+              "expected": [
+                "ଛଅ"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "or-starter-u4-l2",
+          "title": "Nine & Ten",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "exercises": [
+            {
+              "id": "or-starter-u4-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Nine",
+              "options": [
+                "ନଅ",
+                "ଦଶ",
+                "ଛଅ",
+                "ସାତ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "or-starter-u4-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Ten",
+              "options": [
+                "ଦଶ",
+                "ନଅ",
+                "ଆଠ",
+                "ଛଅ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "or-starter-u4-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Nine",
+                  "ନଅ"
+                ],
+                [
+                  "Ten",
+                  "ଦଶ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

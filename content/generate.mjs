@@ -120,6 +120,39 @@ for (const locale of LOCALES) {
           },
         ],
       },
+      {
+        id: `${id}-u4`,
+        title: 'Beyond Five',
+        description: 'Numbers 6 to 10',
+        order: 3,
+        crownLevel: 0,
+        lessons: [
+          {
+            id: `${id}-u4-l1`,
+            title: 'Six to Eight',
+            order: 0,
+            difficulty: 'A1',
+            xpReward: 12,
+            exercises: [
+              { id: `${id}-u4-l1-e1`, kind: 'chooseMeaning', prompt: 'Six', options: [t(locale,'six'), t(locale,'seven'), t(locale,'eight'), t(locale,'nine')], answerIndex: 0 },
+              { id: `${id}-u4-l1-e2`, kind: 'chooseMeaning', prompt: 'Seven', options: [t(locale,'seven'), t(locale,'six'), t(locale,'eight'), t(locale,'ten')], answerIndex: 0 },
+              { id: `${id}-u4-l1-e3`, kind: 'typeTranslation', prompt: 'Type "six"', expected: [t(locale,'six')] },
+            ],
+          },
+          {
+            id: `${id}-u4-l2`,
+            title: 'Nine & Ten',
+            order: 1,
+            difficulty: 'A1',
+            xpReward: 12,
+            exercises: [
+              { id: `${id}-u4-l2-e1`, kind: 'chooseMeaning', prompt: 'Nine', options: [t(locale,'nine'), t(locale,'ten'), t(locale,'six'), t(locale,'seven')], answerIndex: 0 },
+              { id: `${id}-u4-l2-e2`, kind: 'chooseMeaning', prompt: 'Ten', options: [t(locale,'ten'), t(locale,'nine'), t(locale,'eight'), t(locale,'six')], answerIndex: 0 },
+              { id: `${id}-u4-l2-e3`, kind: 'matchPairs', prompt: 'Match the pairs', pairs: [['Nine', t(locale,'nine')], ['Ten', t(locale,'ten')]] },
+            ],
+          },
+        ],
+      },
     ],
   };
   mkdirSync(resolve(here, locale), { recursive: true });

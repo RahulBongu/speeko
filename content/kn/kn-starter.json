@@ -294,6 +294,104 @@
           ]
         }
       ]
+    },
+    {
+      "id": "kn-starter-u4",
+      "title": "Beyond Five",
+      "description": "Numbers 6 to 10",
+      "order": 3,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "kn-starter-u4-l1",
+          "title": "Six to Eight",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "exercises": [
+            {
+              "id": "kn-starter-u4-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Six",
+              "options": [
+                "ಆರು",
+                "ಏಳು",
+                "ಎಂಟು",
+                "ಒಂಬತ್ತು"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u4-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Seven",
+              "options": [
+                "ಏಳು",
+                "ಆರು",
+                "ಎಂಟು",
+                "ಹತ್ತು"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u4-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"six\"",
+              "expected": [
+                "ಆರು"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "kn-starter-u4-l2",
+          "title": "Nine & Ten",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "exercises": [
+            {
+              "id": "kn-starter-u4-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Nine",
+              "options": [
+                "ಒಂಬತ್ತು",
+                "ಹತ್ತು",
+                "ಆರು",
+                "ಏಳು"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u4-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Ten",
+              "options": [
+                "ಹತ್ತು",
+                "ಒಂಬತ್ತು",
+                "ಎಂಟು",
+                "ಆರು"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u4-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Nine",
+                  "ಒಂಬತ್ತು"
+                ],
+                [
+                  "Ten",
+                  "ಹತ್ತು"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
