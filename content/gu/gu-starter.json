@@ -1,0 +1,299 @@
+{
+  "id": "gu-starter",
+  "locale": "gu",
+  "sourceLocale": "en",
+  "title": "ગુજરાતી — Starter",
+  "description": "Starter course for ગુજરાતી (Tier 1: greetings, numbers, essentials).",
+  "difficulty": "A1",
+  "version": "1.0.0",
+  "units": [
+    {
+      "id": "gu-starter-u1",
+      "title": "Greetings",
+      "description": "Hello, thanks, yes, no",
+      "order": 0,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "gu-starter-u1-l1",
+          "title": "Hello & Thanks",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "gu-starter-u1-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Hello",
+              "options": [
+                "નમસ્તે",
+                "આભાર",
+                "હા",
+                "ના"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u1-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Thank you",
+              "options": [
+                "આભાર",
+                "નમસ્તે",
+                "કૃપા કરીને",
+                "માફ કરો"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u1-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"hello\"",
+              "expected": [
+                "નમસ્તે"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "gu-starter-u1-l2",
+          "title": "Yes & No",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "gu-starter-u1-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Yes",
+              "options": [
+                "હા",
+                "ના",
+                "કૃપા કરીને",
+                "માફ કરો"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u1-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "No",
+              "options": [
+                "ના",
+                "હા",
+                "આભાર",
+                "નમસ્તે"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u1-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Yes",
+                  "હા"
+                ],
+                [
+                  "No",
+                  "ના"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gu-starter-u2",
+      "title": "Numbers",
+      "description": "Counting 1 to 5",
+      "order": 1,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "gu-starter-u2-l1",
+          "title": "Numbers 1-3",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "gu-starter-u2-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "One",
+              "options": [
+                "એક",
+                "બે",
+                "ત્રણ",
+                "ચાર"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u2-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Two",
+              "options": [
+                "બે",
+                "એક",
+                "પાંચ",
+                "ત્રણ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u2-l1-e3",
+              "kind": "chooseMeaning",
+              "prompt": "Three",
+              "options": [
+                "ત્રણ",
+                "બે",
+                "ચાર",
+                "એક"
+              ],
+              "answerIndex": 0
+            }
+          ]
+        },
+        {
+          "id": "gu-starter-u2-l2",
+          "title": "Numbers 4-5",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "gu-starter-u2-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Four",
+              "options": [
+                "ચાર",
+                "પાંચ",
+                "એક",
+                "બે"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u2-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Five",
+              "options": [
+                "પાંચ",
+                "ચાર",
+                "ત્રણ",
+                "એક"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u2-l2-e3",
+              "kind": "fillBlank",
+              "prompt": "Fill in the blank",
+              "sentence": "I have ___ apples.",
+              "options": [
+                "one",
+                "two",
+                "three"
+              ],
+              "answerIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gu-starter-u3",
+      "title": "Essentials",
+      "description": "Please, sorry, greetings",
+      "order": 2,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "gu-starter-u3-l1",
+          "title": "Polite words",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "gu-starter-u3-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Please",
+              "options": [
+                "કૃપા કરીને",
+                "માફ કરો",
+                "નમસ્તે",
+                "આભાર"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u3-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Sorry",
+              "options": [
+                "માફ કરો",
+                "કૃપા કરીને",
+                "હા",
+                "ના"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u3-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"please\"",
+              "expected": [
+                "કૃપા કરીને"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "gu-starter-u3-l2",
+          "title": "Good morning",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "gu-starter-u3-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Good morning",
+              "options": [
+                "સુપ્રભાત",
+                "નમસ્તે",
+                "આભાર",
+                "કૃપા કરીને"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u3-l2-e2",
+              "kind": "typeTranslation",
+              "prompt": "Type \"good morning\"",
+              "expected": [
+                "સુપ્રભાત"
+              ]
+            },
+            {
+              "id": "gu-starter-u3-l2-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "સુપ્રભાત",
+                "નમસ્તે",
+                "માફ કરો"
+              ],
+              "answerIndex": 0,
+              "audioUrl": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

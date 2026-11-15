@@ -1,0 +1,30 @@
+{
+  "name": "@speeko/content",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+    "./cli": { "types": "./dist/cli.js", "default": "./dist/cli.js" }
+  },
+  "bin": { "speeko-content": "./dist/cli.js" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "scaffold": "node dist/cli.js scaffold",
+    "validate": "node dist/cli.js validate ../../content",
+    "build:courses": "node dist/cli.js build ../../content ../../content/dist"
+  },
+  "dependencies": {
+    "@speeko/core": "workspace:*",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8",
+    "@types/node": "^22.10.0"
+  }
+}

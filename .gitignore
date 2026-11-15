@@ -2,6 +2,8 @@ node_modules
 .pnpm-store
 data
 dist
+content/dist
+apps/web/public/courses
 .next
 .turbo
 .env

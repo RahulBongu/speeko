@@ -1,0 +1,299 @@
+{
+  "id": "pa-starter",
+  "locale": "pa",
+  "sourceLocale": "en",
+  "title": "ਪੰਜਾਬੀ — Starter",
+  "description": "Starter course for ਪੰਜਾਬੀ (Tier 1: greetings, numbers, essentials).",
+  "difficulty": "A1",
+  "version": "1.0.0",
+  "units": [
+    {
+      "id": "pa-starter-u1",
+      "title": "Greetings",
+      "description": "Hello, thanks, yes, no",
+      "order": 0,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "pa-starter-u1-l1",
+          "title": "Hello & Thanks",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "pa-starter-u1-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Hello",
+              "options": [
+                "ਸਤ ਸ੍ਰੀ ਅਕਾਲ",
+                "ਧੰਨਵਾਦ",
+                "ਹਾਂ",
+                "ਨਹੀਂ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u1-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Thank you",
+              "options": [
+                "ਧੰਨਵਾਦ",
+                "ਸਤ ਸ੍ਰੀ ਅਕਾਲ",
+                "ਕਿਰਪਾ ਕਰਕੇ",
+                "ਮਾਫ਼ ਕਰਨਾ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u1-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"hello\"",
+              "expected": [
+                "ਸਤ ਸ੍ਰੀ ਅਕਾਲ"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pa-starter-u1-l2",
+          "title": "Yes & No",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "pa-starter-u1-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Yes",
+              "options": [
+                "ਹਾਂ",
+                "ਨਹੀਂ",
+                "ਕਿਰਪਾ ਕਰਕੇ",
+                "ਮਾਫ਼ ਕਰਨਾ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u1-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "No",
+              "options": [
+                "ਨਹੀਂ",
+                "ਹਾਂ",
+                "ਧੰਨਵਾਦ",
+                "ਸਤ ਸ੍ਰੀ ਅਕਾਲ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u1-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Yes",
+                  "ਹਾਂ"
+                ],
+                [
+                  "No",
+                  "ਨਹੀਂ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pa-starter-u2",
+      "title": "Numbers",
+      "description": "Counting 1 to 5",
+      "order": 1,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "pa-starter-u2-l1",
+          "title": "Numbers 1-3",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "pa-starter-u2-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "One",
+              "options": [
+                "ਇੱਕ",
+                "ਦੋ",
+                "ਤਿੰਨ",
+                "ਚਾਰ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u2-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Two",
+              "options": [
+                "ਦੋ",
+                "ਇੱਕ",
+                "ਪੰਜ",
+                "ਤਿੰਨ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u2-l1-e3",
+              "kind": "chooseMeaning",
+              "prompt": "Three",
+              "options": [
+                "ਤਿੰਨ",
+                "ਦੋ",
+                "ਚਾਰ",
+                "ਇੱਕ"
+              ],
+              "answerIndex": 0
+            }
+          ]
+        },
+        {
+          "id": "pa-starter-u2-l2",
+          "title": "Numbers 4-5",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "pa-starter-u2-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Four",
+              "options": [
+                "ਚਾਰ",
+                "ਪੰਜ",
+                "ਇੱਕ",
+                "ਦੋ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u2-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Five",
+              "options": [
+                "ਪੰਜ",
+                "ਚਾਰ",
+                "ਤਿੰਨ",
+                "ਇੱਕ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u2-l2-e3",
+              "kind": "fillBlank",
+              "prompt": "Fill in the blank",
+              "sentence": "I have ___ apples.",
+              "options": [
+                "one",
+                "two",
+                "three"
+              ],
+              "answerIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pa-starter-u3",
+      "title": "Essentials",
+      "description": "Please, sorry, greetings",
+      "order": 2,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "pa-starter-u3-l1",
+          "title": "Polite words",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "pa-starter-u3-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Please",
+              "options": [
+                "ਕਿਰਪਾ ਕਰਕੇ",
+                "ਮਾਫ਼ ਕਰਨਾ",
+                "ਸਤ ਸ੍ਰੀ ਅਕਾਲ",
+                "ਧੰਨਵਾਦ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u3-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Sorry",
+              "options": [
+                "ਮਾਫ਼ ਕਰਨਾ",
+                "ਕਿਰਪਾ ਕਰਕੇ",
+                "ਹਾਂ",
+                "ਨਹੀਂ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u3-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"please\"",
+              "expected": [
+                "ਕਿਰਪਾ ਕਰਕੇ"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pa-starter-u3-l2",
+          "title": "Good morning",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "pa-starter-u3-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Good morning",
+              "options": [
+                "ਸ਼ੁਭ ਸਵੇਰ",
+                "ਸਤ ਸ੍ਰੀ ਅਕਾਲ",
+                "ਧੰਨਵਾਦ",
+                "ਕਿਰਪਾ ਕਰਕੇ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u3-l2-e2",
+              "kind": "typeTranslation",
+              "prompt": "Type \"good morning\"",
+              "expected": [
+                "ਸ਼ੁਭ ਸਵੇਰ"
+              ]
+            },
+            {
+              "id": "pa-starter-u3-l2-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ਸ਼ੁਭ ਸਵੇਰ",
+                "ਸਤ ਸ੍ਰੀ ਅਕਾਲ",
+                "ਮਾਫ਼ ਕਰਨਾ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

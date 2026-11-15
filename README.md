@@ -40,19 +40,28 @@ Re-running the exporter reads the live DB read-only, so it can be used to snapsh
 | Package | Typecheck | Build | Tests |
 | --- | --- | --- | --- |
 | `@speeko/core` | ✅ | ✅ (tsc) | ✅ 16/16 |
+| `@speeko/content` | ✅ | ✅ (tsc + CLI) | ✅ 8/8 |
 | `@speeko/api` | ✅ | ✅ (tsc) | — |
-| `@speeko/web` | ✅ | ✅ (Next.js) | — |
+| `@speeko/web` | ✅ | ✅ (Next.js + course sync) | — |
 | `@speeko/mobile` | ✅ | ✅ (Expo web export) | — |
 
-Run everything: `pnpm typecheck && pnpm build && pnpm test` (and `pnpm --filter @speeko/mobile run build` for the mobile bundle).
+Run everything: `pnpm typecheck`, `pnpm build`, `pnpm test`.
 
 ## How to run
 
-- Web: `pnpm --filter @speeko/web dev` → http://localhost:3000
-- API: copy `apps/api/.env.example` to `apps/api/.env`, set `DATABASE_URL`, then `pnpm --filter @speeko/api dev` → http://localhost:3001
-- Mobile: `pnpm --filter @speeko/mobile start` (Expo Go / emulator). APK builds later via EAS (`eas build --platform android`).
+- Web: `pnpm --filter @speeko/web dev` → http://localhost:3000 (courses auto-sync on dev/build)
+- Studio (authoring): http://localhost:3000/studio — edit, live-validate, download course JSON
+- API: `pnpm --filter @speeko/api dev` → http://localhost:3001 (health + locales)
+- Mobile: `pnpm --filter @speeko/mobile start` (Expo Go / emulator). APK builds later via EAS (`eas build --platform android`)
 - Mobile web bundle: `pnpm --filter @speeko/mobile run build` → `apps/mobile/dist`
+- Content CLI: `pnpm --filter @speeko/content run validate` / `build:courses` / `scaffold <locale> <id>` (audio manifest: `node packages/content/dist/cli.js audio content content/_config/audio-manifest.json`)
+
+## Content pipeline
+
+`content/<locale>/<course>.json` → `@speeko/content` (Zod validation, unique-id checks) → `content/dist/` (+ manifest) → `apps/web/public/courses/` (auto-synced on web build/dev).
+
+Seeded Tier-1 starter courses (Greetings / Numbers / Essentials) for: Hindi, Bengali, Marathi, Telugu, Tamil, Kannada, Malayalam, Gujarati, Punjabi, Odia — validate with `pnpm --filter @speeko/content run validate`.
 
 ## Current status
 
-P0 foundation scaffolded and green: monorepo, core domain engine (locale, content schema, gamification, SRS, session state machine, morphology hooks), Fastify+Drizzle API skeleton, Next.js web shell, Expo mobile shell. Next: auth (Better Auth), content authoring, lesson player UI, and the fox mascot in Rive.
+Foundation + content pipeline green: monorepo, core engine, Fastify+Drizzle API with pglite auto-migrations, Next.js web with studio, Expo mobile, 10 starter courses. Next: Better Auth + lesson player UI, Rive fox, and expanding course content tier by tier (authoring UI in `/studio`).

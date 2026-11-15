@@ -1,0 +1,299 @@
+{
+  "id": "bn-starter",
+  "locale": "bn",
+  "sourceLocale": "en",
+  "title": "বাংলা — Starter",
+  "description": "Starter course for বাংলা (Tier 1: greetings, numbers, essentials).",
+  "difficulty": "A1",
+  "version": "1.0.0",
+  "units": [
+    {
+      "id": "bn-starter-u1",
+      "title": "Greetings",
+      "description": "Hello, thanks, yes, no",
+      "order": 0,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "bn-starter-u1-l1",
+          "title": "Hello & Thanks",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "bn-starter-u1-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Hello",
+              "options": [
+                "হ্যালো",
+                "ধন্যবাদ",
+                "হ্যাঁ",
+                "না"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u1-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Thank you",
+              "options": [
+                "ধন্যবাদ",
+                "হ্যালো",
+                "অনুগ্রহ করে",
+                "দুঃখিত"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u1-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"hello\"",
+              "expected": [
+                "হ্যালো"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bn-starter-u1-l2",
+          "title": "Yes & No",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "bn-starter-u1-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Yes",
+              "options": [
+                "হ্যাঁ",
+                "না",
+                "অনুগ্রহ করে",
+                "দুঃখিত"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u1-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "No",
+              "options": [
+                "না",
+                "হ্যাঁ",
+                "ধন্যবাদ",
+                "হ্যালো"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u1-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Yes",
+                  "হ্যাঁ"
+                ],
+                [
+                  "No",
+                  "না"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bn-starter-u2",
+      "title": "Numbers",
+      "description": "Counting 1 to 5",
+      "order": 1,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "bn-starter-u2-l1",
+          "title": "Numbers 1-3",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "bn-starter-u2-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "One",
+              "options": [
+                "এক",
+                "দুই",
+                "তিন",
+                "চার"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u2-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Two",
+              "options": [
+                "দুই",
+                "এক",
+                "পাঁচ",
+                "তিন"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u2-l1-e3",
+              "kind": "chooseMeaning",
+              "prompt": "Three",
+              "options": [
+                "তিন",
+                "দুই",
+                "চার",
+                "এক"
+              ],
+              "answerIndex": 0
+            }
+          ]
+        },
+        {
+          "id": "bn-starter-u2-l2",
+          "title": "Numbers 4-5",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "bn-starter-u2-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Four",
+              "options": [
+                "চার",
+                "পাঁচ",
+                "এক",
+                "দুই"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u2-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Five",
+              "options": [
+                "পাঁচ",
+                "চার",
+                "তিন",
+                "এক"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u2-l2-e3",
+              "kind": "fillBlank",
+              "prompt": "Fill in the blank",
+              "sentence": "I have ___ apples.",
+              "options": [
+                "one",
+                "two",
+                "three"
+              ],
+              "answerIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bn-starter-u3",
+      "title": "Essentials",
+      "description": "Please, sorry, greetings",
+      "order": 2,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "bn-starter-u3-l1",
+          "title": "Polite words",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "bn-starter-u3-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Please",
+              "options": [
+                "অনুগ্রহ করে",
+                "দুঃখিত",
+                "হ্যালো",
+                "ধন্যবাদ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u3-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Sorry",
+              "options": [
+                "দুঃখিত",
+                "অনুগ্রহ করে",
+                "হ্যাঁ",
+                "না"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u3-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"please\"",
+              "expected": [
+                "অনুগ্রহ করে"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bn-starter-u3-l2",
+          "title": "Good morning",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "bn-starter-u3-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Good morning",
+              "options": [
+                "সুপ্রভাত",
+                "হ্যালো",
+                "ধন্যবাদ",
+                "অনুগ্রহ করে"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u3-l2-e2",
+              "kind": "typeTranslation",
+              "prompt": "Type \"good morning\"",
+              "expected": [
+                "সুপ্রভাত"
+              ]
+            },
+            {
+              "id": "bn-starter-u3-l2-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "সুপ্রভাত",
+                "হ্যালো",
+                "দুঃখিত"
+              ],
+              "answerIndex": 0,
+              "audioUrl": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

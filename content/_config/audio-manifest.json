@@ -1,0 +1,1502 @@
+[
+  {
+    "locale": "bn",
+    "text": "Hello",
+    "file": "bn/hello.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "হ্যালো",
+    "file": "bn/হ্যালো.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "ধন্যবাদ",
+    "file": "bn/ধন্যবাদ.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "হ্যাঁ",
+    "file": "bn/হ্যাঁ.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "না",
+    "file": "bn/না.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Thank you",
+    "file": "bn/thank-you.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "অনুগ্রহ করে",
+    "file": "bn/অনুগ্রহ-করে.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "দুঃখিত",
+    "file": "bn/দুঃখিত.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Type \"hello\"",
+    "file": "bn/type-hello-.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Yes",
+    "file": "bn/yes.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "No",
+    "file": "bn/no.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Match the pairs",
+    "file": "bn/match-the-pairs.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "One",
+    "file": "bn/one.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "এক",
+    "file": "bn/এক.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "দুই",
+    "file": "bn/দুই.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "তিন",
+    "file": "bn/তিন.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "চার",
+    "file": "bn/চার.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Two",
+    "file": "bn/two.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "পাঁচ",
+    "file": "bn/পাঁচ.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Three",
+    "file": "bn/three.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Four",
+    "file": "bn/four.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Five",
+    "file": "bn/five.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Fill in the blank",
+    "file": "bn/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Please",
+    "file": "bn/please.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Sorry",
+    "file": "bn/sorry.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Type \"please\"",
+    "file": "bn/type-please-.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Good morning",
+    "file": "bn/good-morning.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "সুপ্রভাত",
+    "file": "bn/সুপ্রভাত.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Type \"good morning\"",
+    "file": "bn/type-good-morning-.mp3"
+  },
+  {
+    "locale": "bn",
+    "text": "Listen and choose",
+    "file": "bn/listen-and-choose.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Hello",
+    "file": "gu/hello.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "નમસ્તે",
+    "file": "gu/નમસ્તે.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "આભાર",
+    "file": "gu/આભાર.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "હા",
+    "file": "gu/હા.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "ના",
+    "file": "gu/ના.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Thank you",
+    "file": "gu/thank-you.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "કૃપા કરીને",
+    "file": "gu/કૃપા-કરીને.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "માફ કરો",
+    "file": "gu/માફ-કરો.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Type \"hello\"",
+    "file": "gu/type-hello-.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Yes",
+    "file": "gu/yes.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "No",
+    "file": "gu/no.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Match the pairs",
+    "file": "gu/match-the-pairs.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "One",
+    "file": "gu/one.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "એક",
+    "file": "gu/એક.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "બે",
+    "file": "gu/બે.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "ત્રણ",
+    "file": "gu/ત્રણ.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "ચાર",
+    "file": "gu/ચાર.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Two",
+    "file": "gu/two.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "પાંચ",
+    "file": "gu/પાંચ.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Three",
+    "file": "gu/three.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Four",
+    "file": "gu/four.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Five",
+    "file": "gu/five.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Fill in the blank",
+    "file": "gu/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Please",
+    "file": "gu/please.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Sorry",
+    "file": "gu/sorry.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Type \"please\"",
+    "file": "gu/type-please-.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Good morning",
+    "file": "gu/good-morning.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "સુપ્રભાત",
+    "file": "gu/સુપ્રભાત.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Type \"good morning\"",
+    "file": "gu/type-good-morning-.mp3"
+  },
+  {
+    "locale": "gu",
+    "text": "Listen and choose",
+    "file": "gu/listen-and-choose.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Hello",
+    "file": "hi/hello.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "नमस्ते",
+    "file": "hi/नमस्ते.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "धन्यवाद",
+    "file": "hi/धन्यवाद.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "हाँ",
+    "file": "hi/हाँ.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "नहीं",
+    "file": "hi/नहीं.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Thank you",
+    "file": "hi/thank-you.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "कृपया",
+    "file": "hi/कृपया.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "माफ़ कीजिये",
+    "file": "hi/माफ़-कीजिये.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Type \"hello\"",
+    "file": "hi/type-hello-.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Yes",
+    "file": "hi/yes.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "No",
+    "file": "hi/no.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Match the pairs",
+    "file": "hi/match-the-pairs.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "One",
+    "file": "hi/one.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "एक",
+    "file": "hi/एक.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "दो",
+    "file": "hi/दो.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "तीन",
+    "file": "hi/तीन.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "चार",
+    "file": "hi/चार.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Two",
+    "file": "hi/two.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "पाँच",
+    "file": "hi/पाँच.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Three",
+    "file": "hi/three.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Four",
+    "file": "hi/four.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Five",
+    "file": "hi/five.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Fill in the blank",
+    "file": "hi/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Please",
+    "file": "hi/please.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Sorry",
+    "file": "hi/sorry.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Type \"please\"",
+    "file": "hi/type-please-.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Good morning",
+    "file": "hi/good-morning.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "सुप्रभात",
+    "file": "hi/सुप्रभात.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Type \"good morning\"",
+    "file": "hi/type-good-morning-.mp3"
+  },
+  {
+    "locale": "hi",
+    "text": "Listen and choose",
+    "file": "hi/listen-and-choose.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Hello",
+    "file": "kn/hello.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ನಮಸ್ಕಾರ",
+    "file": "kn/ನಮಸ್ಕಾರ.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ಧನ್ಯವಾದಗಳು",
+    "file": "kn/ಧನ್ಯವಾದಗಳು.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ಹೌದು",
+    "file": "kn/ಹೌದು.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ಇಲ್ಲ",
+    "file": "kn/ಇಲ್ಲ.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Thank you",
+    "file": "kn/thank-you.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ದಯವಿಟ್ಟು",
+    "file": "kn/ದಯವಿಟ್ಟು.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ಕ್ಷಮಿಸಿ",
+    "file": "kn/ಕ್ಷಮಿಸಿ.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Type \"hello\"",
+    "file": "kn/type-hello-.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Yes",
+    "file": "kn/yes.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "No",
+    "file": "kn/no.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Match the pairs",
+    "file": "kn/match-the-pairs.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "One",
+    "file": "kn/one.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ಒಂದು",
+    "file": "kn/ಒಂದು.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ಎರಡು",
+    "file": "kn/ಎರಡು.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ಮೂರು",
+    "file": "kn/ಮೂರು.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ನಾಲ್ಕು",
+    "file": "kn/ನಾಲ್ಕು.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Two",
+    "file": "kn/two.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ஐದು",
+    "file": "kn/ஐದು.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Three",
+    "file": "kn/three.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Four",
+    "file": "kn/four.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Five",
+    "file": "kn/five.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Fill in the blank",
+    "file": "kn/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Please",
+    "file": "kn/please.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Sorry",
+    "file": "kn/sorry.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Type \"please\"",
+    "file": "kn/type-please-.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Good morning",
+    "file": "kn/good-morning.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "ಶುಭೋದಯ",
+    "file": "kn/ಶುಭೋದಯ.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Type \"good morning\"",
+    "file": "kn/type-good-morning-.mp3"
+  },
+  {
+    "locale": "kn",
+    "text": "Listen and choose",
+    "file": "kn/listen-and-choose.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Hello",
+    "file": "ml/hello.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "നമസ്കാരം",
+    "file": "ml/നമസ്കാരം.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "നന്ദി",
+    "file": "ml/നന്ദി.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "അതെ",
+    "file": "ml/അതെ.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "ഇല്ല",
+    "file": "ml/ഇല്ല.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Thank you",
+    "file": "ml/thank-you.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "ദയവായി",
+    "file": "ml/ദയവായി.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "ക്ഷമിക്കണം",
+    "file": "ml/ക്ഷമിക്കണം.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Type \"hello\"",
+    "file": "ml/type-hello-.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Yes",
+    "file": "ml/yes.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "No",
+    "file": "ml/no.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Match the pairs",
+    "file": "ml/match-the-pairs.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "One",
+    "file": "ml/one.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "ഒന്ന്",
+    "file": "ml/ഒന്ന്.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "രണ്ട്",
+    "file": "ml/രണ്ട്.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "മൂന്ന്",
+    "file": "ml/മൂന്ന്.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "നാല്",
+    "file": "ml/നാല്.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Two",
+    "file": "ml/two.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "അഞ്ച്",
+    "file": "ml/അഞ്ച്.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Three",
+    "file": "ml/three.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Four",
+    "file": "ml/four.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Five",
+    "file": "ml/five.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Fill in the blank",
+    "file": "ml/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Please",
+    "file": "ml/please.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Sorry",
+    "file": "ml/sorry.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Type \"please\"",
+    "file": "ml/type-please-.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Good morning",
+    "file": "ml/good-morning.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "സുപ്രഭാതം",
+    "file": "ml/സുപ്രഭാതം.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Type \"good morning\"",
+    "file": "ml/type-good-morning-.mp3"
+  },
+  {
+    "locale": "ml",
+    "text": "Listen and choose",
+    "file": "ml/listen-and-choose.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Hello",
+    "file": "mr/hello.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "नमस्कार",
+    "file": "mr/नमस्कार.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "धन्यवाद",
+    "file": "mr/धन्यवाद.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "हो",
+    "file": "mr/हो.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "नाही",
+    "file": "mr/नाही.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Thank you",
+    "file": "mr/thank-you.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "कृपया",
+    "file": "mr/कृपया.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "माफ करा",
+    "file": "mr/माफ-करा.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Type \"hello\"",
+    "file": "mr/type-hello-.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Yes",
+    "file": "mr/yes.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "No",
+    "file": "mr/no.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Match the pairs",
+    "file": "mr/match-the-pairs.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "One",
+    "file": "mr/one.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "एक",
+    "file": "mr/एक.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "दोन",
+    "file": "mr/दोन.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "तीन",
+    "file": "mr/तीन.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "चार",
+    "file": "mr/चार.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Two",
+    "file": "mr/two.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "पाच",
+    "file": "mr/पाच.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Three",
+    "file": "mr/three.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Four",
+    "file": "mr/four.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Five",
+    "file": "mr/five.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Fill in the blank",
+    "file": "mr/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Please",
+    "file": "mr/please.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Sorry",
+    "file": "mr/sorry.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Type \"please\"",
+    "file": "mr/type-please-.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Good morning",
+    "file": "mr/good-morning.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "शुभ सकाळ",
+    "file": "mr/शुभ-सकाळ.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Type \"good morning\"",
+    "file": "mr/type-good-morning-.mp3"
+  },
+  {
+    "locale": "mr",
+    "text": "Listen and choose",
+    "file": "mr/listen-and-choose.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Hello",
+    "file": "or/hello.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ନମସ୍କାର",
+    "file": "or/ନମସ୍କାର.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ଧନ୍ୟବାଦ",
+    "file": "or/ଧନ୍ୟବାଦ.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ହଁ",
+    "file": "or/ହଁ.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ନା",
+    "file": "or/ନା.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Thank you",
+    "file": "or/thank-you.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ଦୟାକରି",
+    "file": "or/ଦୟାକରି.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "କ୍ଷମା କରନ୍ତୁ",
+    "file": "or/କ୍ଷମା-କରନ୍ତୁ.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Type \"hello\"",
+    "file": "or/type-hello-.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Yes",
+    "file": "or/yes.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "No",
+    "file": "or/no.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Match the pairs",
+    "file": "or/match-the-pairs.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "One",
+    "file": "or/one.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ଏକ",
+    "file": "or/ଏକ.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ଦୁଇ",
+    "file": "or/ଦୁଇ.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ତିନି",
+    "file": "or/ତିନି.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ଚାରି",
+    "file": "or/ଚାରି.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Two",
+    "file": "or/two.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ପାଞ୍ଚ",
+    "file": "or/ପାଞ୍ଚ.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Three",
+    "file": "or/three.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Four",
+    "file": "or/four.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Five",
+    "file": "or/five.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Fill in the blank",
+    "file": "or/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Please",
+    "file": "or/please.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Sorry",
+    "file": "or/sorry.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Type \"please\"",
+    "file": "or/type-please-.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Good morning",
+    "file": "or/good-morning.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "ଶୁଭ ସକାଳ",
+    "file": "or/ଶୁଭ-ସକାଳ.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Type \"good morning\"",
+    "file": "or/type-good-morning-.mp3"
+  },
+  {
+    "locale": "or",
+    "text": "Listen and choose",
+    "file": "or/listen-and-choose.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Hello",
+    "file": "pa/hello.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ",
+    "file": "pa/ਸਤ-ਸ੍ਰੀ-ਅਕਾਲ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਧੰਨਵਾਦ",
+    "file": "pa/ਧੰਨਵਾਦ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਹਾਂ",
+    "file": "pa/ਹਾਂ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਨਹੀਂ",
+    "file": "pa/ਨਹੀਂ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Thank you",
+    "file": "pa/thank-you.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਕਿਰਪਾ ਕਰਕੇ",
+    "file": "pa/ਕਿਰਪਾ-ਕਰਕੇ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਮਾਫ਼ ਕਰਨਾ",
+    "file": "pa/ਮਾਫ਼-ਕਰਨਾ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Type \"hello\"",
+    "file": "pa/type-hello-.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Yes",
+    "file": "pa/yes.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "No",
+    "file": "pa/no.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Match the pairs",
+    "file": "pa/match-the-pairs.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "One",
+    "file": "pa/one.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਇੱਕ",
+    "file": "pa/ਇੱਕ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਦੋ",
+    "file": "pa/ਦੋ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਤਿੰਨ",
+    "file": "pa/ਤਿੰਨ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਚਾਰ",
+    "file": "pa/ਚਾਰ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Two",
+    "file": "pa/two.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਪੰਜ",
+    "file": "pa/ਪੰਜ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Three",
+    "file": "pa/three.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Four",
+    "file": "pa/four.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Five",
+    "file": "pa/five.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Fill in the blank",
+    "file": "pa/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Please",
+    "file": "pa/please.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Sorry",
+    "file": "pa/sorry.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Type \"please\"",
+    "file": "pa/type-please-.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Good morning",
+    "file": "pa/good-morning.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "ਸ਼ੁਭ ਸਵੇਰ",
+    "file": "pa/ਸ਼ੁਭ-ਸਵੇਰ.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Type \"good morning\"",
+    "file": "pa/type-good-morning-.mp3"
+  },
+  {
+    "locale": "pa",
+    "text": "Listen and choose",
+    "file": "pa/listen-and-choose.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Hello",
+    "file": "ta/hello.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "வணக்கம்",
+    "file": "ta/வணக்கம்.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "நன்றி",
+    "file": "ta/நன்றி.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "ஆம்",
+    "file": "ta/ஆம்.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "இல்லை",
+    "file": "ta/இல்லை.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Thank you",
+    "file": "ta/thank-you.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "தயவுசெய்து",
+    "file": "ta/தயவுசெய்து.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "மன்னிக்கவும்",
+    "file": "ta/மன்னிக்கவும்.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Type \"hello\"",
+    "file": "ta/type-hello-.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Yes",
+    "file": "ta/yes.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "No",
+    "file": "ta/no.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Match the pairs",
+    "file": "ta/match-the-pairs.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "One",
+    "file": "ta/one.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "ஒன்று",
+    "file": "ta/ஒன்று.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "இரண்டு",
+    "file": "ta/இரண்டு.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "மூன்று",
+    "file": "ta/மூன்று.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "நான்கு",
+    "file": "ta/நான்கு.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Two",
+    "file": "ta/two.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "ஐந்து",
+    "file": "ta/ஐந்து.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Three",
+    "file": "ta/three.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Four",
+    "file": "ta/four.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Five",
+    "file": "ta/five.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Fill in the blank",
+    "file": "ta/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Please",
+    "file": "ta/please.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Sorry",
+    "file": "ta/sorry.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Type \"please\"",
+    "file": "ta/type-please-.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Good morning",
+    "file": "ta/good-morning.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "காலை வணக்கம்",
+    "file": "ta/காலை-வணக்கம்.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Type \"good morning\"",
+    "file": "ta/type-good-morning-.mp3"
+  },
+  {
+    "locale": "ta",
+    "text": "Listen and choose",
+    "file": "ta/listen-and-choose.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Hello",
+    "file": "te/hello.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "నమస్కారం",
+    "file": "te/నమస్కారం.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "ధన్యవాదాలు",
+    "file": "te/ధన్యవాదాలు.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "అవును",
+    "file": "te/అవును.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "కాదు",
+    "file": "te/కాదు.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Thank you",
+    "file": "te/thank-you.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "దయచేసి",
+    "file": "te/దయచేసి.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "క్షమించండి",
+    "file": "te/క్షమించండి.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Type \"hello\"",
+    "file": "te/type-hello-.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Yes",
+    "file": "te/yes.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "No",
+    "file": "te/no.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Match the pairs",
+    "file": "te/match-the-pairs.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "One",
+    "file": "te/one.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "ఒకటి",
+    "file": "te/ఒకటి.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "రెండు",
+    "file": "te/రెండు.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "మూడు",
+    "file": "te/మూడు.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "నాలుగు",
+    "file": "te/నాలుగు.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Two",
+    "file": "te/two.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "ఐదు",
+    "file": "te/ఐదు.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Three",
+    "file": "te/three.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Four",
+    "file": "te/four.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Five",
+    "file": "te/five.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Fill in the blank",
+    "file": "te/fill-in-the-blank.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Please",
+    "file": "te/please.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Sorry",
+    "file": "te/sorry.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Type \"please\"",
+    "file": "te/type-please-.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Good morning",
+    "file": "te/good-morning.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "శుభోదయం",
+    "file": "te/శుభోదయం.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Type \"good morning\"",
+    "file": "te/type-good-morning-.mp3"
+  },
+  {
+    "locale": "te",
+    "text": "Listen and choose",
+    "file": "te/listen-and-choose.mp3"
+  }
+]

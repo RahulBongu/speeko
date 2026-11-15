@@ -1,0 +1,299 @@
+{
+  "id": "ml-starter",
+  "locale": "ml",
+  "sourceLocale": "en",
+  "title": "മലയാളം — Starter",
+  "description": "Starter course for മലയാളം (Tier 1: greetings, numbers, essentials).",
+  "difficulty": "A1",
+  "version": "1.0.0",
+  "units": [
+    {
+      "id": "ml-starter-u1",
+      "title": "Greetings",
+      "description": "Hello, thanks, yes, no",
+      "order": 0,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "ml-starter-u1-l1",
+          "title": "Hello & Thanks",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "ml-starter-u1-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Hello",
+              "options": [
+                "നമസ്കാരം",
+                "നന്ദി",
+                "അതെ",
+                "ഇല്ല"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u1-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Thank you",
+              "options": [
+                "നന്ദി",
+                "നമസ്കാരം",
+                "ദയവായി",
+                "ക്ഷമിക്കണം"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u1-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"hello\"",
+              "expected": [
+                "നമസ്കാരം"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ml-starter-u1-l2",
+          "title": "Yes & No",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "ml-starter-u1-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Yes",
+              "options": [
+                "അതെ",
+                "ഇല്ല",
+                "ദയവായി",
+                "ക്ഷമിക്കണം"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u1-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "No",
+              "options": [
+                "ഇല്ല",
+                "അതെ",
+                "നന്ദി",
+                "നമസ്കാരം"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u1-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Yes",
+                  "അതെ"
+                ],
+                [
+                  "No",
+                  "ഇല്ല"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ml-starter-u2",
+      "title": "Numbers",
+      "description": "Counting 1 to 5",
+      "order": 1,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "ml-starter-u2-l1",
+          "title": "Numbers 1-3",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "ml-starter-u2-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "One",
+              "options": [
+                "ഒന്ന്",
+                "രണ്ട്",
+                "മൂന്ന്",
+                "നാല്"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u2-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Two",
+              "options": [
+                "രണ്ട്",
+                "ഒന്ന്",
+                "അഞ്ച്",
+                "മൂന്ന്"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u2-l1-e3",
+              "kind": "chooseMeaning",
+              "prompt": "Three",
+              "options": [
+                "മൂന്ന്",
+                "രണ്ട്",
+                "നാല്",
+                "ഒന്ന്"
+              ],
+              "answerIndex": 0
+            }
+          ]
+        },
+        {
+          "id": "ml-starter-u2-l2",
+          "title": "Numbers 4-5",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "ml-starter-u2-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Four",
+              "options": [
+                "നാല്",
+                "അഞ്ച്",
+                "ഒന്ന്",
+                "രണ്ട്"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u2-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Five",
+              "options": [
+                "അഞ്ച്",
+                "നാല്",
+                "മൂന്ന്",
+                "ഒന്ന്"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u2-l2-e3",
+              "kind": "fillBlank",
+              "prompt": "Fill in the blank",
+              "sentence": "I have ___ apples.",
+              "options": [
+                "one",
+                "two",
+                "three"
+              ],
+              "answerIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ml-starter-u3",
+      "title": "Essentials",
+      "description": "Please, sorry, greetings",
+      "order": 2,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "ml-starter-u3-l1",
+          "title": "Polite words",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "ml-starter-u3-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Please",
+              "options": [
+                "ദയവായി",
+                "ക്ഷമിക്കണം",
+                "നമസ്കാരം",
+                "നന്ദി"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u3-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Sorry",
+              "options": [
+                "ക്ഷമിക്കണം",
+                "ദയവായി",
+                "അതെ",
+                "ഇല്ല"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u3-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"please\"",
+              "expected": [
+                "ദയവായി"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ml-starter-u3-l2",
+          "title": "Good morning",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "ml-starter-u3-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Good morning",
+              "options": [
+                "സുപ്രഭാതം",
+                "നമസ്കാരം",
+                "നന്ദി",
+                "ദയവായി"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u3-l2-e2",
+              "kind": "typeTranslation",
+              "prompt": "Type \"good morning\"",
+              "expected": [
+                "സുപ്രഭാതം"
+              ]
+            },
+            {
+              "id": "ml-starter-u3-l2-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "സുപ്രഭാതം",
+                "നമസ്കാരം",
+                "ക്ഷമിക്കണം"
+              ],
+              "answerIndex": 0,
+              "audioUrl": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

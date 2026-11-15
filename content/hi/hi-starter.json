@@ -1,0 +1,299 @@
+{
+  "id": "hi-starter",
+  "locale": "hi",
+  "sourceLocale": "en",
+  "title": "हिन्दी — Starter",
+  "description": "Starter course for हिन्दी (Tier 1: greetings, numbers, essentials).",
+  "difficulty": "A1",
+  "version": "1.0.0",
+  "units": [
+    {
+      "id": "hi-starter-u1",
+      "title": "Greetings",
+      "description": "Hello, thanks, yes, no",
+      "order": 0,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "hi-starter-u1-l1",
+          "title": "Hello & Thanks",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "hi-starter-u1-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Hello",
+              "options": [
+                "नमस्ते",
+                "धन्यवाद",
+                "हाँ",
+                "नहीं"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u1-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Thank you",
+              "options": [
+                "धन्यवाद",
+                "नमस्ते",
+                "कृपया",
+                "माफ़ कीजिये"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u1-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"hello\"",
+              "expected": [
+                "नमस्ते"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hi-starter-u1-l2",
+          "title": "Yes & No",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "hi-starter-u1-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Yes",
+              "options": [
+                "हाँ",
+                "नहीं",
+                "कृपया",
+                "माफ़ कीजिये"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u1-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "No",
+              "options": [
+                "नहीं",
+                "हाँ",
+                "धन्यवाद",
+                "नमस्ते"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u1-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Yes",
+                  "हाँ"
+                ],
+                [
+                  "No",
+                  "नहीं"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hi-starter-u2",
+      "title": "Numbers",
+      "description": "Counting 1 to 5",
+      "order": 1,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "hi-starter-u2-l1",
+          "title": "Numbers 1-3",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "hi-starter-u2-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "One",
+              "options": [
+                "एक",
+                "दो",
+                "तीन",
+                "चार"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u2-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Two",
+              "options": [
+                "दो",
+                "एक",
+                "पाँच",
+                "तीन"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u2-l1-e3",
+              "kind": "chooseMeaning",
+              "prompt": "Three",
+              "options": [
+                "तीन",
+                "दो",
+                "चार",
+                "एक"
+              ],
+              "answerIndex": 0
+            }
+          ]
+        },
+        {
+          "id": "hi-starter-u2-l2",
+          "title": "Numbers 4-5",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "hi-starter-u2-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Four",
+              "options": [
+                "चार",
+                "पाँच",
+                "एक",
+                "दो"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u2-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Five",
+              "options": [
+                "पाँच",
+                "चार",
+                "तीन",
+                "एक"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u2-l2-e3",
+              "kind": "fillBlank",
+              "prompt": "Fill in the blank",
+              "sentence": "I have ___ apples.",
+              "options": [
+                "one",
+                "two",
+                "three"
+              ],
+              "answerIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hi-starter-u3",
+      "title": "Essentials",
+      "description": "Please, sorry, greetings",
+      "order": 2,
+      "crownLevel": 0,
+      "lessons": [
+        {
+          "id": "hi-starter-u3-l1",
+          "title": "Polite words",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "hi-starter-u3-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Please",
+              "options": [
+                "कृपया",
+                "माफ़ कीजिये",
+                "नमस्ते",
+                "धन्यवाद"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u3-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Sorry",
+              "options": [
+                "माफ़ कीजिये",
+                "कृपया",
+                "हाँ",
+                "नहीं"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u3-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"please\"",
+              "expected": [
+                "कृपया"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hi-starter-u3-l2",
+          "title": "Good morning",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "exercises": [
+            {
+              "id": "hi-starter-u3-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Good morning",
+              "options": [
+                "सुप्रभात",
+                "नमस्ते",
+                "धन्यवाद",
+                "कृपया"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "hi-starter-u3-l2-e2",
+              "kind": "typeTranslation",
+              "prompt": "Type \"good morning\"",
+              "expected": [
+                "सुप्रभात"
+              ]
+            },
+            {
+              "id": "hi-starter-u3-l2-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "सुप्रभात",
+                "नमस्ते",
+                "माफ़ कीजिये"
+              ],
+              "answerIndex": 0,
+              "audioUrl": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
