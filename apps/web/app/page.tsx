@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { levelForXp } from '@speeko/core';
 import { Brand, StatPill } from '@/components/AppHeader';
 import { Fox } from '@/components/Fox';
@@ -8,6 +9,7 @@ import { ProgressBar } from '@/components/ProgressBar';
 import { ArrowRightIcon, BoltIcon, FlameIcon, StarIcon } from '@/components/icons';
 import { COURSE_ORDER, LOCALE_META } from '@/lib/courses';
 import { DAILY_GOAL } from '@/lib/progress';
+import { readCompletedOnboarding } from '@/lib/onboarding';
 import { useProgress } from '@/lib/use-progress';
 
 const FEATURES = [
@@ -40,10 +42,18 @@ const FLOATING_WORDS = [
 
 export default function HomePage() {
   const progress = useProgress();
+  const [onboardingDone, setOnboardingDone] = useState(false);
+  useEffect(() => {
+    setOnboardingDone(Boolean(readCompletedOnboarding()));
+  }, []);
   const started = Boolean(progress && progress.xp > 0);
   const todayXp = progress?.todayXp ?? 0;
   const continueHref =
-    started && progress?.lastCourseId ? `/learn/${progress.lastCourseId}` : '/learn';
+    started && progress?.lastCourseId
+      ? `/learn/${progress.lastCourseId}`
+      : !started && onboardingDone && progress?.lastCourseId
+        ? `/learn/${progress.lastCourseId}`
+        : '/onboarding';
 
   return (
     <div className="overflow-x-hidden">

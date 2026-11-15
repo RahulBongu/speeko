@@ -46,9 +46,11 @@ Android APK (local): requires JDK 17+ and the Android SDK. Run `cd apps/mobile &
 Web pages:
 
 - `/` — landing page with live streak, XP, and course progress
+- `/onboarding/language` — guided first-run setup (motivation, level, goal, commitment) ending in the first lesson
 - `/learn` — language picker and continue-learning card
-- `/learn/[courseId]` — unit path with locked/current/completed lessons
-- `/lesson/[courseId]/[lessonId]` — the lesson player
+- `/learn/[courseId]` — unit path with locked/current/completed lessons, review and recap nodes, checkpoint practice nodes
+- `/learn/[courseId]/guidebook/[unitIndex]` — unit guidebook extracted from the exercises ahead
+- `/lesson/[courseId]/[lessonId]` — the lesson player (including practice-only checkpoints)
 - `/sign-in`, `/sign-up` — account access
 - `/account` — profile, cloud sync status, and sign out
 - `/studio` — course JSON authoring with live validation and download
@@ -67,6 +69,8 @@ Each lesson starts with **5 hearts**, one answer per exercise, and a progress ba
 ## Progress and accounts
 
 Guests learn without an account. Progress is stored in the browser under `speeko.progress.v2` (the legacy `speeko.progress.v1` key is still read forever) and is shaped like the server model:
+
+- Onboarding preferences (language, motivation, level, daily goal, commitment) are stored separately under `speeko.onboarding.v1`; they never award XP and never require an account.
 
 - Completed lessons with accuracy, XP earned, and timestamp
 - Total XP, level, streak, and last active date
@@ -128,7 +132,7 @@ content/      Per-locale course JSON
 - `pnpm test` — 76 tests (65 core + 11 content), all passing
 - `pnpm build` — web, API, mobile-web export, and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
-- `pnpm e2e` — 32 Playwright checks: 9 routes at 1280×800 and 390×844 with zero console/page errors, legacy v1 progress read, first-exercise feedback, server re-grade/idempotency/mismatch/invalid-attempt API checks, and signed-in save plus failed-save Retry flows. Screenshots live in `docs/qa/` and are inspected each phase
+- `pnpm e2e` — 48 Playwright checks across routes, onboarding, guidebook, rewards, and lesson-path regressions at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
 - `pnpm verify` — runs typecheck → test → build → e2e in order
 - Migrations are applied on API startup. P2's `lesson_events` migration was smoke-tested against a fresh pglite directory; there is no separate automated migration test.
 

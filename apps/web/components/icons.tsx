@@ -113,6 +113,25 @@ export function MicIcon(props: IconProps) {
   );
 }
 
+export function GiftIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <rect x="3.5" y="9" width="17" height="11.5" rx="2" />
+      <path d="M12 9v11.5M3.5 13.5h17M7.5 9a3 3 0 0 1 0-4.5C10 4.5 12 9 12 9s2-4.5 4.5-4.5a3 3 0 0 1 0 4.5" />
+    </svg>
+  );
+}
+
+export function BookOpenIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4 5.5A4.5 4.5 0 0 1 8.5 2H20v17H8.5A4.5 4.5 0 0 0 4 23V5.5Z" />
+      <path d="M4 5.5A4.5 4.5 0 0 1 8.5 2H20" />
+      <path d="M9 7h6M9 11h6M9 15h4" />
+    </svg>
+  );
+}
+
 export function RefreshIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>

@@ -29,6 +29,16 @@ const ROUTES: RouteCase[] = [
   { name: 'sign-in', path: '/sign-in', ready: (page) => page.locator('h1').first() },
   { name: 'sign-up', path: '/sign-up', ready: (page) => page.locator('h1').first() },
   {
+    name: 'onboarding-language',
+    path: '/onboarding/language',
+    ready: (page) => page.getByRole('heading', { name: 'Which language calls to you?' }),
+  },
+  {
+    name: 'guidebook-hi-starter-unit-1',
+    path: '/learn/hi-starter/guidebook/1',
+    ready: (page) => page.getByText('Words and phrases in this unit'),
+  },
+  {
     name: 'account',
     path: '/account',
     ready: (page) => page.getByRole('heading', { name: 'You are learning as a guest' }),

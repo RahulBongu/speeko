@@ -19,6 +19,7 @@ import { fetchCourse, findLesson, flattenLessons, type FlatLesson } from '@/lib/
 import {
   DAILY_GOAL,
   applyReviews,
+  isLessonCompleted,
   loadProgress,
   recordCompletionAndReviews,
   saveProgress,
@@ -136,8 +137,53 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
       .then((loaded) => {
         if (cancelled) return;
         const isReview = lessonId === 'review';
+        const checkpointMatch = /^checkpoint-unit-(\d+)$/.exec(lessonId);
         let found: FlatLesson | null = null;
-        if (isReview) {
+        if (checkpointMatch) {
+          const unitNumber = Number(checkpointMatch[1]);
+          if (
+            !Number.isInteger(unitNumber) ||
+            unitNumber < 1 ||
+            unitNumber > loaded.units.length ||
+            unitNumber % 2 !== 0
+          ) {
+            setError('That checkpoint does not exist in this course.');
+            setPhase('error');
+            return;
+          }
+          const priorUnits = loaded.units.slice(0, unitNumber);
+          const priorLessons = priorUnits.flatMap((unit) => unit.lessons);
+          const progress = loadProgress();
+          if (
+            priorLessons.length === 0 ||
+            !priorLessons.every((lesson) => isLessonCompleted(progress, loaded.id, lesson.id))
+          ) {
+            setError(`Finish units 1–${unitNumber} before this checkpoint.`);
+            setPhase('error');
+            return;
+          }
+          const exercises = priorLessons.flatMap((lesson) => lesson.exercises).slice(0, 8);
+          found = {
+            lesson: {
+              id: lessonId,
+              title: `Checkpoint · Unit ${unitNumber}`,
+              description: `${priorLessons.length} lessons' worth of practice, no XP at stake.`,
+              order: 999 + unitNumber,
+              difficulty: loaded.difficulty,
+              xpReward: 0,
+              exercises,
+            },
+            unit: {
+              id: lessonId,
+              title: `Checkpoint after Unit ${unitNumber}`,
+              description: 'A quick check before the next unit — practice only.',
+              order: 999 + unitNumber,
+              crownLevel: 0,
+              lessons: [],
+            },
+            index: 999 + unitNumber,
+          };
+        } else if (isReview) {
           const progress = loadProgress();
           const plan = buildReviewPlan(loaded, progress, Date.now());
           if (plan.exercises.length === 0) {
@@ -273,7 +319,15 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
 
   const persistAttempt = useCallback(
     async (answers: AttemptAnswer[]) => {
-      if (!session || !course || !entry || entry.lesson.id === 'review') return;
+      if (
+        !session ||
+        !course ||
+        !entry ||
+        entry.lesson.id === 'review' ||
+        entry.lesson.id.startsWith('checkpoint-')
+      ) {
+        return;
+      }
       if (savingRef.current) return;
       savingRef.current = true;
       setSaveState({ status: 'saving' });
@@ -307,15 +361,16 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     if (phase !== 'summary' || savedRef.current || !session || !course || !entry) return;
     // Wait for the auth check so a signed-in learner never falls back to a
     // local, unverified award.
-    if (entry.lesson.id !== 'review' && authPending) return;
+    const isCheckpoint = entry.lesson.id.startsWith('checkpoint-');
+    const isPractice = entry.lesson.id === 'review' || isCheckpoint;
+    if (!isPractice && authPending) return;
     savedRef.current = true;
 
-    const isReview = entry.lesson.id === 'review';
     const reviews = buildReviewsFromAnswers(session, course.locale);
 
     // A failed session check is ambiguous. Fail closed for a browser that
     // was signed in; otherwise treat the learner as an offline guest.
-    if (!isReview && authError && !userId && readKnownSignedInUserId()) {
+    if (!isPractice && authError && !userId && readKnownSignedInUserId()) {
       setSaveState({
         status: 'error',
         message: 'Could not check your account. Check your connection and try again.',
@@ -323,8 +378,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
       return;
     }
 
-    if (isReview || !userId) {
-      const updated = isReview
+    if (isPractice || !userId) {
+      const updated = isPractice
         ? applyReviews(loadProgress(), reviews, Date.now())
         : recordCompletionAndReviews(
             loadProgress(),
@@ -670,8 +725,10 @@ function SummaryScreen({
 }) {
   const accuracy = sessionAccuracy(session);
   const isReview = entry.lesson.id === 'review';
-  const localXp = session.xp + (isReview ? 0 : entry.lesson.xpReward);
-  const awardedXp = !isReview && saveState.status === 'saved' ? saveState.xp : localXp;
+  const isCheckpoint = entry.lesson.id.startsWith('checkpoint-');
+  const isPractice = isReview || isCheckpoint;
+  const localXp = session.xp + (isPractice ? 0 : entry.lesson.xpReward);
+  const awardedXp = !isPractice && saveState.status === 'saved' ? saveState.xp : localXp;
   const todayXp = postProgress?.todayXp ?? 0;
   const streak = postProgress?.streak ?? 0;
   const goalValue = Math.min(1, todayXp / DAILY_GOAL);
@@ -688,18 +745,27 @@ function SummaryScreen({
           <Fox mood="celebrate" className="relative h-44 w-44 animate-pop" />
         </div>
         <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-bark-800">
-          {isReview ? 'Review complete!' : 'Lesson complete!'}
+          {isReview
+            ? 'Review complete!'
+            : isCheckpoint
+              ? 'Checkpoint complete!'
+              : 'Lesson complete!'}
         </h1>
         <p className="mt-1 font-semibold text-bark-500">
-          {isReview ? 'Spaced repetition' : entry.lesson.title} · {course.title}
+          {isReview
+            ? 'Spaced repetition'
+            : isCheckpoint
+              ? 'Practice, no XP'
+              : entry.lesson.title}{' '}
+          · {course.title}
         </p>
       </div>
 
       <div className="mt-8 grid grid-cols-3 gap-2.5 sm:gap-3">
         <div className="animate-rise [animation-delay:120ms]">
           <StatCard
-            label={isReview ? 'Skills updated' : 'XP earned'}
-            value={isReview ? `${session.answers.length}` : `+${displayXp}`}
+            label={isReview ? 'Skills updated' : isCheckpoint ? 'Exercises replayed' : 'XP earned'}
+            value={isPractice ? `${session.answers.length}` : `+${displayXp}`}
             icon={<TrophyIcon className="h-5 w-5" />}
             tone="xp"
           />
@@ -712,7 +778,7 @@ function SummaryScreen({
         </div>
       </div>
 
-      {!isReview && saveState.status === 'saving' ? (
+      {!isPractice && saveState.status === 'saving' ? (
         <p
           role="status"
           className="mt-4 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-center text-sm font-semibold text-bark-500"
@@ -720,7 +786,7 @@ function SummaryScreen({
           Saving your reward…
         </p>
       ) : null}
-      {!isReview && saveState.status === 'local' ? (
+      {!isPractice && saveState.status === 'local' ? (
         <p
           role="status"
           className="mt-4 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-center text-sm font-semibold text-bark-500"
@@ -728,7 +794,7 @@ function SummaryScreen({
           Saved on this device.
         </p>
       ) : null}
-      {!isReview && saveState.status === 'saved' ? (
+      {!isPractice && saveState.status === 'saved' ? (
         <p
           role="status"
           className="mt-4 rounded-2xl border-2 border-speeko-200 bg-speeko-50 px-4 py-3 text-center text-sm font-extrabold text-speeko-700"
@@ -736,7 +802,7 @@ function SummaryScreen({
           Reward saved to your account.
         </p>
       ) : null}
-      {!isReview && saveState.status === 'error' ? (
+      {!isPractice && saveState.status === 'error' ? (
         <div
           role="alert"
           className="mt-4 flex flex-col gap-3 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
@@ -756,14 +822,15 @@ function SummaryScreen({
         </div>
       ) : null}
 
-      {isReview ? (
+      {isPractice ? (
         <div className="card mt-4 p-5 text-center">
           <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
-            Spaced repetition
+            {isCheckpoint ? 'Practice check' : 'Spaced repetition'}
           </p>
           <p className="mt-2 text-sm font-semibold text-bark-500">
-            Cards you practiced are now scheduled for their next review — sooner for the ones you
-            missed, later for the ones you nailed.
+            {isCheckpoint
+              ? 'No XP is at stake here — it is a chance to prove the units stuck. The answers do count toward your review schedule.'
+              : 'Cards you practiced are now scheduled for their next review — sooner for the ones you missed, later for the ones you nailed.'}
           </p>
         </div>
       ) : postProgress ? (
@@ -799,7 +866,7 @@ function SummaryScreen({
         </div>
       )}
 
-      {!isReview && postProgress ? (
+      {!isPractice && postProgress ? (
         <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 font-display text-sm font-extrabold text-fox-700">
           <FlameIcon className="h-5 w-5 animate-bob" />
           {streak > 0 ? `${streak} day streak` : 'Streak started'}
