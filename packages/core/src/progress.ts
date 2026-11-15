@@ -4,6 +4,9 @@ import { isDue, newCard, review, SrsCardSchema, type SrsCard } from './srs.js';
 /** Number of XP that counts as a completed daily goal. */
 export const DAILY_GOAL = 50;
 
+/** Current snapshot version. v1 snapshots remain readable forever. */
+export const PROGRESS_VERSION = 2;
+
 export const LessonRecordSchema = z.object({
   courseId: z.string().min(1),
   lessonId: z.string().min(1),
@@ -13,9 +16,10 @@ export const LessonRecordSchema = z.object({
 });
 
 const DateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
+const TimeZoneSchema = z.string().min(1).max(64);
 
-export const ProgressStateSchema = z.object({
-  version: z.literal(1),
+/** Fields shared by every snapshot version. */
+const progressFields = {
   xp: z.number().int().min(0),
   streak: z.number().int().min(0),
   lastActiveDate: DateKeySchema.nullable(),
@@ -25,10 +29,32 @@ export const ProgressStateSchema = z.object({
   lastCourseId: z.string().nullable(),
   lastLessonId: z.string().nullable(),
   srs: z.record(z.string(), SrsCardSchema).default({}),
+};
+
+export const ProgressStateV1Schema = z.object({
+  version: z.literal(1),
+  ...progressFields,
 });
 
+export const ProgressStateV2Schema = z.object({
+  version: z.literal(2),
+  ...progressFields,
+  /** Learner-settable daily XP goal (default 50 until the settings UI lands). */
+  dailyGoal: z.number().int().min(1).max(1000).default(DAILY_GOAL),
+  /** IANA timezone used for day boundaries; null until the client reports one. */
+  timeZone: TimeZoneSchema.nullable().default(null),
+});
+
+/** Strict input schema for the API: accepts legacy v1 and current v2. */
+export const ProgressSnapshotSchema = z.union([ProgressStateV1Schema, ProgressStateV2Schema]);
+
+/** Current (v2) snapshot schema. v1 has its own schema above and is never mutated. */
+export const ProgressStateSchema = ProgressStateV2Schema;
+
 export type LessonRecord = z.infer<typeof LessonRecordSchema>;
-export type ProgressState = z.infer<typeof ProgressStateSchema>;
+export type ProgressStateV1 = z.infer<typeof ProgressStateV1Schema>;
+export type ProgressState = z.infer<typeof ProgressStateV2Schema>;
+export type ProgressSnapshot = z.infer<typeof ProgressSnapshotSchema>;
 
 export interface CompletionInput {
   courseId: string;
@@ -50,7 +76,7 @@ export function lessonKey(courseId: string, lessonId: string): string {
 
 export function emptyProgress(now = new Date()): ProgressState {
   return {
-    version: 1,
+    version: PROGRESS_VERSION,
     xp: 0,
     streak: 0,
     lastActiveDate: null,
@@ -60,6 +86,89 @@ export function emptyProgress(now = new Date()): ProgressState {
     lastCourseId: null,
     lastLessonId: null,
     srs: {},
+    dailyGoal: DAILY_GOAL,
+    timeZone: null,
+  };
+}
+
+/** Strictly upgrades a schema-validated snapshot to the current version. */
+export function upgradeProgress(snapshot: ProgressSnapshot): ProgressState {
+  if (snapshot.version === PROGRESS_VERSION) return snapshot;
+  return {
+    ...snapshot,
+    version: PROGRESS_VERSION,
+    dailyGoal: DAILY_GOAL,
+    timeZone: null,
+  };
+}
+
+function nonNegativeInt(value: unknown, fallback = 0): number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0
+    ? Math.floor(value)
+    : fallback;
+}
+
+function dateKeyOrNull(value: unknown): string | null {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
+}
+
+function coerceCompleted(raw: unknown): Record<string, LessonRecord> {
+  if (!raw || typeof raw !== 'object') return {};
+  const out: Record<string, LessonRecord> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    const parsed = LessonRecordSchema.safeParse(value);
+    if (parsed.success) out[key] = parsed.data;
+  }
+  return out;
+}
+
+function coerceSrs(raw: unknown): Record<string, SrsCard> {
+  if (!raw || typeof raw !== 'object') return {};
+  const out: Record<string, SrsCard> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    const parsed = SrsCardSchema.safeParse(value);
+    if (parsed.success) out[key] = parsed.data;
+  }
+  return out;
+}
+
+/**
+ * Reads any snapshot ever written — v1, current v2, or a partially corrupt
+ * object — and returns a valid v2 state. v1 data is never rewritten in place;
+ * callers decide where to persist the result.
+ *
+ * `todayDate` is always refreshed to the current local day so stale daily XP
+ * cannot leak into a new day, matching the store's historical behaviour.
+ */
+export function migrateProgress(value: unknown, now = new Date()): ProgressState {
+  const source = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
+  const today = todayKey(now);
+  const sourceToday = dateKeyOrNull(source.todayDate);
+  const dailyGoal =
+    typeof source.dailyGoal === 'number' &&
+    Number.isInteger(source.dailyGoal) &&
+    source.dailyGoal >= 1 &&
+    source.dailyGoal <= 1000
+      ? source.dailyGoal
+      : DAILY_GOAL;
+  const timeZone =
+    typeof source.timeZone === 'string' && source.timeZone.length > 0 && source.timeZone.length <= 64
+      ? source.timeZone
+      : null;
+
+  return {
+    version: PROGRESS_VERSION,
+    xp: nonNegativeInt(source.xp),
+    streak: nonNegativeInt(source.streak),
+    lastActiveDate: dateKeyOrNull(source.lastActiveDate),
+    todayDate: today,
+    todayXp: sourceToday === today ? nonNegativeInt(source.todayXp) : 0,
+    completed: coerceCompleted(source.completed),
+    lastCourseId: typeof source.lastCourseId === 'string' ? source.lastCourseId : null,
+    lastLessonId: typeof source.lastLessonId === 'string' ? source.lastLessonId : null,
+    srs: coerceSrs(source.srs),
+    dailyGoal,
+    timeZone,
   };
 }
 
@@ -177,7 +286,7 @@ export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState
   const lastLessonId = newer.lastLessonId ?? older.lastLessonId;
 
   return {
-    version: 1,
+    version: PROGRESS_VERSION,
     xp: newestXp,
     streak,
     lastActiveDate: newer.lastActiveDate ?? older.lastActiveDate,
@@ -187,6 +296,8 @@ export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState
     lastCourseId,
     lastLessonId,
     srs,
+    dailyGoal: newer.dailyGoal,
+    timeZone: newer.timeZone ?? older.timeZone,
   };
 }
 

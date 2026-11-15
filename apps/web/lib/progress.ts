@@ -1,25 +1,16 @@
-import { emptyProgress, lessonKey, todayKey, updateStreak, dueReviewCards, applyReviews, SrsCardSchema, type Course } from '@speeko/core';
+import { emptyProgress, lessonKey, migrateProgress, todayKey, updateStreak, dueReviewCards, applyReviews, type Course } from '@speeko/core';
 import type { CompletionInput, LessonRecord, ProgressState } from '@speeko/core';
 import { flattenLessons } from './courses';
 
 export { DAILY_GOAL, emptyProgress, dueReviewCards, applyReviews, lessonKey, todayKey } from '@speeko/core';
 export type { LessonRecord, ProgressState } from '@speeko/core';
 
-export const PROGRESS_KEY = 'speeko.progress.v1';
+export const PROGRESS_KEY = 'speeko.progress.v2';
+/** Legacy key. Read forever so existing guests never lose their progress. */
+export const LEGACY_PROGRESS_KEY = 'speeko.progress.v1';
 export const PROGRESS_EVENT = 'speeko:progress';
 
 export type LessonStatus = 'completed' | 'current' | 'locked';
-
-/** Keep only well-formed SRS cards; drop anything corrupt from localStorage. */
-function sanitizeSrs(raw: unknown): Record<string, NonNullable<ProgressState['srs']>[string]> {
-  if (!raw || typeof raw !== 'object') return {};
-  const out: Record<string, NonNullable<ProgressState['srs']>[string]> = {};
-  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
-    const parsed = SrsCardSchema.safeParse(value);
-    if (parsed.success) out[key] = parsed.data;
-  }
-  return out;
-}
 
 export interface CourseStats {
   total: number;
@@ -30,29 +21,12 @@ export interface CourseStats {
 
 export function loadProgress(now = new Date()): ProgressState {
   if (typeof window === 'undefined') return emptyProgress(now);
-  const today = todayKey(now);
   try {
-    const raw = window.localStorage.getItem(PROGRESS_KEY);
+    const raw =
+      window.localStorage.getItem(PROGRESS_KEY) ??
+      window.localStorage.getItem(LEGACY_PROGRESS_KEY);
     if (!raw) return emptyProgress(now);
-    const parsed = JSON.parse(raw) as Partial<ProgressState>;
-    return {
-      version: 1,
-      xp: typeof parsed.xp === 'number' && parsed.xp >= 0 ? parsed.xp : 0,
-      streak: typeof parsed.streak === 'number' && parsed.streak >= 0 ? parsed.streak : 0,
-      lastActiveDate: typeof parsed.lastActiveDate === 'string' ? parsed.lastActiveDate : null,
-      todayDate: today,
-      todayXp:
-        parsed.todayDate === today && typeof parsed.todayXp === 'number' && parsed.todayXp >= 0
-          ? parsed.todayXp
-          : 0,
-      completed:
-        parsed.completed && typeof parsed.completed === 'object'
-          ? (parsed.completed as Record<string, LessonRecord>)
-          : {},
-      lastCourseId: typeof parsed.lastCourseId === 'string' ? parsed.lastCourseId : null,
-      lastLessonId: typeof parsed.lastLessonId === 'string' ? parsed.lastLessonId : null,
-      srs: sanitizeSrs(parsed.srs),
-    };
+    return migrateProgress(JSON.parse(raw), now);
   } catch {
     return emptyProgress(now);
   }
