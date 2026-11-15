@@ -12,7 +12,7 @@
     "plugins": ["expo-router"],
     "experiments": { "typedRoutes": true },
     "android": {
-      "adaptiveIcon": { "backgroundColor": "#16a34a" },
+      "adaptiveIcon": { "backgroundColor": "#16a34a", "foregroundImage": "./assets/icon.png" },
       "package": "com.speeko.app"
     },
     "ios": { "bundleIdentifier": "com.speeko.app" }

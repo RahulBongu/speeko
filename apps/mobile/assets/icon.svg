@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="230" fill="#16a34a" />
+  <g transform="translate(0,12)">
+    <polygon points="330,300 412,150 494,300" fill="#ea580c" />
+    <polygon points="530,300 612,150 694,300" fill="#ea580c" />
+    <polygon points="362,292 412,205 462,292" fill="#fdba74" />
+    <polygon points="562,292 612,205 662,292" fill="#fdba74" />
+    <circle cx="512" cy="575" r="245" fill="#f97316" />
+    <ellipse cx="512" cy="655" rx="128" ry="92" fill="#fff7ed" />
+    <circle cx="438" cy="535" r="30" fill="#1f2937" />
+    <circle cx="586" cy="535" r="30" fill="#1f2937" />
+    <circle cx="430" cy="527" r="9" fill="#ffffff" />
+    <circle cx="578" cy="527" r="9" fill="#ffffff" />
+    <circle cx="512" cy="605" r="20" fill="#1f2937" />
+    <path d="M 480 645 Q 512 675 544 645" stroke="#1f2937" stroke-width="10" fill="none" stroke-linecap="round" />
+  </g>
+</svg>
