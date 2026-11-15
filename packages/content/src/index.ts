@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, rmSync } from 'node:fs';
+﻿import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { z } from 'zod';
 import {
@@ -6,6 +6,9 @@ import {
   validateCourse,
   type Course,
   type Locale,
+  type Unit,
+  type Lesson,
+  type Exercise,
   ALL_LOCALES,
   LOCALE_LABEL,
 } from '@speeko/core';
@@ -18,6 +21,8 @@ export interface ValidationResult {
   ok: boolean;
   errors: string[];
 }
+
+export { scaffoldCourse } from './scaffold.js';
 
 export function validateCourseFile(filePath: string): ValidationResult {
   const errors: string[] = [];
@@ -38,15 +43,28 @@ export function validateCourseFile(filePath: string): ValidationResult {
   // Check unique ids within course.
   const course = res.data;
   const ids = new Set<string>();
+  const vocabIds = new Set<string>();
+  const checkReviewed = (scope: string, status: string, reviewer?: string) => {
+    if (status === 'reviewed' && (!reviewer || reviewer.trim().length === 0)) {
+      errors.push(`${scope}: reviewed content requires a reviewer`);
+    }
+  };
+  checkReviewed('course', course.reviewStatus ?? 'draft', course.reviewer);
   for (const u of course.units) {
     if (ids.has(u.id)) errors.push(`duplicate unit id: ${u.id}`);
     ids.add(u.id);
+    checkReviewed(`unit ${u.id}`, u.reviewStatus ?? 'draft', u.reviewer);
     for (const l of u.lessons) {
       if (ids.has(l.id)) errors.push(`duplicate lesson id: ${l.id}`);
       ids.add(l.id);
+      checkReviewed(`lesson ${l.id}`, l.reviewStatus ?? 'draft', l.reviewer);
       for (const e of l.exercises) {
         if (ids.has(e.id)) errors.push(`duplicate exercise id: ${e.id}`);
         ids.add(e.id);
+        if (e.vocabId) {
+          if (vocabIds.has(e.vocabId)) errors.push(`duplicate vocabId: ${e.vocabId}`);
+          vocabIds.add(e.vocabId);
+        }
       }
     }
   }
@@ -103,6 +121,7 @@ export function buildCourses(inputDir: string, outputDir: string): BuildResult {
       units: c.units.length,
       lessons: c.units.reduce((n, u) => n + u.lessons.length, 0),
       exercises: c.units.reduce((n, u) => n + u.lessons.reduce((m, l) => m + l.exercises.length, 0), 0),
+      reviewStatus: c.reviewStatus ?? 'draft',
       file: `${c.id}.json`,
     };
   });
@@ -150,127 +169,106 @@ export function collectAudioEntries(inputDir: string): AudioEntry[] {
 
 // --- Scaffold ---------------------------------------------------------------
 
-export function scaffoldCourse(locale: Locale, id: string): Course {
-  const label = LOCALE_LABEL[locale];
+// --- Importer ---------------------------------------------------------------
+//
+// Imports a normalized phrase list into a draft course. The input is expected
+// to come from an open-licensed source (Tatoeba, etc.); the output is always
+// marked reviewStatus "draft" and must not be presented as reviewed content.
+
+export interface ImportedPhrase {
+  english: string;
+  target: string;
+  transliteration?: string;
+  vocabId?: string;
+}
+
+export interface ImportedCourseInput {
+  locale: Locale;
+  id: string;
+  title: string;
+  description?: string;
+  difficulty?: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+  phrases: ImportedPhrase[];
+}
+
+export function importCourseFromPhrases(input: ImportedCourseInput): Course {
+  const locale = input.locale;
+  const id = input.id;
+  const phrases = input.phrases.filter((phrase) => phrase.english.trim() && phrase.target.trim());
+  const lessonsPerUnit = 5;
+  const phrasesPerLesson = 3;
+  const phrasesPerUnit = lessonsPerUnit * phrasesPerLesson;
+  const units: Unit[] = [];
+
+  for (let unitIndex = 0; unitIndex < Math.ceil(phrases.length / phrasesPerUnit); unitIndex += 1) {
+    const unitPhrases = phrases.slice(unitIndex * phrasesPerUnit, (unitIndex + 1) * phrasesPerUnit);
+    const lessons: Lesson[] = [];
+    for (let lessonIndex = 0; lessonIndex < lessonsPerUnit; lessonIndex += 1) {
+      const lessonPhrases = unitPhrases.slice(
+        lessonIndex * phrasesPerLesson,
+        (lessonIndex + 1) * phrasesPerLesson,
+      );
+      if (lessonPhrases.length === 0) break;
+      const exercises: Exercise[] = [];
+      for (let exerciseIndex = 0; exerciseIndex < lessonPhrases.length; exerciseIndex += 1) {
+        const phrase = lessonPhrases[exerciseIndex]!;
+        const vocabId = phrase.vocabId ?? `${locale}:${phrase.transliteration ?? phrase.target}`;
+        const distractors = phrases
+          .filter((candidate) => candidate.target !== phrase.target)
+          .slice(0, 3)
+          .map((candidate) => candidate.target);
+        exercises.push({
+          id: `${id}-u${unitIndex + 1}-l${lessonIndex + 1}-e${exerciseIndex + 1}`,
+          kind: 'chooseMeaning',
+          prompt: phrase.english,
+          options: [phrase.target, ...distractors],
+          answerIndex: 0,
+          vocabId,
+          transliteration: phrase.transliteration,
+        });
+        exercises.push({
+          id: `${id}-u${unitIndex + 1}-l${lessonIndex + 1}-e${exerciseIndex + 2}`,
+          kind: 'typeTranslation',
+          prompt: `Type "${phrase.english.toLowerCase()}"`,
+          expected: [phrase.target],
+          acceptTypos: true,
+          vocabId,
+          transliteration: phrase.transliteration,
+        });
+      }
+      lessons.push({
+        id: `${id}-u${unitIndex + 1}-l${lessonIndex + 1}`,
+        title: lessonPhrases.map((phrase) => phrase.english).join(', '),
+        order: lessonIndex,
+        difficulty: input.difficulty ?? 'A1',
+        xpReward: 10,
+        reviewStatus: 'draft',
+        guidebook: `Draft lesson imported from open-licensed phrases.`,
+        exercises,
+      });
+    }
+    if (lessons.length === 0) break;
+    units.push({
+      id: `${id}-u${unitIndex + 1}`,
+      title: `Unit ${unitIndex + 1}`,
+      description: input.description ?? 'Imported draft unit.',
+      order: unitIndex,
+      crownLevel: 0,
+      reviewStatus: 'draft',
+      guidebook: input.description ?? 'Imported draft unit.',
+      lessons,
+    });
+  }
+
   return {
     id,
     locale,
     sourceLocale: 'en',
-    title: `${label} — Starter Course`,
-    description: `Starter course for ${label}. Tier 1 (units 1-2).`,
-    difficulty: 'A1',
-    version: '1.0.0',
-    units: [
-      {
-        id: `${id}-u1`,
-        title: 'Basics 1',
-        description: 'Greetings and essentials',
-        order: 0,
-        crownLevel: 0,
-        lessons: [
-          {
-            id: `${id}-u1-l1`,
-            title: 'Hello & Goodbye',
-            order: 0,
-            difficulty: 'A1',
-            xpReward: 10,
-            exercises: [
-              {
-                id: `${id}-u1-l1-e1`,
-                kind: 'chooseMeaning',
-                prompt: 'Hello',
-                options: ['नमस्ते', 'अलविदा', 'धन्यवाद', 'कृपया'],
-                answerIndex: 0,
-              },
-              {
-                id: `${id}-u1-l1-e2`,
-                kind: 'chooseMeaning',
-                prompt: 'Thank you',
-                options: ['धन्यवाद', 'नमस्ते', 'माफ़ कीजिये', 'हाँ'],
-                answerIndex: 0,
-              },
-              {
-                id: `${id}-u1-l1-e3`,
-                kind: 'typeTranslation',
-                prompt: 'Type "hello" in the target language',
-                expected: ['नमस्ते'],
-              },
-            ],
-          },
-          {
-            id: `${id}-u1-l2`,
-            title: 'Yes & No',
-            order: 1,
-            difficulty: 'A1',
-            xpReward: 10,
-            exercises: [
-              {
-                id: `${id}-u1-l2-e1`,
-                kind: 'chooseMeaning',
-                prompt: 'Yes',
-                options: ['हाँ', 'नहीं', 'शायद', 'ठीक है'],
-                answerIndex: 0,
-              },
-              {
-                id: `${id}-u1-l2-e2`,
-                kind: 'chooseMeaning',
-                prompt: 'No',
-                options: ['नहीं', 'हाँ', 'ठीक है', 'अच्छा'],
-                answerIndex: 0,
-              },
-              {
-                id: `${id}-u1-l2-e3`,
-                kind: 'matchPairs',
-                prompt: 'Match the pairs',
-                pairs: [
-                  ['Yes', 'हाँ'],
-                  ['No', 'नहीं'],
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: `${id}-u2`,
-        title: 'Basics 2',
-        description: 'Numbers and people',
-        order: 1,
-        crownLevel: 0,
-        lessons: [
-          {
-            id: `${id}-u2-l1`,
-            title: 'Numbers 1-5',
-            order: 0,
-            difficulty: 'A1',
-            xpReward: 10,
-            exercises: [
-              {
-                id: `${id}-u2-l1-e1`,
-                kind: 'chooseMeaning',
-                prompt: 'One',
-                options: ['एक', 'दो', 'तीन', 'चार'],
-                answerIndex: 0,
-              },
-              {
-                id: `${id}-u2-l1-e2`,
-                kind: 'chooseMeaning',
-                prompt: 'Two',
-                options: ['दो', 'एक', 'पाँच', 'छह'],
-                answerIndex: 0,
-              },
-              {
-                id: `${id}-u2-l1-e3`,
-                kind: 'fillBlank',
-                prompt: 'Fill in the blank',
-                sentence: 'I have ___ apple.',
-                options: ['one', 'two', 'three'],
-                answerIndex: 0,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  } as Course;
+    title: input.title,
+    description: input.description ?? 'Imported draft course. Not reviewed by a native speaker.',
+    difficulty: input.difficulty ?? 'A1',
+    version: '0.1.0',
+    reviewStatus: 'draft',
+    units,
+  };
 }

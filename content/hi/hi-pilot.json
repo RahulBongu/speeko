@@ -1,0 +1,1317 @@
+{
+  "id": "hi-pilot",
+  "locale": "hi",
+  "sourceLocale": "en",
+  "title": "Hindi — Pilot (draft)",
+  "description": "A draft pilot course used to grow the Hindi path. Not reviewed by a native speaker.",
+  "difficulty": "A1",
+  "version": "0.1.0",
+  "reviewStatus": "draft",
+  "units": [
+    {
+      "id": "hi-pilot-u1",
+      "title": "Greetings",
+      "description": "Everyday greetings and polite words.",
+      "order": 0,
+      "crownLevel": 0,
+      "reviewStatus": "draft",
+      "guidebook": "Everyday greetings and polite words.",
+      "lessons": [
+        {
+          "id": "hi-pilot-u1-l1",
+          "title": "Hello",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for hello.",
+          "vocabId": "hi:namaste",
+          "exercises": [
+            {
+              "id": "hi-pilot-u1-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Hello",
+              "options": [
+                "नमस्ते",
+                "धन्यवाद",
+                "कृपया",
+                "माफ कीजिए"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:namaste",
+              "transliteration": "namaste"
+            },
+            {
+              "id": "hi-pilot-u1-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "नमस्ते",
+              "options": [
+                "Hello",
+                "Thank you",
+                "Please",
+                "Sorry"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:namaste",
+              "transliteration": "namaste"
+            },
+            {
+              "id": "hi-pilot-u1-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"hello\"",
+              "expected": [
+                "नमस्ते"
+              ],
+              "vocabId": "hi:namaste",
+              "transliteration": "namaste"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u1-l2",
+          "title": "Thank you",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for thank you.",
+          "vocabId": "hi:dhanyavaad",
+          "exercises": [
+            {
+              "id": "hi-pilot-u1-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Thank you",
+              "options": [
+                "धन्यवाद",
+                "नमस्ते",
+                "कृपया",
+                "माफ कीजिए"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:dhanyavaad",
+              "transliteration": "dhanyavaad"
+            },
+            {
+              "id": "hi-pilot-u1-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "धन्यवाद",
+              "options": [
+                "Thank you",
+                "Hello",
+                "Please",
+                "Sorry"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:dhanyavaad",
+              "transliteration": "dhanyavaad"
+            },
+            {
+              "id": "hi-pilot-u1-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"thank you\"",
+              "expected": [
+                "धन्यवाद"
+              ],
+              "vocabId": "hi:dhanyavaad",
+              "transliteration": "dhanyavaad"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u1-l3",
+          "title": "Please",
+          "order": 2,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for please.",
+          "vocabId": "hi:kripya",
+          "exercises": [
+            {
+              "id": "hi-pilot-u1-l3-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Please",
+              "options": [
+                "कृपया",
+                "नमस्ते",
+                "धन्यवाद",
+                "माफ कीजिए"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:kripya",
+              "transliteration": "kripya"
+            },
+            {
+              "id": "hi-pilot-u1-l3-e2",
+              "kind": "chooseMeaning",
+              "prompt": "कृपया",
+              "options": [
+                "Please",
+                "Hello",
+                "Thank you",
+                "Sorry"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:kripya",
+              "transliteration": "kripya"
+            },
+            {
+              "id": "hi-pilot-u1-l3-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"please\"",
+              "expected": [
+                "कृपया"
+              ],
+              "vocabId": "hi:kripya",
+              "transliteration": "kripya"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u1-l4",
+          "title": "Sorry",
+          "order": 3,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for sorry.",
+          "vocabId": "hi:maaf kijiye",
+          "exercises": [
+            {
+              "id": "hi-pilot-u1-l4-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sorry",
+              "options": [
+                "माफ कीजिए",
+                "नमस्ते",
+                "धन्यवाद",
+                "कृपया"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:maaf kijiye",
+              "transliteration": "maaf kijiye"
+            },
+            {
+              "id": "hi-pilot-u1-l4-e2",
+              "kind": "chooseMeaning",
+              "prompt": "माफ कीजिए",
+              "options": [
+                "Sorry",
+                "Hello",
+                "Thank you",
+                "Please"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:maaf kijiye",
+              "transliteration": "maaf kijiye"
+            },
+            {
+              "id": "hi-pilot-u1-l4-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"sorry\"",
+              "expected": [
+                "माफ कीजिए"
+              ],
+              "vocabId": "hi:maaf kijiye",
+              "transliteration": "maaf kijiye"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u1-l5",
+          "title": "Goodbye",
+          "order": 4,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for goodbye.",
+          "vocabId": "hi:alvida",
+          "exercises": [
+            {
+              "id": "hi-pilot-u1-l5-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Goodbye",
+              "options": [
+                "अलविदा",
+                "नमस्ते",
+                "धन्यवाद",
+                "कृपया"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:alvida",
+              "transliteration": "alvida"
+            },
+            {
+              "id": "hi-pilot-u1-l5-e2",
+              "kind": "chooseMeaning",
+              "prompt": "अलविदा",
+              "options": [
+                "Goodbye",
+                "Hello",
+                "Thank you",
+                "Please"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:alvida",
+              "transliteration": "alvida"
+            },
+            {
+              "id": "hi-pilot-u1-l5-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"goodbye\"",
+              "expected": [
+                "अलविदा"
+              ],
+              "vocabId": "hi:alvida",
+              "transliteration": "alvida"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hi-pilot-u2",
+      "title": "Numbers",
+      "description": "Counting from one to five.",
+      "order": 1,
+      "crownLevel": 0,
+      "reviewStatus": "draft",
+      "guidebook": "Counting from one to five.",
+      "lessons": [
+        {
+          "id": "hi-pilot-u2-l1",
+          "title": "One",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for one.",
+          "vocabId": "hi:ek",
+          "exercises": [
+            {
+              "id": "hi-pilot-u2-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "One",
+              "options": [
+                "एक",
+                "दो",
+                "तीन",
+                "चार"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:ek",
+              "transliteration": "ek"
+            },
+            {
+              "id": "hi-pilot-u2-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "एक",
+              "options": [
+                "One",
+                "Two",
+                "Three",
+                "Four"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:ek",
+              "transliteration": "ek"
+            },
+            {
+              "id": "hi-pilot-u2-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"one\"",
+              "expected": [
+                "एक"
+              ],
+              "vocabId": "hi:ek",
+              "transliteration": "ek"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u2-l2",
+          "title": "Two",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for two.",
+          "vocabId": "hi:do",
+          "exercises": [
+            {
+              "id": "hi-pilot-u2-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Two",
+              "options": [
+                "दो",
+                "एक",
+                "तीन",
+                "चार"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:do",
+              "transliteration": "do"
+            },
+            {
+              "id": "hi-pilot-u2-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "दो",
+              "options": [
+                "Two",
+                "One",
+                "Three",
+                "Four"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:do",
+              "transliteration": "do"
+            },
+            {
+              "id": "hi-pilot-u2-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"two\"",
+              "expected": [
+                "दो"
+              ],
+              "vocabId": "hi:do",
+              "transliteration": "do"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u2-l3",
+          "title": "Three",
+          "order": 2,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for three.",
+          "vocabId": "hi:teen",
+          "exercises": [
+            {
+              "id": "hi-pilot-u2-l3-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Three",
+              "options": [
+                "तीन",
+                "एक",
+                "दो",
+                "चार"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:teen",
+              "transliteration": "teen"
+            },
+            {
+              "id": "hi-pilot-u2-l3-e2",
+              "kind": "chooseMeaning",
+              "prompt": "तीन",
+              "options": [
+                "Three",
+                "One",
+                "Two",
+                "Four"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:teen",
+              "transliteration": "teen"
+            },
+            {
+              "id": "hi-pilot-u2-l3-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"three\"",
+              "expected": [
+                "तीन"
+              ],
+              "vocabId": "hi:teen",
+              "transliteration": "teen"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u2-l4",
+          "title": "Four",
+          "order": 3,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for four.",
+          "vocabId": "hi:chaar",
+          "exercises": [
+            {
+              "id": "hi-pilot-u2-l4-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Four",
+              "options": [
+                "चार",
+                "एक",
+                "दो",
+                "तीन"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:chaar",
+              "transliteration": "chaar"
+            },
+            {
+              "id": "hi-pilot-u2-l4-e2",
+              "kind": "chooseMeaning",
+              "prompt": "चार",
+              "options": [
+                "Four",
+                "One",
+                "Two",
+                "Three"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:chaar",
+              "transliteration": "chaar"
+            },
+            {
+              "id": "hi-pilot-u2-l4-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"four\"",
+              "expected": [
+                "चार"
+              ],
+              "vocabId": "hi:chaar",
+              "transliteration": "chaar"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u2-l5",
+          "title": "Five",
+          "order": 4,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for five.",
+          "vocabId": "hi:paanch",
+          "exercises": [
+            {
+              "id": "hi-pilot-u2-l5-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Five",
+              "options": [
+                "पाँच",
+                "एक",
+                "दो",
+                "तीन"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:paanch",
+              "transliteration": "paanch"
+            },
+            {
+              "id": "hi-pilot-u2-l5-e2",
+              "kind": "chooseMeaning",
+              "prompt": "पाँच",
+              "options": [
+                "Five",
+                "One",
+                "Two",
+                "Three"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:paanch",
+              "transliteration": "paanch"
+            },
+            {
+              "id": "hi-pilot-u2-l5-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"five\"",
+              "expected": [
+                "पाँच"
+              ],
+              "vocabId": "hi:paanch",
+              "transliteration": "paanch"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hi-pilot-u3",
+      "title": "Family",
+      "description": "People close to you.",
+      "order": 2,
+      "crownLevel": 0,
+      "reviewStatus": "draft",
+      "guidebook": "People close to you.",
+      "lessons": [
+        {
+          "id": "hi-pilot-u3-l1",
+          "title": "Mother",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for mother.",
+          "vocabId": "hi:maa",
+          "exercises": [
+            {
+              "id": "hi-pilot-u3-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Mother",
+              "options": [
+                "माँ",
+                "पिता",
+                "भाई",
+                "बहन"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:maa",
+              "transliteration": "maa"
+            },
+            {
+              "id": "hi-pilot-u3-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "माँ",
+              "options": [
+                "Mother",
+                "Father",
+                "Brother",
+                "Sister"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:maa",
+              "transliteration": "maa"
+            },
+            {
+              "id": "hi-pilot-u3-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"mother\"",
+              "expected": [
+                "माँ"
+              ],
+              "vocabId": "hi:maa",
+              "transliteration": "maa"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u3-l2",
+          "title": "Father",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for father.",
+          "vocabId": "hi:pita",
+          "exercises": [
+            {
+              "id": "hi-pilot-u3-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Father",
+              "options": [
+                "पिता",
+                "माँ",
+                "भाई",
+                "बहन"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:pita",
+              "transliteration": "pita"
+            },
+            {
+              "id": "hi-pilot-u3-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "पिता",
+              "options": [
+                "Father",
+                "Mother",
+                "Brother",
+                "Sister"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:pita",
+              "transliteration": "pita"
+            },
+            {
+              "id": "hi-pilot-u3-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"father\"",
+              "expected": [
+                "पिता"
+              ],
+              "vocabId": "hi:pita",
+              "transliteration": "pita"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u3-l3",
+          "title": "Brother",
+          "order": 2,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for brother.",
+          "vocabId": "hi:bhai",
+          "exercises": [
+            {
+              "id": "hi-pilot-u3-l3-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Brother",
+              "options": [
+                "भाई",
+                "माँ",
+                "पिता",
+                "बहन"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:bhai",
+              "transliteration": "bhai"
+            },
+            {
+              "id": "hi-pilot-u3-l3-e2",
+              "kind": "chooseMeaning",
+              "prompt": "भाई",
+              "options": [
+                "Brother",
+                "Mother",
+                "Father",
+                "Sister"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:bhai",
+              "transliteration": "bhai"
+            },
+            {
+              "id": "hi-pilot-u3-l3-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"brother\"",
+              "expected": [
+                "भाई"
+              ],
+              "vocabId": "hi:bhai",
+              "transliteration": "bhai"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u3-l4",
+          "title": "Sister",
+          "order": 3,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for sister.",
+          "vocabId": "hi:behen",
+          "exercises": [
+            {
+              "id": "hi-pilot-u3-l4-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sister",
+              "options": [
+                "बहन",
+                "माँ",
+                "पिता",
+                "भाई"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:behen",
+              "transliteration": "behen"
+            },
+            {
+              "id": "hi-pilot-u3-l4-e2",
+              "kind": "chooseMeaning",
+              "prompt": "बहन",
+              "options": [
+                "Sister",
+                "Mother",
+                "Father",
+                "Brother"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:behen",
+              "transliteration": "behen"
+            },
+            {
+              "id": "hi-pilot-u3-l4-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"sister\"",
+              "expected": [
+                "बहन"
+              ],
+              "vocabId": "hi:behen",
+              "transliteration": "behen"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u3-l5",
+          "title": "Child",
+          "order": 4,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for child.",
+          "vocabId": "hi:bachcha",
+          "exercises": [
+            {
+              "id": "hi-pilot-u3-l5-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Child",
+              "options": [
+                "बच्चा",
+                "माँ",
+                "पिता",
+                "भाई"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:bachcha",
+              "transliteration": "bachcha"
+            },
+            {
+              "id": "hi-pilot-u3-l5-e2",
+              "kind": "chooseMeaning",
+              "prompt": "बच्चा",
+              "options": [
+                "Child",
+                "Mother",
+                "Father",
+                "Brother"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:bachcha",
+              "transliteration": "bachcha"
+            },
+            {
+              "id": "hi-pilot-u3-l5-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"child\"",
+              "expected": [
+                "बच्चा"
+              ],
+              "vocabId": "hi:bachcha",
+              "transliteration": "bachcha"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hi-pilot-u4",
+      "title": "Food",
+      "description": "Food and drink words.",
+      "order": 3,
+      "crownLevel": 0,
+      "reviewStatus": "draft",
+      "guidebook": "Food and drink words.",
+      "lessons": [
+        {
+          "id": "hi-pilot-u4-l1",
+          "title": "Water",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for water.",
+          "vocabId": "hi:paani",
+          "exercises": [
+            {
+              "id": "hi-pilot-u4-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Water",
+              "options": [
+                "पानी",
+                "चाय",
+                "चावल",
+                "रोटी"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:paani",
+              "transliteration": "paani"
+            },
+            {
+              "id": "hi-pilot-u4-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "पानी",
+              "options": [
+                "Water",
+                "Tea",
+                "Rice",
+                "Bread"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:paani",
+              "transliteration": "paani"
+            },
+            {
+              "id": "hi-pilot-u4-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"water\"",
+              "expected": [
+                "पानी"
+              ],
+              "vocabId": "hi:paani",
+              "transliteration": "paani"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u4-l2",
+          "title": "Tea",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for tea.",
+          "vocabId": "hi:chai",
+          "exercises": [
+            {
+              "id": "hi-pilot-u4-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Tea",
+              "options": [
+                "चाय",
+                "पानी",
+                "चावल",
+                "रोटी"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:chai",
+              "transliteration": "chai"
+            },
+            {
+              "id": "hi-pilot-u4-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "चाय",
+              "options": [
+                "Tea",
+                "Water",
+                "Rice",
+                "Bread"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:chai",
+              "transliteration": "chai"
+            },
+            {
+              "id": "hi-pilot-u4-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"tea\"",
+              "expected": [
+                "चाय"
+              ],
+              "vocabId": "hi:chai",
+              "transliteration": "chai"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u4-l3",
+          "title": "Rice",
+          "order": 2,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for rice.",
+          "vocabId": "hi:chaawal",
+          "exercises": [
+            {
+              "id": "hi-pilot-u4-l3-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Rice",
+              "options": [
+                "चावल",
+                "पानी",
+                "चाय",
+                "रोटी"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:chaawal",
+              "transliteration": "chaawal"
+            },
+            {
+              "id": "hi-pilot-u4-l3-e2",
+              "kind": "chooseMeaning",
+              "prompt": "चावल",
+              "options": [
+                "Rice",
+                "Water",
+                "Tea",
+                "Bread"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:chaawal",
+              "transliteration": "chaawal"
+            },
+            {
+              "id": "hi-pilot-u4-l3-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"rice\"",
+              "expected": [
+                "चावल"
+              ],
+              "vocabId": "hi:chaawal",
+              "transliteration": "chaawal"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u4-l4",
+          "title": "Bread",
+          "order": 3,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for bread.",
+          "vocabId": "hi:roti",
+          "exercises": [
+            {
+              "id": "hi-pilot-u4-l4-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Bread",
+              "options": [
+                "रोटी",
+                "पानी",
+                "चाय",
+                "चावल"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:roti",
+              "transliteration": "roti"
+            },
+            {
+              "id": "hi-pilot-u4-l4-e2",
+              "kind": "chooseMeaning",
+              "prompt": "रोटी",
+              "options": [
+                "Bread",
+                "Water",
+                "Tea",
+                "Rice"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:roti",
+              "transliteration": "roti"
+            },
+            {
+              "id": "hi-pilot-u4-l4-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"bread\"",
+              "expected": [
+                "रोटी"
+              ],
+              "vocabId": "hi:roti",
+              "transliteration": "roti"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u4-l5",
+          "title": "Milk",
+          "order": 4,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for milk.",
+          "vocabId": "hi:doodh",
+          "exercises": [
+            {
+              "id": "hi-pilot-u4-l5-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Milk",
+              "options": [
+                "दूध",
+                "पानी",
+                "चाय",
+                "चावल"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:doodh",
+              "transliteration": "doodh"
+            },
+            {
+              "id": "hi-pilot-u4-l5-e2",
+              "kind": "chooseMeaning",
+              "prompt": "दूध",
+              "options": [
+                "Milk",
+                "Water",
+                "Tea",
+                "Rice"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:doodh",
+              "transliteration": "doodh"
+            },
+            {
+              "id": "hi-pilot-u4-l5-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"milk\"",
+              "expected": [
+                "दूध"
+              ],
+              "vocabId": "hi:doodh",
+              "transliteration": "doodh"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hi-pilot-u5",
+      "title": "Places",
+      "description": "Places around town.",
+      "order": 4,
+      "crownLevel": 0,
+      "reviewStatus": "draft",
+      "guidebook": "Places around town.",
+      "lessons": [
+        {
+          "id": "hi-pilot-u5-l1",
+          "title": "Home",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for home.",
+          "vocabId": "hi:ghar",
+          "exercises": [
+            {
+              "id": "hi-pilot-u5-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Home",
+              "options": [
+                "घर",
+                "स्कूल",
+                "बाजार",
+                "स्टेशन"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:ghar",
+              "transliteration": "ghar"
+            },
+            {
+              "id": "hi-pilot-u5-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "घर",
+              "options": [
+                "Home",
+                "School",
+                "Market",
+                "Station"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:ghar",
+              "transliteration": "ghar"
+            },
+            {
+              "id": "hi-pilot-u5-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"home\"",
+              "expected": [
+                "घर"
+              ],
+              "vocabId": "hi:ghar",
+              "transliteration": "ghar"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u5-l2",
+          "title": "School",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for school.",
+          "vocabId": "hi:school",
+          "exercises": [
+            {
+              "id": "hi-pilot-u5-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "School",
+              "options": [
+                "स्कूल",
+                "घर",
+                "बाजार",
+                "स्टेशन"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:school",
+              "transliteration": "school"
+            },
+            {
+              "id": "hi-pilot-u5-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "स्कूल",
+              "options": [
+                "School",
+                "Home",
+                "Market",
+                "Station"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:school",
+              "transliteration": "school"
+            },
+            {
+              "id": "hi-pilot-u5-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"school\"",
+              "expected": [
+                "स्कूल"
+              ],
+              "vocabId": "hi:school",
+              "transliteration": "school"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u5-l3",
+          "title": "Market",
+          "order": 2,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for market.",
+          "vocabId": "hi:bazaar",
+          "exercises": [
+            {
+              "id": "hi-pilot-u5-l3-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Market",
+              "options": [
+                "बाजार",
+                "घर",
+                "स्कूल",
+                "स्टेशन"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:bazaar",
+              "transliteration": "bazaar"
+            },
+            {
+              "id": "hi-pilot-u5-l3-e2",
+              "kind": "chooseMeaning",
+              "prompt": "बाजार",
+              "options": [
+                "Market",
+                "Home",
+                "School",
+                "Station"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:bazaar",
+              "transliteration": "bazaar"
+            },
+            {
+              "id": "hi-pilot-u5-l3-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"market\"",
+              "expected": [
+                "बाजार"
+              ],
+              "vocabId": "hi:bazaar",
+              "transliteration": "bazaar"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u5-l4",
+          "title": "Station",
+          "order": 3,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for station.",
+          "vocabId": "hi:station",
+          "exercises": [
+            {
+              "id": "hi-pilot-u5-l4-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Station",
+              "options": [
+                "स्टेशन",
+                "घर",
+                "स्कूल",
+                "बाजार"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:station",
+              "transliteration": "station"
+            },
+            {
+              "id": "hi-pilot-u5-l4-e2",
+              "kind": "chooseMeaning",
+              "prompt": "स्टेशन",
+              "options": [
+                "Station",
+                "Home",
+                "School",
+                "Market"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:station",
+              "transliteration": "station"
+            },
+            {
+              "id": "hi-pilot-u5-l4-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"station\"",
+              "expected": [
+                "स्टेशन"
+              ],
+              "vocabId": "hi:station",
+              "transliteration": "station"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u5-l5",
+          "title": "Road",
+          "order": 4,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "draft",
+          "guidebook": "Practice the Hindi word for road.",
+          "vocabId": "hi:sadak",
+          "exercises": [
+            {
+              "id": "hi-pilot-u5-l5-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Road",
+              "options": [
+                "सड़क",
+                "घर",
+                "स्कूल",
+                "बाजार"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:sadak",
+              "transliteration": "sadak"
+            },
+            {
+              "id": "hi-pilot-u5-l5-e2",
+              "kind": "chooseMeaning",
+              "prompt": "सड़क",
+              "options": [
+                "Road",
+                "Home",
+                "School",
+                "Market"
+              ],
+              "answerIndex": 0,
+              "vocabId": "hi:sadak",
+              "transliteration": "sadak"
+            },
+            {
+              "id": "hi-pilot-u5-l5-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"road\"",
+              "expected": [
+                "सड़क"
+              ],
+              "vocabId": "hi:sadak",
+              "transliteration": "sadak"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

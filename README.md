@@ -109,7 +109,9 @@ content/<locale>/<course>.json
 apps/web/public/courses/ (synced automatically on dev/build)
 ```
 
-The seeded starter bundle contains **10 courses × 4 units × 2 lessons × 3 exercises = 240 exercises**. The content tests grade every exercise to confirm each answer key is reachable.
+The seeded starter bundle contains **10 courses × 4 units × 2 lessons × 3 exercises = 240 exercises**. P4 adds one draft pilot, `content/hi/hi-pilot.json`: **5 units × 5 lessons × 3 exercises = 75 exercises**, with `reviewStatus: "draft"` on every lesson. The content tests grade every exercise to confirm each answer key is reachable (255 total after P4).
+
+Optional course fields now include `reviewStatus` (`draft`/`reviewed`, default `draft`), `reviewer`, unit/lesson `guidebook`, and exercise `vocabId` / `transliteration`. Reviewed content requires a reviewer. `ATTRIBUTIONS.md` records the intended open-license sources for imported phrases.
 
 Authoring workflow: open `/studio`, paste or edit course JSON, validate live, download the file, and place it under `content/<locale>/`. Then run `pnpm sync:content`.
 

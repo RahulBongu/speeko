@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   validateDirectory,
@@ -7,6 +7,7 @@ import {
   collectAudioEntries,
   scaffoldCourse,
   validateCourseFile,
+  importCourseFromPhrases,
 } from './index.js';
 import type { Locale } from '@speeko/core';
 
@@ -20,6 +21,7 @@ Commands:
   validate [dir]                  Validate all course JSON files under dir (default: ./content)
   build [inputDir] [outputDir]    Validate + compile courses to outputDir (default: ./content ./content/dist)
   scaffold <locale> <id> [dir]    Write a starter course JSON for a locale
+  import <input.json> <out.json>  Import a normalized phrase list into a draft course
   audio [inputDir] [outFile]      Write an audio manifest (default: ./content ./content/audio-manifest.json)
 `);
   process.exit(0);
@@ -69,6 +71,21 @@ if (cmd === 'scaffold') {
   const out = resolve(dir, locale, `${id}.json`);
   writeFileSync(out, JSON.stringify(course, null, 2));
   console.log(`Scaffolded ${out}`);
+  process.exit(0);
+}
+
+if (cmd === 'import') {
+  const inputPath = resolve(args[1] ?? '');
+  const outputPath = resolve(args[2] ?? './imported-course.json');
+  if (!args[1] || !args[2]) {
+    console.error('Usage: import <input.json> <output.json>');
+    process.exit(1);
+  }
+  const input = JSON.parse(readFileSync(inputPath, 'utf8'));
+  const course = importCourseFromPhrases(input);
+  mkdirSync(resolve(outputPath, '..'), { recursive: true });
+  writeFileSync(outputPath, JSON.stringify(course, null, 2));
+  console.log(`Imported ${course.units.reduce((n, u) => n + u.lessons.length, 0)} lessons -> ${outputPath}`);
   process.exit(0);
 }
 

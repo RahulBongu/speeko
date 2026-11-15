@@ -29,6 +29,10 @@ phase report or `PROGRESS.md`, not here.
 | D14 | 2026-11-15 | **Onboarding is a short, local-first route flow.** Language, motivation, level, daily goal, and commitment are direct URLs; commitment starts the first lesson immediately. Returning learners go to their course; no account is required. | Gets a new guest to a real lesson in six taps without a fake signup gate or unreviewed content claims. |
 | D15 | 2026-11-15 | **Path node types are honest:** chest = guidebook recap (no reward), review = existing SRS session, checkpoint = synthetic practice from prior units, no XP and no course progress write. Checkpoints unlock only when every prior lesson is complete. | Node types exist and work without inventing gems, quizzes, or leagues before their phases. |
 | D16 | 2026-11-15 | **Guidebook target items are extracted from the exercises**, splitting pair exercises into individual words. No new Indic sentences are authored or claimed as reviewed. | Keeps P3 visual output derived from tracked content while P4 handles `reviewStatus` and content provenance. |
+| D17 | 2026-11-15 | **Content review status defaults to `draft`.** Existing and scaffolded courses are draft unless a reviewer is recorded. | Prevents unreviewed Indic content from being presented as complete. |
+| D18 | 2026-11-15 | **`reviewed` requires a non-empty reviewer.** Validator enforces this; no content may claim review without attribution. | Makes the review claim auditable. |
+| D19 | 2026-11-15 | **P4 grows one Hindi pilot course to 5×5 lessons as draft.** It is not presented as reviewed and must not count as complete reviewed content. | Provides path depth for testing without fabricating reviewed language material. |
+| D20 | 2026-11-15 | **Studio shows a Draft/Reviewed badge from the manifest.** `reviewStatus` is part of the built manifest. | Makes draft status visible where authors work. |
 
 ## Standing constraints
 

@@ -171,6 +171,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               order: 999 + unitNumber,
               difficulty: loaded.difficulty,
               xpReward: 0,
+              reviewStatus: 'draft',
               exercises,
             },
             unit: {
@@ -179,6 +180,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               description: 'A quick check before the next unit — practice only.',
               order: 999 + unitNumber,
               crownLevel: 0,
+              reviewStatus: 'draft',
               lessons: [],
             },
             index: 999 + unitNumber,
@@ -199,6 +201,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               order: 999,
               difficulty: 'A1',
               xpReward: 0,
+              reviewStatus: 'draft',
               exercises: plan.exercises,
             },
             unit: {
@@ -207,6 +210,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               description: 'Spaced repetition, straight from your own progress.',
               order: 999,
               crownLevel: 0,
+              reviewStatus: 'draft',
               lessons: [],
             },
             index: 999,

@@ -47,11 +47,7 @@ the individual files. The per-route PNGs are the source of truth.
 
 ## Inspection log
 
-- **2026-11-15 — P3:** onboarding language/first-lesson flow, guidebook, and
-  updated course path with chest/review/checkpoint nodes inspected at both viewports.
-  The first guidebook capture displayed `matchPairs` items as fused strings; fixed by
-  splitting pair exercises into their individual target words. The desktop language
-  picker was also compacted so all ten courses fit in two rows.
+- **2026-11-15 — P4:** Studio list now shows Draft/Reviewed badges from the manifest; no new screenshots were needed. Existing route screenshots remain valid.
 - **2026-11-15 — P2:** signed-in success and failed-save Retry screens
   inspected at both viewports. Layout, save-status copy, and Retry fit without
   overflow. Reward tests emulate reduced motion so XP/accuracy/combo render

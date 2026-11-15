@@ -14,28 +14,37 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P0 — Audit | Ground truth, feature map, risks, README corrections | **Done** — `9e7ae9b`, branch `phase/0-audit` |
 | P1 — Safety net | `pnpm verify`, Playwright smoke + screenshots, ESLint, snapshot v2 + v1 migration | **Done** — `68b6e18`, branch `phase/1-safety-net` |
 | P2 — Server-verified rewards | Lesson-completion endpoint, server re-grade, append-only events, `attemptId` idempotency, signed-in save UI | **Done** — `4f514ad`, branch `phase/2-server-rewards` |
-| P3 — Onboarding + path | Onboarding flow, course switcher, unit guidebook, review/chest/checkpoint path nodes, continue button | **Done** — branch `phase/3-onboarding-path` |
+| P3 - Onboarding + path | Onboarding flow, course switcher, unit guidebook, review/chest/checkpoint path nodes, continue button | **Done** - branch `phase/3-onboarding-path` |
+| P4 - Content pipeline | Schema additions, validator rules, importer, one 5x5 draft pilot course, Studio draft badges | **Done** - branch `phase/4-content-pipeline` |
 
-Next phase is selected by the owner; P4 is not started. Later phases (content
-depth, SRS, economy, social, settings, mobile parity) follow the master plan.
+Next phase is selected by the owner; P5 is not started. Later phases (practice,
+content depth, SRS, economy, social, settings, mobile parity) follow the master plan.
 Hosting is deferred by the owner until the UI/product phases are done.
 
-## Verification snapshot (P3)
+## Verification snapshot (P4)
 
 Run from the repo root:
 
 | Command | Result |
 | --- | --- |
 | `pnpm typecheck` | 6/6 Turbo tasks (5 package typechecks + dependency builds) |
-| `pnpm test` | 76 tests — 65 core + 11 content |
+| `pnpm test` | 76 tests — 65 core + 11 content (255 exercises graded) |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm lint` | Passes; one intentional `<img>` warning in the lesson player |
 | `pnpm e2e` | 48 Playwright checks (11 routes × 2 viewports, rewards × 2, onboarding × 2) |
 | `pnpm verify` | typecheck → test → build → e2e, all green |
 
 Visual evidence: 30 screenshots in [`docs/qa/`](./qa/), plus desktop and
-mobile contact sheets. P3 added `onboarding-language`, `guidebook-hi-starter-unit-1`,
-and `onboarding-first-lesson` at both viewports; all were inspected.
+mobile contact sheets. P4 added Studio draft badges; no new route screenshots were
+needed. The P3 route defects remain fixed.
+
+## What P4 changed
+
+- **Content schema additions.** Exercises now support `vocabId` and `transliteration`; units and lessons support `guidebook`; lessons, units, and courses support `reviewStatus` (`draft`/`reviewed`) plus optional `reviewer`. New fields are optional or defaulted, so existing courses still validate.
+- **Validator rules.** `validateCourseFile` now checks duplicate IDs, duplicate vocab IDs, and requires a reviewer for any `reviewed` scope.
+- **Importer.** `importCourseFromPhrases` converts a normalized open-licensed phrase list into a draft course, and the CLI gained an `import` command. Output is always `reviewStatus: "draft"`. `ATTRIBUTIONS.md` documents the intended source and licensing.
+- **Pilot course.** `content/hi/hi-pilot.json` is a 5 unit x 5 lesson draft course (75 exercises), with `reviewStatus: "draft"` on every lesson. Content grading now checks 255 exercises.
+- **Studio flags drafts.** The course list shows a Draft/Reviewed badge from the manifest, which now includes `reviewStatus`.
 
 ## What P3 changed
 
@@ -103,6 +112,9 @@ These are product gaps, not regressions. Details and evidence are in
   is simplified SM-2, not the mandated Leitner 1/2/4/8/16 boxes.
 - `timeZone` is captured on onboarding and stored, but day boundaries still use the
   browser/server local day. Timezone-aware days are a later phase.
+- Content now has an optional `reviewStatus` field and a draft pilot course, but no
+  course has been reviewed by a native speaker. The importer is a utility, not a
+  full open-data pipeline with provenance checks.
 - Content is 4 units / 8 lessons / 24 exercises per course (240 exercises). There is no
   `reviewStatus` field yet; new Indic content becomes `draft` from P4 onward.
 - Mobile remains a branded welcome screen. The release APK exists at
