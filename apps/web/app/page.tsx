@@ -49,6 +49,10 @@ export default function HomePage() {
     <div className="overflow-x-hidden">
       <div className="relative">
         <div aria-hidden="true" className="hero-dots absolute inset-0 opacity-70" />
+        <div
+          aria-hidden="true"
+          className="hero-glow absolute left-1/2 top-8 h-[420px] w-[720px] -translate-x-1/2 opacity-70"
+        />
         <div className="relative mx-auto max-w-5xl px-5 pb-16 pt-5">
           <header className="flex items-center justify-between gap-3">
             <Brand />
@@ -63,7 +67,7 @@ export default function HomePage() {
           </header>
 
           <div className="mt-12 grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8">
-            <div>
+            <div className="animate-rise [animation-delay:80ms]">
               <span className="inline-flex items-center gap-2 rounded-full border-2 border-speeko-200 bg-white px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.14em] text-speeko-700 shadow-card-sm">
                 <span className="h-2 w-2 rounded-full bg-speeko-500" />
                 10 Indian languages · free to start
@@ -96,8 +100,8 @@ export default function HomePage() {
                 more.
               </p>
 
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Link href={continueHref} className="btn-primary px-7 py-4 text-base">
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row animate-rise [animation-delay:160ms]">
+                <Link href={continueHref} className="btn-primary btn-shine px-7 py-4 text-base active:scale-[0.97]">
                   {started ? 'Continue learning' : 'Start learning'}
                   <ArrowRightIcon className="h-4 w-4" />
                 </Link>
@@ -152,7 +156,7 @@ export default function HomePage() {
               )}
             </div>
 
-            <div className="relative mx-auto w-full max-w-sm pb-6 pt-2">
+            <div className="relative mx-auto w-full max-w-sm pb-6 pt-2 animate-rise [animation-delay:240ms]">
               <div
                 aria-hidden="true"
                 className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-speeko-200/50 blur-2xl"

@@ -41,6 +41,28 @@ import { ExerciseBody } from './ExerciseBody';
 
 type Phase = 'loading' | 'error' | 'playing' | 'feedback' | 'summary' | 'hearts';
 
+/** Count from 0 to `target` — instantly under prefers-reduced-motion. */
+function useCountUp(target: number, duration = 900): number {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setValue(target);
+      return;
+    }
+    const start = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(2, -4 * t); // easeOutExpo
+      setValue(Math.round(target * eased));
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [target, duration]);
+  return value;
+}
+
 const TIPS = [
   'Take your time — accuracy beats speed.',
   'Say each answer out loud as you tap it.',
@@ -497,7 +519,7 @@ function FeedbackBar({
     >
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-start gap-3">
-          <Fox mood={correct ? 'happy' : 'sad'} className="hidden h-14 w-14 shrink-0 sm:block" />
+          <Fox mood={correct ? 'happy' : 'sad'} className="hidden h-14 w-14 shrink-0 animate-bob sm:block" />
           <div>
             <p
               className={`font-display text-xl font-extrabold ${
@@ -508,7 +530,9 @@ function FeedbackBar({
             </p>
             {correct ? (
               <p className="text-sm font-semibold text-speeko-700">
-                {xpGained > 0 ? `+${xpGained} XP` : 'Progress saved'}
+                <span className="inline-block animate-pop">
+                  {xpGained > 0 ? `+${xpGained} XP` : 'Progress saved'}
+                </span>
                 {combo >= 2 ? ` · ${combo} in a row` : ''}
               </p>
             ) : expected ? (
@@ -554,6 +578,9 @@ function SummaryScreen({
   const streak = postProgress?.streak ?? 0;
   const goalValue = Math.min(1, todayXp / DAILY_GOAL);
   const goalDone = todayXp >= DAILY_GOAL;
+  const displayXp = useCountUp(awardedXp);
+  const displayAccuracy = useCountUp(Math.round(accuracy * 100));
+  const displayCombo = useCountUp(session.maxCombo);
 
   return (
     <main className="relative mx-auto w-full max-w-2xl flex-1 px-4 py-10 sm:px-6">
@@ -571,14 +598,20 @@ function SummaryScreen({
       </div>
 
       <div className="mt-8 grid grid-cols-3 gap-2.5 sm:gap-3">
-        <StatCard
-          label={isReview ? 'Skills updated' : 'XP earned'}
-          value={isReview ? `${session.answers.length}` : `+${awardedXp}`}
-          icon={<TrophyIcon className="h-5 w-5" />}
-          tone="xp"
-        />
-        <StatCard label="Accuracy" value={`${Math.round(accuracy * 100)}%`} icon={<CheckIcon className="h-5 w-5" />} tone="green" />
-        <StatCard label="Best combo" value={`×${session.maxCombo}`} icon={<BoltIcon className="h-5 w-5" />} tone="streak" />
+        <div className="animate-rise [animation-delay:120ms]">
+          <StatCard
+            label={isReview ? 'Skills updated' : 'XP earned'}
+            value={isReview ? `${session.answers.length}` : `+${displayXp}`}
+            icon={<TrophyIcon className="h-5 w-5" />}
+            tone="xp"
+          />
+        </div>
+        <div className="animate-rise [animation-delay:220ms]">
+          <StatCard label="Accuracy" value={`${displayAccuracy}%`} icon={<CheckIcon className="h-5 w-5" />} tone="green" />
+        </div>
+        <div className="animate-rise [animation-delay:320ms]">
+          <StatCard label="Best combo" value={`×${displayCombo}`} icon={<BoltIcon className="h-5 w-5" />} tone="streak" />
+        </div>
       </div>
 
       {isReview ? (
@@ -617,7 +650,7 @@ function SummaryScreen({
 
       {!isReview && (
         <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 font-display text-sm font-extrabold text-fox-700">
-          <FlameIcon className="h-5 w-5" />
+          <FlameIcon className="h-5 w-5 animate-bob" />
           {streak > 0 ? `${streak} day streak` : 'Streak started'}
         </div>
       )}

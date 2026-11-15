@@ -105,6 +105,40 @@ body {
     background-image: radial-gradient(#f0d7ba 1.5px, transparent 1.5px);
     background-size: 26px 26px;
   }
+
+  .hero-glow {
+    background: radial-gradient(60% 60% at 50% 45%, #ffe9a8 0%, rgba(255, 233, 168, 0) 70%);
+  }
+
+  /* CSS-only shine sweep for primary CTAs — no JS, reduced-motion safe */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    top: -60%;
+    left: -30%;
+    width: 45%;
+    height: 220%;
+    transform: translateX(-140%) rotate(20deg);
+    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.55) 50%, transparent 80%);
+    animation: shine-sweep 3.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes shine-sweep {
+    0%,
+    55% {
+      transform: translateX(-140%) rotate(20deg);
+    }
+    85%,
+    100% {
+      transform: translateX(340%) rotate(20deg);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

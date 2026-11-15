@@ -67,9 +67,9 @@ type ChoiceState = 'default' | 'selected' | 'correct' | 'wrong' | 'muted';
 
 const CHOICE_CLASSES: Record<ChoiceState, string> = {
   default:
-    'border-cream-200 bg-white text-bark-700 shadow-card-sm hover:-translate-y-0.5 hover:border-speeko-300 hover:bg-speeko-50',
-  selected: 'border-speeko-400 bg-speeko-50 text-speeko-800 shadow-green-sm',
-  correct: 'border-speeko-500 bg-speeko-100 text-speeko-800 shadow-green-sm',
+    'border-cream-200 bg-white text-bark-700 shadow-card-sm hover:-translate-y-0.5 hover:border-speeko-300 hover:bg-speeko-50 active:scale-[0.97]',
+  selected: 'border-speeko-400 bg-speeko-50 text-speeko-800 shadow-green-sm active:scale-[0.97]',
+  correct: 'animate-pop border-speeko-500 bg-speeko-100 text-speeko-800 shadow-green-sm',
   wrong: 'animate-shake border-red-400 bg-red-50 text-red-700',
   muted: 'border-cream-200 bg-white text-bark-300 opacity-60',
 };

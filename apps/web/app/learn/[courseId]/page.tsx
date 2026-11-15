@@ -205,7 +205,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                     const offset = OFFSETS[(unitIndex * 2 + lessonIndex) % OFFSETS.length] ?? '';
                     const node = (
                       <span
-                        className={`flex h-[74px] w-[74px] items-center justify-center rounded-full border-4 border-white shadow-card transition duration-200 ${
+                        className={`flex h-[74px] w-[74px] items-center justify-center rounded-full border-4 border-white shadow-card transition duration-200 group-active:scale-[0.94] ${
                           status === 'completed'
                             ? 'bg-speeko-500 text-white group-hover:-translate-y-1'
                             : status === 'current'
@@ -224,7 +224,11 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                     );
 
                     return (
-                      <li key={lesson.id} className={`flex scroll-mt-24 ${offset}`}>
+                      <li
+                        key={lesson.id}
+                        style={{ animationDelay: `${Math.min(unitIndex * 3 + lessonIndex, 8) * 70}ms` }}
+                        className={`flex scroll-mt-24 animate-rise ${offset}`}
+                      >
                         <div className="relative flex flex-col items-center">
                           <div className="relative">
                             {status === 'current' ? (
