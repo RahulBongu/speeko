@@ -1,5 +1,5 @@
 import { pgTable, text, integer, timestamp, jsonb, boolean, serial, uniqueIndex } from 'drizzle-orm/pg-core';
-import type { ProgressState } from '@speeko/core';
+import type { GradedAnswer, ProgressState } from '@speeko/core';
 import { user } from './auth-schema.js';
 
 export * from './auth-schema.js';
@@ -86,3 +86,30 @@ export const progressSnapshots = pgTable('progress_snapshots', {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+/**
+ * Append-only record of every verified lesson attempt. `attemptId` is the
+ * client's idempotency key: a retry with the same key returns the original
+ * event instead of awarding XP twice. Nothing updates or deletes these rows.
+ */
+export const lessonEvents = pgTable(
+  'lesson_events',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    attemptId: text('attempt_id').notNull(),
+    courseId: text('course_id').notNull(),
+    lessonId: text('lesson_id').notNull(),
+    xpEarned: integer('xp_earned').notNull(),
+    accuracyBp: integer('accuracy_bp').notNull(),
+    heartsLeft: integer('hearts_left').notNull(),
+    maxCombo: integer('max_combo').notNull(),
+    answers: jsonb('answers').$type<GradedAnswer[]>().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    userAttemptIdx: uniqueIndex('lesson_events_user_attempt_idx').on(t.userId, t.attemptId),
+  }),
+);

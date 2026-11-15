@@ -4,6 +4,7 @@ export * from './gamification.js';
 export * from './srs.js';
 export * from './skills.js';
 export * from './session.js';
+export * from './attempt.js';
 export * from './grading.js';
 export * from './progress.js';
 export * from './morphology.js';

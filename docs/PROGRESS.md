@@ -12,66 +12,74 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | Phase | Scope | Status |
 | --- | --- | --- |
 | P0 — Audit | Ground truth, feature map, risks, README corrections | **Done** — `9e7ae9b`, branch `phase/0-audit` |
-| P1 — Safety net | `pnpm verify`, Playwright smoke + screenshots, ESLint, snapshot v2 + v1 migration | **Done** — branch `phase/1-safety-net` |
-| P2 — Server-verified rewards | Lesson-completion endpoint, re-grade on server, append-only events, idempotency | **Next** |
+| P1 — Safety net | `pnpm verify`, Playwright smoke + screenshots, ESLint, snapshot v2 + v1 migration | **Done** — `68b6e18`, branch `phase/1-safety-net` |
+| P2 — Server-verified rewards | Lesson-completion endpoint, server re-grade, append-only events, `attemptId` idempotency, signed-in save UI | **Done** — branch `phase/2-server-rewards` |
 
-Later phases (practice, content depth, SRS, economy, social, settings, mobile
-parity) follow the master plan. Hosting is deferred by the owner until the
-UI/product phases are done.
+Next phase is selected by the owner; P3 is not started. Later phases (practice,
+content depth, SRS, economy, social, settings, mobile parity) follow the master
+plan. Hosting is deferred by the owner until the UI/product phases are done.
 
-## Verification snapshot (P1)
+## Verification snapshot (P2)
 
 Run from the repo root:
 
 | Command | Result |
 | --- | --- |
 | `pnpm typecheck` | 6/6 Turbo tasks (5 package typechecks + dependency builds) |
-| `pnpm test` | 69 tests — 58 core + 11 content |
+| `pnpm test` | 76 tests — 65 core + 11 content |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm lint` | Passes; one intentional `<img>` warning in the lesson player |
-| `pnpm e2e` | 22 Playwright checks (9 routes × 2 viewports, legacy v1 read, lesson feedback) |
+| `pnpm e2e` | 32 Playwright checks (9 routes × 2 viewports, legacy v1 read, lesson feedback, 5 reward checks × 2 viewports) |
 | `pnpm verify` | typecheck → test → build → e2e, all green |
 
-Visual evidence: 20 screenshots in [`docs/qa/`](./qa/), plus desktop and
-mobile contact sheets. Every route was inspected after the run; two defects
-found this way were fixed (mobile header wrapping, test-readiness race that
-captured the course skeleton).
+Visual evidence: 24 screenshots in [`docs/qa/`](./qa/), plus desktop and
+mobile contact sheets. P2 added signed-in success and failed-save Retry
+screens; both viewports were inspected. The P1 route defects (mobile header
+wrapping, skeleton race) remain fixed.
 
-## What P1 changed
+## What P2 changed
 
-- **Progress snapshot v2.** `version: 2` adds `dailyGoal` (default 50) and
-  `timeZone` (default `null`). v1 has its own schema, is still readable
-  forever, and is never rewritten in place. `migrateProgress` is lenient:
-  corrupt lesson/SRS entries are dropped, negatives clamp to zero, stale
-  daily XP resets, and unknown versions become a clean v2 snapshot.
-- **Storage keys.** New writes go to `speeko.progress.v2`; the web app reads
-  v2 first and falls back to the v1 key. The API accepts v1 and v2 payloads
-  and stores v2.
-- **`pnpm verify`** chains typecheck, unit tests, production builds, and the
-  Playwright suite (the suite needs built web/API output).
-- **Playwright** uses the installed Chrome (`channel: 'chrome'`) — no browser
-  download. 1280×800 and 390×844 projects, viewport screenshots, and
-  assertions that each route produces zero page errors and zero console errors.
-- **ESLint** is committed and non-interactive for web (`next/core-web-vitals`)
-  and mobile (`eslint-config-expo`, legacy config for SDK 53).
-- **Honest copy.** The signed-in "Weekly League" card is now "Your
-  milestones": it is a solo XP ladder with no peers, so it no longer implies
-  competition. Real leagues wait for real players.
+- **One grading rule set.** `packages/core/src/attempt.ts` re-grades raw
+  `AnswerInput` values in canonical lesson order with the same XP, combo,
+  hearts, accuracy, and SRS rules the player uses. `recordCompletion` and
+  `recordCompletionAndReviews` moved into core so web and API share them.
+- **Server-verified completion.** `POST /api/lesson-completions` requires a
+  session, loads authoritative tracked course JSON, re-grades, and returns the
+  resulting snapshot plus event. Status codes: `201` new, `200` duplicate,
+  `409` attemptId reused for another lesson, `422` invalid/incomplete/failed
+  attempt, `401` unauthenticated, `404` unknown course/lesson, `400` malformed
+  payload.
+- **Append-only rewards.** `lesson_events` stores the graded answers, XP,
+  accuracy basis points, hearts, max combo, and timestamps. A unique index on
+  `(user_id, attempt_id)` makes retries safe; no update or delete path exists.
+  Migration `0002` was smoke-tested against a fresh pglite directory.
+- **Signed-in client path.** The player captures raw answers and a stable
+  attempt id, sends them at the summary, and displays the server snapshot. On
+  network/session failure it shows **Reward not saved** with Retry and does not
+  award local XP. If the session check itself fails, a browser that was signed
+  in fails closed while a first-time guest can still save locally. Guests and
+  review sessions remain fully offline-capable.
+- **`PUT /api/progress`** still imports guest snapshots and merges across
+  devices, but it is explicitly non-authoritative. Future leagues/quests/gems
+  must derive from lesson events.
+- **Coverage.** Seven core scoring/review tests plus five reward Playwright
+  checks per viewport: unauthenticated rejection, server re-grade, idempotent
+  retry, attemptId mismatch, incomplete attempt, signed-in save, and failed-save
+  Retry.
 
-## Known gaps after P1
+## Known gaps after P2
 
-These are unchanged product gaps, not regressions. Details and evidence are in
+These are product gaps, not regressions. Details and evidence are in
 [`AUDIT.md`](./AUDIT.md).
 
-- Rewards are still client-trusted. `PUT /api/progress` validates shape and
-  merges, but XP/streak/completion totals are reported by the client. P2 fixes
-  this; do not build leagues, quests, or gems on the snapshot.
-- SRS is simplified SM-2, not the mandated Leitner 1/2/4/8/16 boxes. Existing
-  cards persist in snapshots.
+- No leagues, quests, achievements, gems/shop, settings, public profiles, or
+  social graph. Controls that do not exist are labelled "coming soon". No
+  leaderboard can be built from snapshots; use lesson events when that phase
+  starts.
+- Review sessions still update SRS locally without a `lesson_events` row. SRS
+  is simplified SM-2, not the mandated Leitner 1/2/4/8/16 boxes.
 - `timeZone` is stored but day boundaries still use the browser/server local
   day. Timezone-aware days are a later phase.
-- No practice hub, quests, achievements, gems/shop, settings, public profiles,
-  or social graph. Controls that do not exist are labelled "coming soon".
 - Content is 4 units / 8 lessons / 24 exercises per course (240 exercises).
   There is no `reviewStatus` field yet; new Indic content becomes `draft` from
   P4 onward.

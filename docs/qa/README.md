@@ -32,6 +32,8 @@ routes at viewport size (not full-page).
 | `studio.png` | `/studio` | course link rendered |
 | `studio-hi-starter.png` | `/studio/hi-starter` | "Valid course" |
 | `lesson-feedback.png` | lesson | after answering the first exercise |
+| `lesson-complete-signed-in.png` | lesson | signed-in summary, `Reward saved to your account.` |
+| `lesson-complete-error.png` | lesson | failed save, `Reward not saved` + Retry |
 
 Every capture also asserts the HTTP status is below 400, no uncaught page
 errors occur, and no console errors are emitted. Fonts are awaited before the
@@ -42,6 +44,10 @@ the individual files. The per-route PNGs are the source of truth.
 
 ## Inspection log
 
+- **2026-11-15 — P2:** signed-in success and failed-save Retry screens
+  inspected at both viewports. Layout, save-status copy, and Retry fit without
+  overflow. Reward tests emulate reduced motion so XP/accuracy/combo render
+  final values instead of a count-up frame.
 - **2026-11-15 — P1:** all 20 images inspected. Found and fixed a wrapped
   "Sign in" label in the mobile header. The first mobile `/learn` capture
   showed empty course cards; this was a test-readiness race (skeleton was
@@ -49,11 +55,12 @@ the individual files. The per-route PNGs are the source of truth.
 
 ## Limitations
 
-- **Guest state only.** No authenticated screenshots; sign-in/sign-up are
-  captured as forms, not as a signed-in session. `account.png` shows the guest
-  view. The "Your milestones" card is therefore not covered visually yet.
+- **Route screenshots are guest state.** P2 adds signed-in reward screens and
+  API checks, but other authenticated pages (`/account` signed in) are still
+  not captured.
 - **Web only.** The Expo welcome screen and the release APK are not captured.
-- **No interaction coverage beyond the first exercise.** Deep lesson flow,
-  hearts, pair reset, completion, sign-out, and cloud sync still need tests.
+- **Interaction coverage is still narrow.** Deep lesson flow beyond completion,
+  hearts exhaustion, pair reset, sign-out, and cloud sync on a second device
+  need more tests.
 - **Static viewport.** Screenshots do not catch overflow below the fold, dark
   mode (not implemented), or reduced-motion variants.

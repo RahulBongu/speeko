@@ -146,8 +146,9 @@ export function AccountPanel() {
       <div className="card flex flex-col gap-3 p-6">
         <h2 className="font-display text-lg font-extrabold text-bark-800">Account</h2>
         <p className="text-sm font-semibold text-bark-500">
-          Completed lessons, XP, and streaks sync after every lesson. You can keep learning offline and the
-          next save catches up.
+          Completed lessons, XP, and streaks sync after every lesson. If a save
+          cannot reach the server, the lesson shows Retry before it can be
+          counted for your account.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
           <Link href="/learn" className="btn-primary">

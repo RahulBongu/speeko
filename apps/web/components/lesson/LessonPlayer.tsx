@@ -13,6 +13,7 @@ import {
   type Exercise,
   type GradeResult,
   type SessionState,
+  type AttemptAnswer,
 } from '@speeko/core';
 import { fetchCourse, findLesson, flattenLessons, type FlatLesson } from '@/lib/courses';
 import {
@@ -24,6 +25,9 @@ import {
   type ProgressState,
 } from '@/lib/progress';
 import { buildReviewPlan, buildReviewsFromAnswers } from '@/lib/review';
+import { authClient } from '@/lib/auth-client';
+import { readKnownSignedInUserId } from '@/lib/auth-marker';
+import { submitLessonCompletion } from '@/lib/sync';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
 import { ProgressBar } from '@/components/ProgressBar';
@@ -40,6 +44,20 @@ import { canSubmit, initialDraft, toAnswerInput, type DraftAnswer } from './answ
 import { ExerciseBody } from './ExerciseBody';
 
 type Phase = 'loading' | 'error' | 'playing' | 'feedback' | 'summary' | 'hearts';
+
+type SaveState =
+  | { status: 'idle' }
+  | { status: 'local' }
+  | { status: 'saving' }
+  | { status: 'saved'; xp: number }
+  | { status: 'error'; message: string };
+
+function newAttemptId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `attempt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
 
 /** Count from 0 to `target` — instantly under prefers-reduced-motion. */
 function useCountUp(target: number, duration = 900): number {
@@ -87,9 +105,15 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [xpGained, setXpGained] = useState(0);
   const [showExit, setShowExit] = useState(false);
   const [postProgress, setPostProgress] = useState<ProgressState | null>(null);
+  const [saveState, setSaveState] = useState<SaveState>({ status: 'idle' });
+  const { data: authSession, isPending: authPending, error: authError } = authClient.useSession();
+  const userId = authSession?.user.id ?? null;
 
   const shownAt = useRef(Date.now());
   const savedRef = useRef(false);
+  const savingRef = useRef(false);
+  const attemptId = useRef(newAttemptId());
+  const attemptAnswers = useRef<AttemptAnswer[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -103,6 +127,10 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setAnsweredExercise(null);
     setPostProgress(null);
     savedRef.current = false;
+    savingRef.current = false;
+    attemptId.current = newAttemptId();
+    attemptAnswers.current = [];
+    setSaveState({ status: 'idle' });
 
     fetchCourse(courseId)
       .then((loaded) => {
@@ -191,6 +219,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     if (!input) return;
     const result = gradeExercise(exerciseNow, input);
     const elapsed = Math.max(0, Date.now() - shownAt.current);
+    attemptAnswers.current.push({ exerciseId: exerciseNow.id, input, ms: elapsed });
     const next = reduceSession(session, {
       type: 'answer',
       exerciseId: exerciseNow.id,
@@ -234,30 +263,92 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setXpGained(0);
     setPostProgress(null);
     savedRef.current = false;
+    savingRef.current = false;
+    attemptId.current = newAttemptId();
+    attemptAnswers.current = [];
+    setSaveState({ status: 'idle' });
     shownAt.current = Date.now();
     setPhase('playing');
   }, [entry]);
 
+  const persistAttempt = useCallback(
+    async (answers: AttemptAnswer[]) => {
+      if (!session || !course || !entry || entry.lesson.id === 'review') return;
+      if (savingRef.current) return;
+      savingRef.current = true;
+      setSaveState({ status: 'saving' });
+      try {
+        const result = await submitLessonCompletion({
+          attemptId: attemptId.current,
+          courseId: course.id,
+          lessonId: entry.lesson.id,
+          answers,
+        });
+        saveProgress(result.progress);
+        setPostProgress(result.progress);
+        setSaveState({ status: 'saved', xp: result.event.xp });
+      } catch (cause) {
+        const message =
+          cause instanceof Error
+            ? cause.message
+            : 'Check your connection and try again.';
+        setSaveState({
+          status: 'error',
+          message: message.endsWith('.') ? message : `${message}.`,
+        });
+      } finally {
+        savingRef.current = false;
+      }
+    },
+    [session, course, entry],
+  );
+
   useEffect(() => {
     if (phase !== 'summary' || savedRef.current || !session || !course || !entry) return;
+    // Wait for the auth check so a signed-in learner never falls back to a
+    // local, unverified award.
+    if (entry.lesson.id !== 'review' && authPending) return;
     savedRef.current = true;
-    const reviews = buildReviewsFromAnswers(session, course.locale);
+
     const isReview = entry.lesson.id === 'review';
-    const updated = isReview
-      ? applyReviews(loadProgress(), reviews, Date.now())
-      : recordCompletionAndReviews(
-          loadProgress(),
-          {
-            courseId: course.id,
-            lessonId: entry.lesson.id,
-            xp: session.xp + entry.lesson.xpReward,
-            accuracy: sessionAccuracy(session),
-          },
-          reviews,
-        );
-    saveProgress(updated);
-    setPostProgress(updated);
-  }, [phase, session, course, entry]);
+    const reviews = buildReviewsFromAnswers(session, course.locale);
+
+    // A failed session check is ambiguous. Fail closed for a browser that
+    // was signed in; otherwise treat the learner as an offline guest.
+    if (!isReview && authError && !userId && readKnownSignedInUserId()) {
+      setSaveState({
+        status: 'error',
+        message: 'Could not check your account. Check your connection and try again.',
+      });
+      return;
+    }
+
+    if (isReview || !userId) {
+      const updated = isReview
+        ? applyReviews(loadProgress(), reviews, Date.now())
+        : recordCompletionAndReviews(
+            loadProgress(),
+            {
+              courseId: course.id,
+              lessonId: entry.lesson.id,
+              xp: session.xp + entry.lesson.xpReward,
+              accuracy: sessionAccuracy(session),
+            },
+            reviews,
+          );
+      saveProgress(updated);
+      setPostProgress(updated);
+      setSaveState({ status: 'local' });
+      return;
+    }
+
+    void persistAttempt(attemptAnswers.current);
+  }, [phase, session, course, entry, authPending, authError, userId, persistAttempt]);
+
+  const retrySave = useCallback(() => {
+    if (!session || !course || !entry || savingRef.current) return;
+    void persistAttempt(attemptAnswers.current);
+  }, [session, course, entry, persistAttempt]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -379,6 +470,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           session={session}
           postProgress={postProgress}
           nextLesson={nextLesson}
+          saveState={saveState}
+          onRetry={retrySave}
         />
       ) : phase === 'hearts' ? (
         <OutOfHeartsScreen
@@ -564,16 +657,21 @@ function SummaryScreen({
   session,
   postProgress,
   nextLesson,
+  saveState,
+  onRetry,
 }: {
   course: Course;
   entry: FlatLesson;
   session: SessionState;
   postProgress: ProgressState | null;
   nextLesson: FlatLesson | null;
+  saveState: SaveState;
+  onRetry: () => void;
 }) {
   const accuracy = sessionAccuracy(session);
   const isReview = entry.lesson.id === 'review';
-  const awardedXp = session.xp + (isReview ? 0 : entry.lesson.xpReward);
+  const localXp = session.xp + (isReview ? 0 : entry.lesson.xpReward);
+  const awardedXp = !isReview && saveState.status === 'saved' ? saveState.xp : localXp;
   const todayXp = postProgress?.todayXp ?? 0;
   const streak = postProgress?.streak ?? 0;
   const goalValue = Math.min(1, todayXp / DAILY_GOAL);
@@ -614,6 +712,50 @@ function SummaryScreen({
         </div>
       </div>
 
+      {!isReview && saveState.status === 'saving' ? (
+        <p
+          role="status"
+          className="mt-4 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-center text-sm font-semibold text-bark-500"
+        >
+          Saving your reward…
+        </p>
+      ) : null}
+      {!isReview && saveState.status === 'local' ? (
+        <p
+          role="status"
+          className="mt-4 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-center text-sm font-semibold text-bark-500"
+        >
+          Saved on this device.
+        </p>
+      ) : null}
+      {!isReview && saveState.status === 'saved' ? (
+        <p
+          role="status"
+          className="mt-4 rounded-2xl border-2 border-speeko-200 bg-speeko-50 px-4 py-3 text-center text-sm font-extrabold text-speeko-700"
+        >
+          Reward saved to your account.
+        </p>
+      ) : null}
+      {!isReview && saveState.status === 'error' ? (
+        <div
+          role="alert"
+          className="mt-4 flex flex-col gap-3 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div>
+            <p className="font-display text-sm font-extrabold text-fox-700">
+              Reward not saved
+            </p>
+            <p className="mt-1 text-sm font-semibold text-bark-500">
+              {saveState.message} Retry to save this lesson — if you leave now, it
+              won&apos;t be counted.
+            </p>
+          </div>
+          <button type="button" onClick={onRetry} className="btn-secondary shrink-0">
+            Retry
+          </button>
+        </div>
+      ) : null}
+
       {isReview ? (
         <div className="card mt-4 p-5 text-center">
           <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
@@ -624,7 +766,7 @@ function SummaryScreen({
             missed, later for the ones you nailed.
           </p>
         </div>
-      ) : (
+      ) : postProgress ? (
         <div className="card mt-4 p-5">
           <div className="flex items-baseline justify-between gap-3">
             <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
@@ -646,14 +788,23 @@ function SummaryScreen({
               : `${DAILY_GOAL - todayXp} XP to hit today's goal.`}
           </p>
         </div>
+      ) : (
+        <div className="card mt-4 p-5 text-center">
+          <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
+            Daily goal
+          </p>
+          <p className="mt-2 text-sm font-semibold text-bark-500">
+            Your daily goal and streak update when this lesson is saved.
+          </p>
+        </div>
       )}
 
-      {!isReview && (
+      {!isReview && postProgress ? (
         <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 font-display text-sm font-extrabold text-fox-700">
           <FlameIcon className="h-5 w-5 animate-bob" />
           {streak > 0 ? `${streak} day streak` : 'Streak started'}
         </div>
-      )}
+      ) : null}
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         {nextLesson ? (

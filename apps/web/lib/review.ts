@@ -6,7 +6,7 @@
 
 import {
   dueReviewCards,
-  qualityForOutcome,
+  reviewsForAttempt,
   skillIdFor,
   type Course,
   type Exercise,
@@ -20,18 +20,7 @@ export function buildReviewsFromAnswers(
   session: SessionState,
   locale: Course['locale'],
 ): { skillId: string; quality: number }[] {
-  const misses = new Map<string, number>();
-  const reviews: { skillId: string; quality: number }[] = [];
-  for (const answer of session.answers) {
-    const exercise = session.exercises.find((entry) => entry.id === answer.exerciseId);
-    if (!exercise) continue;
-    const skillId = skillIdFor(locale, exercise);
-    if (!skillId) continue;
-    const priorMisses = misses.get(exercise.id) ?? 0;
-    reviews.push({ skillId, quality: qualityForOutcome(answer.correct, priorMisses > 0) });
-    if (!answer.correct) misses.set(exercise.id, priorMisses + 1);
-  }
-  return reviews;
+  return reviewsForAttempt(locale, session.exercises, session.answers);
 }
 
 export interface ReviewPlan {

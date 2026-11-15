@@ -31,7 +31,7 @@ Open http://localhost:3000. `pnpm dev` starts the web app on port 3000 and the A
 | --- | --- |
 | `pnpm dev` | Web + API through Turbo |
 | `pnpm --filter @speeko/web dev` | Web app on port 3000 (syncs courses first) |
-| `pnpm --filter @speeko/api dev` | API on port 3001 (`/health`, `/api/auth/*`, `/api/progress`) |
+| `pnpm --filter @speeko/api dev` | API on port 3001 (`/health`, `/api/auth/*`, `/api/progress`, `/api/lesson-completions`) |
 | `pnpm --filter @speeko/mobile start` | Expo Go / emulator |
 | `pnpm typecheck` | TypeScript across every package |
 | `pnpm test` | Vitest suites for grading, progress merging, and all course content |
@@ -75,11 +75,13 @@ Guests learn without an account. Progress is stored in the browser under `speeko
 
 Snapshot `v1` remains readable and is never rewritten in place. `v2` adds `dailyGoal` and `timeZone`; loading an old snapshot runs a lenient migration that drops corrupt lesson/SRS entries, clamps negatives, resets stale daily XP, and writes `v2` on the next save.
 
-Signing up merges the local snapshot into the account, so nothing earned as a guest is lost. While signed in, every lesson save is pushed to the API in the background; opening the app on another device pulls the cloud snapshot and merges it back. The merge is conservative: lesson records are unioned, and XP/streak totals take the higher value instead of double-counting.
+Signing up merges the local snapshot into the account, so nothing earned as a guest is lost. While signed in, a finished lesson is sent to `POST /api/lesson-completions` as raw answers. The server re-grades the attempt against the tracked course JSON, applies the same combo/hearts/XP rules from `@speeko/core`, and writes an append-only `lesson_events` row keyed by `(user_id, attempt_id)`. A retry with the same attempt id returns the original event instead of awarding XP twice.
 
-Authentication uses Better Auth email + password sessions. The API mounts the Better Auth handler at `/api/auth/*` and protects `GET/PUT /api/progress` with the session cookie. Progress is stored as a validated JSON snapshot per user, which keeps the local and cloud models identical while leaving room for normalized tables later.
+If that save cannot reach the server, the learner sees **Reward not saved** with a Retry button; signed-in attempts are not awarded locally. Guests (and review sessions) still save locally and work fully offline.
 
-> **Current boundary:** cloud sync is a consistency layer, not an anti-cheat boundary. The API validates the snapshot shape and merges it, but XP, streaks, and completions are still client-reported. Server-verified lesson completions are the next phase; leagues, quests, and gems must not be built on the snapshot before then.
+Authentication uses Better Auth email + password sessions. The API mounts the Better Auth handler at `/api/auth/*` and protects progress and lesson-completion routes with the session cookie.
+
+> **Current boundary:** `PUT /api/progress` remains a guest-import/snapshot-sync layer. It validates shape and merges conservatively, but it is not authoritative for XP. Lesson rewards are authoritative only through `lesson_events`; leagues, quests, and gems must derive from those events, not from the snapshot.
 
 Local development needs no configuration. To customize, copy the examples:
 
@@ -123,12 +125,12 @@ content/      Per-locale course JSON
 ## Verification
 
 - `pnpm typecheck` — 5 packages clean (6 Turbo tasks including dependency builds)
-- `pnpm test` — 69 tests (58 core + 11 content), all passing
+- `pnpm test` — 76 tests (65 core + 11 content), all passing
 - `pnpm build` — web, API, mobile-web export, and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
-- `pnpm e2e` — 22 Playwright checks: 9 routes at 1280×800 and 390×844 with zero console/page errors, legacy v1 progress read, and first-exercise feedback. Screenshots live in `docs/qa/` and are inspected each phase
+- `pnpm e2e` — 32 Playwright checks: 9 routes at 1280×800 and 390×844 with zero console/page errors, legacy v1 progress read, first-exercise feedback, server re-grade/idempotency/mismatch/invalid-attempt API checks, and signed-in save plus failed-save Retry flows. Screenshots live in `docs/qa/` and are inspected each phase
 - `pnpm verify` — runs typecheck → test → build → e2e in order
-- No automated fresh-database migration check exists yet; the API migrates pglite on startup.
+- Migrations are applied on API startup. P2's `lesson_events` migration was smoke-tested against a fresh pglite directory; there is no separate automated migration test.
 
 Playwright uses the installed Google Chrome, so `pnpm e2e` does not download a browser. It serves the production web build and the compiled API, so run `pnpm build` first (or use `pnpm verify`).
 

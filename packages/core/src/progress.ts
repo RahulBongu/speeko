@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { isDue, newCard, review, SrsCardSchema, type SrsCard } from './srs.js';
+import { updateStreak } from './gamification.js';
 
 /** Number of XP that counts as a completed daily goal. */
 export const DAILY_GOAL = 50;
@@ -232,6 +233,53 @@ export function dueReviewCards(progress: ProgressState, now: number): SrsCard[] 
   return Object.values(progress.srs)
     .filter((card) => isDue(card, now))
     .sort((a, b) => a.dueAt - b.dueAt);
+}
+
+/**
+ * Records a finished lesson: XP, streak, daily XP, completion record, and the
+ * learner's last position. Pure and shared by the web store and the API, so a
+ * server-verified attempt updates progress with identical rules.
+ */
+export function recordCompletion(
+  progress: ProgressState,
+  input: CompletionInput,
+  now = new Date(),
+): ProgressState {
+  const today = todayKey(now);
+  const base: ProgressState =
+    progress.todayDate === today ? progress : { ...progress, todayDate: today, todayXp: 0 };
+  const key = lessonKey(input.courseId, input.lessonId);
+  const previous = base.completed[key];
+  const accuracy = Math.max(0, Math.min(1, input.accuracy));
+  const record: LessonRecord = {
+    courseId: input.courseId,
+    lessonId: input.lessonId,
+    completedAt: now.toISOString(),
+    accuracy: Math.max(previous?.accuracy ?? 0, accuracy),
+    xp: (previous?.xp ?? 0) + Math.max(0, input.xp),
+  };
+  const streak = updateStreak(base.lastActiveDate, today, base.streak, false);
+  return {
+    ...base,
+    xp: base.xp + Math.max(0, input.xp),
+    streak: streak.streak,
+    lastActiveDate: today,
+    todayXp: base.todayXp + Math.max(0, input.xp),
+    completed: { ...base.completed, [key]: record },
+    lastCourseId: input.courseId,
+    lastLessonId: input.lessonId,
+  };
+}
+
+/** Records a completion and applies its SRS outcomes in one step. */
+export function recordCompletionAndReviews(
+  progress: ProgressState,
+  input: CompletionInput,
+  reviews: SrsReview[],
+  now = new Date(),
+): ProgressState {
+  const completed = recordCompletion(progress, input, now);
+  return applyReviews(completed, reviews, now.getTime());
 }
 
 /**
