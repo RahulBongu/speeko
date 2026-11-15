@@ -1,3 +1,5 @@
+'use client';
+
 import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';

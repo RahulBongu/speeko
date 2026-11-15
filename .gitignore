@@ -21,3 +21,5 @@ apps/mobile/dist
 apps/mobile/temp-bundle
 coverage
 .session/
+
+*.tsbuildinfo
