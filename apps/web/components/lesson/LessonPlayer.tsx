@@ -17,11 +17,13 @@ import {
 import { fetchCourse, findLesson, flattenLessons, type FlatLesson } from '@/lib/courses';
 import {
   DAILY_GOAL,
+  applyReviews,
   loadProgress,
-  recordCompletion,
+  recordCompletionAndReviews,
   saveProgress,
   type ProgressState,
 } from '@/lib/progress';
+import { buildReviewPlan, buildReviewsFromAnswers } from '@/lib/review';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
 import { ProgressBar } from '@/components/ProgressBar';
@@ -83,7 +85,39 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     fetchCourse(courseId)
       .then((loaded) => {
         if (cancelled) return;
-        const found = findLesson(loaded, lessonId);
+        const isReview = lessonId === 'review';
+        let found: FlatLesson | null = null;
+        if (isReview) {
+          const progress = loadProgress();
+          const plan = buildReviewPlan(loaded, progress, Date.now());
+          if (plan.exercises.length === 0) {
+            setError('Nothing is due for review yet. Come back after a few lessons.');
+            setPhase('error');
+            return;
+          }
+          found = {
+            lesson: {
+              id: 'review',
+              title: 'Review',
+              description: 'Re-practice the skills you are about to forget.',
+              order: 999,
+              difficulty: 'A1',
+              xpReward: 0,
+              exercises: plan.exercises,
+            },
+            unit: {
+              id: 'review',
+              title: 'Daily review',
+              description: 'Spaced repetition, straight from your own progress.',
+              order: 999,
+              crownLevel: 0,
+              lessons: [],
+            },
+            index: 999,
+          };
+        } else {
+          found = findLesson(loaded, lessonId);
+        }
         if (!found) {
           setError('That lesson does not exist in this course.');
           setPhase('error');
@@ -185,13 +219,20 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   useEffect(() => {
     if (phase !== 'summary' || savedRef.current || !session || !course || !entry) return;
     savedRef.current = true;
-    const totalXp = session.xp + entry.lesson.xpReward;
-    const updated = recordCompletion(loadProgress(), {
-      courseId: course.id,
-      lessonId: entry.lesson.id,
-      xp: totalXp,
-      accuracy: sessionAccuracy(session),
-    });
+    const reviews = buildReviewsFromAnswers(session, course.locale);
+    const isReview = entry.lesson.id === 'review';
+    const updated = isReview
+      ? applyReviews(loadProgress(), reviews, Date.now())
+      : recordCompletionAndReviews(
+          loadProgress(),
+          {
+            courseId: course.id,
+            lessonId: entry.lesson.id,
+            xp: session.xp + entry.lesson.xpReward,
+            accuracy: sessionAccuracy(session),
+          },
+          reviews,
+        );
     saveProgress(updated);
     setPostProgress(updated);
   }, [phase, session, course, entry]);
@@ -507,7 +548,8 @@ function SummaryScreen({
   nextLesson: FlatLesson | null;
 }) {
   const accuracy = sessionAccuracy(session);
-  const awardedXp = session.xp + entry.lesson.xpReward;
+  const isReview = entry.lesson.id === 'review';
+  const awardedXp = session.xp + (isReview ? 0 : entry.lesson.xpReward);
   const todayXp = postProgress?.todayXp ?? 0;
   const streak = postProgress?.streak ?? 0;
   const goalValue = Math.min(1, todayXp / DAILY_GOAL);
@@ -521,45 +563,64 @@ function SummaryScreen({
           <Fox mood="celebrate" className="relative h-44 w-44 animate-pop" />
         </div>
         <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-bark-800">
-          Lesson complete!
+          {isReview ? 'Review complete!' : 'Lesson complete!'}
         </h1>
         <p className="mt-1 font-semibold text-bark-500">
-          {entry.lesson.title} · {course.title}
+          {isReview ? 'Spaced repetition' : entry.lesson.title} · {course.title}
         </p>
       </div>
 
       <div className="mt-8 grid grid-cols-3 gap-2.5 sm:gap-3">
-        <StatCard label="XP earned" value={`+${awardedXp}`} icon={<TrophyIcon className="h-5 w-5" />} tone="xp" />
+        <StatCard
+          label={isReview ? 'Skills updated' : 'XP earned'}
+          value={isReview ? `${session.answers.length}` : `+${awardedXp}`}
+          icon={<TrophyIcon className="h-5 w-5" />}
+          tone="xp"
+        />
         <StatCard label="Accuracy" value={`${Math.round(accuracy * 100)}%`} icon={<CheckIcon className="h-5 w-5" />} tone="green" />
         <StatCard label="Best combo" value={`×${session.maxCombo}`} icon={<BoltIcon className="h-5 w-5" />} tone="streak" />
       </div>
 
-      <div className="card mt-4 p-5">
-        <div className="flex items-baseline justify-between gap-3">
+      {isReview ? (
+        <div className="card mt-4 p-5 text-center">
           <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
-            Daily goal
+            Spaced repetition
           </p>
-          <p className="font-display text-sm font-extrabold text-bark-600">
-            {Math.min(todayXp, DAILY_GOAL)} / {DAILY_GOAL} XP
+          <p className="mt-2 text-sm font-semibold text-bark-500">
+            Cards you practiced are now scheduled for their next review — sooner for the ones you
+            missed, later for the ones you nailed.
           </p>
         </div>
-        <ProgressBar
-          value={goalValue}
-          className="mt-2 h-4"
-          barClassName={goalDone ? 'bg-fox-500' : 'bg-speeko-400'}
-          label="Daily XP goal"
-        />
-        <p className="mt-2 text-sm font-semibold text-bark-500">
-          {goalDone
-            ? 'Daily goal complete — the fox is doing a little dance.'
-            : `${DAILY_GOAL - todayXp} XP to hit today's goal.`}
-        </p>
-      </div>
+      ) : (
+        <div className="card mt-4 p-5">
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
+              Daily goal
+            </p>
+            <p className="font-display text-sm font-extrabold text-bark-600">
+              {Math.min(todayXp, DAILY_GOAL)} / {DAILY_GOAL} XP
+            </p>
+          </div>
+          <ProgressBar
+            value={goalValue}
+            className="mt-2 h-4"
+            barClassName={goalDone ? 'bg-fox-500' : 'bg-speeko-400'}
+            label="Daily XP goal"
+          />
+          <p className="mt-2 text-sm font-semibold text-bark-500">
+            {goalDone
+              ? 'Daily goal complete — the fox is doing a little dance.'
+              : `${DAILY_GOAL - todayXp} XP to hit today's goal.`}
+          </p>
+        </div>
+      )}
 
-      <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 font-display text-sm font-extrabold text-fox-700">
-        <FlameIcon className="h-5 w-5" />
-        {streak > 0 ? `${streak} day streak` : 'Streak started'}
-      </div>
+      {!isReview && (
+        <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 font-display text-sm font-extrabold text-fox-700">
+          <FlameIcon className="h-5 w-5" />
+          {streak > 0 ? `${streak} day streak` : 'Streak started'}
+        </div>
+      )}
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         {nextLesson ? (

@@ -1,14 +1,25 @@
-import { emptyProgress, lessonKey, todayKey, updateStreak, type Course } from '@speeko/core';
+import { emptyProgress, lessonKey, todayKey, updateStreak, dueReviewCards, applyReviews, SrsCardSchema, type Course } from '@speeko/core';
 import type { CompletionInput, LessonRecord, ProgressState } from '@speeko/core';
 import { flattenLessons } from './courses';
 
-export { DAILY_GOAL, emptyProgress, lessonKey, todayKey } from '@speeko/core';
+export { DAILY_GOAL, emptyProgress, dueReviewCards, applyReviews, lessonKey, todayKey } from '@speeko/core';
 export type { LessonRecord, ProgressState } from '@speeko/core';
 
 export const PROGRESS_KEY = 'speeko.progress.v1';
 export const PROGRESS_EVENT = 'speeko:progress';
 
 export type LessonStatus = 'completed' | 'current' | 'locked';
+
+/** Keep only well-formed SRS cards; drop anything corrupt from localStorage. */
+function sanitizeSrs(raw: unknown): Record<string, NonNullable<ProgressState['srs']>[string]> {
+  if (!raw || typeof raw !== 'object') return {};
+  const out: Record<string, NonNullable<ProgressState['srs']>[string]> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    const parsed = SrsCardSchema.safeParse(value);
+    if (parsed.success) out[key] = parsed.data;
+  }
+  return out;
+}
 
 export interface CourseStats {
   total: number;
@@ -40,6 +51,7 @@ export function loadProgress(now = new Date()): ProgressState {
           : {},
       lastCourseId: typeof parsed.lastCourseId === 'string' ? parsed.lastCourseId : null,
       lastLessonId: typeof parsed.lastLessonId === 'string' ? parsed.lastLessonId : null,
+      srs: sanitizeSrs(parsed.srs),
     };
   } catch {
     return emptyProgress(now);
@@ -81,6 +93,21 @@ export function recordCompletion(
     lastCourseId: input.courseId,
     lastLessonId: input.lessonId,
   };
+}
+
+/**
+ * Records a finished lesson (XP/streak/completion) AND applies the SRS
+ * outcomes for every answered exercise. This is the single write path used
+ * by lesson completion and review sessions.
+ */
+export function recordCompletionAndReviews(
+  progress: ProgressState,
+  input: CompletionInput,
+  reviews: { skillId: string; quality: number }[],
+  now = new Date(),
+): ProgressState {
+  const completed = recordCompletion(progress, input, now);
+  return applyReviews(completed, reviews, now.getTime());
 }
 
 export function isLessonCompleted(

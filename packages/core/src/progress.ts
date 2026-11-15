@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isDue, newCard, review, SrsCardSchema, type SrsCard } from './srs.js';
 
 /** Number of XP that counts as a completed daily goal. */
 export const DAILY_GOAL = 50;
@@ -23,6 +24,7 @@ export const ProgressStateSchema = z.object({
   completed: z.record(z.string(), LessonRecordSchema),
   lastCourseId: z.string().nullable(),
   lastLessonId: z.string().nullable(),
+  srs: z.record(z.string(), SrsCardSchema).default({}),
 });
 
 export type LessonRecord = z.infer<typeof LessonRecordSchema>;
@@ -57,6 +59,7 @@ export function emptyProgress(now = new Date()): ProgressState {
     completed: {},
     lastCourseId: null,
     lastLessonId: null,
+    srs: {},
   };
 }
 
@@ -66,6 +69,60 @@ function newestCompletion(progress: ProgressState): string | null {
     if (!newest || record.completedAt > newest) newest = record.completedAt;
   }
   return newest;
+}
+
+/**
+ * Merge two SRS card maps. For entries present in both, keep the card with
+ * more repetitions (more evidence); ties broken by more lapses (learner
+ * struggled → review sooner), then by earlier dueAt.
+ */
+function mergeSrs(a: Record<string, SrsCard>, b: Record<string, SrsCard>): Record<string, SrsCard> {
+  const out: Record<string, SrsCard> = { ...a };
+  for (const [key, card] of Object.entries(b)) {
+    const existing = out[key];
+    if (!existing) {
+      out[key] = card;
+      continue;
+    }
+    out[key] = pickReviewCard(existing, card);
+  }
+  return out;
+}
+
+function pickReviewCard(x: SrsCard, y: SrsCard): SrsCard {
+  if (x.repetitions !== y.repetitions) return x.repetitions > y.repetitions ? x : y;
+  if (x.lapses !== y.lapses) return x.lapses > y.lapses ? x : y;
+  return x.dueAt <= y.dueAt ? x : y;
+}
+
+export interface SrsReview {
+  skillId: string;
+  quality: number;
+}
+
+/**
+ * Applies an answered-exercise review set to a progress snapshot, creating
+ * cards as needed and advancing each card's schedule (SM-2).
+ */
+export function applyReviews(
+  progress: ProgressState,
+  reviews: SrsReview[],
+  now: number,
+): ProgressState {
+  if (reviews.length === 0) return progress;
+  const srs = { ...progress.srs };
+  for (const { skillId, quality } of reviews) {
+    const card = srs[skillId] ?? newCard(skillId, now);
+    srs[skillId] = review(card, quality, now);
+  }
+  return { ...progress, srs };
+}
+
+/** Returns the SRS cards due for review at `now`, earliest first. */
+export function dueReviewCards(progress: ProgressState, now: number): SrsCard[] {
+  return Object.values(progress.srs)
+    .filter((card) => isDue(card, now))
+    .sort((a, b) => a.dueAt - b.dueAt);
 }
 
 /**
@@ -112,6 +169,7 @@ export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState
       : a.todayDate > b.todayDate
         ? a.todayXp
         : b.todayXp;
+  const srs = mergeSrs(a.srs, b.srs);
 
   const newestXp = Math.max(a.xp, b.xp);
   const streak = aActive === bActive ? Math.max(a.streak, b.streak) : newer.streak;
@@ -128,6 +186,7 @@ export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState
     completed,
     lastCourseId,
     lastLessonId,
+    srs,
   };
 }
 

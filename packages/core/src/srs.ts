@@ -1,4 +1,5 @@
 // Spaced repetition — simplified SM-2 with per-skill ease factors.
+import { z } from 'zod';
 
 export interface SrsCard {
   skillId: string;
@@ -8,6 +9,19 @@ export interface SrsCard {
   dueAt: number; // epoch ms
   lapses: number;
 }
+
+/**
+ * Zod schema for an SRS card. Reused by the progress schema so snapshots
+ * round-trip through the API validation.
+ */
+export const SrsCardSchema = z.object({
+  skillId: z.string().min(1),
+  ease: z.number().min(1.3).finite(),
+  intervalDays: z.number().min(0).finite(),
+  repetitions: z.number().int().min(0),
+  dueAt: z.number().finite(),
+  lapses: z.number().int().min(0),
+});
 
 export const DEFAULT_EASE = 2.5;
 export const MIN_EASE = 1.3;

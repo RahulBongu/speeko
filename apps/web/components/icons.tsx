@@ -112,3 +112,11 @@ export function MicIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function RefreshIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5" />
+    </svg>
+  );
+}

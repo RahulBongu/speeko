@@ -13,9 +13,11 @@ import {
   FlameIcon,
   LockIcon,
   PlayIcon,
+  RefreshIcon,
   TrophyIcon,
 } from '@/components/icons';
 import { LOCALE_META, fetchCourse } from '@/lib/courses';
+import { dueReviewCount } from '@/lib/review';
 import { courseStats, isLessonCompleted, lessonStatus } from '@/lib/progress';
 import { useProgress } from '@/lib/use-progress';
 
@@ -72,6 +74,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
   const meta = LOCALE_META[course.locale];
   const stats = courseStats(course, progress);
   const nextLessonId = stats.nextLessonId;
+  const dueCount = dueReviewCount(course, progress);
 
   return (
     <div className="min-h-screen">
@@ -146,12 +149,23 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                 {stats.completed}/{stats.total} lessons
               </p>
             </div>
-            <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-white/80">
-              <TrophyIcon className="h-4 w-4" />
-              {stats.allComplete
-                ? 'Every lesson complete. Your fox is very proud.'
-                : `${stats.total - stats.completed} lessons left on this path`}
-            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <p className="flex items-center gap-1.5 text-xs font-bold text-white/80">
+                <TrophyIcon className="h-4 w-4" />
+                {stats.allComplete
+                  ? 'Every lesson complete. Your fox is very proud.'
+                  : `${stats.total - stats.completed} lessons left on this path`}
+              </p>
+              {dueCount > 0 ? (
+                <Link
+                  href={`/lesson/${course.id}/review`}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 font-display text-xs font-extrabold text-white transition hover:bg-white/30"
+                >
+                  <RefreshIcon className="h-4 w-4" />
+                  Review {dueCount} due
+                </Link>
+              ) : null}
+            </div>
           </div>
         </section>
 
