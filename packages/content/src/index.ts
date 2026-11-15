@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { z } from 'zod';
 import {
@@ -72,6 +72,9 @@ export interface BuildResult {
 }
 
 export function buildCourses(inputDir: string, outputDir: string): BuildResult {
+  // Start from a clean directory so courses deleted from `content/` do not
+  // linger in the bundle or the web app's public folder.
+  rmSync(outputDir, { recursive: true, force: true });
   mkdirSync(outputDir, { recursive: true });
   const results = validateDirectory(inputDir);
   const failures = results.filter((r) => !r.ok);
