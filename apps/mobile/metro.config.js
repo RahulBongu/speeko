@@ -6,13 +6,16 @@ const path = require('path');
 
 const projectRoot = __dirname;
 const monorepoRoot = path.resolve(projectRoot, '..', '..');
+const monorepoNodeModules = path.resolve(monorepoRoot, 'node_modules');
 
 const config = getDefaultConfig(projectRoot);
 
-config.watchFolders = [monorepoRoot];
+// The pnpm store lives under the monorepo root and packages are hoisted
+// there. Metro only needs to watch that folder, not the whole repo.
+config.watchFolders = [monorepoNodeModules];
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
-  path.resolve(monorepoRoot, 'node_modules'),
+  monorepoNodeModules,
 ];
 
 module.exports = config;
