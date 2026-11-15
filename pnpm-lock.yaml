@@ -82,6 +82,9 @@ importers:
       expo-asset:
         specifier: ~11.1.7
         version: 11.1.7(expo@53.0.27(@babel/core@7.29.13(supports-color@8.1.1))(@expo/metro-runtime@5.0.4(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1)))(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1))(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1)
+      expo-haptics:
+        specifier: ~14.1.4
+        version: 14.1.4(expo@53.0.27(@babel/core@7.29.13(supports-color@8.1.1))(@expo/metro-runtime@5.0.4(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1)))(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1))
       expo-modules-core:
         specifier: ~2.5.0
         version: 2.5.0
@@ -3532,6 +3535,11 @@ packages:
     peerDependencies:
       expo: '*'
       react: '*'
+
+  expo-haptics@14.1.4:
+    resolution: {integrity: sha512-QZdE3NMX74rTuIl82I+n12XGwpDWKb8zfs5EpwsnGi/D/n7O2Jd4tO5ivH+muEG/OCJOMq5aeaVDqqaQOhTkcA==}
+    peerDependencies:
+      expo: '*'
 
   expo-keep-awake@14.1.4:
     resolution: {integrity: sha512-wU9qOnosy4+U4z/o4h8W9PjPvcFMfZXrlUoKTMBW7F4pLqhkkP/5G4EviPZixv4XWFMjn1ExQ5rV6BX8GwJsWA==}
@@ -9497,6 +9505,10 @@ snapshots:
       expo: 53.0.27(@babel/core@7.29.13(supports-color@8.1.1))(@expo/metro-runtime@5.0.4(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1)))(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1)
       fontfaceobserver: 2.3.0
       react: 19.0.0
+
+  expo-haptics@14.1.4(expo@53.0.27(@babel/core@7.29.13(supports-color@8.1.1))(@expo/metro-runtime@5.0.4(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1)))(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1)):
+    dependencies:
+      expo: 53.0.27(@babel/core@7.29.13(supports-color@8.1.1))(@expo/metro-runtime@5.0.4(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1)))(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1)
 
   expo-keep-awake@14.1.4(expo@53.0.27(@babel/core@7.29.13(supports-color@8.1.1))(@expo/metro-runtime@5.0.4(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1)))(react-native@0.79.6(@babel/core@7.29.13(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1))(react@19.0.0):
     dependencies:
