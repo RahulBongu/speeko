@@ -38,6 +38,8 @@ Open http://localhost:3000. `pnpm dev` starts the web app on port 3000 and the A
 | `pnpm build` | Production builds for web, API, mobile-web, content |
 | `pnpm sync:content` | Rebuild courses into `apps/web/public/courses` |
 
+Android APK (debug, local): requires JDK 17+ and the Android SDK. Run `cd apps/mobile && npx expo prebuild --platform android && cd android && ./gradlew assembleDebug`. The APK lands at `apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk`. For a release build, use EAS: `eas build --platform android`.
+
 Web pages:
 
 - `/` — landing page with live streak, XP, and course progress
@@ -121,7 +123,7 @@ content/      Per-locale course JSON
 
 ## Roadmap
 
-1. Rive fox with animation states
-2. Android APK via EAS
+1. Rive fox asset authored in Rive (runtime integration already in place)
+2. Release-signed Android APK and store listing
 3. Expanded course content beyond the starter tier
 4. Native mobile account and sync client
