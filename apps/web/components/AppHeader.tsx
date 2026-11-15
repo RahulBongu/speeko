@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Fox } from './Fox';
+import { AuthMenu } from './AuthMenu';
 
 export function Brand({ href = '/' }: { href?: string }) {
   return (
@@ -12,7 +13,7 @@ export function Brand({ href = '/' }: { href?: string }) {
   );
 }
 
-export function SiteHeader({ active }: { active?: 'learn' | 'studio' }) {
+export function SiteHeader({ active }: { active?: 'learn' | 'studio' | 'account' }) {
   const linkClass = (isActive: boolean) =>
     `focus-ring rounded-xl px-3 py-2 font-display text-sm font-bold transition ${
       isActive ? 'bg-speeko-100 text-speeko-700' : 'text-bark-500 hover:bg-cream-100 hover:text-bark-700'
@@ -28,6 +29,8 @@ export function SiteHeader({ active }: { active?: 'learn' | 'studio' }) {
           <Link href="/studio" className={linkClass(active === 'studio')}>
             Studio
           </Link>
+          <span className="mx-1 h-5 w-px bg-cream-200" aria-hidden="true" />
+          <AuthMenu />
         </nav>
       </div>
     </header>

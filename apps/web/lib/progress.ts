@@ -1,36 +1,12 @@
-import { updateStreak, type Course } from '@speeko/core';
+import { emptyProgress, lessonKey, todayKey, updateStreak, type Course } from '@speeko/core';
+import type { CompletionInput, LessonRecord, ProgressState } from '@speeko/core';
 import { flattenLessons } from './courses';
+
+export { DAILY_GOAL, emptyProgress, lessonKey, todayKey } from '@speeko/core';
+export type { LessonRecord, ProgressState } from '@speeko/core';
 
 export const PROGRESS_KEY = 'speeko.progress.v1';
 export const PROGRESS_EVENT = 'speeko:progress';
-export const DAILY_GOAL = 50;
-
-export interface LessonRecord {
-  courseId: string;
-  lessonId: string;
-  completedAt: string;
-  accuracy: number;
-  xp: number;
-}
-
-export interface ProgressState {
-  version: 1;
-  xp: number;
-  streak: number;
-  lastActiveDate: string | null;
-  todayDate: string;
-  todayXp: number;
-  completed: Record<string, LessonRecord>;
-  lastCourseId: string | null;
-  lastLessonId: string | null;
-}
-
-export interface CompletionInput {
-  courseId: string;
-  lessonId: string;
-  xp: number;
-  accuracy: number;
-}
 
 export type LessonStatus = 'completed' | 'current' | 'locked';
 
@@ -39,31 +15,6 @@ export interface CourseStats {
   completed: number;
   nextLessonId: string | null;
   allComplete: boolean;
-}
-
-export function todayKey(date = new Date()): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-export function lessonKey(courseId: string, lessonId: string): string {
-  return `${courseId}:${lessonId}`;
-}
-
-export function emptyProgress(now = new Date()): ProgressState {
-  return {
-    version: 1,
-    xp: 0,
-    streak: 0,
-    lastActiveDate: null,
-    todayDate: todayKey(now),
-    todayXp: 0,
-    completed: {},
-    lastCourseId: null,
-    lastLessonId: null,
-  };
 }
 
 export function loadProgress(now = new Date()): ProgressState {

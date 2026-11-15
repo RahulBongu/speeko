@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { ProgressSync } from '@/components/ProgressSync';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -24,7 +25,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-cream-50 text-bark-800 antialiased">{children}</body>
+      <body className="min-h-screen bg-cream-50 text-bark-800 antialiased">
+        <ProgressSync />
+        {children}
+      </body>
     </html>
   );
 }
