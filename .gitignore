@@ -16,3 +16,4 @@ android/.gradle
 ios/Pods
 *.tsbuildinfo
 coverage
+.session/
