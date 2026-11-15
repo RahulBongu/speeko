@@ -1,4 +1,8 @@
 import { pgTable, text, integer, timestamp, jsonb, boolean, serial, uniqueIndex } from 'drizzle-orm/pg-core';
+import type { ProgressState } from '@speeko/core';
+import { user } from './auth-schema.js';
+
+export * from './auth-schema.js';
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
@@ -66,4 +70,19 @@ export const energy = pgTable('energy', {
     .references(() => users.id),
   amount: integer('amount').notNull().default(5),
   lastRegenAt: timestamp('last_regen_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+/**
+ * Cloud copy of the learner's progress snapshot. The snapshot mirrors the
+ * local store so guests can migrate to an account without losing anything.
+ */
+export const progressSnapshots = pgTable('progress_snapshots', {
+  userId: text('user_id')
+    .primaryKey()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  data: jsonb('data').$type<ProgressState>().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
 });

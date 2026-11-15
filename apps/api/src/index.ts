@@ -2,13 +2,31 @@ import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { healthRoutes } from './routes/health.js';
-import { runMigrations } from './db/client.js';
+import { authRoutes } from './routes/auth.js';
+import { progressRoutes } from './routes/progress.js';
+import { closeDb, runMigrations } from './db/client.js';
 
 const app = Fastify({ logger: true });
 
+const clientOrigins = (process.env.CLIENT_ORIGINS ?? 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 async function main() {
-  await app.register(cors, { origin: true });
+  await app.register(cors, {
+    origin: clientOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400,
+  });
   await app.register(healthRoutes);
+  await app.register(authRoutes);
+  await app.register(progressRoutes);
+  app.addHook('onClose', async () => {
+    await closeDb();
+  });
   try {
     await runMigrations();
     app.log.info('Database migrations applied.');
