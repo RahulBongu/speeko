@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Speeko - Profile</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400..1000;1,6..12,400..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-fixed-dim": "#ffb95f",
+            "on-tertiary-fixed-variant": "#653e00",
+            "surface-variant": "#ffdbc8",
+            "surface-dim": "#f6d3bf",
+            "surface-container-lowest": "#ffffff",
+            "surface-tint": "#006e2d",
+            "on-tertiary": "#ffffff",
+            "on-error": "#ffffff",
+            "inverse-surface": "#412c1f",
+            "surface-container-low": "#fff1ea",
+            "on-primary-container": "#f7fff2",
+            "on-tertiary-fixed": "#2a1700",
+            "on-tertiary-container": "#fffbff",
+            "error-container": "#ffdad6",
+            "on-surface-variant": "#3e4a3d",
+            "inverse-on-surface": "#ffede5",
+            "surface-container-high": "#ffe3d3",
+            "on-primary-fixed": "#002109",
+            "inverse-primary": "#62df7d",
+            "primary": "#006b2c",
+            "on-secondary-fixed-variant": "#783200",
+            "secondary-fixed": "#ffdbca",
+            "on-secondary-container": "#5c2400",
+            "secondary-fixed-dim": "#ffb690",
+            "tertiary": "#825100",
+            "primary-fixed": "#7ffc97",
+            "secondary-container": "#fd761a",
+            "tertiary-container": "#a36700",
+            "primary-fixed-dim": "#62df7d",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed": "#ffddb8",
+            "on-surface": "#29170b",
+            "surface": "#fff8f5",
+            "background": "#fff8f5",
+            "surface-bright": "#fff8f5",
+            "primary-container": "#00873a",
+            "surface-container": "#ffeadf",
+            "surface-container-highest": "#ffdbc8",
+            "secondary": "#9d4300",
+            "error": "#ba1a1a",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed": "#341100",
+            "outline": "#6e7b6c",
+            "on-primary-fixed-variant": "#005320",
+            "on-background": "#29170b",
+            "outline-variant": "#bdcaba"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "1rem",
+            "space-md": "1rem",
+            "space-xl": "2.5rem",
+            "space-lg": "1.5rem",
+            "margin-desktop": "3rem",
+            "space-sm": "0.5rem",
+            "margin-tablet": "2rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Nunito Sans"],
+            "label-lg": ["Nunito Sans"],
+            "body-md": ["Nunito Sans"],
+            "label-sm": ["Nunito Sans"],
+            "headline-lg-mobile": ["Nunito Sans"],
+            "body-sm": ["Nunito Sans"],
+            "headline-md": ["Nunito Sans"],
+            "headline-sm": ["Nunito Sans"],
+            "display-hero": ["Nunito Sans"],
+            "body-lg": ["Nunito Sans"],
+            "label-md": ["Nunito Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "900" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "900" }],
+            "body-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "800" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "900" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "800" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "800" }],
+            "display-hero": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "900" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "700" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "800" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      font-family: 'Nunito Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex justify-center selection:bg-secondary-container selection:text-white">
+<!-- Mobile View Wrapper -->
+<div class="w-full max-w-md min-h-screen flex flex-col bg-background relative pb-28 pt-20 px-4">
+<!-- Top App Bar Navigation Anchor (Shared Component Execution) -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 h-16 max-w-md mx-auto right-0 bg-surface-container-low border-b-2 border-on-background/20 shadow-[0_4px_0_0_#3e4a3d]">
+<div class="flex items-center gap-2">
+<span class="text-headline-md font-headline-md font-black text-primary tracking-tight">Speeko</span>
+<span class="text-xs px-2 py-0.5 rounded-full bg-surface-container-highest border border-on-background/30 text-on-surface-variant font-label-sm">Account</span>
+</div>
+<div class="flex items-center gap-2">
+<button aria-label="Settings" class="w-10 h-10 rounded-xl bg-surface-container-lowest border-2 border-on-background shadow-[0_3px_0_0_#3e4a3d] flex items-center justify-center text-on-surface-variant active:translate-y-1 active:shadow-none transition-transform duration-100 hover:bg-surface-variant">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+</button>
+</div>
+</header>
+<!-- Main Canvas Content -->
+<main class="flex-1 flex flex-col gap-5">
+<!-- Profile Header Hero Card (Tactile Neo-Pop Cartoon style) -->
+<section class="bg-surface-container-lowest rounded-2xl border-2 border-on-background shadow-[0_4px_0_0_#3e4a3d] p-5 relative overflow-hidden">
+<!-- Playful corner background decorative flourish -->
+<div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-surface-container-high/40 pointer-events-none"></div>
+<div class="flex items-start gap-4">
+<!-- Mascot Fox Avatar with Frame -->
+<div class="relative shrink-0">
+<div class="w-20 h-20 rounded-full border-2 border-on-background shadow-[0_3px_0_0_#3e4a3d] overflow-hidden bg-secondary-fixed">
+<img alt="Speeko Fox Mascot" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ALJJyrCEpMHroHGvxxcPZwnp8x9YNmra2h09VwGmjqlOXwgPRRJxM6j0DK8su-HTroHanom5dvMisffxQu6hyGrfdxY1fKF64n8neAQtEYUtHPrxm0BA6a96-E21uyvoVMzIastQOoHToBzF0mrEWN0r_rZKXNTR-Y6b-MNvsiAa-O_jUxrtpU0GxW_dLUs8ZfRk7JF_Vt2aJhqVeIl7lqaARFGCDu-ihjkPYVxX64Foai9zy5KQNgxoi-EngFLR"/>
+</div>
+<!-- Online / Ready Badge Overlay -->
+<div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary-container border-2 border-on-background flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined fill-icon text-[14px]">check</span>
+</div>
+</div>
+<!-- Name & Details -->
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<h1 class="text-headline-md font-headline-md text-on-background truncate">Aarav Sharma</h1>
+<!-- Small Edit Pill Button -->
+<button class="px-2.5 py-1 rounded-lg bg-surface-container-high border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1 active:translate-y-0.5 active:shadow-none transition-all">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+<span>Edit</span>
+</button>
+</div>
+<!-- Handle & Joined Info -->
+<div class="flex flex-wrap items-center gap-2 mt-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-md bg-surface-container border border-on-background/20 text-label-sm font-label-sm text-secondary font-bold">
+                @aarav
+              </span>
+<span class="flex items-center text-label-sm font-label-sm text-on-surface-variant gap-1">
+<span class="material-symbols-outlined text-[14px] text-outline">calendar_today</span>
+                Joined July 2026
+              </span>
+</div>
+<!-- Level 3 Badge -->
+<div class="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-tertiary-fixed border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d]">
+<span class="material-symbols-outlined fill-icon text-[16px] text-tertiary">military_tech</span>
+<span class="text-label-sm font-label-sm font-black text-on-tertiary-fixed">Level 3 Explorer</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Horizontal Grid (3 Chunky Cards) -->
+<section class="grid grid-cols-3 gap-2.5">
+<!-- Streak Card -->
+<div class="bg-surface-container-lowest rounded-2xl border-2 border-on-background shadow-[0_4px_0_0_#3e4a3d] p-3 flex flex-col items-center justify-center text-center relative">
+<div class="w-9 h-9 rounded-xl bg-secondary-fixed flex items-center justify-center border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] mb-1.5 text-secondary">
+<span class="material-symbols-outlined fill-icon text-[20px]">local_fire_department</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">6 days</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Streak</span>
+</div>
+<!-- Total XP Card -->
+<div class="bg-surface-container-lowest rounded-2xl border-2 border-on-background shadow-[0_4px_0_0_#3e4a3d] p-3 flex flex-col items-center justify-center text-center relative">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed flex items-center justify-center border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] mb-1.5 text-primary">
+<span class="material-symbols-outlined fill-icon text-[20px]">bolt</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">120 XP</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Total XP</span>
+</div>
+<!-- Course Card -->
+<div class="bg-surface-container-lowest rounded-2xl border-2 border-on-background shadow-[0_4px_0_0_#3e4a3d] p-3 flex flex-col items-center justify-center text-center relative">
+<div class="w-9 h-9 rounded-xl bg-surface-variant flex items-center justify-center border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] mb-1.5 text-on-secondary-container">
+<span class="material-symbols-outlined fill-icon text-[20px]">auto_stories</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">1 course</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-bold">Hindi · हिंदी</span>
+</div>
+</section>
+<!-- Preferences Section -->
+<section class="bg-surface-container-lowest rounded-2xl border-2 border-on-background shadow-[0_4px_0_0_#3e4a3d] p-4 flex flex-col gap-3">
+<h2 class="text-label-md font-label-md font-black text-on-surface-variant uppercase tracking-wider px-1">Preferences</h2>
+<!-- Row 1: Daily goal -->
+<div class="flex items-center justify-between p-2 rounded-xl hover:bg-surface-container-low transition-colors border border-transparent hover:border-outline-variant/60">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">ads_click</span>
+</div>
+<div>
+<p class="text-body-md font-body-md text-on-background leading-none font-bold">Daily goal</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">50 XP / day</p>
+</div>
+</div>
+<button class="px-2.5 py-1 rounded-lg bg-surface-container-high border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] text-label-sm font-label-sm text-on-surface active:translate-y-0.5 active:shadow-none flex items-center gap-0.5">
+<span>Edit</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</div>
+<div class="h-[1px] bg-on-background/10 mx-1"></div>
+<!-- Row 2: Sound effects -->
+<div class="flex items-center justify-between p-2 rounded-xl hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">volume_up</span>
+</div>
+<div>
+<p class="text-body-md font-body-md text-on-background leading-none font-bold">Sound effects</p>
+<p class="text-body-sm font-body-sm text-primary font-bold mt-0.5">On</p>
+</div>
+</div>
+<!-- Tactile Neo-Pop Green Active Switch -->
+<button aria-label="Toggle sound effects" class="w-13 h-7 px-0.5 py-0.5 rounded-full bg-primary-container border-2 border-on-background shadow-[0_2px_0_0_#005320] flex items-center justify-end transition-all">
+<span class="w-5 h-5 rounded-full bg-white border border-on-background shadow-[0_1px_0_0_#3e4a3d] flex items-center justify-center text-[10px] text-primary">●</span>
+</button>
+</div>
+<div class="h-[1px] bg-on-background/10 mx-1"></div>
+<!-- Row 3: Haptics -->
+<div class="flex items-center justify-between p-2 rounded-xl hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">vibration</span>
+</div>
+<div>
+<p class="text-body-md font-body-md text-on-background leading-none font-bold">Haptics</p>
+<p class="text-body-sm font-body-sm text-primary font-bold mt-0.5">On</p>
+</div>
+</div>
+<!-- Tactile Neo-Pop Green Active Switch -->
+<button aria-label="Toggle haptics" class="w-13 h-7 px-0.5 py-0.5 rounded-full bg-primary-container border-2 border-on-background shadow-[0_2px_0_0_#005320] flex items-center justify-end transition-all">
+<span class="w-5 h-5 rounded-full bg-white border border-on-background shadow-[0_1px_0_0_#3e4a3d] flex items-center justify-center text-[10px] text-primary">●</span>
+</button>
+</div>
+<div class="h-[1px] bg-on-background/10 mx-1"></div>
+<!-- Row 4: Reduce animations -->
+<div class="flex items-center justify-between p-2 rounded-xl hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">motion_photos_off</span>
+</div>
+<div>
+<p class="text-body-md font-body-md text-on-background leading-none font-bold">Reduce animations</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">Off</p>
+</div>
+</div>
+<!-- Tactile Neo-Pop Inactive Switch -->
+<button aria-label="Toggle reduce animations" class="w-13 h-7 px-0.5 py-0.5 rounded-full bg-surface-container-high border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] flex items-center justify-start transition-all">
+<span class="w-5 h-5 rounded-full bg-white border border-on-background shadow-[0_1px_0_0_#3e4a3d]"></span>
+</button>
+</div>
+</section>
+<!-- Support Section -->
+<section class="bg-surface-container-lowest rounded-2xl border-2 border-on-background shadow-[0_4px_0_0_#3e4a3d] p-4 flex flex-col gap-2">
+<h2 class="text-label-md font-label-md font-black text-on-surface-variant uppercase tracking-wider px-1">Support</h2>
+<!-- Help Center -->
+<a class="flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low active:translate-y-0.5 transition-all" href="#help">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">help_center</span>
+</div>
+<span class="text-body-md font-body-md text-on-background font-bold">Help center</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</a>
+<div class="h-[1px] bg-on-background/10 mx-1"></div>
+<!-- Send feedback -->
+<a class="flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low active:translate-y-0.5 transition-all" href="#feedback">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">mark_chat_read</span>
+</div>
+<span class="text-body-md font-body-md text-on-background font-bold">Send feedback</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</a>
+<div class="h-[1px] bg-on-background/10 mx-1"></div>
+<!-- Terms & privacy -->
+<a class="flex items-center justify-between p-2.5 rounded-xl hover:bg-surface-container-low active:translate-y-0.5 transition-all" href="#terms">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container border-2 border-on-background shadow-[0_2px_0_0_#3e4a3d] flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<span class="text-body-md font-body-md text-on-background font-bold">Terms &amp; privacy</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</a>
+</section>
+<!-- Danger Zone / Sign Out Button -->
+<section class="pt-2">
+<button class="w-full py-3.5 px-4 rounded-xl bg-error-container border-2 border-error shadow-[0_4px_0_0_#93000a] text-on-error-container font-label-lg text-label-lg flex items-center justify-center gap-2 active:translate-y-1 active:shadow-none transition-transform duration-100">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span>Sign out</span>
+</button>
+</section>
+<!-- Footer Small Print with Fox Mascot Touch -->
+<footer class="flex flex-col items-center justify-center gap-1 py-4 text-center">
+<div class="flex items-center gap-1.5 text-label-sm font-label-sm text-outline">
+<span class="material-symbols-outlined text-[16px] text-secondary">pets</span>
+<span>Speeko · build 0.0.1</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant/70 text-xs">Crafted with love for Indian languages</p>
+</footer>
+</main>
+<!-- Bottom Navigation Bar (Shared Component Anchor) -->
+<!-- Current Page intent is 'Profile' -> strictly applies style_active_navigation to Profile, style_inactive_navigation to others -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 flex justify-around items-center px-4 py-2 h-18 max-w-md mx-auto pb-safe bg-surface border-t-2 border-on-background/20 shadow-[0_-4px_0_0_#bdcaba]">
+<!-- Tab 1: Home -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary active:translate-y-0.5 active:shadow-none transition-all duration-100">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="text-label-sm font-label-sm mt-0.5">Home</span>
+</button>
+<!-- Tab 2: Learn -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary active:translate-y-0.5 active:shadow-none transition-all duration-100">
+<span class="material-symbols-outlined text-[24px]">school</span>
+<span class="text-label-sm font-label-sm mt-0.5">Learn</span>
+</button>
+<!-- Tab 3: Studio -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary active:translate-y-0.5 active:shadow-none transition-all duration-100">
+<span class="material-symbols-outlined text-[24px]">mic</span>
+<span class="text-label-sm font-label-sm mt-0.5">Studio</span>
+</button>
+<!-- Tab 4: Profile (ACTIVE STATE) -->
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-3 py-1 border-2 border-on-background shadow-[0_3px_0_0_#005320] active:translate-y-0.5 active:shadow-none transition-all duration-100">
+<span class="material-symbols-outlined fill-icon text-[24px]">person</span>
+<span class="text-label-sm font-label-sm mt-0.5">Profile</span>
+</button>
+</nav>
+</div>
+</body></html>

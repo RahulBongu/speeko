@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Speeko - Sign in / Create Account</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,300..900;1,6..12,300..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-highest": "#ffdbc8",
+            "inverse-primary": "#62df7d",
+            "inverse-on-surface": "#ffede5",
+            "error": "#ba1a1a",
+            "outline": "#6e7b6c",
+            "on-primary-fixed": "#002109",
+            "surface-container": "#ffeadf",
+            "inverse-surface": "#412c1f",
+            "surface-container-high": "#ffe3d3",
+            "secondary-fixed-dim": "#ffb690",
+            "tertiary-container": "#a36700",
+            "on-primary-fixed-variant": "#005320",
+            "surface-container-low": "#fff1ea",
+            "primary-fixed-dim": "#62df7d",
+            "surface": "#fff8f5",
+            "on-secondary-container": "#5c2400",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#fffbff",
+            "background": "#fff8f5",
+            "on-error-container": "#93000a",
+            "on-tertiary-fixed": "#2a1700",
+            "secondary-fixed": "#ffdbca",
+            "on-surface": "#29170b",
+            "surface-bright": "#fff8f5",
+            "on-primary-container": "#f7fff2",
+            "on-error": "#ffffff",
+            "on-tertiary-fixed-variant": "#653e00",
+            "primary-container": "#00873a",
+            "on-primary": "#ffffff",
+            "tertiary": "#825100",
+            "tertiary-fixed": "#ffddb8",
+            "primary": "#006b2c",
+            "surface-tint": "#006e2d",
+            "surface-dim": "#f6d3bf",
+            "tertiary-fixed-dim": "#ffb95f",
+            "on-secondary-fixed": "#341100",
+            "on-surface-variant": "#3e4a3d",
+            "error-container": "#ffdad6",
+            "secondary-container": "#fd761a",
+            "on-secondary": "#ffffff",
+            "primary-fixed": "#7ffc97",
+            "secondary": "#9d4300",
+            "surface-variant": "#ffdbc8",
+            "on-secondary-fixed-variant": "#783200",
+            "surface-container-lowest": "#ffffff",
+            "outline-variant": "#bdcaba",
+            "on-background": "#29170b"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2.5rem",
+            "margin": "1rem",
+            "margin-tablet": "2rem",
+            "margin-desktop": "3rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Nunito Sans"],
+            "body-sm": ["Nunito Sans"],
+            "headline-md": ["Nunito Sans"],
+            "headline-sm": ["Nunito Sans"],
+            "label-lg": ["Nunito Sans"],
+            "display-hero": ["Nunito Sans"],
+            "label-sm": ["Nunito Sans"],
+            "label-md": ["Nunito Sans"],
+            "body-lg": ["Nunito Sans"],
+            "headline-lg-mobile": ["Nunito Sans"],
+            "body-md": ["Nunito Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "900" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "800" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "900" }],
+            "display-hero": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "900" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "800" }],
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "800" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "700" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "900" }],
+            "body-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Tactile micro-bounce keyframes */
+    @keyframes gentleWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-3deg); }
+      75% { transform: rotate(3deg); }
+    }
+    .wiggle-fox {
+      animation: gentleWiggle 4s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col items-center justify-start relative select-none selection:bg-surface-variant overflow-x-hidden">
+<!-- Background Cultural & Gamified Glyphs Watermark Canvas -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.07] overflow-hidden flex flex-wrap justify-between gap-12 p-6 z-0 select-none">
+<span class="text-4xl font-black text-on-surface">क</span>
+<span class="text-3xl font-black text-primary">A</span>
+<span class="text-5xl font-black text-secondary">नमस्ते</span>
+<span class="text-4xl font-black text-on-surface">म</span>
+<span class="text-3xl font-black text-primary">★</span>
+<span class="text-4xl font-black text-secondary">ख</span>
+<span class="text-5xl font-black text-on-surface">अ</span>
+<span class="text-3xl font-black text-primary">B</span>
+<span class="text-4xl font-black text-on-surface">வணக்கம்</span>
+<span class="text-4xl font-black text-secondary">ग</span>
+<span class="text-3xl font-black text-primary">✦</span>
+<span class="text-4xl font-black text-on-surface">आ</span>
+</div>
+<!-- Mobile Screen Container (Locked 390px - 440px viewport for ergonomic tactile play) -->
+<main class="w-full max-w-[420px] min-h-screen flex flex-col justify-between px-5 pt-4 pb-8 relative z-10 mx-auto">
+<!-- Top Minimal Navigation Bar -->
+<header class="w-full flex items-center justify-between py-2">
+<!-- Back button -->
+<button aria-label="Go back" class="w-11 h-11 rounded-xl bg-surface-container-lowest border-2 border-on-surface shadow-[0_3px_0_0_#29170b] active:translate-y-1 active:shadow-none flex items-center justify-center transition-all duration-100 group" type="button">
+<span class="material-symbols-outlined text-on-surface text-[22px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+</button>
+<!-- App Brand Anchor badge -->
+<div class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container-low border-2 border-on-surface shadow-[0_2px_0_0_#29170b]">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="text-headline-sm font-headline-sm font-black text-primary tracking-tight">Speeko</span>
+<span class="text-xs">🇮🇳</span>
+</div>
+<!-- Language / Help pill -->
+<button aria-label="Help &amp; Language" class="w-11 h-11 rounded-xl bg-surface-container-lowest border-2 border-on-surface shadow-[0_3px_0_0_#29170b] active:translate-y-1 active:shadow-none flex items-center justify-center transition-all duration-100 text-on-surface" type="button">
+<span class="material-symbols-outlined text-[22px]">translate</span>
+</button>
+</header>
+<!-- Content Stack -->
+<div class="flex-1 flex flex-col justify-center items-center my-3 w-full">
+<!-- Mascot & Speech Bubble Section -->
+<div class="w-full flex flex-col items-center relative mt-1 mb-5">
+<!-- Speech Bubble -->
+<div class="relative bg-surface-container-lowest border-2 border-on-surface rounded-2xl px-4 py-3 shadow-[0_4px_0_0_#29170b] mb-3 max-w-[310px] w-full text-center flex flex-col items-center">
+<div class="flex items-center gap-1.5 justify-center mb-0.5">
+<span class="text-xs px-2 py-0.5 rounded-full bg-surface-container-highest text-on-secondary-container font-label-sm font-extrabold uppercase tracking-wide">
+              Hindi • தமிழ்
+            </span>
+</div>
+<p class="text-body-md font-body-md font-black text-on-surface leading-tight">
+            फिर से स्वागत है! 🦊
+          </p>
+<p class="text-body-sm font-body-sm font-bold text-on-surface-variant mt-0.5">
+            Ready to continue your streak today?
+          </p>
+<!-- Downward speech bubble pointer triangle -->
+<div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-4 h-4 bg-surface-container-lowest border-b-2 border-r-2 border-on-surface rotate-45"></div>
+</div>
+<!-- Avatar Ring Frame with Extruded Shadow -->
+<div class="relative w-28 h-28 rounded-full border-3 border-on-surface bg-surface-container shadow-[0_5px_0_0_#29170b] p-1 wiggle-fox">
+<div class="w-full h-full rounded-full overflow-hidden border border-on-surface/20 bg-surface-container-low flex items-center justify-center">
+<img alt="Friendly Speeko Fox mascot wearing marigold flower and yellow scarf" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ALJJyrCEpMHroHGvxxcPZwnp8x9YNmra2h09VwGmjqlOXwgPRRJxM6j0DK8su-HTroHanom5dvMisffxQu6hyGrfdxY1fKF64n8neAQtEYUtHPrxm0BA6a96-E21uyvoVMzIastQOoHToBzF0mrEWN0r_rZKXNTR-Y6b-MNvsiAa-O_jUxrtpU0GxW_dLUs8ZfRk7JF_Vt2aJhqVeIl7lqaARFGCDu-ihjkPYVxX64Foai9zy5KQNgxoi-EngFLR"/>
+</div>
+<!-- Tactile Level/Streak floating badge -->
+<div class="absolute -bottom-1 -right-1 bg-surface-container-lowest border-2 border-on-surface rounded-full px-2 py-0.5 shadow-[0_2px_0_0_#29170b] flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary-container text-base" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="text-label-sm font-label-sm font-black text-on-surface">5</span>
+</div>
+</div>
+</div>
+<!-- Segmented Auth Switcher Pills -->
+<div class="w-full max-w-[350px] bg-surface-container border-2 border-on-surface p-1 rounded-full flex gap-1 shadow-[0_3px_0_0_#29170b] mb-5">
+<button class="flex-1 py-2 px-4 rounded-full bg-primary text-on-primary font-label-md font-label-md font-black shadow-[0_3px_0_0_#005320] border border-on-primary-fixed-variant transition-all text-center" id="tab-signin" type="button">
+          Sign in
+        </button>
+<button class="flex-1 py-2 px-4 rounded-full text-on-surface font-label-md font-label-md font-bold hover:text-primary transition-all text-center" id="tab-signup" type="button">
+          Create account
+        </button>
+</div>
+<!-- Card Container for Auth Form -->
+<div class="w-full bg-surface-container-lowest border-2 border-on-surface rounded-3xl p-5 shadow-[0_6px_0_0_#29170b] flex flex-col gap-4">
+<form class="flex flex-col gap-3.5" id="auth-form" onsubmit="event.preventDefault();">
+<!-- Email / Username Input -->
+<div class="flex flex-col gap-1 text-left">
+<label class="text-label-md font-label-md font-bold text-on-surface flex items-center justify-between" for="identifier">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">alternate_email</span>
+                Email or Username
+              </span>
+<span class="text-label-sm font-label-sm font-semibold text-outline">e.g. Aarav</span>
+</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low/60 border-2 border-on-surface rounded-xl px-4 py-3 text-body-md font-body-md font-bold text-on-surface placeholder:text-outline/70 focus:outline-none focus:bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary-fixed shadow-[0_2px_0_0_#29170b] transition-all" id="identifier" placeholder="Enter email or username" type="text" value="aarav.patel@speeko.in"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-1 text-left">
+<div class="flex items-center justify-between">
+<label class="text-label-md font-label-md font-bold text-on-surface flex items-center gap-1.5" for="password">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">lock</span>
+                Password
+              </label>
+<a class="text-label-sm font-label-sm font-extrabold text-secondary hover:text-on-secondary-container transition-colors underline decoration-2 decoration-secondary/40" href="#">
+                Forgot password?
+              </a>
+</div>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low/60 border-2 border-on-surface rounded-xl px-4 py-3 pr-11 text-body-md font-body-md font-bold text-on-surface placeholder:text-outline/70 focus:outline-none focus:bg-surface-container-lowest focus:border-primary focus:ring-2 focus:ring-primary-fixed shadow-[0_2px_0_0_#29170b] transition-all" id="password" placeholder="Enter password" type="password" value="••••••••••••"/>
+<button aria-label="Toggle password visibility" class="absolute right-3 text-on-surface-variant hover:text-on-surface p-1 rounded-lg focus:outline-none transition-colors" id="toggle-password" onclick="const p = document.getElementById('password'); const icon = this.querySelector('span'); if(p.type === 'password'){ p.type = 'text'; icon.textContent = 'visibility_off'; } else { p.type = 'password'; icon.textContent = 'visibility'; }" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Primary Push Button (Tactile 3D Slab) -->
+<div class="pt-1.5">
+<button class="w-full bg-primary-container hover:bg-primary text-on-primary-container font-headline-sm font-headline-sm font-black py-3.5 px-6 rounded-2xl border-2 border-on-surface shadow-[0_5px_0_0_#005320] active:translate-y-1 active:shadow-[0_1px_0_0_#005320] transition-all flex items-center justify-center gap-2 cursor-pointer" type="submit">
+<span>Sign in</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</form>
+<!-- Playful Arcade Divider -->
+<div class="flex items-center gap-3 my-0.5">
+<div class="flex-1 h-[2px] bg-on-surface/20"></div>
+<span class="text-label-sm font-label-sm font-black text-on-surface-variant uppercase tracking-wider bg-surface-container-low px-2.5 py-0.5 rounded-full border border-on-surface/30">
+            or continue with
+          </span>
+<div class="flex-1 h-[2px] bg-on-surface/20"></div>
+</div>
+<!-- Google Single Sign-on Button -->
+<button class="w-full bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-lg font-label-lg font-black py-3 px-4 rounded-xl border-2 border-on-surface shadow-[0_4px_0_0_#29170b] active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all flex items-center justify-center gap-3 cursor-pointer" type="button">
+<!-- Google 4-color G Vector -->
+<svg aria-hidden="true" class="w-5 h-5 flex-shrink-0" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span>Google</span>
+</button>
+</div>
+</div>
+<!-- Screen Footer / Disclaimers & Switch Link -->
+<footer class="w-full flex flex-col items-center gap-3 pt-2 text-center">
+<p class="text-body-sm font-body-sm font-semibold text-on-surface-variant max-w-[320px]">
+        New to Speeko? 
+        <a class="text-secondary font-black hover:underline decoration-2 ml-1 inline-flex items-center gap-0.5" href="#">
+<span>Create an account</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</p>
+<p class="text-[11px] leading-tight text-outline font-semibold px-4">
+        By continuing, you agree to Speeko's 
+        <a class="underline hover:text-on-surface" href="#">Terms</a> &amp; 
+        <a class="underline hover:text-on-surface" href="#">Privacy Policy</a>.
+      </p>
+</footer>
+</main>
+<script>
+    // Tab switching interactivity
+    const tabSignIn = document.getElementById('tab-signin');
+    const tabSignUp = document.getElementById('tab-signup');
+    
+    function setSignInActive() {
+      tabSignIn.className = "flex-1 py-2 px-4 rounded-full bg-primary text-on-primary font-label-md font-label-md font-black shadow-[0_3px_0_0_#005320] border border-on-primary-fixed-variant transition-all text-center";
+      tabSignUp.className = "flex-1 py-2 px-4 rounded-full text-on-surface font-label-md font-label-md font-bold hover:text-primary transition-all text-center";
+    }
+
+    function setSignUpActive() {
+      tabSignUp.className = "flex-1 py-2 px-4 rounded-full bg-primary text-on-primary font-label-md font-label-md font-black shadow-[0_3px_0_0_#005320] border border-on-primary-fixed-variant transition-all text-center";
+      tabSignIn.className = "flex-1 py-2 px-4 rounded-full text-on-surface font-label-md font-label-md font-bold hover:text-primary transition-all text-center";
+    }
+
+    tabSignIn.addEventListener('click', setSignInActive);
+    tabSignUp.addEventListener('click', setSignUpActive);
+  </script>
+</body></html>

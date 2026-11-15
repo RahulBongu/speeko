@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Speeko - Your Progress</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400..900;1,6..12,400..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-container": "#f7fff2",
+            "tertiary-fixed": "#ffddb8",
+            "on-surface-variant": "#3e4a3d",
+            "error": "#ba1a1a",
+            "on-tertiary": "#ffffff",
+            "surface-dim": "#f6d3bf",
+            "tertiary": "#825100",
+            "on-primary-fixed-variant": "#005320",
+            "inverse-on-surface": "#ffede5",
+            "on-secondary-container": "#5c2400",
+            "primary-fixed-dim": "#62df7d",
+            "secondary": "#9d4300",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#29170b",
+            "tertiary-fixed-dim": "#ffb95f",
+            "secondary-fixed": "#ffdbca",
+            "on-error-container": "#93000a",
+            "on-primary-fixed": "#002109",
+            "background": "#fff8f5",
+            "tertiary-container": "#a36700",
+            "on-primary": "#ffffff",
+            "surface-container-high": "#ffe3d3",
+            "surface": "#fff8f5",
+            "inverse-primary": "#62df7d",
+            "on-tertiary-container": "#fffbff",
+            "primary-container": "#00873a",
+            "secondary-container": "#fd761a",
+            "outline-variant": "#bdcaba",
+            "surface-container-highest": "#ffdbc8",
+            "outline": "#6e7b6c",
+            "on-secondary": "#ffffff",
+            "surface-container-low": "#fff1ea",
+            "primary-fixed": "#7ffc97",
+            "on-secondary-fixed": "#341100",
+            "on-secondary-fixed-variant": "#783200",
+            "surface-tint": "#006e2d",
+            "primary": "#006b2c",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
+            "on-tertiary-fixed": "#2a1700",
+            "on-tertiary-fixed-variant": "#653e00",
+            "surface-bright": "#fff8f5",
+            "surface-variant": "#ffdbc8",
+            "inverse-surface": "#412c1f",
+            "on-background": "#29170b"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "3rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2.5rem",
+            "margin-tablet": "2rem",
+            "space-md": "1rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Nunito Sans"],
+            "label-md": ["Nunito Sans"],
+            "body-lg": ["Nunito Sans"],
+            "display-hero": ["Nunito Sans"],
+            "headline-md": ["Nunito Sans"],
+            "body-md": ["Nunito Sans"],
+            "headline-lg-mobile": ["Nunito Sans"],
+            "label-lg": ["Nunito Sans"],
+            "body-sm": ["Nunito Sans"],
+            "label-sm": ["Nunito Sans"],
+            "headline-sm": ["Nunito Sans"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "900"}],
+            "label-md": ["14px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "800"}],
+            "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "700"}],
+            "display-hero": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "900"}],
+            "headline-md": ["22px", {"lineHeight": "28px", "fontWeight": "800"}],
+            "body-md": ["16px", {"lineHeight": "22px", "fontWeight": "600"}],
+            "headline-lg-mobile": ["26px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "900"}],
+            "label-lg": ["16px", {"lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "900"}],
+            "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "800"}],
+            "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "800"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Playful arcade dot pattern background */
+    .arcade-pattern {
+      background-color: #fff8f5;
+      background-image: radial-gradient(#3e4a3d 0.85px, transparent 0.85px);
+      background-size: 16px 16px;
+      background-position: 0 0;
+    }
+  </style>
+</head>
+<body class="arcade-pattern text-on-surface antialiased font-body-md min-h-screen flex justify-center selection:bg-secondary-container selection:text-surface-container-lowest">
+<!-- Mobile Simulator Canvas (Max 480px) -->
+<div class="relative w-full max-w-md bg-background min-h-screen flex flex-col pb-28 border-x-2 border-on-background/10">
+<!-- Top Sticky Navigation Bar -->
+<header class="sticky top-0 z-40 bg-surface-container-low/95 backdrop-blur-md px-4 py-3 border-b-2 border-on-background/20 shadow-[0_4px_0_0_#3e4a3d] flex items-center justify-between">
+<!-- Chunky Back Button -->
+<button aria-label="Go Back" class="w-10 h-10 rounded-full bg-surface-container-lowest border-2 border-on-background flex items-center justify-center shadow-[0_3px_0_0_#3e4a3d] active:translate-y-1 active:shadow-none transition-all duration-100 cursor-pointer" onclick="history.back()">
+<span class="material-symbols-outlined text-on-background" data-icon="arrow_back">arrow_back</span>
+</button>
+<!-- Center Title and Progress Pill -->
+<div class="flex flex-col items-center">
+<h1 class="text-headline-sm font-headline-sm text-on-background tracking-tight">Your Progress</h1>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-secondary font-black bg-surface-container-high px-2 py-0.5 rounded-full border border-on-background/20 mt-0.5">
+<span>Keep up the momentum!</span>
+<span class="text-xs">🔥</span>
+</div>
+</div>
+<!-- Trailing Action: Share / Stats -->
+<button aria-label="Share stats" class="w-10 h-10 rounded-full bg-surface-container-lowest border-2 border-on-background flex items-center justify-center shadow-[0_3px_0_0_#3e4a3d] active:translate-y-1 active:shadow-none transition-all duration-100 cursor-pointer">
+<span class="material-symbols-outlined text-primary" data-icon="share">share</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 px-4 py-4 space-y-4">
+<!-- 1. Hero Card: Stats & Streak Showcase -->
+<section class="bg-surface-container-lowest border-2 border-on-background rounded-xl p-4 shadow-[0_4px_0_0_#3e4a3d] relative overflow-hidden">
+<div class="flex items-center justify-between">
+<!-- Circular Streak Gauge -->
+<div class="relative flex items-center justify-center">
+<!-- SVG Progress Ring -->
+<svg class="w-24 h-24 transform -rotate-90" viewbox="0 0 96 96">
+<circle class="stroke-surface-container" cx="48" cy="48" fill="none" r="40" stroke="#ffeadf" stroke-width="8"></circle>
+<circle class="transition-all duration-700 ease-out" cx="48" cy="48" fill="none" r="40" stroke="#fd761a" stroke-dasharray="251.2" stroke-dashoffset="36" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<!-- Center Flame & Count -->
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined fill-1 text-secondary-container text-2xl animate-bounce" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="text-headline-sm font-headline-sm text-on-background leading-none mt-0.5">6</span>
+<span class="text-[10px] font-extrabold uppercase tracking-wide text-secondary leading-none">Days</span>
+</div>
+</div>
+<!-- Vertical Divider -->
+<div class="w-0.5 h-20 bg-surface-container border-r border-on-background/20 mx-2"></div>
+<!-- Right Column: XP & Level Badges -->
+<div class="flex-1 pl-2 flex flex-col justify-center gap-2">
+<!-- Total XP Pill -->
+<div class="flex items-center justify-between bg-surface-container-low border-2 border-on-background rounded-lg p-2 shadow-[0_2px_0_0_#3e4a3d]">
+<div class="flex items-center gap-1.5">
+<span class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center border border-on-background">
+<span class="material-symbols-outlined text-primary text-sm fill-1" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-bold">Total XP</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-primary font-black">120 XP</span>
+</div>
+<!-- Level / Explorer Badge -->
+<div class="flex items-center justify-between bg-tertiary-fixed border-2 border-on-background rounded-lg p-2 shadow-[0_2px_0_0_#3e4a3d]">
+<div class="flex items-center gap-1.5">
+<span class="w-6 h-6 rounded-full bg-surface-container-lowest flex items-center justify-center border border-on-background">
+<span class="material-symbols-outlined text-tertiary text-sm fill-1" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+</span>
+<span class="text-label-sm font-label-sm text-tertiary font-bold">Level 3</span>
+</div>
+<span class="text-label-sm font-label-sm uppercase bg-surface-container-lowest text-tertiary font-black px-2 py-0.5 rounded-full border border-on-background">Explorer</span>
+</div>
+</div>
+</div>
+<!-- Motivational Quote Footer Banner -->
+<div class="mt-3 pt-2.5 border-t-2 border-surface-container flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-primary-container text-base fill-1" data-icon="military_tech" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+            Ranked #4 in Hindi League
+          </span>
+<span class="text-label-sm font-label-sm text-secondary font-black cursor-pointer hover:underline">View League &gt;</span>
+</div>
+</section>
+<!-- 2. "This Week" Activity Bar Chart -->
+<section class="bg-surface-container-lowest border-2 border-on-background rounded-xl p-4 shadow-[0_4px_0_0_#3e4a3d]">
+<div class="flex items-center justify-between mb-3">
+<div>
+<h2 class="text-headline-sm font-headline-sm text-on-background">Weekly Activity</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Your daily Hindi practice consistency</p>
+</div>
+<span class="text-label-sm font-label-sm text-on-primary font-black bg-primary-container px-2.5 py-1 rounded-full border-2 border-on-background shadow-[0_2px_0_0_#005320]">
+            Goal 5/7 days
+          </span>
+</div>
+<!-- Chart Grid Graphic -->
+<div class="bg-surface-container-low border-2 border-on-background/20 rounded-lg p-3 pt-6 flex items-end justify-between gap-1.5 h-44 relative">
+<!-- Baseline Rule -->
+<div class="absolute bottom-9 left-2 right-2 border-b border-dashed border-on-background/20 pointer-events-none"></div>
+<!-- Mon (Completed) -->
+<div class="flex flex-col items-center flex-1 gap-1 z-10">
+<span class="text-[10px] font-black text-on-surface-variant">25m</span>
+<div class="w-full bg-primary-fixed-dim rounded-t-lg border-2 border-on-background h-20 shadow-[0_2px_0_0_#005320] transition-all hover:scale-105"></div>
+<span class="text-label-sm font-label-sm font-black text-on-surface-variant mt-1">M</span>
+</div>
+<!-- Tue (Completed) -->
+<div class="flex flex-col items-center flex-1 gap-1 z-10">
+<span class="text-[10px] font-black text-on-surface-variant">18m</span>
+<div class="w-full bg-primary-fixed-dim rounded-t-lg border-2 border-on-background h-14 shadow-[0_2px_0_0_#005320] transition-all hover:scale-105"></div>
+<span class="text-label-sm font-label-sm font-black text-on-surface-variant mt-1">T</span>
+</div>
+<!-- Wed (Completed) -->
+<div class="flex flex-col items-center flex-1 gap-1 z-10">
+<span class="text-[10px] font-black text-on-surface-variant">30m</span>
+<div class="w-full bg-primary-fixed-dim rounded-t-lg border-2 border-on-background h-24 shadow-[0_2px_0_0_#005320] transition-all hover:scale-105"></div>
+<span class="text-label-sm font-label-sm font-black text-on-surface-variant mt-1">W</span>
+</div>
+<!-- Thu (Missed/Rest) -->
+<div class="flex flex-col items-center flex-1 gap-1 z-10">
+<span class="text-[10px] font-black text-outline">0m</span>
+<div class="w-full bg-surface-container rounded-t-lg border-2 border-on-background/30 h-3"></div>
+<span class="text-label-sm font-label-sm font-bold text-outline mt-1">T</span>
+</div>
+<!-- Fri (Completed) -->
+<div class="flex flex-col items-center flex-1 gap-1 z-10">
+<span class="text-[10px] font-black text-on-surface-variant">22m</span>
+<div class="w-full bg-primary-fixed-dim rounded-t-lg border-2 border-on-background h-16 shadow-[0_2px_0_0_#005320] transition-all hover:scale-105"></div>
+<span class="text-label-sm font-label-sm font-black text-on-surface-variant mt-1">F</span>
+</div>
+<!-- Sat (Today - Highlighted) -->
+<div class="flex flex-col items-center flex-1 gap-1 z-10 relative">
+<span class="text-[10px] font-black text-secondary bg-surface-container-lowest px-1 rounded border border-on-background">35m</span>
+<div class="w-full bg-secondary-container rounded-t-lg border-2 border-on-background h-28 shadow-[0_3px_0_0_#5c2400] relative animate-pulse">
+<span class="material-symbols-outlined fill-1 text-on-secondary absolute -top-3 left-1/2 -translate-x-1/2 text-xs" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<span class="text-label-sm font-label-sm font-black text-secondary-container mt-1 bg-surface-container-high px-1.5 rounded-full border border-on-background">S</span>
+</div>
+<!-- Sun (Upcoming) -->
+<div class="flex flex-col items-center flex-1 gap-1 z-10">
+<span class="text-[10px] font-black text-outline">-</span>
+<div class="w-full bg-surface-container rounded-t-lg border-2 border-dashed border-on-background/30 h-4"></div>
+<span class="text-label-sm font-label-sm font-bold text-outline mt-1">S</span>
+</div>
+</div>
+</section>
+<!-- 3. Row of Stat Pills / Grid -->
+<section class="grid grid-cols-3 gap-2.5">
+<!-- Exercises Pill -->
+<div class="bg-surface-container-lowest border-2 border-on-background rounded-xl p-2.5 flex flex-col items-center text-center shadow-[0_3px_0_0_#3e4a3d]">
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim border-2 border-on-background flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-primary-container text-base font-black" data-icon="check_circle">check_circle</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">34</span>
+<span class="text-[11px] font-label-sm font-bold text-on-surface-variant leading-tight mt-0.5">Exercises</span>
+</div>
+<!-- Words learned Pill -->
+<div class="bg-surface-container-lowest border-2 border-on-background rounded-xl p-2.5 flex flex-col items-center text-center shadow-[0_3px_0_0_#3e4a3d]">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed border-2 border-on-background flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-tertiary text-base font-black" data-icon="spellcheck">spellcheck</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">58</span>
+<span class="text-[11px] font-label-sm font-bold text-on-surface-variant leading-tight mt-0.5">Words Learned</span>
+</div>
+<!-- Accuracy Pill -->
+<div class="bg-surface-container-lowest border-2 border-on-background rounded-xl p-2.5 flex flex-col items-center text-center shadow-[0_3px_0_0_#3e4a3d]">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed border-2 border-on-background flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-secondary text-base font-black" data-icon="crisis_alert">crisis_alert</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">82%</span>
+<span class="text-[11px] font-label-sm font-bold text-on-surface-variant leading-tight mt-0.5">Accuracy</span>
+</div>
+</section>
+<!-- 4. Learning Path Preview Card with Mascot -->
+<section class="bg-surface-container-lowest border-2 border-on-background rounded-xl p-4 shadow-[0_4px_0_0_#3e4a3d] space-y-3">
+<div class="flex items-center justify-between">
+<div>
+<span class="text-label-sm font-label-sm text-primary font-black uppercase tracking-wider">Current Course</span>
+<h3 class="text-headline-sm font-headline-sm text-on-background">Hindi — Unit 1: Greetings</h3>
+</div>
+<span class="text-label-md font-label-md font-black text-on-primary bg-primary-container px-2 py-0.5 rounded-full border border-on-background">40%</span>
+</div>
+<!-- Progress bar -->
+<div class="w-full bg-surface-container rounded-full h-3 border-2 border-on-background overflow-hidden p-0.5">
+<div class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 40%"></div>
+</div>
+<!-- Mascot & Speech Bubble Section -->
+<div class="flex items-center gap-3 pt-1">
+<!-- Speeko Fox Avatar -->
+<div class="relative flex-shrink-0">
+<img alt="Speeko the Indian fox mascot" class="w-16 h-16 rounded-full border-2 border-on-background object-cover bg-surface-container-high shadow-[0_2px_0_0_#3e4a3d]" src="https://lh3.googleusercontent.com/aida/ALJJyrCEpMHroHGvxxcPZwnp8x9YNmra2h09VwGmjqlOXwgPRRJxM6j0DK8su-HTroHanom5dvMisffxQu6hyGrfdxY1fKF64n8neAQtEYUtHPrxm0BA6a96-E21uyvoVMzIastQOoHToBzF0mrEWN0r_rZKXNTR-Y6b-MNvsiAa-O_jUxrtpU0GxW_dLUs8ZfRk7JF_Vt2aJhqVeIl7lqaARFGCDu-ihjkPYVxX64Foai9zy5KQNgxoi-EngFLR"/>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary-fixed rounded-full border border-on-background flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-xs fill-1" data-icon="check" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<!-- Playful Speech Bubble -->
+<div class="relative bg-surface-container-low border-2 border-on-background rounded-xl p-3 flex-1 shadow-[0_2px_0_0_#3e4a3d]">
+<!-- Speech Triangle pointer -->
+<div class="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-y-6 border-y-transparent border-r-8 border-r-on-background"></div>
+<div class="absolute -left-1.5 top-1/2 -translate-y-1/2 w-0 h-0 border-y-5 border-y-transparent border-r-7 border-r-surface-container-low"></div>
+<p class="text-body-sm font-body-sm text-on-surface font-bold">
+              "Sab kaam sahi chal raha hai! 🦊"
+            </p>
+<p class="text-label-sm font-label-sm text-on-surface-variant font-medium text-[11px]">
+              (Everything is going great! Keep it up!)
+            </p>
+</div>
+</div>
+<!-- Continue Unit 3D Action Button -->
+<button class="w-full bg-primary hover:bg-primary-container text-on-primary py-2.5 px-4 rounded-xl border-2 border-on-background font-label-lg text-label-lg shadow-[0_4px_0_0_#005320] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer mt-2">
+<span>Continue Unit 1</span>
+<span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</section>
+<!-- 5. Settings / Practice Preferences Shortcut List -->
+<section class="bg-surface-container-lowest border-2 border-on-background rounded-xl overflow-hidden shadow-[0_4px_0_0_#3e4a3d]">
+<div class="px-4 py-3 bg-surface-container border-b-2 border-on-background flex items-center justify-between">
+<h4 class="text-label-lg font-label-lg text-on-background">Practice Routine</h4>
+<span class="material-symbols-outlined text-on-surface-variant text-lg" data-icon="tune">tune</span>
+</div>
+<div class="divide-y-2 divide-on-background/10">
+<!-- Daily Goal Item -->
+<div class="px-4 py-3 flex items-center justify-between hover:bg-surface-container-low transition-colors cursor-pointer group active:translate-y-0.5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high border-2 border-on-background flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-base" data-icon="track_changes">track_changes</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-background">Daily goal</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant text-xs">Target practice time</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-label-sm font-label-sm font-black text-primary bg-primary-fixed px-2 py-0.5 rounded border border-on-background">15 min / day</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Practice reminders Item -->
+<div class="px-4 py-3 flex items-center justify-between hover:bg-surface-container-low transition-colors cursor-pointer group active:translate-y-0.5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high border-2 border-on-background flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-base" data-icon="alarm">alarm</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-background">Practice reminders</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant text-xs">Keep your streak safe</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-label-sm font-label-sm font-black text-on-surface bg-surface-container px-2 py-0.5 rounded border border-on-background">8:00 PM</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Sound & Haptics Item -->
+<div class="px-4 py-3 flex items-center justify-between hover:bg-surface-container-low transition-colors cursor-pointer group active:translate-y-0.5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high border-2 border-on-background flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-base" data-icon="volume_up">volume_up</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-background">Sound &amp; haptics</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant text-xs">Audio feedback for Hindi tones</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-label-sm font-label-sm font-black text-primary-container bg-primary-fixed-dim px-2 py-0.5 rounded border border-on-background">On</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-0.5 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Adhering strictly to Shared Components JSON) -->
+<!-- JSON: labels: ["Home", "Learn", "Studio", "Profile"] -->
+<!-- For user progress/stats screen, maps to "Profile" or "Learn". We highlight "Profile" as closest user account destination. -->
+<nav class="fixed bottom-0 left-0 right-0 w-full z-50 flex justify-around items-center px-4 py-2 h-18 max-w-md mx-auto pb-safe bg-surface dark:bg-surface-container-highest border-t-2 border-on-background/20 dark:border-outline/40 shadow-[0_-4px_0_0_#bdcaba] dark:shadow-none">
+<!-- 1. Home Item (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-dim px-3 py-1 hover:text-primary dark:hover:text-primary-fixed active:translate-y-0.5 active:shadow-none transition-all duration-100" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="home">home</span>
+<span class="text-label-sm font-label-sm mt-0.5">Home</span>
+</a>
+<!-- 2. Learn Item (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-dim px-3 py-1 hover:text-primary dark:hover:text-primary-fixed active:translate-y-0.5 active:shadow-none transition-all duration-100" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="school">school</span>
+<span class="text-label-sm font-label-sm mt-0.5">Learn</span>
+</a>
+<!-- 3. Studio Item (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-dim px-3 py-1 hover:text-primary dark:hover:text-primary-fixed active:translate-y-0.5 active:shadow-none transition-all duration-100" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="mic">mic</span>
+<span class="text-label-sm font-label-sm mt-0.5">Studio</span>
+</a>
+<!-- 4. Profile / Progress Item (Active Item) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-3 py-1 border-2 border-on-background shadow-[0_3px_0_0_#005320] active:translate-y-0.5 active:shadow-none transition-all duration-100" href="#">
+<span class="material-symbols-outlined text-2xl fill-1" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-label-sm font-label-sm mt-0.5 font-bold">Profile</span>
+</a>
+</nav>
+</div>
+</body></html>

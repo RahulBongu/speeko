@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <!-- Speeko mascot — sitting fox (Pose B: The Listener) -->
+  <!-- Tail -->
+  <path d="M 45,120 C 15,120 10,75 35,65 C 25,80 35,110 55,110 Z" fill="#F97316" stroke="#3F2A1D" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M 35,65 C 38,72 32,82 45,86 C 40,80 38,75 35,65 Z" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="2"/>
+  <!-- Body sitting -->
+  <ellipse cx="80" cy="112" rx="34" ry="30" fill="#F97316" stroke="#3F2A1D" stroke-width="4"/>
+  <ellipse cx="80" cy="116" rx="20" ry="22" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="3"/>
+  <!-- Little paws in front -->
+  <ellipse cx="68" cy="136" rx="8" ry="6" fill="#F97316" stroke="#3F2A1D" stroke-width="3"/>
+  <ellipse cx="92" cy="136" rx="8" ry="6" fill="#F97316" stroke="#3F2A1D" stroke-width="3"/>
+  <!-- Saffron bandana / scarf -->
+  <path d="M 60,86 Q 80,98 100,86 Q 80,104 60,86 Z" fill="#F59E0B" stroke="#3F2A1D" stroke-width="3"/>
+  <polygon points="76,96 72,112 84,100" fill="#F59E0B" stroke="#3F2A1D" stroke-width="2"/>
+  <!-- Left ear -->
+  <polygon points="54,48 42,16 72,30" fill="#F97316" stroke="#3F2A1D" stroke-width="3.5" stroke-linejoin="round"/>
+  <polygon points="56,44 48,24 68,34" fill="#FED7AA" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Right ear -->
+  <polygon points="106,48 118,16 88,30" fill="#F97316" stroke="#3F2A1D" stroke-width="3.5" stroke-linejoin="round"/>
+  <polygon points="104,44 112,24 92,34" fill="#FED7AA" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Head -->
+  <ellipse cx="80" cy="58" rx="32" ry="26" fill="#F97316" stroke="#3F2A1D" stroke-width="4"/>
+  <!-- Cream cheeks -->
+  <path d="M 54,58 C 54,74 66,80 80,80 C 94,80 106,74 106,58 C 106,50 94,54 80,58 C 66,54 54,50 54,58 Z" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Eyes -->
+  <circle cx="70" cy="54" r="4" fill="#3F2A1D"/>
+  <circle cx="71.5" cy="52.5" r="1.3" fill="#FFFDF6"/>
+  <circle cx="90" cy="54" r="4" fill="#3F2A1D"/>
+  <circle cx="91.5" cy="52.5" r="1.3" fill="#FFFDF6"/>
+  <!-- Bindi -->
+  <circle cx="80" cy="46" r="2.8" fill="#DC2626"/>
+  <!-- Nose -->
+  <ellipse cx="80" cy="65" rx="3.5" ry="2.2" fill="#3F2A1D"/>
+  <path d="M 77,68 Q 80,72 83,68" fill="none" stroke="#3F2A1D" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

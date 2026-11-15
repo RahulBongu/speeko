@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Speeko - Choose Your Language</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400..900;1,6..12,400..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "error": "#ba1a1a",
+            "surface-container-high": "#ffe3d3",
+            "surface": "#fff8f5",
+            "on-secondary-fixed": "#341100",
+            "primary-fixed": "#7ffc97",
+            "tertiary-fixed": "#ffddb8",
+            "primary-container": "#00873a",
+            "on-error": "#ffffff",
+            "outline-variant": "#bdcaba",
+            "on-secondary-container": "#5c2400",
+            "inverse-surface": "#412c1f",
+            "on-primary": "#ffffff",
+            "primary-fixed-dim": "#62df7d",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#002109",
+            "secondary": "#9d4300",
+            "on-tertiary-container": "#fffbff",
+            "surface-variant": "#ffdbc8",
+            "surface-dim": "#f6d3bf",
+            "on-tertiary": "#ffffff",
+            "background": "#fff8f5",
+            "secondary-fixed-dim": "#ffb690",
+            "surface-tint": "#006e2d",
+            "on-surface": "#29170b",
+            "error-container": "#ffdad6",
+            "on-background": "#29170b",
+            "on-tertiary-fixed-variant": "#653e00",
+            "surface-container-low": "#fff1ea",
+            "inverse-on-surface": "#ffede5",
+            "on-tertiary-fixed": "#2a1700",
+            "on-secondary-fixed-variant": "#783200",
+            "on-surface-variant": "#3e4a3d",
+            "surface-bright": "#fff8f5",
+            "secondary-container": "#fd761a",
+            "inverse-primary": "#62df7d",
+            "primary": "#006b2c",
+            "tertiary-container": "#a36700",
+            "surface-container-highest": "#ffdbc8",
+            "surface-container": "#ffeadf",
+            "on-primary-fixed-variant": "#005320",
+            "on-error-container": "#93000a",
+            "secondary-fixed": "#ffdbca",
+            "on-primary-container": "#f7fff2",
+            "tertiary": "#825100",
+            "tertiary-fixed-dim": "#ffb95f",
+            "outline": "#6e7b6c",
+            "surface-container-lowest": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xl": "2.5rem",
+            "margin": "1rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "margin-tablet": "2rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "margin-desktop": "3rem"
+          },
+          "fontFamily": {
+            "label-md": ["Nunito Sans"],
+            "headline-sm": ["Nunito Sans"],
+            "body-md": ["Nunito Sans"],
+            "display-hero": ["Nunito Sans"],
+            "body-sm": ["Nunito Sans"],
+            "headline-lg-mobile": ["Nunito Sans"],
+            "headline-md": ["Nunito Sans"],
+            "label-lg": ["Nunito Sans"],
+            "label-sm": ["Nunito Sans"],
+            "headline-lg": ["Nunito Sans"],
+            "body-lg": ["Nunito Sans"]
+          },
+          "fontSize": {
+            "label-md": ["14px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "800" }],
+            "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "800" }],
+            "body-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "display-hero": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "900" }],
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "900" }],
+            "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "800" }],
+            "label-lg": ["16px", { "lineHeight": "20px", "letterSpacing": "0.04em", "fontWeight": "900" }],
+            "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "800" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "900" }],
+            "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background antialiased font-body-md min-h-screen flex justify-center selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Mobile Simulator Canvas -->
+<main class="w-full max-w-[420px] bg-background min-h-screen flex flex-col relative pb-32">
+<!-- Top Onboarding Header Bar -->
+<header class="sticky top-0 z-40 bg-surface/90 backdrop-blur-md px-4 pt-3 pb-2 flex items-center justify-between">
+<!-- Back Button -->
+<button aria-label="Go back" class="w-11 h-11 rounded-xl bg-surface-container-lowest border-2 border-on-background flex items-center justify-center shadow-[0_3px_0_0_#29170b] active:translate-y-0.5 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<span class="material-symbols-outlined text-on-background" data-icon="arrow_back">arrow_back</span>
+</button>
+<!-- Step Counter & Chunky Indicator -->
+<div class="flex-1 px-4 flex flex-col items-center">
+<div class="w-full bg-surface-container-highest rounded-full h-3.5 border-2 border-on-background overflow-hidden p-0.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)]">
+<div class="h-full bg-secondary-container rounded-full w-1/3 transition-all duration-300"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant mt-1">Step 1 of 3</span>
+</div>
+<!-- Streaks / Live Pill Icon placeholder -->
+<div class="flex items-center gap-1 bg-surface-container-low px-2.5 py-1.5 rounded-full border-2 border-on-background shadow-[0_2px_0_0_#29170b]">
+<span class="material-symbols-outlined text-secondary-container text-sm" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="text-label-sm font-label-sm text-on-surface">New</span>
+</div>
+</header>
+<!-- Main Scrollable Journey Canvas -->
+<div class="px-4 pt-2 flex flex-col space-y-4">
+<!-- Mascot & Interactive Speech Bubble Card -->
+<div class="relative pt-4 pb-2">
+<div class="flex items-end gap-3">
+<!-- Fox Mascot Avatar with 3D Ring Frame -->
+<div class="relative shrink-0 z-10">
+<div class="w-20 h-20 rounded-full border-2 border-on-background bg-surface-container shadow-[0_4px_0_0_#29170b] overflow-hidden flex items-center justify-center">
+<img alt="Friendly Speeko Fox Mascot waving" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ALJJyrCEpMHroHGvxxcPZwnp8x9YNmra2h09VwGmjqlOXwgPRRJxM6j0DK8su-HTroHanom5dvMisffxQu6hyGrfdxY1fKF64n8neAQtEYUtHPrxm0BA6a96-E21uyvoVMzIastQOoHToBzF0mrEWN0r_rZKXNTR-Y6b-MNvsiAa-O_jUxrtpU0GxW_dLUs8ZfRk7JF_Vt2aJhqVeIl7lqaARFGCDu-ihjkPYVxX64Foai9zy5KQNgxoi-EngFLR"/>
+</div>
+<!-- Little badge flag -->
+<div class="absolute -bottom-1 -right-1 bg-primary text-on-primary rounded-full w-6 h-6 border-2 border-on-background flex items-center justify-center shadow-[0_2px_0_0_#29170b]">
+<span class="material-symbols-outlined text-xs" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+</div>
+<!-- Speeko Fox Speech Bubble with Pointer -->
+<div class="relative flex-1 bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b]">
+<!-- Speech Bubble Tail -->
+<div class="absolute -left-2.5 bottom-4 w-0 h-0 border-t-[8px] border-t-transparent border-r-[10px] border-r-on-background border-b-[8px] border-b-transparent"></div>
+<div class="absolute -left-1.5 bottom-4 w-0 h-0 border-t-[7px] border-t-transparent border-r-[9px] border-r-surface-container-lowest border-b-[7px] border-b-transparent"></div>
+<p class="font-headline-sm text-headline-sm text-on-surface leading-snug">
+              Which flavour of India sounds fun today? 🦊
+            </p>
+</div>
+</div>
+</div>
+<!-- Headline Hero Section -->
+<div class="space-y-1">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-background font-black tracking-tight">
+          Choose your language
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant font-medium">
+          More than 400 million people speak these at home.
+        </p>
+</div>
+<!-- Search Input Container -->
+<div class="relative">
+<div class="flex items-center bg-surface-container-lowest rounded-2xl border-2 border-on-background px-3.5 py-2.5 shadow-[0_3px_0_0_#29170b] focus-within:shadow-[0_4px_0_0_#00873a] focus-within:border-primary-container transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none p-0 text-on-surface font-body-md focus:ring-0 focus:outline-none placeholder:text-outline" placeholder="Search languages..." type="text"/>
+<span class="material-symbols-outlined text-outline text-lg" data-icon="mic">mic</span>
+</div>
+</div>
+<!-- Section Sub-bar / Quick Filter Pill -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="translate" style="font-variation-settings: 'FILL' 1;">translate</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">11 National Languages</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded-full border border-on-background/30 text-label-sm font-label-sm text-on-surface">
+<span>Popular</span>
+<span class="material-symbols-outlined text-xs" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Language Grid: 11 Languages (Tactile 3D Cards) -->
+<div class="grid grid-cols-2 gap-3.5 pb-6">
+<!-- 1. HINDI (SELECTED STATE) -->
+<button class="relative text-left bg-primary-fixed/30 border-2 border-primary-container rounded-2xl p-3.5 shadow-[0_4px_0_0_#005320] flex flex-col justify-between h-[124px] active:translate-y-1 active:shadow-[0_1px_0_0_#005320] transition-transform">
+<!-- Selection Badge -->
+<div class="absolute -top-2 -right-2 bg-primary-container text-on-primary-container rounded-full w-6 h-6 border-2 border-on-background flex items-center justify-center shadow-[0_2px_0_0_#005320]">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="check">check</span>
+</div>
+<!-- Native Script -->
+<div class="flex items-start justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">हिन्दी</span>
+<span class="text-[10px] font-black uppercase tracking-wider bg-primary-container text-on-primary-container px-2 py-0.5 rounded-md border border-on-background/20">Selected</span>
+</div>
+<!-- English Label & Sub-pill -->
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Hindi</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-primary font-bold">
+<span>Devanagari</span>
+<span>·</span>
+<span>600M</span>
+</div>
+</div>
+</button>
+<!-- 2. TAMIL -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">தமிழ்</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Tamil</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Dravidian</span>
+<span>·</span>
+<span>85M</span>
+</div>
+</div>
+</button>
+<!-- 3. TELUGU -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">తెలుగు</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Telugu</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Andhra Script</span>
+<span>·</span>
+<span>96M</span>
+</div>
+</div>
+</button>
+<!-- 4. BENGALI -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">বাংলা</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Bengali</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Eastern Indo</span>
+<span>·</span>
+<span>107M</span>
+</div>
+</div>
+</button>
+<!-- 5. MARATHI -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">मराठी</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Marathi</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Devanagari</span>
+<span>·</span>
+<span>99M</span>
+</div>
+</div>
+</button>
+<!-- 6. GUJARATI -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">ગુજરાતી</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Gujarati</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Western Script</span>
+<span>·</span>
+<span>60M</span>
+</div>
+</div>
+</button>
+<!-- 7. KANNADA -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">ಕನ್ನಡ</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Kannada</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Karnataka</span>
+<span>·</span>
+<span>44M</span>
+</div>
+</div>
+</button>
+<!-- 8. MALAYALAM -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">മലയാളം</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Malayalam</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Kerala Script</span>
+<span>·</span>
+<span>38M</span>
+</div>
+</div>
+</button>
+<!-- 9. PUNJABI -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">ਪੰਜਾਬੀ</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Punjabi</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Gurmukhi</span>
+<span>·</span>
+<span>33M</span>
+</div>
+</div>
+</button>
+<!-- 10. ODIA -->
+<button class="text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex flex-col justify-between h-[124px] hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">ଓଡ଼ିଆ</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Odia</div>
+<div class="flex items-center gap-1 text-label-sm font-label-sm text-on-surface-variant font-medium">
+<span>Utkala Script</span>
+<span>·</span>
+<span>35M</span>
+</div>
+</div>
+</button>
+<!-- 11. URDU (Spans 2 columns or stands as full width celebratory card) -->
+<button class="col-span-2 text-left bg-surface-container-lowest border-2 border-on-background rounded-2xl p-3.5 shadow-[0_4px_0_0_#29170b] flex items-center justify-between hover:bg-surface-container-low active:translate-y-1 active:shadow-[0_1px_0_0_#29170b] transition-all">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-variant border-2 border-on-background flex items-center justify-center shadow-[0_2px_0_0_#29170b]">
+<span class="text-2xl font-bold text-on-surface">اردو</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Urdu</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">Nastaliq Script · 51M speakers</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Bottom Sticky Interactive Footer Action -->
+<footer class="fixed bottom-0 left-0 right-0 w-full max-w-[420px] mx-auto bg-surface/95 backdrop-blur-md px-4 pt-3 pb-6 border-t-2 border-on-background/10 z-50">
+<!-- Primary Chunky CTA Button -->
+<button class="w-full bg-primary-container text-on-primary-container py-3.5 px-6 rounded-2xl border-2 border-on-background shadow-[0_4px_0_0_#005320] active:translate-y-1 active:shadow-[0_1px_0_0_#005320] transition-all flex items-center justify-center gap-2 group">
+<span class="font-label-lg text-label-lg tracking-wider">Start learning Hindi</span>
+<span class="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<!-- Trust Sub-caption Fine Print -->
+<div class="flex items-center justify-center gap-1.5 mt-2.5 text-on-surface-variant text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-primary text-xs" data-icon="eco" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span>Free to start · progress saves locally</span>
+</div>
+</footer>
+</main>
+</body></html>

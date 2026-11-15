@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speeko — Brand Identity Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            nunito: ['Nunito', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif']
+          },
+          colors: {
+            brandCream: '#FFF9E0',
+            brandDark: '#3F2A1D',
+            brandGreen: '#16A34A',
+            brandFox: '#F97316',
+            brandAccent: '#F59E0B',
+            brandSurface: '#FFFDF6'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FFF9E0;
+      color: #3F2A1D;
+      font-family: 'Nunito', sans-serif;
+    }
+    .retro-border {
+      border: 3px solid #3F2A1D;
+    }
+    .retro-shadow-sm {
+      box-shadow: 0 4px 0 #3F2A1D;
+    }
+    .retro-shadow {
+      box-shadow: 0 6px 0 #3F2A1D;
+    }
+    .retro-shadow-lg {
+      box-shadow: 0 10px 0 #3F2A1D;
+    }
+    .retro-shadow-green {
+      box-shadow: 0 6px 0 #15803d;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-brandCream p-6 md:p-12 text-brandDark selection:bg-brandGreen selection:text-white">
+  
+  <div class="max-w-6xl mx-auto space-y-12">
+
+    <!-- Header Section -->
+    <header class="flex flex-col md:flex-row md:items-end justify-between border-b-4 border-brandDark pb-8 gap-6">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 rounded-full border-2 border-brandDark text-xs font-black uppercase tracking-wider text-brandDark">
+          <span class="w-2 h-2 rounded-full bg-brandGreen"></span> Brand Identity & Style Guide v1.0
+        </div>
+        <h1 class="text-4xl md:text-5xl font-black tracking-tight flex items-center gap-3">
+          Speeko <span class="text-2xl md:text-3xl font-normal text-brandDark/60">स्पीको</span>
+        </h1>
+        <p class="text-lg font-bold text-brandDark/75 max-w-xl">
+          Gamified Indian language learning app brand specification. Friendly, vibrant, encouraging, and authentically Desi.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 bg-white/70 px-4 py-3 rounded-2xl border-2 border-brandDark retro-shadow-sm self-start md:self-auto">
+        <div class="text-right">
+          <div class="text-xs uppercase font-extrabold text-brandDark/50 tracking-wider">Target Domain</div>
+          <div class="text-sm font-black text-brandDark">Indian EdTech / Language Gaming</div>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-brandGreen flex items-center justify-center text-white font-black text-lg border-2 border-brandDark">
+          🇮🇳
+        </div>
+      </div>
+    </header>
+
+    <!-- 1. PRIMARY LOGO LOCKUP -->
+    <section class="space-y-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-brandGreen text-white font-black flex items-center justify-center border-2 border-brandDark text-sm">01</span>
+          <h2 class="text-2xl font-black tracking-tight">Primary Logo Lockup</h2>
+        </div>
+        <span class="text-sm font-bold text-brandDark/60">Vector geometry + chunky lowercase wordmark</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Full Color Lockup on Light -->
+        <div class="bg-brandSurface p-8 md:p-12 rounded-3xl retro-border retro-shadow flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-4 right-4 text-xs font-black uppercase px-3 py-1 bg-amber-50 rounded-lg border-2 border-brandDark/30 text-brandDark/70">
+            Full Color (Standard)
+          </div>
+
+          <div class="my-10 flex items-center justify-center gap-5 sm:gap-6">
+            <!-- Geometric Fox Head SVG -->
+            <div class="w-20 h-20 sm:w-24 sm:h-24 transition-transform group-hover:scale-105 duration-200">
+              <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-sm">
+                <!-- Left Ear -->
+                <polygon points="20,44 14,14 42,28" fill="#F97316" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
+                <polygon points="22,40 18,20 36,30" fill="#FED7AA" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Right Ear -->
+                <polygon points="80,44 86,14 58,28" fill="#F97316" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
+                <polygon points="78,40 82,20 64,30" fill="#FED7AA" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Head Base -->
+                <ellipse cx="50" cy="56" rx="36" ry="30" fill="#F97316" stroke="#3F2A1D" stroke-width="4"/>
+                <!-- Cheeks/Snout Cream Patch -->
+                <path d="M 24,56 C 24,74 36,82 50,82 C 64,82 76,74 76,56 C 76,46 64,50 50,56 C 36,50 24,46 24,56 Z" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="3.5" stroke-linejoin="round"/>
+                <!-- Eyes -->
+                <circle cx="38" cy="50" r="4.5" fill="#3F2A1D"/>
+                <circle cx="39.5" cy="48.5" r="1.5" fill="#FFFDF6"/>
+                <circle cx="62" cy="50" r="4.5" fill="#3F2A1D"/>
+                <circle cx="63.5" cy="48.5" r="1.5" fill="#FFFDF6"/>
+                <!-- Bindi dot (Indian flair) -->
+                <circle cx="50" cy="42" r="3" fill="#DC2626"/>
+                <!-- Nose -->
+                <ellipse cx="50" cy="64" rx="4" ry="2.5" fill="#3F2A1D"/>
+                <!-- Mouth line -->
+                <path d="M 46,67 Q 50,71 54,67" fill="none" stroke="#3F2A1D" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <!-- Wordmark: chunky lowercase -->
+            <div class="flex items-baseline font-nunito font-black tracking-tight text-4xl sm:text-5xl md:text-6xl text-brandDark">
+              <span class="text-brandGreen">speek</span><span class="text-brandFox">o</span>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t-2 border-brandDark/10 flex items-center justify-between text-xs font-bold text-brandDark/60">
+            <span>Primary on Cream & White surfaces</span>
+            <span>Ratio 1:3.2 Lockup</span>
+          </div>
+        </div>
+
+        <!-- Mono White Lockup on Brand Dark -->
+        <div class="bg-brandDark p-8 md:p-12 rounded-3xl retro-border retro-shadow flex flex-col justify-between relative overflow-hidden group text-white">
+          <div class="absolute top-4 right-4 text-xs font-black uppercase px-3 py-1 bg-white/10 rounded-lg border border-white/20 text-white/90">
+            Monochrome Reversed (Dark)
+          </div>
+
+          <div class="my-10 flex items-center justify-center gap-5 sm:gap-6">
+            <!-- Monochromatic Fox SVG -->
+            <div class="w-20 h-20 sm:w-24 sm:h-24 transition-transform group-hover:scale-105 duration-200">
+              <svg viewBox="0 0 100 100" class="w-full h-full">
+                <!-- Left Ear -->
+                <polygon points="20,44 14,14 42,28" fill="#FFFFFF" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Right Ear -->
+                <polygon points="80,44 86,14 58,28" fill="#FFFFFF" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Head Base -->
+                <ellipse cx="50" cy="56" rx="36" ry="30" fill="#FFFFFF"/>
+                <!-- Negative Space Inner Face -->
+                <circle cx="38" cy="50" r="4.5" fill="#3F2A1D"/>
+                <circle cx="62" cy="50" r="4.5" fill="#3F2A1D"/>
+                <circle cx="50" cy="42" r="3" fill="#3F2A1D"/>
+                <ellipse cx="50" cy="64" rx="4.5" ry="3" fill="#3F2A1D"/>
+                <path d="M 45,67 Q 50,72 55,67" fill="none" stroke="#3F2A1D" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <!-- Monochromatic Wordmark -->
+            <div class="flex items-baseline font-nunito font-black tracking-tight text-4xl sm:text-5xl md:text-6xl text-white">
+              speeko
+            </div>
+          </div>
+
+          <div class="pt-4 border-t-2 border-white/15 flex items-center justify-between text-xs font-bold text-white/60">
+            <span>Reversed on dark backgrounds / signage</span>
+            <span>Single-pass screen printing compliant</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. APP ICON CONCEPTS & 3. FAVICON MARK -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- 2. App Icons (Span 2) -->
+      <section class="lg:col-span-2 space-y-5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-brandGreen text-white font-black flex items-center justify-center border-2 border-brandDark text-sm">02</span>
+            <h2 class="text-2xl font-black tracking-tight">App Icon Concepts</h2>
+          </div>
+          <span class="text-sm font-bold text-brandDark/60">iOS & Android squircle</span>
+        </div>
+
+        <div class="bg-brandSurface p-8 rounded-3xl retro-border retro-shadow">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            
+            <!-- Concept A: Fox Head centered on Vibrant Green -->
+            <div class="flex flex-col items-center gap-4 group">
+              <div class="w-32 h-32 rounded-[28px] bg-brandGreen p-3 retro-border shadow-[0_8px_0_#15803d] flex items-center justify-center transition-transform group-hover:-translate-y-1">
+                <svg viewBox="0 0 100 100" class="w-24 h-24">
+                  <polygon points="20,44 14,14 42,28" fill="#F97316" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
+                  <polygon points="22,40 18,20 36,30" fill="#FED7AA" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+                  <polygon points="80,44 86,14 58,28" fill="#F97316" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
+                  <polygon points="78,40 82,20 64,30" fill="#FED7AA" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+                  <ellipse cx="50" cy="56" rx="36" ry="30" fill="#F97316" stroke="#3F2A1D" stroke-width="4"/>
+                  <path d="M 24,56 C 24,74 36,82 50,82 C 64,82 76,74 76,56 C 76,46 64,50 50,56 C 36,50 24,46 24,56 Z" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="3.5" stroke-linejoin="round"/>
+                  <circle cx="38" cy="50" r="4.5" fill="#3F2A1D"/>
+                  <circle cx="39.5" cy="48.5" r="1.5" fill="#FFFDF6"/>
+                  <circle cx="62" cy="50" r="4.5" fill="#3F2A1D"/>
+                  <circle cx="63.5" cy="48.5" r="1.5" fill="#FFFDF6"/>
+                  <circle cx="50" cy="42" r="3" fill="#DC2626"/>
+                  <ellipse cx="50" cy="64" rx="4" ry="2.5" fill="#3F2A1D"/>
+                  <path d="M 46,67 Q 50,71 54,67" fill="none" stroke="#3F2A1D" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="text-center">
+                <span class="text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Concept A (Hero)</span>
+                <p class="text-sm font-bold text-brandDark mt-1.5">Fox Head on Green</p>
+                <p class="text-xs text-brandDark/60">High contrast store standout</p>
+              </div>
+            </div>
+
+            <!-- Concept B: White Fox Head on Cream -->
+            <div class="flex flex-col items-center gap-4 group">
+              <div class="w-32 h-32 rounded-[28px] bg-brandCream p-3 retro-border retro-shadow flex items-center justify-center transition-transform group-hover:-translate-y-1">
+                <svg viewBox="0 0 100 100" class="w-24 h-24">
+                  <!-- Outer bold outline for silhouette -->
+                  <polygon points="20,44 14,14 42,28" fill="#FFFFFF" stroke="#3F2A1D" stroke-width="4.5" stroke-linejoin="round"/>
+                  <polygon points="80,44 86,14 58,28" fill="#FFFFFF" stroke="#3F2A1D" stroke-width="4.5" stroke-linejoin="round"/>
+                  <ellipse cx="50" cy="56" rx="36" ry="30" fill="#FFFFFF" stroke="#3F2A1D" stroke-width="4.5"/>
+                  <circle cx="38" cy="50" r="4.5" fill="#3F2A1D"/>
+                  <circle cx="62" cy="50" r="4.5" fill="#3F2A1D"/>
+                  <circle cx="50" cy="42" r="3" fill="#F97316"/>
+                  <ellipse cx="50" cy="64" rx="4" ry="2.5" fill="#3F2A1D"/>
+                  <path d="M 46,67 Q 50,71 54,67" fill="none" stroke="#3F2A1D" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="text-center">
+                <span class="text-xs font-black bg-stone-100 text-stone-700 border border-stone-300 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Concept B</span>
+                <p class="text-sm font-bold text-brandDark mt-1.5">White Fox on Cream</p>
+                <p class="text-xs text-brandDark/60">Minimalist & editorial look</p>
+              </div>
+            </div>
+
+            <!-- Concept C: Wordmark only Green on Cream -->
+            <div class="flex flex-col items-center gap-4 group">
+              <div class="w-32 h-32 rounded-[28px] bg-brandCream p-3 retro-border retro-shadow flex flex-col items-center justify-center transition-transform group-hover:-translate-y-1">
+                <div class="font-nunito font-black text-3xl tracking-tight text-brandGreen">
+                  spee<span class="text-brandFox">ko</span>
+                </div>
+                <div class="w-10 h-1.5 bg-brandDark rounded-full mt-2"></div>
+              </div>
+              <div class="text-center">
+                <span class="text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Concept C</span>
+                <p class="text-sm font-bold text-brandDark mt-1.5">Wordmark on Cream</p>
+                <p class="text-xs text-brandDark/60">Typographic focus</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Favicon / Glyph Mark (Span 1) -->
+      <section class="space-y-5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-brandGreen text-white font-black flex items-center justify-center border-2 border-brandDark text-sm">03</span>
+            <h2 class="text-2xl font-black tracking-tight">Favicon & Glyph</h2>
+          </div>
+        </div>
+
+        <div class="bg-brandSurface p-8 rounded-3xl retro-border retro-shadow flex flex-col items-center justify-between h-[230px]">
+          <div class="flex items-center justify-center flex-1 gap-6">
+            <!-- 64px circular glyph -->
+            <div class="relative group">
+              <div class="w-20 h-20 rounded-full bg-amber-100 retro-border retro-shadow-sm flex items-center justify-center p-2">
+                <svg viewBox="0 0 100 100" class="w-16 h-16">
+                  <polygon points="20,44 14,14 42,28" fill="#F97316" stroke="#3F2A1D" stroke-width="4.5" stroke-linejoin="round"/>
+                  <polygon points="80,44 86,14 58,28" fill="#F97316" stroke="#3F2A1D" stroke-width="4.5" stroke-linejoin="round"/>
+                  <ellipse cx="50" cy="56" rx="36" ry="30" fill="#F97316" stroke="#3F2A1D" stroke-width="4.5"/>
+                  <path d="M 24,56 C 24,74 36,82 50,82 C 64,82 76,74 76,56 C 76,46 64,50 50,56 C 36,50 24,46 24,56 Z" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
+                  <circle cx="38" cy="50" r="4.5" fill="#3F2A1D"/>
+                  <circle cx="62" cy="50" r="4.5" fill="#3F2A1D"/>
+                  <circle cx="50" cy="42" r="3" fill="#DC2626"/>
+                  <ellipse cx="50" cy="64" rx="4" ry="2.5" fill="#3F2A1D"/>
+                </svg>
+              </div>
+              <span class="absolute -bottom-2 -right-2 text-[10px] font-black bg-brandGreen text-white px-1.5 py-0.5 rounded-md border border-brandDark">32px</span>
+            </div>
+
+            <!-- 32px mini browser tab mockup -->
+            <div class="bg-white px-3 py-2 rounded-xl border-2 border-brandDark text-xs font-bold flex items-center gap-2 retro-shadow-sm">
+              <div class="w-5 h-5 rounded-full bg-amber-100 border border-brandDark flex items-center justify-center overflow-hidden">
+                <div class="w-3.5 h-3.5 bg-brandFox rounded-full"></div>
+              </div>
+              <span class="text-brandDark/80">Speeko | Learn...</span>
+            </div>
+          </div>
+
+          <div class="text-center w-full pt-3 border-t-2 border-brandDark/10">
+            <span class="text-xs font-black text-brandDark/70 uppercase tracking-wider">Browser & Notification Token</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 4. MASCOT: SPEEKO FOX (TWO POSES) -->
+    <section class="space-y-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-brandGreen text-white font-black flex items-center justify-center border-2 border-brandDark text-sm">04</span>
+          <h2 class="text-2xl font-black tracking-tight">Mascot Characters: Two Poses</h2>
+        </div>
+        <span class="text-sm font-bold text-brandDark/60">Duolingo-grade flat vector sticker style</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Pose 1: Cheerful Waving Pose -->
+        <div class="bg-brandSurface p-8 rounded-3xl retro-border retro-shadow flex flex-col sm:flex-row items-center gap-6 group">
+          <div class="w-48 h-48 rounded-2xl bg-amber-50/80 border-2 border-brandDark/30 p-2 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-102 transition-transform">
+            <img src="https://lh3.googleusercontent.com/aida/ALJJyrCEpMHroHGvxxcPZwnp8x9YNmra2h09VwGmjqlOXwgPRRJxM6j0DK8su-HTroHanom5dvMisffxQu6hyGrfdxY1fKF64n8neAQtEYUtHPrxm0BA6a96-E21uyvoVMzIastQOoHToBzF0mrEWN0r_rZKXNTR-Y6b-MNvsiAa-O_jUxrtpU0GxW_dLUs8ZfRk7JF_Vt2aJhqVeIl7lqaARFGCDu-ihjkPYVxX64Foai9zy5KQNgxoi-EngFLR" alt="Speeko Fox Mascot Waving" class="w-full h-full object-contain drop-shadow-md rounded-xl">
+          </div>
+          <div class="space-y-3 text-left">
+            <div class="inline-block px-3 py-1 rounded-full bg-emerald-100 border border-brandGreen text-brandGreen font-black text-xs uppercase tracking-wider">
+              Pose A: The Welcomer
+            </div>
+            <h3 class="text-xl font-black text-brandDark">Waving & Encouraging</h3>
+            <p class="text-sm font-bold text-brandDark/70 leading-relaxed">
+              Used in onboarding flows, lesson start screens, and daily greetings. Expresses immediate warmth, friendliness, and hospitality.
+            </p>
+            <div class="flex flex-wrap gap-2 pt-2">
+              <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg bg-white border border-brandDark/30 text-brandDark">Marigold Flower</span>
+              <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg bg-white border border-brandDark/30 text-brandDark">Saffron Bandana</span>
+              <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg bg-white border border-brandDark/30 text-brandDark">Bindi Dot</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pose 2: Attentive Sitting Pose (SVG Vector Crafted) -->
+        <div class="bg-brandSurface p-8 rounded-3xl retro-border retro-shadow flex flex-col sm:flex-row items-center gap-6 group">
+          <div class="w-48 h-48 rounded-2xl bg-amber-50/80 border-2 border-brandDark/30 p-4 flex items-center justify-center flex-shrink-0 group-hover:scale-102 transition-transform">
+            <!-- Full Body Sitting Fox Vector Illustration -->
+            <svg viewBox="0 0 160 160" class="w-full h-full">
+              <!-- Tail -->
+              <path d="M 45,120 C 15,120 10,75 35,65 C 25,80 35,110 55,110 Z" fill="#F97316" stroke="#3F2A1D" stroke-width="3.5" stroke-linejoin="round"/>
+              <path d="M 35,65 C 38,72 32,82 45,86 C 40,80 38,75 35,65 Z" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="2"/>
+              
+              <!-- Body Sitting -->
+              <ellipse cx="80" cy="112" rx="34" ry="30" fill="#F97316" stroke="#3F2A1D" stroke-width="4"/>
+              <!-- Cream Chest Belly -->
+              <ellipse cx="80" cy="116" rx="20" ry="22" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="3"/>
+
+              <!-- Little Paws in front -->
+              <ellipse cx="68" cy="136" rx="8" ry="6" fill="#F97316" stroke="#3F2A1D" stroke-width="3"/>
+              <ellipse cx="92" cy="136" rx="8" ry="6" fill="#F97316" stroke="#3F2A1D" stroke-width="3"/>
+              
+              <!-- Saffron Scarf / Bandana -->
+              <path d="M 60,86 Q 80,98 100,86 Q 80,104 60,86 Z" fill="#F59E0B" stroke="#3F2A1D" stroke-width="3"/>
+              <polygon points="76,96 72,112 84,100" fill="#F59E0B" stroke="#3F2A1D" stroke-width="2"/>
+
+              <!-- Head Base -->
+              <!-- Left Ear -->
+              <polygon points="54,48 42,16 72,30" fill="#F97316" stroke="#3F2A1D" stroke-width="3.5" stroke-linejoin="round"/>
+              <polygon points="56,44 48,24 68,34" fill="#FED7AA" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+              <!-- Right Ear -->
+              <polygon points="106,48 118,16 88,30" fill="#F97316" stroke="#3F2A1D" stroke-width="3.5" stroke-linejoin="round"/>
+              <polygon points="104,44 112,24 92,34" fill="#FED7AA" stroke="#3F2A1D" stroke-width="2" stroke-linejoin="round"/>
+              <!-- Head -->
+              <ellipse cx="80" cy="58" rx="32" ry="26" fill="#F97316" stroke="#3F2A1D" stroke-width="4"/>
+              <!-- White Cheeks -->
+              <path d="M 54,58 C 54,74 66,80 80,80 C 94,80 106,74 106,58 C 106,50 94,54 80,58 C 66,54 54,50 54,58 Z" fill="#FFFDF6" stroke="#3F2A1D" stroke-width="3" stroke-linejoin="round"/>
+              <!-- Eyes -->
+              <circle cx="70" cy="54" r="4" fill="#3F2A1D"/>
+              <circle cx="71.5" cy="52.5" r="1.3" fill="#FFFDF6"/>
+              <circle cx="90" cy="54" r="4" fill="#3F2A1D"/>
+              <circle cx="91.5" cy="52.5" r="1.3" fill="#FFFDF6"/>
+              <!-- Bindi -->
+              <circle cx="80" cy="46" r="2.8" fill="#DC2626"/>
+              <!-- Nose -->
+              <ellipse cx="80" cy="65" rx="3.5" ry="2.2" fill="#3F2A1D"/>
+              <path d="M 77,68 Q 80,72 83,68" fill="none" stroke="#3F2A1D" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="space-y-3 text-left">
+            <div class="inline-block px-3 py-1 rounded-full bg-amber-100 border border-brandAccent text-brandAccent font-black text-xs uppercase tracking-wider">
+              Pose B: The Listener
+            </div>
+            <h3 class="text-xl font-black text-brandDark">Sitting & Attentive</h3>
+            <p class="text-sm font-bold text-brandDark/70 leading-relaxed">
+              Designed for interactive lesson exercises, quiz cards, progress milestone modals, and listening drills. Calmer posture for focused study.
+            </p>
+            <div class="flex flex-wrap gap-2 pt-2">
+              <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg bg-white border border-brandDark/30 text-brandDark">Curled Fox Tail</span>
+              <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg bg-white border border-brandDark/30 text-brandDark">Sitting Paws</span>
+              <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg bg-white border border-brandDark/30 text-brandDark">Active Learner State</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. COLOR PALETTE CHIPS & 6. TYPE SPECIMEN -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- 5. Color Palette Chips (Span 7) -->
+      <section class="lg:col-span-7 space-y-5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-brandGreen text-white font-black flex items-center justify-center border-2 border-brandDark text-sm">05</span>
+            <h2 class="text-2xl font-black tracking-tight">Color Palette Chips</h2>
+          </div>
+          <span class="text-sm font-bold text-brandDark/60">5 core tokens</span>
+        </div>
+
+        <div class="bg-brandSurface p-8 rounded-3xl retro-border retro-shadow">
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
+            
+            <!-- Primary Green -->
+            <div class="flex flex-col rounded-2xl overflow-hidden retro-border bg-white retro-shadow-sm group">
+              <div class="h-20 bg-brandGreen flex items-end p-2 transition-transform group-hover:scale-105 duration-150"></div>
+              <div class="p-2.5 space-y-1">
+                <div class="text-[11px] font-black uppercase text-brandDark/60">Primary</div>
+                <div class="font-black text-sm text-brandDark">#16A34A</div>
+                <div class="text-[10px] font-bold text-brandDark/70">Success & CTA</div>
+              </div>
+            </div>
+
+            <!-- Fox Orange -->
+            <div class="flex flex-col rounded-2xl overflow-hidden retro-border bg-white retro-shadow-sm group">
+              <div class="h-20 bg-brandFox flex items-end p-2 transition-transform group-hover:scale-105 duration-150"></div>
+              <div class="p-2.5 space-y-1">
+                <div class="text-[11px] font-black uppercase text-brandDark/60">Fox</div>
+                <div class="font-black text-sm text-brandDark">#F97316</div>
+                <div class="text-[10px] font-bold text-brandDark/70">Mascot & Energy</div>
+              </div>
+            </div>
+
+            <!-- Cream -->
+            <div class="flex flex-col rounded-2xl overflow-hidden retro-border bg-white retro-shadow-sm group">
+              <div class="h-20 bg-brandCream border-b-2 border-brandDark/20 flex items-end p-2 transition-transform group-hover:scale-105 duration-150"></div>
+              <div class="p-2.5 space-y-1">
+                <div class="text-[11px] font-black uppercase text-brandDark/60">Cream</div>
+                <div class="font-black text-sm text-brandDark">#FFF9E0</div>
+                <div class="text-[10px] font-bold text-brandDark/70">Warm Backdrop</div>
+              </div>
+            </div>
+
+            <!-- Dark -->
+            <div class="flex flex-col rounded-2xl overflow-hidden retro-border bg-white retro-shadow-sm group">
+              <div class="h-20 bg-brandDark flex items-end p-2 transition-transform group-hover:scale-105 duration-150"></div>
+              <div class="p-2.5 space-y-1">
+                <div class="text-[11px] font-black uppercase text-brandDark/60">Dark</div>
+                <div class="font-black text-sm text-brandDark">#3F2A1D</div>
+                <div class="text-[10px] font-bold text-brandDark/70">Outline & Text</div>
+              </div>
+            </div>
+
+            <!-- Accent Marigold -->
+            <div class="flex flex-col rounded-2xl overflow-hidden retro-border bg-white retro-shadow-sm group col-span-2 sm:col-span-1">
+              <div class="h-20 bg-brandAccent flex items-end p-2 transition-transform group-hover:scale-105 duration-150"></div>
+              <div class="p-2.5 space-y-1">
+                <div class="text-[11px] font-black uppercase text-brandDark/60">Accent</div>
+                <div class="font-black text-sm text-brandDark">#F59E0B</div>
+                <div class="text-[10px] font-bold text-brandDark/70">Streaks & XP</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Type Specimen (Span 5) -->
+      <section class="lg:col-span-5 space-y-5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-brandGreen text-white font-black flex items-center justify-center border-2 border-brandDark text-sm">06</span>
+            <h2 class="text-2xl font-black tracking-tight">Type Specimen</h2>
+          </div>
+          <span class="text-sm font-bold text-brandDark/60">Nunito ExtraBold</span>
+        </div>
+
+        <div class="bg-brandSurface p-8 rounded-3xl retro-border retro-shadow flex flex-col justify-between space-y-6">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black uppercase px-2.5 py-0.5 rounded-md bg-amber-100 text-brandDark border border-brandDark/30">Primary Headline Font</span>
+              <span class="text-xs font-bold text-brandDark/50">Google Fonts · Nunito 900</span>
+            </div>
+
+            <p class="font-nunito font-black text-3xl sm:text-4xl text-brandDark leading-tight tracking-tight">
+              &ldquo;Speak a little more, every day.&rdquo;
+            </p>
+            <p class="font-nunito font-extrabold text-lg text-brandGreen">
+              &ldquo;रोज़ थोड़ा और बोलिए।&rdquo;
+            </p>
+          </div>
+
+          <div class="pt-4 border-t-2 border-brandDark/10 space-y-2">
+            <div class="flex justify-between items-center text-xs font-bold text-brandDark/70">
+              <span>Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm</span>
+              <span class="font-black text-brandDark">0123456789</span>
+            </div>
+            <div class="text-[11px] font-extrabold text-brandDark/50 uppercase tracking-wider">
+              Rounded terminals · Maximum legibility for mobile gamification
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Specifications / Design Directives -->
+    <footer class="pt-6 border-t-4 border-brandDark flex flex-col sm:flex-row items-center justify-between text-xs font-black text-brandDark/70 gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-brandFox"></span>
+        <span>Speeko Design System & Brand Asset Board</span>
+      </div>
+      <div>
+        <span>Crafted for high-energy multilingual fluency • No 3D renders</span>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
