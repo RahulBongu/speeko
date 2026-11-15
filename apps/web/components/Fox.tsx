@@ -1,4 +1,10 @@
 import type { CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+
+const RiveLayer = dynamic(() => import('./RiveLayer').then((module) => module.RiveLayer), {
+  ssr: false,
+});
 
 export type FoxMood = 'idle' | 'happy' | 'sad' | 'celebrate';
 
@@ -6,6 +12,7 @@ export interface FoxProps {
   mood?: FoxMood;
   className?: string;
   title?: string;
+  riveSrc?: string;
 }
 
 const MOOD_LABEL: Record<FoxMood, string> = {
@@ -20,10 +27,43 @@ const MOOD_LABEL: Record<FoxMood, string> = {
  * stay lightweight; a Rive rig can replace this later without touching the
  * surrounding UI.
  */
-export function Fox({ mood = 'idle', className, title }: FoxProps) {
+export function Fox({ mood = 'idle', className, title, riveSrc }: FoxProps) {
+  const resolvedRiveSrc = riveSrc ?? process.env.NEXT_PUBLIC_RIVE_FOX_URL;
+  const [riveAvailable, setRiveAvailable] = useState(Boolean(resolvedRiveSrc) === false);
+
+  useEffect(() => {
+    if (!resolvedRiveSrc) {
+      setRiveAvailable(false);
+      return;
+    }
+    let cancelled = false;
+    fetch(resolvedRiveSrc, { method: 'HEAD' })
+      .then((response) => {
+        if (!cancelled) setRiveAvailable(response.ok);
+      })
+      .catch(() => {
+        if (!cancelled) setRiveAvailable(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [resolvedRiveSrc]);
+
   const happy = mood === 'happy' || mood === 'celebrate';
   const sad = mood === 'sad';
   const celebrate = mood === 'celebrate';
+
+  if (resolvedRiveSrc && riveAvailable) {
+    return (
+      <div
+        className={className}
+        role="img"
+        aria-label={title ?? MOOD_LABEL[mood]}
+      >
+        <RiveLayer src={resolvedRiveSrc} />
+      </div>
+    );
+  }
 
   const leftEarStyle: CSSProperties = {
     transformOrigin: '76px 74px',

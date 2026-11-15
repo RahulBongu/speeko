@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@rive-app/react-canvas": "^4.39.0",
     "@speeko/core": "workspace:*",
     "better-auth": "^1.7.25",
     "next": "15.1.3",
