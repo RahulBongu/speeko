@@ -13,7 +13,8 @@ A Duolingo-style language-learning app for ten Indian languages, built with orig
 | Web | Next.js 15 (App Router), React 19, Tailwind CSS |
 | Mobile | Expo SDK 53, expo-router, React Native |
 | API | Fastify 5, Drizzle ORM, pglite (dev) / Postgres |
-| Core | TypeScript answer grading, streak math, content schemas |
+| Auth | Better Auth (email + password sessions) |
+| Core | TypeScript answer grading, streak math, progress merging, content schemas |
 | Content | Zod-validated JSON courses, compiled into a static bundle |
 | Tooling | pnpm workspaces, Turborepo, Vitest |
 
@@ -21,19 +22,19 @@ A Duolingo-style language-learning app for ten Indian languages, built with orig
 
 ```bash
 pnpm install
-pnpm --filter @speeko/web dev
+pnpm dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. `pnpm dev` starts the web app on port 3000 and the API on port 3001. The API creates a local pglite database automatically on first run — no database setup required.
 
 | Command | What it does |
 | --- | --- |
-| `pnpm dev` | All dev servers through Turbo |
+| `pnpm dev` | Web + API through Turbo |
 | `pnpm --filter @speeko/web dev` | Web app on port 3000 (syncs courses first) |
-| `pnpm --filter @speeko/api dev` | API on port 3001 (`/health`, locales) |
+| `pnpm --filter @speeko/api dev` | API on port 3001 (`/health`, `/api/auth/*`, `/api/progress`) |
 | `pnpm --filter @speeko/mobile start` | Expo Go / emulator |
 | `pnpm typecheck` | TypeScript across every package |
-| `pnpm test` | Vitest suites for core grading and all course content |
+| `pnpm test` | Vitest suites for grading, progress merging, and all course content |
 | `pnpm build` | Production builds for web, API, mobile-web, content |
 | `pnpm sync:content` | Rebuild courses into `apps/web/public/courses` |
 
@@ -43,6 +44,8 @@ Web pages:
 - `/learn` — language picker and continue-learning card
 - `/learn/[courseId]` — unit path with locked/current/completed lessons
 - `/lesson/[courseId]/[lessonId]` — the lesson player
+- `/sign-in`, `/sign-up` — account access
+- `/account` — profile, cloud sync status, and sign out
 - `/studio` — course JSON authoring with live validation and download
 
 ## Lesson player
@@ -56,16 +59,29 @@ Each lesson starts with **5 hearts**, one answer per exercise, and a progress ba
 - **Exit guard**, out-of-hearts screen, retry, completion summary, confetti, and next-lesson navigation are all implemented.
 - **Mascot:** Speeko the fox is an original inline SVG with idle, happy, sad, and celebrate moods. A Rive animation can replace it later without changing the player shell.
 
-## Progress model
+## Progress and accounts
 
-Progress is currently stored in the browser under `speeko.progress.v1` and is intentionally shaped like the future server model:
+Guests learn without an account. Progress is stored in the browser under `speeko.progress.v1` and is shaped like the server model:
 
 - Completed lessons with accuracy, XP earned, and timestamp
 - Total XP, level, streak, and last active date
 - Daily XP toward a 50 XP goal
 - Last course and lesson for the continue card
 
-A completed lesson unlocks the next one in its unit. Streaks use the shared `updateStreak` helper from `@speeko/core`. Better Auth and server-side progress sync are planned; the local store is the migration source.
+Signing up merges the local snapshot into the account, so nothing earned as a guest is lost. While signed in, every lesson save is pushed to the API in the background; opening the app on another device pulls the cloud snapshot and merges it back. The merge is conservative: lesson records are unioned, and XP/streak totals take the higher value instead of double-counting.
+
+Authentication uses Better Auth email + password sessions. The API mounts the Better Auth handler at `/api/auth/*` and protects `GET/PUT /api/progress` with the session cookie. Progress is stored as a validated JSON snapshot per user, which keeps the local and cloud models identical while leaving room for normalized tables later.
+
+Local development needs no configuration. To customize, copy the examples:
+
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env.local
+```
+
+`BETTER_AUTH_SECRET` is required in production (the API refuses to start without it). Without `DATABASE_URL`, the API uses pglite at `apps/api/data`; point `DATABASE_URL` at Postgres to use a hosted database instead.
+
+A completed lesson unlocks the next one in its unit. Streaks use the shared `updateStreak` helper from `@speeko/core`; snapshot merging and validation live there too.
 
 ## Content pipeline
 
@@ -86,7 +102,7 @@ Authoring workflow: open `/studio`, paste or edit course JSON, validate live, do
 
 ```
 apps/
-  api/        Fastify + Drizzle service (pglite for local dev)
+  api/        Fastify + Drizzle + Better Auth (pglite for local dev)
   web/        Next.js app, lesson player, progress store, mascot
   mobile/     Expo app sharing @speeko/core
 packages/
@@ -98,13 +114,14 @@ content/      Per-locale course JSON
 ## Verification
 
 - `pnpm typecheck` — 5/5 packages clean
-- `pnpm test` — 37 tests (26 core + 11 content), all passing
+- `pnpm test` — 43 tests (32 core + 11 content), all passing
 - `pnpm build` — web, API, mobile-web export, and content bundle all succeed
-- End-to-end browser checks cover the full lesson flow, all ten exercise boards, hearts/out-of-hearts, pair mismatch/reset, progress persistence and unlocking, mobile layouts, and the exit modal, with no console errors
+- Fresh-database migration check passes on pglite
+- End-to-end browser checks cover the full lesson flow, all ten exercise boards, hearts/out-of-hearts, pair mismatch/reset, progress persistence and unlocking, account creation, guest-progress merge, cloud sync on a second browser, sign-out, mobile layouts, and the exit modal, with no console errors
 
 ## Roadmap
 
-1. Better Auth + server-side progress sync
-2. Rive fox with animation states
-3. Android APK via EAS
-4. Expanded course content beyond the starter tier
+1. Rive fox with animation states
+2. Android APK via EAS
+3. Expanded course content beyond the starter tier
+4. Native mobile account and sync client
