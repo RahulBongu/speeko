@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { buildHabitReport, dayKeyInTimeZone, historyFromLessonEvents } from '@speeko/core';
 import { getDb } from '../db/client.js';
-import { lessonEvents } from '../db/schema.js';
+import { lessonEvents, userInventory } from '../db/schema.js';
 import { readProgress } from '../progress-store.js';
 import { sessionFromHeaders } from './auth.js';
 
@@ -44,6 +44,19 @@ export async function habitRoutes(app: FastifyInstance) {
       timeZone: progress.timeZone,
       dailyGoal: progress.dailyGoal,
     });
+
+    const [freezeRow] = await db
+      .select({ quantity: userInventory.quantity })
+      .from(userInventory)
+      .where(and(eq(userInventory.userId, userId), eq(userInventory.itemId, 'streak-freeze')))
+      .limit(1);
+    const credits = freezeRow?.quantity ?? 0;
+    if (credits > 0) {
+      report.streak.freezesAvailable = Math.min(
+        report.streak.maxFreezes,
+        report.streak.freezesAvailable + credits,
+      );
+    }
 
     return reply.send({ habits: report });
   });

@@ -60,3 +60,12 @@ phase report or `PROGRESS.md`, not here.
 | D29 | **Signed-in habit history is event-derived.** | Quests, streaks, the calendar, and achievements derive from append-only `lesson_events`, deduped by `attemptId`. The progress snapshot contributes only `dailyGoal` and `timeZone`. `PUT /api/progress` keeps those preferences even when lesson history is more recent elsewhere. |
 | D30 | **Guest habit data is device-derived and labelled.** | Guests see activity saved in this browser and the page says so. It is never presented as verified or shared history. |
 | D31 | **Activity is stored per day and merged by the larger value.** | v2 snapshots now include `activity: Record<day, {xp, lessons}>`. Repeated syncs and merges keep the larger day aggregate, so the same lesson can never be double-counted. v1 snapshots seed activity from completed lessons and `lastActiveDate`; v1 data is still not rewritten. |
+
+## P7 — Gems and shop
+
+| ID | Decision | Rationale / impact |
+| --- | --- | --- |
+| D32 | **Gems are server-verified and ledger-based.** | `gem_ledger` is append-only with a per-user `sourceKey` idempotency key. Lessons award +5, completed daily quests award +10, and purchases subtract their price. Balances derive from the ledger. |
+| D33 | **The shop sells original fox cosmetics and streak freezes only.** | No real-money payments, ads, or external services. Cosmetics are one-time purchases; streak freezes add a freeze credit up to the existing cap of two. |
+| D34 | **Purchases are serialized per user.** | `SELECT ... FOR UPDATE` on the user row plus a unique `sourceKey` prevents double-spend under concurrent requests. Insufficient gems, already-owned, and full-freeze states return honest 409 responses. |
+| D35 | **Quest gems are awarded for completed daily quests.** | Daily quest completion credits +10 gems idempotently. Weekly quests remain progress-only. |

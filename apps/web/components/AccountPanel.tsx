@@ -1,14 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { DAILY_GOAL } from '@/lib/progress';
 import { useProgress } from '@/lib/use-progress';
+import { fetchGems } from '@/lib/shop';
 import { Fox } from './Fox';
 import { ProgressBar } from './ProgressBar';
 import { StatPill } from './AppHeader';
-import { BoltIcon, FlameIcon, TrophyIcon, CheckIcon, StarIcon, LockIcon } from './icons';
+import { BoltIcon, FlameIcon, TrophyIcon, CheckIcon, StarIcon, LockIcon, GemIcon } from './icons';
 
 /**
  * Solo XP milestones. These are not a league: there are no peers and nothing
@@ -42,6 +44,25 @@ export function AccountPanel() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const progress = useProgress();
+  const [gemBalance, setGemBalance] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!session) {
+      setGemBalance(null);
+      return;
+    }
+    let active = true;
+    fetchGems()
+      .then((result) => {
+        if (active && result) setGemBalance(result.balance);
+      })
+      .catch(() => {
+        if (active) setGemBalance(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [session]);
 
   if (isPending) {
     return (
@@ -94,7 +115,7 @@ export function AccountPanel() {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
         {[
           <StatPill key="streak" icon={<FlameIcon className="h-4 w-4 animate-bob" />} value={<span className="inline-block animate-pop">{progress?.streak ?? 0}</span>} label="Day streak" tone="streak" />,
           <StatPill key="xp" icon={<BoltIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:120ms]">{`${progress?.xp ?? 0} XP`}</span>} label="Total XP" tone="xp" />,
@@ -105,6 +126,13 @@ export function AccountPanel() {
             value={<span className="inline-block animate-pop [animation-delay:360ms]">{`${Math.min(todayXp, dailyGoal)}/${dailyGoal} XP`}</span>}
             label="Daily XP goal"
             tone="goal"
+          />,
+          <StatPill
+            key="gems"
+            icon={<GemIcon className="h-4 w-4" />}
+            value={<span className="inline-block animate-pop [animation-delay:440ms]">{gemBalance ?? '—'}</span>}
+            label="Gems"
+            tone="xp"
           />,
         ].map((pill, index) => (
           <div
@@ -152,6 +180,9 @@ export function AccountPanel() {
           counted for your account.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
+          <Link href="/shop" className="btn-secondary">
+            Shop
+          </Link>
           <Link href="/habits" className="btn-secondary">
             Habits &amp; calendar
           </Link>

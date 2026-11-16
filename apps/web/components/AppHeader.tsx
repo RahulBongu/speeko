@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Fox } from './Fox';
 import { AuthMenu } from './AuthMenu';
-import { FlameIcon } from './icons';
+import { FlameIcon, ShopIcon } from './icons';
 
 export function Brand({ href = '/' }: { href?: string }) {
   return (
@@ -17,7 +17,7 @@ export function Brand({ href = '/' }: { href?: string }) {
 export function SiteHeader({
   active,
 }: {
-  active?: 'learn' | 'practice' | 'habits' | 'studio' | 'account';
+  active?: 'learn' | 'practice' | 'habits' | 'shop' | 'studio' | 'account';
 }) {
   const linkClass = (isActive: boolean) =>
     `focus-ring whitespace-nowrap rounded-xl px-1.5 py-2 font-display text-sm font-bold transition sm:px-3 ${
@@ -41,6 +41,14 @@ export function SiteHeader({
           >
             <FlameIcon className="h-4 w-4" />
             <span className="hidden sm:inline">Habits</span>
+          </Link>
+          <Link
+            href="/shop"
+            aria-label="Shop"
+            className={`${linkClass(active === 'shop')} inline-flex items-center gap-1.5`}
+          >
+            <ShopIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Shop</span>
           </Link>
           <Link
             href="/studio"

@@ -59,6 +59,8 @@ export const ProgressStateV2Schema = z.object({
   dailyGoal: z.number().int().min(1).max(1000).default(DAILY_GOAL),
   /** IANA timezone used for day boundaries; null until the client reports one. */
   timeZone: TimeZoneSchema.nullable().default(null),
+  /** Equipped fox cosmetic id, or null for the default fox. */
+  equippedCosmetic: z.string().min(1).max(64).nullable().default(null),
 });
 
 /** Strict input schema for the API: accepts legacy v1 and current v2. */
@@ -102,6 +104,7 @@ export function emptyProgress(now = new Date()): ProgressState {
     activity: {},
     dailyGoal: DAILY_GOAL,
     timeZone: null,
+    equippedCosmetic: null,
   };
 }
 
@@ -114,6 +117,7 @@ export function upgradeProgress(snapshot: ProgressSnapshot): ProgressState {
     activity: {},
     dailyGoal: DAILY_GOAL,
     timeZone: null,
+    equippedCosmetic: null,
   };
 }
 
@@ -273,6 +277,10 @@ export function migrateProgress(
     activity,
     dailyGoal,
     timeZone,
+    equippedCosmetic:
+      typeof source.equippedCosmetic === 'string' && source.equippedCosmetic.length > 0
+        ? source.equippedCosmetic
+        : null,
   };
 }
 
@@ -481,6 +489,7 @@ export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState
     activity,
     dailyGoal: newer.dailyGoal,
     timeZone: newer.timeZone ?? older.timeZone,
+    equippedCosmetic: newer.equippedCosmetic ?? older.equippedCosmetic,
   };
 }
 

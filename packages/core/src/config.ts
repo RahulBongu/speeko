@@ -75,3 +75,51 @@ export const HABIT_ACHIEVEMENTS: readonly AchievementDefinition[] = [
   { id: 'days-7', title: 'Seven active days', metric: 'activeDays', target: 7 },
   { id: 'days-30', title: 'Thirty active days', metric: 'activeDays', target: 30 },
 ] as const;
+
+export const GEM_LESSON_REWARD = 5;
+export const GEM_DAILY_QUEST_REWARD = 10;
+
+export type ShopItemKind = 'cosmetic' | 'freeze';
+
+export interface ShopItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  kind: ShopItemKind;
+  cosmeticId?: string;
+}
+
+export const SHOP_ITEMS: readonly ShopItem[] = [
+  {
+    id: 'fox-scarf',
+    name: 'Speeko scarf',
+    description: 'A green scarf for chilly lessons.',
+    price: 30,
+    kind: 'cosmetic',
+    cosmeticId: 'scarf',
+  },
+  {
+    id: 'fox-hat',
+    name: 'Party hat',
+    description: 'For lesson celebrations.',
+    price: 50,
+    kind: 'cosmetic',
+    cosmeticId: 'hat',
+  },
+  {
+    id: 'fox-glasses',
+    name: 'Study glasses',
+    description: 'For serious learners.',
+    price: 40,
+    kind: 'cosmetic',
+    cosmeticId: 'glasses',
+  },
+  {
+    id: 'streak-freeze',
+    name: 'Streak freeze',
+    description: 'One extra day of safety, added to your freeze inventory.',
+    price: 50,
+    kind: 'freeze',
+  },
+] as const;

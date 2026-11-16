@@ -113,3 +113,49 @@ export const lessonEvents = pgTable(
     userAttemptIdx: uniqueIndex('lesson_events_user_attempt_idx').on(t.userId, t.attemptId),
   }),
 );
+
+/**
+ * Append-only gem ledger. Positive amounts are earnings, negative amounts are
+ * purchases. `sourceKey` is an idempotency key scoped to the user, so a retry
+ * or a concurrent request can never credit or charge twice.
+ */
+export const gemLedger = pgTable(
+  'gem_ledger',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    amount: integer('amount').notNull(),
+    reason: text('reason').notNull(),
+    sourceKey: text('source_key').notNull(),
+    metadata: jsonb('metadata'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    userSourceIdx: uniqueIndex('gem_ledger_user_source_idx').on(t.userId, t.sourceKey),
+  }),
+);
+
+/**
+ * Owned shop items. Cosmetics are one-time purchases (quantity 1); consumables
+ * such as streak freezes can have a quantity greater than one.
+ */
+export const userInventory = pgTable(
+  'user_inventory',
+  {
+    id: serial('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    itemId: text('item_id').notNull(),
+    quantity: integer('quantity').notNull().default(1),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (t) => ({
+    userItemIdx: uniqueIndex('user_inventory_user_item_idx').on(t.userId, t.itemId),
+  }),
+);

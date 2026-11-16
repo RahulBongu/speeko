@@ -18,6 +18,7 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P4 - Content pipeline | Schema additions, validator rules, importer, one 5x5 draft pilot course, Studio draft badges | **Done** - branch `phase/4-content-pipeline` |
 | P5 - Practice hub | Leitner SRS 1/2/4/8/16 with read-time SM-2 migration, `/practice` hub, due/trouble/unit practice modes, practice-only sessions | **Done** - branch `phase/5-practice-hub` |
 | P6 - Habit systems | Daily goal setting, event-derived quests, 12-week streak calendar + freezes, achievements, `/habits` page | **Done** - `phase/6-habit-systems` |
+| P7 - Gems + shop | Gem ledger, shop, original fox cosmetics, inventory | **Done** - `phase/7-gems-shop` |
 
 ## Verification snapshot (P5)
 
@@ -35,6 +36,16 @@ Run from the repo root:
 Visual evidence: 38 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P5 added the practice hub and the three practice summaries at
 both viewports.
+
+## What P7 changed
+
+- **Gem ledger.** `gem_ledger` is append-only with a per-user `sourceKey` idempotency key. Lessons award +5 gems, completed daily quests award +10 gems, and purchases subtract their price. `GET /api/gems` returns the derived balance and recent ledger.
+- **Quest gems.** `awardQuestGems` runs after a verified lesson and on gem/shop reads, crediting completed daily quests idempotently. Weekly quests remain progress-only.
+- **Shop API.** `GET /api/shop` returns the catalog, balance, owned quantities, and affordability. `POST /api/shop/purchase` serializes per user with `SELECT ... FOR UPDATE`, checks balance/ownership/freeze capacity, writes the ledger and inventory, and returns honest 409 states. Duplicate request keys replay instead of charging again.
+- **Original fox cosmetics.** The shop sells a scarf, hat, glasses, and a streak freeze. Cosmetics are one-time purchases and can be equipped through the account progress snapshot; the Fox component renders each accessory as an original SVG layer.
+- **Freeze credits.** Purchased streak freezes add credits to the existing freeze inventory, capped at two. `/api/habits` adds credits to the derived freeze count.
+- **Shop page.** `/shop` shows the gem balance, catalog, buy/insufficient-gems states, owned/equip controls, and an equipped-fox preview. The account panel shows the gem balance and a shop link.
+- **Coverage.** 95 core tests, 11 content tests, and 86 Playwright checks. Five shop checks cover unauthenticated access, insufficient gems, one-time purchase and replay, concurrent double-spend, and freeze credits.
 
 ## What P6 changed
 
@@ -68,6 +79,21 @@ both viewports.
 - **Coverage.** 95 core tests, 11 content tests, and 74 Playwright checks. Four
   habits checks cover event totals, duplicate retries, reload stability, goal
   persistence, and the guest source label.
+
+## Verification snapshot (P7)
+
+Run from the repo root:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 95 core + 11 content tests |
+| `pnpm build` | 5/5 Turbo tasks |
+| `pnpm e2e` | 86 Playwright checks across routes, onboarding, rewards, practice, habits, and shop |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+
+Visual evidence: 44 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
+contact sheets. P7 added the `/shop` route screenshot at both viewports.
 
 ## Verification snapshot (P6)
 

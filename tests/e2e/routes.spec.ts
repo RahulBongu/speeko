@@ -32,6 +32,11 @@ const ROUTES: RouteCase[] = [
     ready: (page) => page.getByRole('heading', { name: 'Make it stick.' }),
   },
   {
+    name: 'shop',
+    path: '/shop',
+    ready: (page) => page.getByRole('heading', { name: 'The shop needs an account' }),
+  },
+  {
     name: 'habits',
     path: '/habits',
     ready: (page) => page.getByRole('heading', { name: 'One day at a time.' }),

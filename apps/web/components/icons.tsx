@@ -157,3 +157,21 @@ export function CalendarIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function GemIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M6 3h12l4 6-10 12L2 9l4-6Z" opacity=".9" />
+      <path d="M2 9h20M6 3l4 6 2-6 2 6 4-6" fill="none" stroke="currentColor" strokeWidth={1.2} opacity=".55" />
+    </svg>
+  );
+}
+
+export function ShopIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4 8h16l-1.5 11h-13L4 8Z" />
+      <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+    </svg>
+  );
+}

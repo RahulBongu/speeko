@@ -22,6 +22,13 @@
       "when": 1794758841573,
       "tag": "0002_graceful_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794796582591,
+      "tag": "0003_cuddly_tinkerer",
+      "breakpoints": true
     }
   ]
 }

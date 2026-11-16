@@ -15,6 +15,7 @@ import { getDb } from '../db/client.js';
 import { lessonEvents, progressSnapshots } from '../db/schema.js';
 import { findLesson, loadCourse } from '../content.js';
 import { readProgress } from '../progress-store.js';
+import { awardLessonGem, awardQuestGems } from '../gem-awards.js';
 import { sessionFromHeaders } from './auth.js';
 
 const AnswerInputSchema = z.discriminatedUnion('kind', [
@@ -191,6 +192,12 @@ export async function lessonCompletionRoutes(app: FastifyInstance) {
       created = inserted[0]!;
       updatedProgress = next;
     });
+
+    const finalProgress = updatedProgress ?? (await readProgress(userId));
+    if (created) {
+      await awardLessonGem(db, userId, body.attemptId);
+      await awardQuestGems(db, userId, finalProgress.timeZone, finalProgress.dailyGoal);
+    }
 
     if (!created) {
       const [event] = await db
