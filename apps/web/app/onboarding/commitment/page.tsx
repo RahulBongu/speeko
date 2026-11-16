@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { OnboardingFrame } from '@/components/onboarding/OnboardingFrame';
 import { OptionButton } from '@/components/onboarding/OptionButton';
 import { completeOnboarding, readOnboardingDraft } from '@/lib/onboarding';
-import { loadProgress, saveProgress } from '@/lib/progress';
+import { loadProgress, saveProgress, browserTimeZone } from '@/lib/progress';
 
 const COMMITMENTS = [
   { id: 'daily', label: 'Every day', description: "I'll protect a few minutes tomorrow and today — start my first lesson now.", prefix: '24' },
@@ -49,7 +49,7 @@ export default function CommitmentStep() {
     setSelected(commitment);
     completeOnboarding(full);
 
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? null;
+    const timeZone = browserTimeZone();
     const current = loadProgress();
     const courseId = `${draft.locale}-starter`;
     saveProgress({

@@ -1,9 +1,19 @@
 import { z } from 'zod';
+import { DAILY_GOAL_DEFAULT } from './config.js';
+import {
+  addDays,
+  computeStreak,
+  dayKeyInTimeZone,
+  diffDays,
+  historyFromActivity,
+  isDayKey,
+  isValidTimeZone,
+} from './habits.js';
 import { isDue, newCard, review, SrsCardSchema, type SrsCard } from './srs.js';
 import { updateStreak } from './gamification.js';
 
 /** Number of XP that counts as a completed daily goal. */
-export const DAILY_GOAL = 50;
+export const DAILY_GOAL = DAILY_GOAL_DEFAULT;
 
 /** Current snapshot version. v1 snapshots remain readable forever. */
 export const PROGRESS_VERSION = 2;
@@ -40,7 +50,12 @@ export const ProgressStateV1Schema = z.object({
 export const ProgressStateV2Schema = z.object({
   version: z.literal(2),
   ...progressFields,
-  /** Learner-settable daily XP goal (default 50 until the settings UI lands). */
+  /** Device-local XP and lesson counts per day, for guest habit history. */
+  activity: z.record(DateKeySchema, z.object({
+    xp: z.number().int().min(0),
+    lessons: z.number().int().min(0),
+  })).default({}),
+  /** Learner-settable daily XP goal (default 50). */
   dailyGoal: z.number().int().min(1).max(1000).default(DAILY_GOAL),
   /** IANA timezone used for day boundaries; null until the client reports one. */
   timeZone: TimeZoneSchema.nullable().default(null),
@@ -65,10 +80,7 @@ export interface CompletionInput {
 }
 
 export function todayKey(date = new Date()): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return dayKeyInTimeZone(date, null);
 }
 
 export function lessonKey(courseId: string, lessonId: string): string {
@@ -87,6 +99,7 @@ export function emptyProgress(now = new Date()): ProgressState {
     lastCourseId: null,
     lastLessonId: null,
     srs: {},
+    activity: {},
     dailyGoal: DAILY_GOAL,
     timeZone: null,
   };
@@ -98,6 +111,7 @@ export function upgradeProgress(snapshot: ProgressSnapshot): ProgressState {
   return {
     ...snapshot,
     version: PROGRESS_VERSION,
+    activity: {},
     dailyGoal: DAILY_GOAL,
     timeZone: null,
   };
@@ -110,7 +124,59 @@ function nonNegativeInt(value: unknown, fallback = 0): number {
 }
 
 function dateKeyOrNull(value: unknown): string | null {
-  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
+  return typeof value === 'string' && isDayKey(value) ? value : null;
+}
+
+export interface ActivityRecord {
+  xp: number;
+  lessons: number;
+}
+
+function coerceActivity(raw: unknown): Record<string, ActivityRecord> {
+  if (!raw || typeof raw !== 'object') return {};
+  const out: Record<string, ActivityRecord> = {};
+  for (const [day, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (!isDayKey(day) || !value || typeof value !== 'object') continue;
+    const entry = value as Record<string, unknown>;
+    out[day] = {
+      xp: nonNegativeInt(entry.xp),
+      lessons: nonNegativeInt(entry.lessons),
+    };
+  }
+  return out;
+}
+
+/**
+ * Older snapshots predate per-day activity. Reconstruct what they can prove:
+ * one lesson on each recorded completion date, a real active anchor on
+ * `lastActiveDate`, and today's already-counted XP. No XP is invented for
+ * past days, so an old calendar starts sparse rather than false.
+ */
+function seedActivity(
+  completed: Record<string, LessonRecord>,
+  lastActiveDate: string | null,
+  today: string,
+  todayXp: number,
+  timeZone: string | null,
+): Record<string, ActivityRecord> {
+  const activity: Record<string, ActivityRecord> = {};
+  for (const record of Object.values(completed)) {
+    const date = new Date(record.completedAt);
+    if (Number.isNaN(date.getTime())) continue;
+    const day = dayKeyInTimeZone(date, timeZone);
+    const entry = activity[day] ?? { xp: 0, lessons: 0 };
+    entry.lessons += 1;
+    activity[day] = entry;
+  }
+  if (lastActiveDate && isDayKey(lastActiveDate) && !activity[lastActiveDate]) {
+    activity[lastActiveDate] = { xp: 0, lessons: 1 };
+  }
+  if (todayXp > 0) {
+    const entry = activity[today] ?? { xp: 0, lessons: 0 };
+    entry.xp = Math.max(entry.xp, todayXp);
+    activity[today] = entry;
+  }
+  return activity;
 }
 
 function coerceCompleted(raw: unknown): Record<string, LessonRecord> {
@@ -138,13 +204,16 @@ function coerceSrs(raw: unknown): Record<string, SrsCard> {
  * object — and returns a valid v2 state. v1 data is never rewritten in place;
  * callers decide where to persist the result.
  *
- * `todayDate` is always refreshed to the current local day so stale daily XP
- * cannot leak into a new day, matching the store's historical behaviour.
+ * `todayDate` is refreshed to the learner's current day so stale daily XP
+ * cannot leak into a new day. `fallbackTimeZone` lets the browser supply the
+ * device's IANA zone when an older snapshot stored null.
  */
-export function migrateProgress(value: unknown, now = new Date()): ProgressState {
+export function migrateProgress(
+  value: unknown,
+  now = new Date(),
+  fallbackTimeZone: string | null = null,
+): ProgressState {
   const source = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
-  const today = todayKey(now);
-  const sourceToday = dateKeyOrNull(source.todayDate);
   const dailyGoal =
     typeof source.dailyGoal === 'number' &&
     Number.isInteger(source.dailyGoal) &&
@@ -152,22 +221,56 @@ export function migrateProgress(value: unknown, now = new Date()): ProgressState
     source.dailyGoal <= 1000
       ? source.dailyGoal
       : DAILY_GOAL;
-  const timeZone =
+  const sourceTimeZone =
     typeof source.timeZone === 'string' && source.timeZone.length > 0 && source.timeZone.length <= 64
       ? source.timeZone
       : null;
+  const timeZone = isValidTimeZone(sourceTimeZone)
+    ? sourceTimeZone
+    : isValidTimeZone(fallbackTimeZone)
+      ? fallbackTimeZone
+      : null;
+  const today = dayKeyInTimeZone(now, timeZone);
+  const sourceToday = dateKeyOrNull(source.todayDate);
+  const todayXp = sourceToday === today ? nonNegativeInt(source.todayXp) : 0;
+  const completed = coerceCompleted(source.completed);
+  const lastActiveDate = dateKeyOrNull(source.lastActiveDate);
+  const hasActivity =
+    source.activity !== null &&
+    typeof source.activity === 'object' &&
+    !Array.isArray(source.activity);
+  const activity = hasActivity
+    ? coerceActivity(source.activity)
+    : seedActivity(completed, lastActiveDate, today, todayXp, timeZone);
+
+  // Keep today's stored XP and today's activity entry consistent.
+  if (todayXp > 0) {
+    const entry = activity[today] ?? { xp: 0, lessons: 0 };
+    activity[today] = { ...entry, xp: Math.max(entry.xp, todayXp) };
+  }
+
+  let streak = nonNegativeInt(source.streak);
+  if (lastActiveDate) {
+    const gap = diffDays(lastActiveDate, today);
+    // A long absence with no freeze breaks the run. Preserve the stored value
+    // when a freeze covers the gap or when the learner was active recently.
+    if (gap >= 2 && computeStreak(historyFromActivity(activity), today).current === 0) {
+      streak = 0;
+    }
+  }
 
   return {
     version: PROGRESS_VERSION,
     xp: nonNegativeInt(source.xp),
-    streak: nonNegativeInt(source.streak),
-    lastActiveDate: dateKeyOrNull(source.lastActiveDate),
+    streak,
+    lastActiveDate,
     todayDate: today,
-    todayXp: sourceToday === today ? nonNegativeInt(source.todayXp) : 0,
-    completed: coerceCompleted(source.completed),
+    todayXp,
+    completed,
     lastCourseId: typeof source.lastCourseId === 'string' ? source.lastCourseId : null,
     lastLessonId: typeof source.lastLessonId === 'string' ? source.lastLessonId : null,
     srs: coerceSrs(source.srs),
+    activity,
     dailyGoal,
     timeZone,
   };
@@ -245,27 +348,49 @@ export function recordCompletion(
   input: CompletionInput,
   now = new Date(),
 ): ProgressState {
-  const today = todayKey(now);
+  const today = dayKeyInTimeZone(now, progress.timeZone);
   const base: ProgressState =
     progress.todayDate === today ? progress : { ...progress, todayDate: today, todayXp: 0 };
   const key = lessonKey(input.courseId, input.lessonId);
   const previous = base.completed[key];
   const accuracy = Math.max(0, Math.min(1, input.accuracy));
+  const gainedXp = Math.max(0, input.xp);
   const record: LessonRecord = {
     courseId: input.courseId,
     lessonId: input.lessonId,
     completedAt: now.toISOString(),
     accuracy: Math.max(previous?.accuracy ?? 0, accuracy),
-    xp: (previous?.xp ?? 0) + Math.max(0, input.xp),
+    xp: (previous?.xp ?? 0) + gainedXp,
   };
-  const streak = updateStreak(base.lastActiveDate, today, base.streak, false);
+
+  const activity = { ...(base.activity ?? {}) };
+  const activityToday = activity[today] ?? { xp: 0, lessons: 0 };
+  activity[today] = {
+    xp: activityToday.xp + gainedXp,
+    lessons: activityToday.lessons + 1,
+  };
+
+  // A freeze must be checked against yesterday's inventory, before today's
+  // activity hides the gap it is meant to cover.
+  const freezesAvailable = computeStreak(
+    historyFromActivity(base.activity ?? {}),
+    addDays(today, -1),
+  ).freezesAvailable;
+  const streak = updateStreak(
+    base.lastActiveDate,
+    today,
+    base.streak,
+    freezesAvailable > 0,
+  );
+
   return {
     ...base,
-    xp: base.xp + Math.max(0, input.xp),
+    xp: base.xp + gainedXp,
     streak: streak.streak,
     lastActiveDate: today,
-    todayXp: base.todayXp + Math.max(0, input.xp),
+    todayXp: base.todayXp + gainedXp,
     completed: { ...base.completed, [key]: record },
+    activity,
     lastCourseId: input.courseId,
     lastLessonId: input.lessonId,
   };
@@ -327,6 +452,15 @@ export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState
         ? a.todayXp
         : b.todayXp;
   const srs = mergeSrs(a.srs, b.srs);
+  const activity: Record<string, ActivityRecord> = { ...(a.activity ?? {}) };
+  for (const [day, entry] of Object.entries(b.activity ?? {})) {
+    const existing = activity[day];
+    // Day rows are aggregates: keep the larger value, never sum, so a merge or
+    // repeated sync cannot double-count the same lesson.
+    activity[day] = existing
+      ? { xp: Math.max(existing.xp, entry.xp), lessons: Math.max(existing.lessons, entry.lessons) }
+      : entry;
+  }
 
   const newestXp = Math.max(a.xp, b.xp);
   const streak = aActive === bActive ? Math.max(a.streak, b.streak) : newer.streak;
@@ -344,6 +478,7 @@ export function mergeProgress(a: ProgressState, b: ProgressState): ProgressState
     lastCourseId,
     lastLessonId,
     srs,
+    activity,
     dailyGoal: newer.dailyGoal,
     timeZone: newer.timeZone ?? older.timeZone,
   };

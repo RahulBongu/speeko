@@ -44,6 +44,7 @@ export default function LearnPage() {
     ? completedInCourse(progress, continueEntry.id)
     : 0;
   const todayXp = progress?.todayXp ?? 0;
+  const dailyGoal = progress?.dailyGoal ?? DAILY_GOAL;
   const level = levelForXp(progress?.xp ?? 0);
 
   return (
@@ -82,12 +83,18 @@ export default function LearnPage() {
               label="Level"
               tone="default"
             />
-            <StatPill
-              icon={<BoltIcon className="h-4 w-4" />}
-              value={`${Math.min(todayXp, DAILY_GOAL)}/${DAILY_GOAL} XP`}
-              label="Daily XP goal"
-              tone="goal"
-            />
+            <Link
+              href="/habits"
+              aria-label="Open habits, daily goal, and streak calendar"
+              className="focus-ring rounded-2xl"
+            >
+              <StatPill
+                icon={<BoltIcon className="h-4 w-4" />}
+                value={`${Math.min(todayXp, dailyGoal)}/${dailyGoal} XP`}
+                label="Daily XP goal"
+                tone="goal"
+              />
+            </Link>
           </div>
         </div>
 

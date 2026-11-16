@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Fox } from './Fox';
 import { AuthMenu } from './AuthMenu';
+import { FlameIcon } from './icons';
 
 export function Brand({ href = '/' }: { href?: string }) {
   return (
@@ -13,14 +14,18 @@ export function Brand({ href = '/' }: { href?: string }) {
   );
 }
 
-export function SiteHeader({ active }: { active?: 'learn' | 'practice' | 'studio' | 'account' }) {
+export function SiteHeader({
+  active,
+}: {
+  active?: 'learn' | 'practice' | 'habits' | 'studio' | 'account';
+}) {
   const linkClass = (isActive: boolean) =>
-    `focus-ring whitespace-nowrap rounded-xl px-2 py-2 font-display text-sm font-bold transition sm:px-3 ${
+    `focus-ring whitespace-nowrap rounded-xl px-1.5 py-2 font-display text-sm font-bold transition sm:px-3 ${
       isActive ? 'bg-speeko-100 text-speeko-700' : 'text-bark-500 hover:bg-cream-100 hover:text-bark-700'
     }`;
   return (
     <header className="border-b border-cream-200/80 bg-cream-50/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-3 sm:gap-4">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-5">
         <Brand />
         <nav className="flex items-center gap-0.5 sm:gap-1" aria-label="Main">
           <Link href="/learn" className={linkClass(active === 'learn')}>
@@ -28,6 +33,14 @@ export function SiteHeader({ active }: { active?: 'learn' | 'practice' | 'studio
           </Link>
           <Link href="/practice" className={linkClass(active === 'practice')}>
             Practice
+          </Link>
+          <Link
+            href="/habits"
+            aria-label="Habits"
+            className={`${linkClass(active === 'habits')} inline-flex items-center gap-1.5`}
+          >
+            <FlameIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Habits</span>
           </Link>
           <Link
             href="/studio"

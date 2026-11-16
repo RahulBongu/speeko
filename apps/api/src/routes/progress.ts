@@ -61,18 +61,26 @@ export async function progressRoutes(app: FastifyInstance) {
     const incoming = upgradeProgress(parsed.data);
     const existingState = existing ? migrateProgress(existing.data) : null;
     const merged = existingState ? mergeProgress(existingState, incoming) : incoming;
+    // Goal and time zone are preferences, not activity. They follow this
+    // client write even when the more recent lesson history lives on another
+    // device, so a goal change is never silently reverted.
+    const withPreferences = {
+      ...merged,
+      dailyGoal: incoming.dailyGoal,
+      timeZone: incoming.timeZone ?? merged.timeZone,
+    };
 
     const [saved] = await db
       .insert(progressSnapshots)
-      .values({ userId, data: merged })
+      .values({ userId, data: withPreferences })
       .onConflictDoUpdate({
         target: progressSnapshots.userId,
-        set: { data: merged, updatedAt: new Date() },
+        set: { data: withPreferences, updatedAt: new Date() },
       })
       .returning();
 
     return reply.send({
-      progress: merged,
+      progress: withPreferences,
       updatedAt: saved?.updatedAt?.toISOString() ?? null,
     });
   });

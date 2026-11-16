@@ -5,6 +5,7 @@ import { healthRoutes } from './routes/health.js';
 import { authRoutes } from './routes/auth.js';
 import { progressRoutes } from './routes/progress.js';
 import { lessonCompletionRoutes } from './routes/lesson-completions.js';
+import { habitRoutes } from './routes/habits.js';
 import { closeDb, runMigrations } from './db/client.js';
 
 const app = Fastify({ logger: true });
@@ -26,6 +27,7 @@ async function main() {
   await app.register(authRoutes);
   await app.register(progressRoutes);
   await app.register(lessonCompletionRoutes);
+  await app.register(habitRoutes);
   app.addHook('onClose', async () => {
     await closeDb();
   });

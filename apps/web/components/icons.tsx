@@ -139,3 +139,21 @@ export function RefreshIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function SnowflakeIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 2v20M4.2 7l15.6 10M19.8 7 4.2 17" />
+      <path d="m9 4 3 2 3-2M9 20l3-2 3 2M5.4 9.2 2.5 7.5M18.6 14.8l2.9 1.7M18.6 9.2l2.9-1.7M5.4 14.8l-2.9 1.7" />
+    </svg>
+  );
+}
+
+export function CalendarIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M8 3v4M16 3v4M3.5 10h17" />
+    </svg>
+  );
+}

@@ -2,18 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { DAILY_GOAL } from '@/lib/progress';
+import { DAILY_GOAL_OPTIONS } from '@/lib/progress';
 import { OnboardingFrame } from '@/components/onboarding/OnboardingFrame';
 import { OptionButton } from '@/components/onboarding/OptionButton';
 import { readOnboardingDraft, saveOnboardingDraft } from '@/lib/onboarding';
 
-const GOALS = [
-  { xp: 10, label: 'Casual · 10 XP', description: 'A few minutes whenever you can.' },
-  { xp: 30, label: 'Light · 30 XP', description: 'One lesson most days.' },
-  { xp: DAILY_GOAL, label: 'Regular · 50 XP', description: 'The recommended daily habit.' },
-  { xp: 80, label: 'Serious · 80 XP', description: 'A short lesson plus review.' },
-  { xp: 120, label: 'Committed · 120 XP', description: 'You came here to work.' },
-] as const;
+const GOAL_COPY: Record<number, { label: string; description: string }> = {
+  10: { label: 'Casual · 10 XP', description: 'A few minutes whenever you can.' },
+  30: { label: 'Light · 30 XP', description: 'One lesson most days.' },
+  50: { label: 'Regular · 50 XP', description: 'The recommended daily habit.' },
+  80: { label: 'Serious · 80 XP', description: 'A short lesson plus review.' },
+  120: { label: 'Committed · 120 XP', description: 'You came here to work.' },
+};
+
+const GOALS = DAILY_GOAL_OPTIONS.map((xp) => ({
+  xp,
+  label: GOAL_COPY[xp]?.label ?? `${xp} XP`,
+  description: GOAL_COPY[xp]?.description ?? 'A steady daily target.',
+}));
 
 export default function DailyGoalStep() {
   const router = useRouter();

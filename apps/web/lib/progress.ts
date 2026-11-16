@@ -1,4 +1,5 @@
 import {
+  browserTimeZone,
   emptyProgress,
   lessonKey,
   migrateProgress,
@@ -9,15 +10,20 @@ import { flattenLessons } from './courses';
 
 export {
   DAILY_GOAL,
+  DAILY_GOAL_OPTIONS,
   applyReviews,
+  browserTimeZone,
+  buildHabitReport,
+  dayKeyInTimeZone,
   dueReviewCards,
   emptyProgress,
+  historyFromActivity,
   lessonKey,
   recordCompletion,
   recordCompletionAndReviews,
   todayKey,
 } from '@speeko/core';
-export type { LessonRecord, ProgressState } from '@speeko/core';
+export type { HabitReport, LessonRecord, ProgressState } from '@speeko/core';
 
 export const PROGRESS_KEY = 'speeko.progress.v2';
 /** Legacy key. Read forever so existing guests never lose their progress. */
@@ -34,15 +40,19 @@ export interface CourseStats {
 }
 
 export function loadProgress(now = new Date()): ProgressState {
-  if (typeof window === 'undefined') return emptyProgress(now);
+  const timeZone = browserTimeZone();
+  if (typeof window === 'undefined') {
+    const empty = emptyProgress(now);
+    return { ...empty, timeZone };
+  }
   try {
     const raw =
       window.localStorage.getItem(PROGRESS_KEY) ??
       window.localStorage.getItem(LEGACY_PROGRESS_KEY);
-    if (!raw) return emptyProgress(now);
-    return migrateProgress(JSON.parse(raw), now);
+    if (!raw) return { ...emptyProgress(now), timeZone };
+    return migrateProgress(JSON.parse(raw), now, timeZone);
   } catch {
-    return emptyProgress(now);
+    return { ...emptyProgress(now), timeZone };
   }
 }
 

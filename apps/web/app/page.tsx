@@ -48,6 +48,7 @@ export default function HomePage() {
   }, []);
   const started = Boolean(progress && progress.xp > 0);
   const todayXp = progress?.todayXp ?? 0;
+  const dailyGoal = progress?.dailyGoal ?? DAILY_GOAL;
   const continueHref =
     started && progress?.lastCourseId
       ? `/learn/${progress.lastCourseId}`
@@ -142,22 +143,30 @@ export default function HomePage() {
                       tone="default"
                     />
                   </div>
-                  <div className="mt-4 max-w-md rounded-2xl border-2 border-cream-200 bg-white p-4 shadow-card-sm">
+                  <Link
+                    href="/habits"
+                    className="focus-ring group mt-4 block max-w-md rounded-2xl border-2 border-cream-200 bg-white p-4 shadow-card-sm transition hover:border-speeko-200 hover:shadow-card"
+                    aria-label="Open habits, daily goal, and streak calendar"
+                  >
                     <div className="flex items-baseline justify-between gap-3">
                       <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-bark-400">
                         Today&apos;s goal
                       </p>
                       <p className="font-display text-xs font-extrabold text-bark-600">
-                        {Math.min(todayXp, DAILY_GOAL)} / {DAILY_GOAL} XP
+                        {Math.min(todayXp, dailyGoal)} / {dailyGoal} XP
                       </p>
                     </div>
                     <ProgressBar
-                      value={Math.min(1, todayXp / DAILY_GOAL)}
+                      value={Math.min(1, todayXp / dailyGoal)}
                       className="mt-2 h-2.5"
                       barClassName="bg-speeko-400"
                       label="Daily XP goal"
                     />
-                  </div>
+                    <span className="mt-2 flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-speeko-600">
+                      Habits
+                      <ArrowRightIcon className="h-3 w-3 transition group-hover:translate-x-0.5" />
+                    </span>
+                  </Link>
                 </>
               ) : (
                 <p className="mt-5 text-xs font-bold uppercase tracking-[0.12em] text-bark-300">

@@ -819,8 +819,9 @@ function SummaryScreen({
   const awardedXp = !isPractice && saveState.status === 'saved' ? saveState.xp : localXp;
   const todayXp = postProgress?.todayXp ?? 0;
   const streak = postProgress?.streak ?? 0;
-  const goalValue = Math.min(1, todayXp / DAILY_GOAL);
-  const goalDone = todayXp >= DAILY_GOAL;
+  const dailyGoal = postProgress?.dailyGoal ?? DAILY_GOAL;
+  const goalValue = Math.min(1, todayXp / dailyGoal);
+  const goalDone = todayXp >= dailyGoal;
   const displayXp = useCountUp(awardedXp);
   const displayAccuracy = useCountUp(Math.round(accuracy * 100));
   const displayCombo = useCountUp(session.maxCombo);
@@ -925,7 +926,7 @@ function SummaryScreen({
               Daily goal
             </p>
             <p className="font-display text-sm font-extrabold text-bark-600">
-              {Math.min(todayXp, DAILY_GOAL)} / {DAILY_GOAL} XP
+              {Math.min(todayXp, dailyGoal)} / {dailyGoal} XP
             </p>
           </div>
           <ProgressBar
@@ -937,7 +938,7 @@ function SummaryScreen({
           <p className="mt-2 text-sm font-semibold text-bark-500">
             {goalDone
               ? 'Daily goal complete — the fox is doing a little dance.'
-              : `${DAILY_GOAL - todayXp} XP to hit today's goal.`}
+              : `${dailyGoal - todayXp} XP to hit today's goal.`}
           </p>
         </div>
       ) : (

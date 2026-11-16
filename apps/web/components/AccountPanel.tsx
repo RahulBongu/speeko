@@ -73,6 +73,7 @@ export function AccountPanel() {
 
   const completed = progress ? Object.keys(progress.completed).length : 0;
   const todayXp = progress?.todayXp ?? 0;
+  const dailyGoal = progress?.dailyGoal ?? DAILY_GOAL;
   const milestone = milestoneForXp(progress?.xp ?? 0);
 
   return (
@@ -101,7 +102,7 @@ export function AccountPanel() {
           <StatPill
             key="goal"
             icon={<BoltIcon className="h-4 w-4" />}
-            value={<span className="inline-block animate-pop [animation-delay:360ms]">{`${Math.min(todayXp, DAILY_GOAL)}/${DAILY_GOAL} XP`}</span>}
+            value={<span className="inline-block animate-pop [animation-delay:360ms]">{`${Math.min(todayXp, dailyGoal)}/${dailyGoal} XP`}</span>}
             label="Daily XP goal"
             tone="goal"
           />,
@@ -151,6 +152,9 @@ export function AccountPanel() {
           counted for your account.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
+          <Link href="/habits" className="btn-secondary">
+            Habits &amp; calendar
+          </Link>
           <Link href="/learn" className="btn-primary">
             Continue learning
           </Link>

@@ -8,9 +8,11 @@ import {
   emptyProgress,
   mergeProgress,
   migrateProgress,
+  recordCompletion,
   todayKey,
   upgradeProgress,
 } from './progress.js';
+import { buildHabitReport, computeStreak } from './habits.js';
 
 const NOW = new Date(2026, 10, 15, 12, 0);
 const TODAY = todayKey(NOW);
@@ -238,5 +240,118 @@ describe('progress v2 migration', () => {
       'hi-starter:hi-starter-u1-l1',
       'hi-starter:hi-starter-u1-l2',
     ]);
+  });
+
+  it('reconstructs per-day activity from old completions without inventing XP', () => {
+    const migrated = migrateProgress(v1Snapshot, NOW);
+    expect(migrated.activity['2026-11-14']).toEqual({ xp: 0, lessons: 1 });
+    expect(migrated.activity[TODAY]).toEqual({ xp: 30, lessons: 0 });
+    expect(migrated.xp).toBe(120);
+  });
+
+  it('resets a stale streak when no activity or freeze can support it', () => {
+    const migrated = migrateProgress(
+      {
+        ...emptyProgress(NOW),
+        streak: 12,
+        lastActiveDate: '2026-11-01',
+        todayDate: '2026-11-01',
+        todayXp: 0,
+      },
+      NOW,
+    );
+    expect(migrated.streak).toBe(0);
+  });
+
+  it('uses the stored time zone for completion day boundaries', () => {
+    const base = {
+      ...emptyProgress(NOW),
+      timeZone: 'Asia/Kolkata',
+      streak: 1,
+      lastActiveDate: '2026-11-15',
+      todayDate: '2026-11-15',
+      todayXp: 10,
+      activity: { '2026-11-15': { xp: 10, lessons: 1 } },
+    };
+    const beforeMidnight = recordCompletion(
+      base,
+      { courseId: 'hi-starter', lessonId: 'hi-starter-u1-l1', xp: 10, accuracy: 1 },
+      new Date('2026-11-15T18:29:00Z'),
+    );
+    expect(beforeMidnight.todayDate).toBe('2026-11-15');
+    expect(beforeMidnight.streak).toBe(1);
+
+    const afterMidnight = recordCompletion(
+      base,
+      { courseId: 'hi-starter', lessonId: 'hi-starter-u1-l1', xp: 10, accuracy: 1 },
+      new Date('2026-11-15T18:30:00Z'),
+    );
+    expect(afterMidnight.todayDate).toBe('2026-11-16');
+    expect(afterMidnight.todayXp).toBe(10);
+    expect(afterMidnight.streak).toBe(2);
+    expect(afterMidnight.activity['2026-11-16']).toEqual({ xp: 10, lessons: 1 });
+  });
+
+  it('spends an earned freeze on a two-day completion gap', () => {
+    const activity = Object.fromEntries(
+      Array.from({ length: 7 }, (_, index) => {
+        const day = `2026-11-${String(index + 1).padStart(2, '0')}`;
+        return [day, { xp: 10, lessons: 1 }];
+      }),
+    );
+    const base = {
+      ...emptyProgress(NOW),
+      timeZone: 'UTC',
+      xp: 70,
+      streak: 7,
+      lastActiveDate: '2026-11-07',
+      todayDate: '2026-11-07',
+      todayXp: 10,
+      activity,
+    };
+
+    const completed = recordCompletion(
+      base,
+      { courseId: 'hi-starter', lessonId: 'hi-starter-u1-l1', xp: 10, accuracy: 1 },
+      new Date('2026-11-09T12:00:00Z'),
+    );
+    expect(completed.streak).toBe(8);
+    expect(completed.activity['2026-11-09']).toEqual({ xp: 10, lessons: 1 });
+
+    const report = buildHabitReport(
+      Object.entries(completed.activity).map(([day, value]) => ({ day, ...value })),
+      {
+        asOfDay: '2026-11-09',
+        timeZone: 'UTC',
+        dailyGoal: completed.dailyGoal,
+        lifetimeXp: completed.xp,
+        lifetimeLessons: Object.keys(completed.completed).length,
+      },
+    );
+    expect(report.streak.current).toBe(8);
+    expect(report.streak.frozenDays).toEqual(['2026-11-08']);
+  });
+
+  it('merges activity day rows without double-counting', () => {
+    const a = {
+      ...emptyProgress(NOW),
+      activity: { '2026-11-14': { xp: 10, lessons: 1 } },
+      todayDate: '2026-11-15',
+    };
+    const b = {
+      ...emptyProgress(NOW),
+      activity: {
+        '2026-11-14': { xp: 20, lessons: 1 },
+        '2026-11-15': { xp: 5, lessons: 1 },
+      },
+      todayDate: '2026-11-15',
+      todayXp: 5,
+    };
+    const merged = mergeProgress(a, b);
+    expect(merged.activity['2026-11-14']).toEqual({ xp: 20, lessons: 1 });
+    expect(merged.activity['2026-11-15']).toEqual({ xp: 5, lessons: 1 });
+
+    const history = Object.entries(merged.activity).map(([day, value]) => ({ day, ...value }));
+    expect(computeStreak(history, '2026-11-15').current).toBe(2);
   });
 });

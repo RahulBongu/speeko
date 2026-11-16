@@ -14,6 +14,7 @@ import {
 import { getDb } from '../db/client.js';
 import { lessonEvents, progressSnapshots } from '../db/schema.js';
 import { findLesson, loadCourse } from '../content.js';
+import { readProgress } from '../progress-store.js';
 import { sessionFromHeaders } from './auth.js';
 
 const AnswerInputSchema = z.discriminatedUnion('kind', [
@@ -67,16 +68,6 @@ function serializeEvent(row: LessonEventRow) {
     maxCombo: row.maxCombo,
     createdAt: row.createdAt.toISOString(),
   };
-}
-
-async function readProgress(userId: string): Promise<ProgressState> {
-  const db = getDb();
-  const [row] = await db
-    .select({ data: progressSnapshots.data })
-    .from(progressSnapshots)
-    .where(eq(progressSnapshots.userId, userId))
-    .limit(1);
-  return row ? migrateProgress(row.data) : emptyProgress();
 }
 
 export async function lessonCompletionRoutes(app: FastifyInstance) {
