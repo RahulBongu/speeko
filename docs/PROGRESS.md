@@ -17,10 +17,7 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P3 - Onboarding + path | Onboarding flow, course switcher, unit guidebook, review/chest/checkpoint path nodes, continue button | **Done** - branch `phase/3-onboarding-path` |
 | P4 - Content pipeline | Schema additions, validator rules, importer, one 5x5 draft pilot course, Studio draft badges | **Done** - branch `phase/4-content-pipeline` |
 | P5 - Practice hub | Leitner SRS 1/2/4/8/16 with read-time SM-2 migration, `/practice` hub, due/trouble/unit practice modes, practice-only sessions | **Done** - branch `phase/5-practice-hub` |
-
-P6 (habit systems) is next and is not started. Later phases (gems/shop, leagues,
-mobile parity, stories, hardening) follow the master plan. Hosting is deferred by
-the owner until the UI/product phases are done.
+| P6 - Habit systems | Daily goal setting, event-derived quests, 12-week streak calendar + freezes, achievements, `/habits` page | **Done** - `phase/6-habit-systems` |
 
 ## Verification snapshot (P5)
 
@@ -39,7 +36,56 @@ Visual evidence: 38 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P5 added the practice hub and the three practice summaries at
 both viewports.
 
-## What P5 changed
+## What P6 changed
+
+- **Habit rules in `packages/core`.** `config.ts` is the single source of truth for
+  daily-goal options, freeze cadence and cap, calendar weeks, and quest/achievement
+  definitions. `habits.ts` adds IANA day keys, DST-safe arithmetic, event-to-history
+  bucketing, duplicate-attempt and duplicate-day deduplication, streak/freeze
+  simulation, quests, a Monday-aligned 12-week calendar, and achievements. 17 tests
+  cover IST midnight, New York spring/fall DST, duplicate events, freeze earn/spend/
+  cap, trailing gaps, quests, week boundaries, calendar length, achievements, and
+  the empty report.
+- **Snapshot v2 gains `activity`.** Per-day `{xp, lessons}` for guest history. v1
+  snapshots are migrated with seeded activity from completed lessons and
+  `lastActiveDate`; v1 data is still never rewritten. `recordCompletion` now
+  updates activity and uses the stored time zone for day boundaries; merge keeps
+  the larger day aggregate so repeated syncs never double-count.
+- **Server habits are event-derived.** `GET /api/habits` derives history from
+  append-only `lesson_events` only, deduping by `attemptId`. The progress snapshot
+  contributes only `dailyGoal` and `timeZone`. `PUT /api/progress` keeps
+  preferences (goal and time zone) even when lesson history is more recent
+  elsewhere.
+- **`/habits` page.** Daily-goal picker (10/30/50/80/120 XP), quests, a 12-week
+  Monday-aligned calendar with freeze cells, freeze inventory and explanation, and
+  achievements. Guests see device-derived data with an honest source label; signed-in
+  users see server-verified data with loading, error, and empty states. Practice
+  creates no events, so it does not count.
+- **Stored goal everywhere.** Home, learn, account, and lesson summaries now use
+  `progress.dailyGoal` instead of a hardcoded 50. Onboarding uses core
+  `DAILY_GOAL_OPTIONS`. The header links to `/habits` (icon on mobile to avoid
+  overflow) and learn/account link into it.
+- **Coverage.** 95 core tests, 11 content tests, and 74 Playwright checks. Four
+  habits checks cover event totals, duplicate retries, reload stability, goal
+  persistence, and the guest source label.
+
+## Verification snapshot (P6)
+
+Run from the repo root:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 95 core + 11 content tests; 17 habits tests added |
+| `pnpm build` | 5/5 Turbo tasks |
+| `pnpm e2e` | 74 Playwright checks across routes, onboarding, rewards, practice, and habits |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+
+Visual evidence: 42 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
+contact sheets. P6 added the `/habits` route plus guest, signed-in, and goal-picker
+screenshots at both viewports.
+
+## What P6 changed
 
 - **SRS is Leitner 1/2/4/8/16.** A miss returns a card to box 1 for tomorrow; a
   correct answer moves it one box forward, capped at box 5. Legacy SM-2 cards

@@ -145,13 +145,13 @@ test('signed-in habits page shows verified history and survives reload without d
 
   await openHabits(page);
   await expect(page.getByText('Verified server history')).toBeVisible();
-  await expect(page.getByText(`${xp} / 50`)).toBeVisible();
+  await expect(page.getByText(`${xp} / 50`).first()).toBeVisible();
   await screenshot(page, testInfo, 'habits-signed-in');
 
   const before = await getHabits(page.request);
   await page.reload();
   await expect(page.getByRole('heading', { name: 'One day at a time.' })).toBeVisible();
-  await expect(page.getByText(`${xp} / 50`)).toBeVisible();
+  await expect(page.getByText(`${xp} / 50`).first()).toBeVisible();
 
   const after = await getHabits(page.request);
   expect(after.totals).toEqual(before.totals);
@@ -237,7 +237,7 @@ test('guest habits derive from device activity and label their source', async ({
   await expect(page.getByText('This device only')).toBeVisible();
   await expect(page.getByText('7 days in a row', { exact: false })).toBeVisible();
   await expect(page.getByText('1 of 2')).toBeVisible();
-  await expect(page.getByText('40 / 50')).toBeVisible();
+  await expect(page.getByText('40 / 50').first()).toBeVisible();
   await expect(page.getByText('5 of 10')).toBeVisible();
   await screenshot(page, testInfo, 'habits-guest');
 });

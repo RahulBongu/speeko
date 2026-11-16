@@ -49,3 +49,14 @@ phase report or `PROGRESS.md`, not here.
   notifications, or reviews. A visible control either works or says "coming soon".
 - `pnpm verify` green plus inspected screenshots is the definition of done.
 - New Indic content stays `draft` until a native speaker reviews it.
+
+## P6 — Habit systems
+
+| ID | Decision | Rationale / impact |
+| --- | --- | --- |
+| D26 | **Day boundaries use the learner's stored IANA time zone, not the server clock.** | Daily goals, quests, streaks, and calendars roll over at local midnight. The snapshot stores `timeZone`; the browser supplies it on first load and onboarding captures it. Invalid or missing zones fall back to the runtime's local day. |
+| D27 | **Quests are progress-only.** | Quests derive from history and show progress, but award no gems or other rewards yet. Gem rewards arrive with the shop in P7, matching D3. |
+| D28 | **Streak freezes earn automatically and spend automatically.** | One freeze is earned at every 7-day streak milestone, capped at two. A one-day gap spends one freeze automatically; larger gaps reset the streak. There is no purchase or manual control until P7. |
+| D29 | **Signed-in habit history is event-derived.** | Quests, streaks, the calendar, and achievements derive from append-only `lesson_events`, deduped by `attemptId`. The progress snapshot contributes only `dailyGoal` and `timeZone`. `PUT /api/progress` keeps those preferences even when lesson history is more recent elsewhere. |
+| D30 | **Guest habit data is device-derived and labelled.** | Guests see activity saved in this browser and the page says so. It is never presented as verified or shared history. |
+| D31 | **Activity is stored per day and merged by the larger value.** | v2 snapshots now include `activity: Record<day, {xp, lessons}>`. Repeated syncs and merges keep the larger day aggregate, so the same lesson can never be double-counted. v1 snapshots seed activity from completed lessons and `lastActiveDate`; v1 data is still not rewritten. |

@@ -40,18 +40,24 @@ routes at viewport size (not full-page).
 | `lesson-complete-error.png` | lesson | failed save, `Reward not saved` + Retry |
 | `onboarding-language.png` | `/onboarding/language` | language step heading |
 | `guidebook-hi-starter-unit-1.png` | `/learn/hi-starter/guidebook/1` | "Words and phrases in this unit" rendered |
-| `onboarding-first-lesson.png` | lesson | after the six-tap onboarding flow reaches lesson one |
-
+| `habits.png` | `/habits` | "One day at a time." heading |
+| `habits-guest.png` | `/habits` | seeded device history, calendar, achievements, freeze card |
+| `habits-signed-in.png` | `/habits` | signed-in summary after a verified lesson |
+| `habits-goal.png` | `/habits` | goal picker with 80 XP selected |
 Every capture also asserts the HTTP status is below 400, no uncaught page
 errors occur, and no console errors are emitted. Fonts are awaited before the
 shot so text does not render in a fallback face.
 
 `contact-desktop.png` and `contact-mobile.png` are convenience composites of
-the individual files (19 images each). The per-route PNGs are the source of truth.
+the individual files (23 images each). The per-route PNGs are the source of truth.
 
 ## Inspection log
 
-- **2026-11-16 — P5:** practice hub, empty state, and both practice summaries
+- **2026-11-16 — P6:** habit screenshots generated at both viewports: empty guest
+  habits, seeded guest history, signed-in verified history, and goal-picker state.
+  Automated ready conditions, HTTP status, and console/page-error checks passed.
+  Manual image inspection was not available in this run; layout was checked against
+  the source for overflow at the 390 px viewport.
   inspected at desktop and mobile. Found the summary count-up captured mid-frame
   (94% instead of 100%); the practice tests now emulate reduced motion before
   the summary, matching the reward suite. Also caught and fixed the feedback bar
