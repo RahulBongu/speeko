@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { levelForXp } from '@speeko/core';
 import { Brand, StatPill } from '@/components/AppHeader';
 import { Fox } from '@/components/Fox';
@@ -8,6 +9,7 @@ import { ProgressBar } from '@/components/ProgressBar';
 import { ArrowRightIcon, BoltIcon, FlameIcon, StarIcon } from '@/components/icons';
 import { COURSE_ORDER, LOCALE_META } from '@/lib/courses';
 import { DAILY_GOAL } from '@/lib/progress';
+import { readCompletedOnboarding } from '@/lib/onboarding';
 import { useProgress } from '@/lib/use-progress';
 
 const FEATURES = [
@@ -40,10 +42,19 @@ const FLOATING_WORDS = [
 
 export default function HomePage() {
   const progress = useProgress();
+  const [onboardingDone, setOnboardingDone] = useState(false);
+  useEffect(() => {
+    setOnboardingDone(Boolean(readCompletedOnboarding()));
+  }, []);
   const started = Boolean(progress && progress.xp > 0);
   const todayXp = progress?.todayXp ?? 0;
+  const dailyGoal = progress?.dailyGoal ?? DAILY_GOAL;
   const continueHref =
-    started && progress?.lastCourseId ? `/learn/${progress.lastCourseId}` : '/learn';
+    started && progress?.lastCourseId
+      ? `/learn/${progress.lastCourseId}`
+      : !started && onboardingDone && progress?.lastCourseId
+        ? `/learn/${progress.lastCourseId}`
+        : '/onboarding';
 
   return (
     <div className="overflow-x-hidden">
@@ -132,22 +143,30 @@ export default function HomePage() {
                       tone="default"
                     />
                   </div>
-                  <div className="mt-4 max-w-md rounded-2xl border-2 border-cream-200 bg-white p-4 shadow-card-sm">
+                  <Link
+                    href="/habits"
+                    className="focus-ring group mt-4 block max-w-md rounded-2xl border-2 border-cream-200 bg-white p-4 shadow-card-sm transition hover:border-speeko-200 hover:shadow-card"
+                    aria-label="Open habits, daily goal, and streak calendar"
+                  >
                     <div className="flex items-baseline justify-between gap-3">
                       <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-bark-400">
                         Today&apos;s goal
                       </p>
                       <p className="font-display text-xs font-extrabold text-bark-600">
-                        {Math.min(todayXp, DAILY_GOAL)} / {DAILY_GOAL} XP
+                        {Math.min(todayXp, dailyGoal)} / {dailyGoal} XP
                       </p>
                     </div>
                     <ProgressBar
-                      value={Math.min(1, todayXp / DAILY_GOAL)}
+                      value={Math.min(1, todayXp / dailyGoal)}
                       className="mt-2 h-2.5"
                       barClassName="bg-speeko-400"
                       label="Daily XP goal"
                     />
-                  </div>
+                    <span className="mt-2 flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-speeko-600">
+                      Habits
+                      <ArrowRightIcon className="h-3 w-3 transition group-hover:translate-x-0.5" />
+                    </span>
+                  </Link>
                 </>
               ) : (
                 <p className="mt-5 text-xs font-bold uppercase tracking-[0.12em] text-bark-300">

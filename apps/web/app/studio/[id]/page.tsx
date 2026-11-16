@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { validateCourse } from '@speeko/core';
 
 export default function StudioEditor({ params }: { params: Promise<{ id: string }> }) {
@@ -59,9 +60,9 @@ export default function StudioEditor({ params }: { params: Promise<{ id: string 
           >
             Download JSON
           </button>
-          <a href="/studio" className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50">
+          <Link href="/studio" className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50">
             Back
-          </a>
+          </Link>
         </div>
       </div>
       {errors.length > 0 ? (

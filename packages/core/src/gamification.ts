@@ -1,8 +1,9 @@
 // Gamification rules for Speeko. Pure functions; no I/O.
 
+export { DAILY_GOAL_DEFAULT as DAILY_XP_GOAL_DEFAULT } from './config.js';
+
 export const MAX_ENERGY = 5;
 export const ENERGY_REGEN_MINUTES = 25;
-export const DAILY_XP_GOAL_DEFAULT = 50;
 
 export type LeagueTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond' | 'champion';
 

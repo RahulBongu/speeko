@@ -11,6 +11,7 @@ interface ManifestEntry {
   units: number;
   lessons: number;
   exercises: number;
+  reviewStatus?: string;
   file: string;
 }
 
@@ -37,6 +38,15 @@ export default function StudioIndex() {
               <Link href={`/studio/${e.id}`} className="font-medium text-speeko-700 hover:underline">
                 {e.title}
               </Link>
+              {e.reviewStatus === 'draft' ? (
+                <span className="ml-2 rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-amber-700">
+                  Draft
+                </span>
+              ) : (
+                <span className="ml-2 rounded-full border border-speeko-200 bg-speeko-50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-speeko-700">
+                  Reviewed
+                </span>
+              )}
               <span className="ml-2 text-sm text-gray-500">
                 {e.locale} · {e.difficulty} · {e.units} units · {e.lessons} lessons · {e.exercises} exercises
               </span>

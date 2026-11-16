@@ -4,6 +4,12 @@ import cors from '@fastify/cors';
 import { healthRoutes } from './routes/health.js';
 import { authRoutes } from './routes/auth.js';
 import { progressRoutes } from './routes/progress.js';
+import { lessonCompletionRoutes } from './routes/lesson-completions.js';
+import { habitRoutes } from './routes/habits.js';
+import { shopRoutes } from './routes/shop.js';
+import { socialRoutes } from './routes/social.js';
+import { courseRoutes } from './routes/courses.js';
+import { aiRoutes } from './routes/ai.js';
 import { closeDb, runMigrations } from './db/client.js';
 
 const app = Fastify({ logger: true });
@@ -24,6 +30,12 @@ async function main() {
   await app.register(healthRoutes);
   await app.register(authRoutes);
   await app.register(progressRoutes);
+  await app.register(lessonCompletionRoutes);
+  await app.register(habitRoutes);
+  await app.register(shopRoutes);
+  await app.register(socialRoutes);
+  await app.register(courseRoutes);
+  await app.register(aiRoutes);
   app.addHook('onClose', async () => {
     await closeDb();
   });

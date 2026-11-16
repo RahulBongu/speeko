@@ -105,37 +105,37 @@ describe('progress', () => {
     expect(parsed.srs).toEqual({});
   });
 
-  it('creates SRS cards for reviewed skills and advances their schedule', () => {
+  it('creates SRS cards for reviewed skills and advances their box', () => {
     const base = emptyProgress();
     const now = Date.UTC(2026, 10, 15, 12, 0);
     const next = applyReviews(base, [{ skillId: 'hi:नमस्ते', quality: 5 }], now);
-    expect(next.srs['hi:नमस्ते']?.repetitions).toBe(1);
-    expect(next.srs['hi:नमस्ते']?.intervalDays).toBe(1);
-    expect(next.srs['hi:नमस्ते']?.ease).toBeGreaterThan(2.5);
+    expect(next.srs['hi:नमस्ते']?.box).toBe(1);
+    expect(next.srs['hi:नमस्ते']?.dueAt).toBe(now + 86_400_000);
+    expect(next.srs['hi:नमस्ते']?.lapses).toBe(0);
   });
 
-  it('counts failed reviews as lapses and resets repetitions', () => {
-    const base = snapshot({ srs: { 'hi:नमस्ते': card('hi:नमस्ते', { repetitions: 3, intervalDays: 6 }) } });
+  it('counts failed reviews as lapses and returns the card to box 1', () => {
+    const base = snapshot({ srs: { 'hi:नमस्ते': card('hi:नमस्ते', { box: 3 }) } });
     const now = Date.UTC(2026, 10, 15, 12, 0);
     const next = applyReviews(base, [{ skillId: 'hi:नमस्ते', quality: 2 }], now);
-    expect(next.srs['hi:नमस्ते']?.repetitions).toBe(0);
+    expect(next.srs['hi:नमस्ते']?.box).toBe(1);
     expect(next.srs['hi:नमस्ते']?.lapses).toBe(1);
   });
 
   it('merges SRS cards from two snapshots', () => {
-    const a = snapshot({ srs: { 'hi:x': card('hi:x', { repetitions: 5, dueAt: Date.UTC(2026, 11, 1) }) } });
-    const b = snapshot({ srs: { 'hi:x': card('hi:x', { repetitions: 2, dueAt: Date.UTC(2026, 10, 20) }) } });
+    const a = snapshot({ srs: { 'hi:x': card('hi:x', { box: 5, dueAt: Date.UTC(2026, 11, 1) }) } });
+    const b = snapshot({ srs: { 'hi:x': card('hi:x', { box: 2, dueAt: Date.UTC(2026, 10, 20) }) } });
     const merged = mergeProgress(a, b);
-    expect(merged.srs['hi:x']?.repetitions).toBe(5);
+    expect(merged.srs['hi:x']?.box).toBe(5);
   });
 
   it('dueReviewCards returns only due cards, earliest first', () => {
     const now = Date.UTC(2026, 10, 15, 12, 0);
     const progress = snapshot({
       srs: {
-        'hi:earlier': card('hi:earlier', { dueAt: now - 1000, intervalDays: 3 }),
-        'hi:later': card('hi:later', { dueAt: now - 500, intervalDays: 3 }),
-        'hi:future': card('hi:future', { dueAt: now + 86_400_000 * 30, intervalDays: 30 }),
+        'hi:earlier': card('hi:earlier', { dueAt: now - 1000, box: 3 }),
+        'hi:later': card('hi:later', { dueAt: now - 500, box: 3 }),
+        'hi:future': card('hi:future', { dueAt: now + 86_400_000 * 30, box: 5 }),
       },
     });
     const due = dueReviewCards(progress, now).map((c) => c.skillId);

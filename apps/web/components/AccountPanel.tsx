@@ -1,17 +1,22 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { DAILY_GOAL } from '@/lib/progress';
 import { useProgress } from '@/lib/use-progress';
+import { fetchGems } from '@/lib/shop';
 import { Fox } from './Fox';
 import { ProgressBar } from './ProgressBar';
 import { StatPill } from './AppHeader';
-import { BoltIcon, FlameIcon, TrophyIcon, CheckIcon, StarIcon, LockIcon } from './icons';
+import { BoltIcon, FlameIcon, TrophyIcon, CheckIcon, StarIcon, LockIcon, GemIcon } from './icons';
 
-/** Local league thresholds — climbs solely on the learner's own XP. */
-const LEAGUES = [
+/**
+ * Solo XP milestones. These are not a league: there are no peers and nothing
+ * is ranked. Real leagues only ship once enough real players exist.
+ */
+const MILESTONES = [
   { name: 'Bronze', xp: 0 },
   { name: 'Silver', xp: 80 },
   { name: 'Gold', xp: 200 },
@@ -20,15 +25,15 @@ const LEAGUES = [
   { name: 'Diamond', xp: 1500 },
 ] as const;
 
-type League = (typeof LEAGUES)[number];
+type Milestone = (typeof MILESTONES)[number];
 
-function leagueForXp(xp: number): { current: League; next: League | null } {
-  let current: League = LEAGUES[0];
-  let next: League | null = null;
-  for (const league of LEAGUES) {
-    if (xp >= league.xp) current = league;
+function milestoneForXp(xp: number): { current: Milestone; next: Milestone | null } {
+  let current: Milestone = MILESTONES[0];
+  let next: Milestone | null = null;
+  for (const milestone of MILESTONES) {
+    if (xp >= milestone.xp) current = milestone;
     else {
-      next = league;
+      next = milestone;
       break;
     }
   }
@@ -39,6 +44,25 @@ export function AccountPanel() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const progress = useProgress();
+  const [gemBalance, setGemBalance] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!session) {
+      setGemBalance(null);
+      return;
+    }
+    let active = true;
+    fetchGems()
+      .then((result) => {
+        if (active && result) setGemBalance(result.balance);
+      })
+      .catch(() => {
+        if (active) setGemBalance(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [session]);
 
   if (isPending) {
     return (
@@ -70,7 +94,8 @@ export function AccountPanel() {
 
   const completed = progress ? Object.keys(progress.completed).length : 0;
   const todayXp = progress?.todayXp ?? 0;
-  const league = leagueForXp(progress?.xp ?? 0);
+  const dailyGoal = progress?.dailyGoal ?? DAILY_GOAL;
+  const milestone = milestoneForXp(progress?.xp ?? 0);
 
   return (
     <div className="flex flex-col gap-5">
@@ -90,7 +115,7 @@ export function AccountPanel() {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
         {[
           <StatPill key="streak" icon={<FlameIcon className="h-4 w-4 animate-bob" />} value={<span className="inline-block animate-pop">{progress?.streak ?? 0}</span>} label="Day streak" tone="streak" />,
           <StatPill key="xp" icon={<BoltIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:120ms]">{`${progress?.xp ?? 0} XP`}</span>} label="Total XP" tone="xp" />,
@@ -98,9 +123,16 @@ export function AccountPanel() {
           <StatPill
             key="goal"
             icon={<BoltIcon className="h-4 w-4" />}
-            value={<span className="inline-block animate-pop [animation-delay:360ms]">{`${Math.min(todayXp, DAILY_GOAL)}/${DAILY_GOAL} XP`}</span>}
+            value={<span className="inline-block animate-pop [animation-delay:360ms]">{`${Math.min(todayXp, dailyGoal)}/${dailyGoal} XP`}</span>}
             label="Daily XP goal"
             tone="goal"
+          />,
+          <StatPill
+            key="gems"
+            icon={<GemIcon className="h-4 w-4" />}
+            value={<span className="inline-block animate-pop [animation-delay:440ms]">{gemBalance ?? '—'}</span>}
+            label="Gems"
+            tone="xp"
           />,
         ].map((pill, index) => (
           <div
@@ -116,37 +148,44 @@ export function AccountPanel() {
       <div className="card flex flex-col gap-3 p-6">
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-display text-lg font-extrabold text-bark-800">
-            Weekly League
+            Your milestones
           </h2>
           <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#fff9e0] px-3 py-1.5 font-display text-xs font-extrabold uppercase tracking-wide text-[#a06b00]">
             <StarIcon className="h-4 w-4" />
-            {league.current.name}
+            {milestone.current.name}
           </span>
         </div>
         <p className="text-sm font-semibold text-bark-500">
-          {league.next
-            ? `Earn ${league.next.xp - (progress?.xp ?? 0)} more XP to reach ${league.next.name}.`
-            : 'You have reached the summit. Diamond league — enjoy the view.'}
+          {milestone.next
+            ? `Earn ${milestone.next.xp - (progress?.xp ?? 0)} more XP to reach ${milestone.next.name}.`
+            : 'You have reached the summit. Diamond tier — enjoy the view.'}
         </p>
         <ProgressBar
-          value={league.next ? (progress?.xp ?? 0) / league.next.xp : 1}
+          value={milestone.next ? (progress?.xp ?? 0) / milestone.next.xp : 1}
           className="h-3.5"
           barClassName="bg-gradient-to-r from-fox-400 to-fox-600"
-          label="League progress"
+          label="Milestone progress"
         />
         <div className="mt-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-bark-300">
           <LockIcon className="h-3.5 w-3.5" />
-          Shop &amp; full league ladder — coming soon
+          Shop &amp; more milestones — coming soon
         </div>
       </div>
 
       <div className="card flex flex-col gap-3 p-6">
         <h2 className="font-display text-lg font-extrabold text-bark-800">Account</h2>
         <p className="text-sm font-semibold text-bark-500">
-          Completed lessons, XP, and streaks sync after every lesson. You can keep learning offline and the
-          next save catches up.
+          Completed lessons, XP, and streaks sync after every lesson. If a save
+          cannot reach the server, the lesson shows Retry before it can be
+          counted for your account.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
+          <Link href="/shop" className="btn-secondary">
+            Shop
+          </Link>
+          <Link href="/habits" className="btn-secondary">
+            Habits &amp; calendar
+          </Link>
           <Link href="/learn" className="btn-primary">
             Continue learning
           </Link>

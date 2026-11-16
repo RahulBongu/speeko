@@ -11,6 +11,7 @@ import {
   BoltIcon,
   CheckIcon,
   FlameIcon,
+  GiftIcon,
   LockIcon,
   PlayIcon,
   RefreshIcon,
@@ -20,8 +21,80 @@ import { LOCALE_META, fetchCourse } from '@/lib/courses';
 import { dueReviewCount } from '@/lib/review';
 import { courseStats, isLessonCompleted, lessonStatus } from '@/lib/progress';
 import { useProgress } from '@/lib/use-progress';
+import { CourseSwitcher } from '@/components/CourseSwitcher';
 
 const OFFSETS = ['sm:ml-0', 'sm:ml-16', 'sm:ml-32', 'sm:ml-16'] as const;
+
+function PathNode({
+  href,
+  icon,
+  label,
+  sub,
+  tone,
+  locked = false,
+  lockedReason,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  sub: string;
+  tone: 'chest' | 'review' | 'checkpoint';
+  locked?: boolean;
+  lockedReason?: string;
+}) {
+  const tones = {
+    chest: 'bg-[#fff1e8] text-fox-700 border-[#ffd9c2]',
+    review: 'bg-speeko-50 text-speeko-700 border-speeko-200',
+    checkpoint: 'bg-[#fff9e0] text-[#a06b00] border-[#ffe9a8]',
+  } as const;
+  const circle = (
+    <span
+      className={`flex h-[64px] w-[64px] items-center justify-center rounded-2xl border-2 shadow-card-sm transition duration-200 ${
+        locked ? 'border-cream-200 bg-cream-100 text-bark-300' : `${tones[tone]} group-hover:-translate-y-1`
+      }`}
+    >
+      {locked ? <LockIcon className="h-6 w-6" /> : icon}
+    </span>
+  );
+  const copy = (
+    <span className="text-center">
+      <span
+        className={`block font-display text-xs font-extrabold leading-tight ${
+          locked ? 'text-bark-300' : 'text-bark-700'
+        }`}
+      >
+        {label}
+      </span>
+      <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-[0.1em] text-bark-400">
+        {sub}
+      </span>
+    </span>
+  );
+
+  if (locked) {
+    return (
+      <span
+        aria-disabled="true"
+        title={lockedReason ?? 'Locked'}
+        className="flex w-24 flex-col items-center gap-1.5 opacity-80"
+      >
+        {circle}
+        {copy}
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={`${label}: ${sub}`}
+      className="focus-ring group flex w-24 flex-col items-center gap-1.5 rounded-2xl"
+    >
+      {circle}
+      {copy}
+    </Link>
+  );
+}
 
 export default function CoursePathPage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = use(params);
@@ -93,9 +166,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
             >
               <span className="script-text">{meta.glyph}</span>
             </span>
-            <span className="truncate font-display text-sm font-extrabold text-bark-700">
-              {meta.english}
-            </span>
+            <CourseSwitcher courseId={course.id} />
           </div>
           <div className="ml-auto flex items-center gap-1.5">
             <StatPill
@@ -174,6 +245,18 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
             const unitDone = unit.lessons.filter((lesson) =>
               isLessonCompleted(progress, course.id, lesson.id),
             ).length;
+            const unitNumber = unitIndex + 1;
+            const isCheckpointUnit = unitNumber % 2 === 0;
+            const checkpointUpTo = unitNumber;
+            const priorLessons = course.units
+              .slice(0, checkpointUpTo)
+              .flatMap((entry) => entry.lessons);
+            const checkpointUnlocked =
+              priorLessons.length > 0 &&
+              priorLessons.every((lesson) =>
+                isLessonCompleted(progress, course.id, lesson.id),
+              );
+            const checkpointId = `checkpoint-unit-${checkpointUpTo}`;
             return (
               <section key={unit.id}>
                 <div
@@ -276,6 +359,38 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                     );
                   })}
                 </ol>
+
+                <div className="mt-8 flex flex-wrap items-start justify-center gap-5">
+                  <PathNode
+                    href={`/learn/${course.id}/guidebook/${unitNumber}`}
+                    icon={<GiftIcon className="h-7 w-7" />}
+                    label="Unit chest"
+                    sub="Words & guidebook"
+                    tone="chest"
+                  />
+                  <PathNode
+                    href={`/lesson/${course.id}/review`}
+                    icon={<RefreshIcon className="h-7 w-7" />}
+                    label="Review"
+                    sub={dueCount > 0 ? `${dueCount} due` : 'Spaced practice'}
+                    tone="review"
+                  />
+                  {isCheckpointUnit ? (
+                    <PathNode
+                      href={`/lesson/${course.id}/${checkpointId}`}
+                      icon={<TrophyIcon className="h-7 w-7" />}
+                      label="Checkpoint"
+                      sub={
+                        checkpointUnlocked
+                          ? `Units 1–${checkpointUpTo}`
+                          : `Finish units 1–${checkpointUpTo} first`
+                      }
+                      tone="checkpoint"
+                      locked={!checkpointUnlocked}
+                      lockedReason={`Finish units 1–${checkpointUpTo} first`}
+                    />
+                  ) : null}
+                </div>
               </section>
             );
           })}

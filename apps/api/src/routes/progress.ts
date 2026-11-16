@@ -1,9 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import { eq } from 'drizzle-orm';
 import {
-  ProgressStateSchema,
+  ProgressSnapshotSchema,
   emptyProgress,
   mergeProgress,
+  migrateProgress,
+  upgradeProgress,
 } from '@speeko/core';
 import { getDb } from '../db/client.js';
 import { progressSnapshots } from '../db/schema.js';
@@ -27,7 +29,7 @@ export async function progressRoutes(app: FastifyInstance) {
       .limit(1);
 
     return reply.send({
-      progress: row?.data ?? emptyProgress(),
+      progress: row ? migrateProgress(row.data) : emptyProgress(),
       updatedAt: row?.updatedAt?.toISOString() ?? null,
     });
   });
@@ -36,7 +38,7 @@ export async function progressRoutes(app: FastifyInstance) {
     const userId = await requireUserId(request.headers);
     if (!userId) return reply.status(401).send({ error: 'Unauthorized' });
 
-    const parsed = ProgressStateSchema.safeParse(
+    const parsed = ProgressSnapshotSchema.safeParse(
       (request.body as { progress?: unknown } | null)?.progress,
     );
     if (!parsed.success) {
@@ -56,20 +58,29 @@ export async function progressRoutes(app: FastifyInstance) {
       .where(eq(progressSnapshots.userId, userId))
       .limit(1);
 
-    const incoming = parsed.data;
-    const merged = existing ? mergeProgress(existing.data, incoming) : incoming;
+    const incoming = upgradeProgress(parsed.data);
+    const existingState = existing ? migrateProgress(existing.data) : null;
+    const merged = existingState ? mergeProgress(existingState, incoming) : incoming;
+    // Goal and time zone are preferences, not activity. They follow this
+    // client write even when the more recent lesson history lives on another
+    // device, so a goal change is never silently reverted.
+    const withPreferences = {
+      ...merged,
+      dailyGoal: incoming.dailyGoal,
+      timeZone: incoming.timeZone ?? merged.timeZone,
+    };
 
     const [saved] = await db
       .insert(progressSnapshots)
-      .values({ userId, data: merged })
+      .values({ userId, data: withPreferences })
       .onConflictDoUpdate({
         target: progressSnapshots.userId,
-        set: { data: merged, updatedAt: new Date() },
+        set: { data: withPreferences, updatedAt: new Date() },
       })
       .returning();
 
     return reply.send({
-      progress: merged,
+      progress: withPreferences,
       updatedAt: saved?.updatedAt?.toISOString() ?? null,
     });
   });

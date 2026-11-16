@@ -16,6 +16,10 @@ const baseExercise = z.object({
   audioUrl: z.string().optional(),
   imageUrl: z.string().optional(),
   hint: z.string().optional(),
+  /** Stable id for spaced repetition and guidebook grouping. */
+  vocabId: z.string().min(1).optional(),
+  /** Roman/latin reading for the target-language text, when useful. */
+  transliteration: z.string().min(1).optional(),
 });
 
 export const ChooseMeaningExercise = baseExercise.extend({
@@ -100,6 +104,9 @@ export const LessonSchema = z.object({
   difficulty: DifficultySchema,
   xpReward: z.number().int().min(0).default(10),
   exercises: z.array(ExerciseSchema).min(1),
+  guidebook: z.string().optional(),
+  reviewStatus: z.enum(['draft', 'reviewed']).default('draft'),
+  reviewer: z.string().min(1).optional(),
 });
 
 export type Lesson = z.infer<typeof LessonSchema>;
@@ -111,6 +118,9 @@ export const UnitSchema = z.object({
   order: z.number().int().min(0),
   lessons: z.array(LessonSchema).min(1),
   crownLevel: z.number().int().min(0).max(5).default(0),
+  guidebook: z.string().optional(),
+  reviewStatus: z.enum(['draft', 'reviewed']).default('draft'),
+  reviewer: z.string().min(1).optional(),
 });
 
 export type Unit = z.infer<typeof UnitSchema>;
@@ -124,6 +134,8 @@ export const CourseSchema = z.object({
   difficulty: DifficultySchema,
   units: z.array(UnitSchema).min(1),
   version: z.string().default('1.0.0'),
+  reviewStatus: z.enum(['draft', 'reviewed']).default('draft'),
+  reviewer: z.string().min(1).optional(),
 });
 
 export type Course = z.infer<typeof CourseSchema>;

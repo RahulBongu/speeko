@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   accuracy as sessionAccuracy,
+  buildTroublePracticePlan,
+  buildUnitPracticePlan,
   createSession,
   currentExercise,
   gradeExercise,
@@ -13,17 +15,23 @@ import {
   type Exercise,
   type GradeResult,
   type SessionState,
+  type AttemptAnswer,
 } from '@speeko/core';
 import { fetchCourse, findLesson, flattenLessons, type FlatLesson } from '@/lib/courses';
 import {
   DAILY_GOAL,
   applyReviews,
+  isLessonCompleted,
   loadProgress,
   recordCompletionAndReviews,
   saveProgress,
   type ProgressState,
 } from '@/lib/progress';
 import { buildReviewPlan, buildReviewsFromAnswers } from '@/lib/review';
+import { checkUnitPractice, isPracticeLessonId, practiceKind } from '@/lib/practice';
+import { authClient } from '@/lib/auth-client';
+import { readKnownSignedInUserId } from '@/lib/auth-marker';
+import { submitLessonCompletion } from '@/lib/sync';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
 import { ProgressBar } from '@/components/ProgressBar';
@@ -40,6 +48,20 @@ import { canSubmit, initialDraft, toAnswerInput, type DraftAnswer } from './answ
 import { ExerciseBody } from './ExerciseBody';
 
 type Phase = 'loading' | 'error' | 'playing' | 'feedback' | 'summary' | 'hearts';
+
+type SaveState =
+  | { status: 'idle' }
+  | { status: 'local' }
+  | { status: 'saving' }
+  | { status: 'saved'; xp: number }
+  | { status: 'error'; message: string };
+
+function newAttemptId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `attempt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
 
 /** Count from 0 to `target` — instantly under prefers-reduced-motion. */
 function useCountUp(target: number, duration = 900): number {
@@ -70,6 +92,49 @@ const TIPS = [
   'One lesson a day keeps the streak alive.',
 ];
 
+/**
+ * Builds a synthetic, practice-only lesson entry from real exercises. The
+ * entry never matches a course lesson, so it cannot award XP or completion.
+ */
+function syntheticEntry({
+  id,
+  title,
+  description,
+  exercises,
+  order,
+  difficulty,
+}: {
+  id: string;
+  title: string;
+  description: string;
+  exercises: Exercise[];
+  order: number;
+  difficulty: Course['difficulty'];
+}): FlatLesson {
+  return {
+    lesson: {
+      id,
+      title,
+      description,
+      order,
+      difficulty,
+      xpReward: 0,
+      reviewStatus: 'draft',
+      exercises,
+    },
+    unit: {
+      id: `practice:${id}`,
+      title: 'Practice',
+      description: 'Practice only — no XP and no new lessons.',
+      order,
+      crownLevel: 0,
+      reviewStatus: 'draft',
+      lessons: [],
+    },
+    index: order,
+  };
+}
+
 export interface LessonPlayerProps {
   courseId: string;
   lessonId: string;
@@ -87,9 +152,17 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [xpGained, setXpGained] = useState(0);
   const [showExit, setShowExit] = useState(false);
   const [postProgress, setPostProgress] = useState<ProgressState | null>(null);
+  const [saveState, setSaveState] = useState<SaveState>({ status: 'idle' });
+  const { data: authSession, isPending: authPending, error: authError } = authClient.useSession();
+  const userId = authSession?.user.id ?? null;
+  /** The route itself is practice-only, regardless of loaded entry state. */
+  const practiceRoute = isPracticeLessonId(lessonId);
 
   const shownAt = useRef(Date.now());
   const savedRef = useRef(false);
+  const savingRef = useRef(false);
+  const attemptId = useRef(newAttemptId());
+  const attemptAnswers = useRef<AttemptAnswer[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -103,13 +176,50 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setAnsweredExercise(null);
     setPostProgress(null);
     savedRef.current = false;
+    savingRef.current = false;
+    attemptId.current = newAttemptId();
+    attemptAnswers.current = [];
+    setSaveState({ status: 'idle' });
 
     fetchCourse(courseId)
       .then((loaded) => {
         if (cancelled) return;
-        const isReview = lessonId === 'review';
+        const checkpointMatch = /^checkpoint-unit-(\d+)$/.exec(lessonId);
+        const unitPracticeMatch = /^practice-unit-(\d+)$/.exec(lessonId);
         let found: FlatLesson | null = null;
-        if (isReview) {
+        if (checkpointMatch) {
+          const unitNumber = Number(checkpointMatch[1]);
+          if (
+            !Number.isInteger(unitNumber) ||
+            unitNumber < 1 ||
+            unitNumber > loaded.units.length ||
+            unitNumber % 2 !== 0
+          ) {
+            setError('That checkpoint does not exist in this course.');
+            setPhase('error');
+            return;
+          }
+          const priorUnits = loaded.units.slice(0, unitNumber);
+          const priorLessons = priorUnits.flatMap((unit) => unit.lessons);
+          const progress = loadProgress();
+          if (
+            priorLessons.length === 0 ||
+            !priorLessons.every((lesson) => isLessonCompleted(progress, loaded.id, lesson.id))
+          ) {
+            setError(`Finish units 1–${unitNumber} before this checkpoint.`);
+            setPhase('error');
+            return;
+          }
+          const exercises = priorLessons.flatMap((lesson) => lesson.exercises).slice(0, 8);
+          found = syntheticEntry({
+            id: lessonId,
+            title: `Checkpoint · Unit ${unitNumber}`,
+            description: `${priorLessons.length} lessons' worth of practice, no XP at stake.`,
+            exercises,
+            order: 999 + unitNumber,
+            difficulty: loaded.difficulty,
+          });
+        } else if (lessonId === 'review') {
           const progress = loadProgress();
           const plan = buildReviewPlan(loaded, progress, Date.now());
           if (plan.exercises.length === 0) {
@@ -117,26 +227,49 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             setPhase('error');
             return;
           }
-          found = {
-            lesson: {
-              id: 'review',
-              title: 'Review',
-              description: 'Re-practice the skills you are about to forget.',
-              order: 999,
-              difficulty: 'A1',
-              xpReward: 0,
-              exercises: plan.exercises,
-            },
-            unit: {
-              id: 'review',
-              title: 'Daily review',
-              description: 'Spaced repetition, straight from your own progress.',
-              order: 999,
-              crownLevel: 0,
-              lessons: [],
-            },
-            index: 999,
-          };
+          found = syntheticEntry({
+            id: 'review',
+            title: 'Review',
+            description: 'Re-practice the skills you are about to forget.',
+            exercises: plan.exercises,
+            order: 999,
+            difficulty: loaded.difficulty,
+          });
+        } else if (unitPracticeMatch) {
+          const unitNumber = Number(unitPracticeMatch[1]);
+          const progress = loadProgress();
+          const check = checkUnitPractice(loaded, progress, lessonId);
+          const unit = loaded.units[unitNumber - 1];
+          if (!check.ok || !unit) {
+            setError(check.reason ?? 'That unit practice does not exist in this course.');
+            setPhase('error');
+            return;
+          }
+          const plan = buildUnitPracticePlan(loaded, progress, unitNumber);
+          found = syntheticEntry({
+            id: lessonId,
+            title: unit.title,
+            description: `A quick mix from the ${unit.title} lessons you have finished.`,
+            exercises: plan.exercises,
+            order: 900 + unitNumber,
+            difficulty: loaded.difficulty,
+          });
+        } else if (lessonId === 'practice-trouble') {
+          const progress = loadProgress();
+          const plan = buildTroublePracticePlan(loaded, progress);
+          if (plan.exercises.length === 0) {
+            setError('No trouble words yet. A word lands here after you miss it at least once.');
+            setPhase('error');
+            return;
+          }
+          found = syntheticEntry({
+            id: 'practice-trouble',
+            title: 'Trouble words',
+            description: 'The words you have missed before — another pass, no XP.',
+            exercises: plan.exercises,
+            order: 998,
+            difficulty: loaded.difficulty,
+          });
         } else {
           found = findLesson(loaded, lessonId);
         }
@@ -191,6 +324,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     if (!input) return;
     const result = gradeExercise(exerciseNow, input);
     const elapsed = Math.max(0, Date.now() - shownAt.current);
+    attemptAnswers.current.push({ exerciseId: exerciseNow.id, input, ms: elapsed });
     const next = reduceSession(session, {
       type: 'answer',
       exerciseId: exerciseNow.id,
@@ -234,30 +368,99 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setXpGained(0);
     setPostProgress(null);
     savedRef.current = false;
+    savingRef.current = false;
+    attemptId.current = newAttemptId();
+    attemptAnswers.current = [];
+    setSaveState({ status: 'idle' });
     shownAt.current = Date.now();
     setPhase('playing');
   }, [entry]);
 
+  const persistAttempt = useCallback(
+    async (answers: AttemptAnswer[]) => {
+      if (
+        !session ||
+        !course ||
+        !entry ||
+        isPracticeLessonId(entry.lesson.id)
+      ) {
+        return;
+      }
+      if (savingRef.current) return;
+      savingRef.current = true;
+      setSaveState({ status: 'saving' });
+      try {
+        const result = await submitLessonCompletion({
+          attemptId: attemptId.current,
+          courseId: course.id,
+          lessonId: entry.lesson.id,
+          answers,
+        });
+        saveProgress(result.progress);
+        setPostProgress(result.progress);
+        setSaveState({ status: 'saved', xp: result.event.xp });
+      } catch (cause) {
+        const message =
+          cause instanceof Error
+            ? cause.message
+            : 'Check your connection and try again.';
+        setSaveState({
+          status: 'error',
+          message: message.endsWith('.') ? message : `${message}.`,
+        });
+      } finally {
+        savingRef.current = false;
+      }
+    },
+    [session, course, entry],
+  );
+
   useEffect(() => {
     if (phase !== 'summary' || savedRef.current || !session || !course || !entry) return;
+    // Wait for the auth check so a signed-in learner never falls back to a
+    // local, unverified award.
+    const isPractice = isPracticeLessonId(entry.lesson.id);
+    if (!isPractice && authPending) return;
     savedRef.current = true;
+
     const reviews = buildReviewsFromAnswers(session, course.locale);
-    const isReview = entry.lesson.id === 'review';
-    const updated = isReview
-      ? applyReviews(loadProgress(), reviews, Date.now())
-      : recordCompletionAndReviews(
-          loadProgress(),
-          {
-            courseId: course.id,
-            lessonId: entry.lesson.id,
-            xp: session.xp + entry.lesson.xpReward,
-            accuracy: sessionAccuracy(session),
-          },
-          reviews,
-        );
-    saveProgress(updated);
-    setPostProgress(updated);
-  }, [phase, session, course, entry]);
+
+    // A failed session check is ambiguous. Fail closed for a browser that
+    // was signed in; otherwise treat the learner as an offline guest.
+    if (!isPractice && authError && !userId && readKnownSignedInUserId()) {
+      setSaveState({
+        status: 'error',
+        message: 'Could not check your account. Check your connection and try again.',
+      });
+      return;
+    }
+
+    if (isPractice || !userId) {
+      const updated = isPractice
+        ? applyReviews(loadProgress(), reviews, Date.now())
+        : recordCompletionAndReviews(
+            loadProgress(),
+            {
+              courseId: course.id,
+              lessonId: entry.lesson.id,
+              xp: session.xp + entry.lesson.xpReward,
+              accuracy: sessionAccuracy(session),
+            },
+            reviews,
+          );
+      saveProgress(updated);
+      setPostProgress(updated);
+      setSaveState({ status: 'local' });
+      return;
+    }
+
+    void persistAttempt(attemptAnswers.current);
+  }, [phase, session, course, entry, authPending, authError, userId, persistAttempt]);
+
+  const retrySave = useCallback(() => {
+    if (!session || !course || !entry || savingRef.current) return;
+    void persistAttempt(attemptAnswers.current);
+  }, [session, course, entry, persistAttempt]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -299,11 +502,14 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
         </h1>
         <p className="max-w-md text-sm font-semibold text-bark-500">{error}</p>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-          <Link href={`/learn/${courseId}`} className="btn-primary">
-            Back to the course
+          <Link
+            href={practiceRoute ? '/practice' : `/learn/${courseId}`}
+            className="btn-primary"
+          >
+            {practiceRoute ? 'Back to practice' : 'Back to the course'}
           </Link>
-          <Link href="/learn" className="btn-secondary">
-            All languages
+          <Link href={practiceRoute ? `/learn/${courseId}` : '/learn'} className="btn-secondary">
+            {practiceRoute ? 'Open course path' : 'All languages'}
           </Link>
         </div>
       </div>
@@ -379,6 +585,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           session={session}
           postProgress={postProgress}
           nextLesson={nextLesson}
+          saveState={saveState}
+          onRetry={retrySave}
         />
       ) : phase === 'hearts' ? (
         <OutOfHeartsScreen
@@ -456,6 +664,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           xpGained={xpGained}
           combo={session.combo}
           isLast={session.finished}
+          isPractice={practiceRoute}
           onContinue={handleContinue}
         />
       ) : null}
@@ -475,17 +684,19 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           >
             <Fox className="mx-auto h-24 w-24" />
             <h2 id="exit-title" className="mt-2 font-display text-2xl font-extrabold text-bark-800">
-              Leave this lesson?
+              {practiceRoute ? 'Leave this practice?' : 'Leave this lesson?'}
             </h2>
             <p className="mt-1 text-sm font-semibold text-bark-500">
-              Your answers so far won&apos;t be saved. You can restart any time.
+              {practiceRoute
+                ? "Answers from this session won't be saved. Your review schedule only changes when you finish."
+                : "Your answers so far won't be saved. You can restart any time."}
             </p>
             <div className="mt-5 flex flex-col gap-2">
               <button type="button" className="btn-primary" onClick={() => setShowExit(false)}>
-                Keep learning
+                Keep practicing
               </button>
-              <Link href={`/learn/${course.id}`} className="btn-secondary">
-                Leave lesson
+              <Link href={practiceRoute ? '/practice' : `/learn/${course.id}`} className="btn-secondary">
+                {practiceRoute ? 'Leave practice' : 'Leave lesson'}
               </Link>
             </div>
           </div>
@@ -501,6 +712,7 @@ function FeedbackBar({
   xpGained,
   combo,
   isLast,
+  isPractice,
   onContinue,
 }: {
   correct: boolean;
@@ -508,6 +720,7 @@ function FeedbackBar({
   xpGained: number;
   combo: number;
   isLast: boolean;
+  isPractice: boolean;
   onContinue: () => void;
 }) {
   return (
@@ -531,7 +744,11 @@ function FeedbackBar({
             {correct ? (
               <p className="text-sm font-semibold text-speeko-700">
                 <span className="inline-block animate-pop">
-                  {xpGained > 0 ? `+${xpGained} XP` : 'Progress saved'}
+                  {isPractice
+                    ? 'Review scheduled'
+                    : xpGained > 0
+                      ? `+${xpGained} XP`
+                      : 'Progress saved'}
                 </span>
                 {combo >= 2 ? ` · ${combo} in a row` : ''}
               </p>
@@ -564,20 +781,47 @@ function SummaryScreen({
   session,
   postProgress,
   nextLesson,
+  saveState,
+  onRetry,
 }: {
   course: Course;
   entry: FlatLesson;
   session: SessionState;
   postProgress: ProgressState | null;
   nextLesson: FlatLesson | null;
+  saveState: SaveState;
+  onRetry: () => void;
 }) {
   const accuracy = sessionAccuracy(session);
-  const isReview = entry.lesson.id === 'review';
-  const awardedXp = session.xp + (isReview ? 0 : entry.lesson.xpReward);
+  const kind = practiceKind(entry.lesson.id);
+  const isPractice = kind !== 'lesson';
+  const heading =
+    kind === 'review'
+      ? 'Review complete!'
+      : kind === 'checkpoint'
+        ? 'Checkpoint complete!'
+        : kind === 'trouble'
+          ? 'Trouble words done!'
+          : kind === 'unit'
+            ? 'Unit practice complete!'
+            : 'Lesson complete!';
+  const subtitle =
+    kind === 'review'
+      ? 'Spaced repetition'
+      : kind === 'checkpoint'
+        ? 'Practice, no XP'
+        : kind === 'trouble'
+          ? 'Trouble words · no XP'
+          : kind === 'unit'
+            ? 'Unit practice · no XP'
+            : entry.lesson.title;
+  const localXp = session.xp + (isPractice ? 0 : entry.lesson.xpReward);
+  const awardedXp = !isPractice && saveState.status === 'saved' ? saveState.xp : localXp;
   const todayXp = postProgress?.todayXp ?? 0;
   const streak = postProgress?.streak ?? 0;
-  const goalValue = Math.min(1, todayXp / DAILY_GOAL);
-  const goalDone = todayXp >= DAILY_GOAL;
+  const dailyGoal = postProgress?.dailyGoal ?? DAILY_GOAL;
+  const goalValue = Math.min(1, todayXp / dailyGoal);
+  const goalDone = todayXp >= dailyGoal;
   const displayXp = useCountUp(awardedXp);
   const displayAccuracy = useCountUp(Math.round(accuracy * 100));
   const displayCombo = useCountUp(session.maxCombo);
@@ -590,18 +834,18 @@ function SummaryScreen({
           <Fox mood="celebrate" className="relative h-44 w-44 animate-pop" />
         </div>
         <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-bark-800">
-          {isReview ? 'Review complete!' : 'Lesson complete!'}
+          {heading}
         </h1>
         <p className="mt-1 font-semibold text-bark-500">
-          {isReview ? 'Spaced repetition' : entry.lesson.title} · {course.title}
+          {subtitle} · {course.title}
         </p>
       </div>
 
       <div className="mt-8 grid grid-cols-3 gap-2.5 sm:gap-3">
         <div className="animate-rise [animation-delay:120ms]">
           <StatCard
-            label={isReview ? 'Skills updated' : 'XP earned'}
-            value={isReview ? `${session.answers.length}` : `+${displayXp}`}
+            label={isPractice ? 'Exercises replayed' : 'XP earned'}
+            value={isPractice ? `${session.answers.length}` : `+${displayXp}`}
             icon={<TrophyIcon className="h-5 w-5" />}
             tone="xp"
           />
@@ -614,24 +858,75 @@ function SummaryScreen({
         </div>
       </div>
 
-      {isReview ? (
+      {!isPractice && saveState.status === 'saving' ? (
+        <p
+          role="status"
+          className="mt-4 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-center text-sm font-semibold text-bark-500"
+        >
+          Saving your reward…
+        </p>
+      ) : null}
+      {!isPractice && saveState.status === 'local' ? (
+        <p
+          role="status"
+          className="mt-4 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-center text-sm font-semibold text-bark-500"
+        >
+          Saved on this device.
+        </p>
+      ) : null}
+      {!isPractice && saveState.status === 'saved' ? (
+        <p
+          role="status"
+          className="mt-4 rounded-2xl border-2 border-speeko-200 bg-speeko-50 px-4 py-3 text-center text-sm font-extrabold text-speeko-700"
+        >
+          Reward saved to your account.
+        </p>
+      ) : null}
+      {!isPractice && saveState.status === 'error' ? (
+        <div
+          role="alert"
+          className="mt-4 flex flex-col gap-3 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div>
+            <p className="font-display text-sm font-extrabold text-fox-700">
+              Reward not saved
+            </p>
+            <p className="mt-1 text-sm font-semibold text-bark-500">
+              {saveState.message} Retry to save this lesson — if you leave now, it
+              won&apos;t be counted.
+            </p>
+          </div>
+          <button type="button" onClick={onRetry} className="btn-secondary shrink-0">
+            Retry
+          </button>
+        </div>
+      ) : null}
+
+      {isPractice ? (
         <div className="card mt-4 p-5 text-center">
           <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
-            Spaced repetition
+            {kind === 'review'
+              ? 'Spaced repetition'
+              : kind === 'checkpoint'
+                ? 'Practice check'
+                : 'Practice only'}
           </p>
           <p className="mt-2 text-sm font-semibold text-bark-500">
-            Cards you practiced are now scheduled for their next review — sooner for the ones you
-            missed, later for the ones you nailed.
+            {kind === 'review'
+              ? 'Cards you practiced are now scheduled for their next review — sooner for the ones you missed, later for the ones you nailed.'
+              : kind === 'checkpoint'
+                ? 'No XP is at stake here — it is a chance to prove the units stuck. The answers do count toward your review schedule.'
+                : 'No XP and no course progress here. The answers still move each word through its review box.'}
           </p>
         </div>
-      ) : (
+      ) : postProgress ? (
         <div className="card mt-4 p-5">
           <div className="flex items-baseline justify-between gap-3">
             <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
               Daily goal
             </p>
             <p className="font-display text-sm font-extrabold text-bark-600">
-              {Math.min(todayXp, DAILY_GOAL)} / {DAILY_GOAL} XP
+              {Math.min(todayXp, dailyGoal)} / {dailyGoal} XP
             </p>
           </div>
           <ProgressBar
@@ -643,20 +938,41 @@ function SummaryScreen({
           <p className="mt-2 text-sm font-semibold text-bark-500">
             {goalDone
               ? 'Daily goal complete — the fox is doing a little dance.'
-              : `${DAILY_GOAL - todayXp} XP to hit today's goal.`}
+              : `${dailyGoal - todayXp} XP to hit today's goal.`}
+          </p>
+        </div>
+      ) : (
+        <div className="card mt-4 p-5 text-center">
+          <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
+            Daily goal
+          </p>
+          <p className="mt-2 text-sm font-semibold text-bark-500">
+            Your daily goal and streak update when this lesson is saved.
           </p>
         </div>
       )}
 
-      {!isReview && (
+      {!isPractice && postProgress ? (
         <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 font-display text-sm font-extrabold text-fox-700">
           <FlameIcon className="h-5 w-5 animate-bob" />
           {streak > 0 ? `${streak} day streak` : 'Streak started'}
         </div>
-      )}
+      ) : null}
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        {nextLesson ? (
+        {isPractice ? (
+          <>
+            <Link
+              href={`/lesson/${course.id}/${entry.lesson.id}`}
+              className="btn-primary flex-1"
+            >
+              Practice again
+            </Link>
+            <Link href="/practice" className="btn-secondary flex-1">
+              Practice hub
+            </Link>
+          </>
+        ) : nextLesson ? (
           <>
             <Link
               href={`/lesson/${course.id}/${nextLesson.lesson.id}`}

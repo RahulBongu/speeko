@@ -15,6 +15,7 @@ export interface FoxProps {
   className?: string;
   title?: string;
   riveSrc?: string;
+  accessory?: 'scarf' | 'hat' | 'glasses' | null;
 }
 
 const MOOD_LABEL: Record<FoxMood, string> = {
@@ -29,7 +30,7 @@ const MOOD_LABEL: Record<FoxMood, string> = {
  * stay lightweight; a Rive rig can replace this later without touching the
  * surrounding UI.
  */
-export function Fox({ mood = 'idle', className, title, riveSrc }: FoxProps) {
+export function Fox({ mood = 'idle', className, title, riveSrc, accessory = null }: FoxProps) {
   const resolvedRiveSrc = riveSrc ?? process.env.NEXT_PUBLIC_RIVE_FOX_URL;
   const [riveAvailable, setRiveAvailable] = useState(Boolean(resolvedRiveSrc) === false);
 
@@ -242,6 +243,34 @@ export function Fox({ mood = 'idle', className, title, riveSrc }: FoxProps) {
           strokeLinecap="round"
         />
       )}
+      {accessory === 'scarf' ? (
+        <path
+          d="M78 150c13 10 27 15 42 15s29-5 42-15l3 9c-15 11-29 16-45 16s-30-5-45-16Z"
+          fill="#37b02c"
+          stroke="#269020"
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+        />
+      ) : null}
+      {accessory === 'hat' ? (
+        <g>
+          <path
+            d="M62 92h116l-18-34H80Z"
+            fill="#7c3aed"
+            stroke="#5b21b6"
+            strokeWidth="3"
+            strokeLinejoin="round"
+          />
+          <circle cx="120" cy="58" r="8" fill="#fbbf24" />
+        </g>
+      ) : null}
+      {accessory === 'glasses' ? (
+        <g>
+          <circle cx="96" cy="101" r="16" fill="none" stroke="#1f2937" strokeWidth="3" />
+          <circle cx="144" cy="101" r="16" fill="none" stroke="#1f2937" strokeWidth="3" />
+          <path d="M112 101h16" stroke="#1f2937" strokeWidth="3" />
+        </g>
+      ) : null}
     </svg>
   );
 }

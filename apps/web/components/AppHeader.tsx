@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Fox } from './Fox';
 import { AuthMenu } from './AuthMenu';
+import { FlameIcon, ShopIcon, TrophyIcon } from './icons';
 
 export function Brand({ href = '/' }: { href?: string }) {
   return (
@@ -13,23 +14,57 @@ export function Brand({ href = '/' }: { href?: string }) {
   );
 }
 
-export function SiteHeader({ active }: { active?: 'learn' | 'studio' | 'account' }) {
+export function SiteHeader({
+  active,
+}: {
+  active?: 'learn' | 'practice' | 'habits' | 'shop' | 'leagues' | 'studio' | 'account';
+}) {
   const linkClass = (isActive: boolean) =>
-    `focus-ring rounded-xl px-3 py-2 font-display text-sm font-bold transition ${
+    `focus-ring whitespace-nowrap rounded-xl px-1.5 py-2 font-display text-sm font-bold transition sm:px-3 ${
       isActive ? 'bg-speeko-100 text-speeko-700' : 'text-bark-500 hover:bg-cream-100 hover:text-bark-700'
     }`;
   return (
     <header className="border-b border-cream-200/80 bg-cream-50/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-3">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-5">
         <Brand />
-        <nav className="flex items-center gap-1" aria-label="Main">
+        <nav className="flex items-center gap-0.5 sm:gap-1" aria-label="Main">
           <Link href="/learn" className={linkClass(active === 'learn')}>
             Learn
           </Link>
-          <Link href="/studio" className={linkClass(active === 'studio')}>
+          <Link href="/practice" className={linkClass(active === 'practice')}>
+            Practice
+          </Link>
+          <Link
+            href="/habits"
+            aria-label="Habits"
+            className={`${linkClass(active === 'habits')} inline-flex items-center gap-1.5`}
+          >
+            <FlameIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Habits</span>
+          </Link>
+          <Link
+            href="/shop"
+            aria-label="Shop"
+            className={`${linkClass(active === 'shop')} inline-flex items-center gap-1.5`}
+          >
+            <ShopIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Shop</span>
+          </Link>
+          <Link
+            href="/leagues"
+            aria-label="Leagues"
+            className={`${linkClass(active === 'leagues')} inline-flex items-center gap-1.5`}
+          >
+            <TrophyIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Leagues</span>
+          </Link>
+          <Link
+            href="/studio"
+            className={`${linkClass(active === 'studio')} hidden sm:inline-block`}
+          >
             Studio
           </Link>
-          <span className="mx-1 h-5 w-px bg-cream-200" aria-hidden="true" />
+          <span className="mx-1 hidden h-5 w-px bg-cream-200 sm:block" aria-hidden="true" />
           <AuthMenu />
         </nav>
       </div>

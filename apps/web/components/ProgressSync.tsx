@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { mergeProgress, progressEquals, type ProgressState } from '@speeko/core';
 import { authClient } from '@/lib/auth-client';
+import { writeKnownSignedInUserId } from '@/lib/auth-marker';
 import { PROGRESS_EVENT, loadProgress, saveProgress } from '@/lib/progress';
 import { fetchCloudProgress, pushCloudProgress } from '@/lib/sync';
 
@@ -11,13 +12,19 @@ import { fetchCloudProgress, pushCloudProgress } from '@/lib/sync';
  * sync. Guests keep working entirely offline; signing in merges both sides.
  */
 export function ProgressSync() {
-  const { data: session } = authClient.useSession();
+  const { data: session, error: authError } = authClient.useSession();
   const userId = session?.user.id ?? null;
   const readyFor = useRef<string | null>(null);
 
   useEffect(() => {
     readyFor.current = null;
-    if (!userId) return;
+    if (!userId) {
+      // Keep the marker when the session check failed: this browser may
+      // still hold a signed-in cookie, and completions must fail closed.
+      if (!authError) writeKnownSignedInUserId(null);
+      return;
+    }
+    writeKnownSignedInUserId(userId);
 
     let cancelled = false;
     (async () => {
@@ -42,7 +49,7 @@ export function ProgressSync() {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, authError]);
 
   useEffect(() => {
     if (!userId) return;

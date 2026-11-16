@@ -113,10 +113,74 @@ export function MicIcon(props: IconProps) {
   );
 }
 
+export function GiftIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <rect x="3.5" y="9" width="17" height="11.5" rx="2" />
+      <path d="M12 9v11.5M3.5 13.5h17M7.5 9a3 3 0 0 1 0-4.5C10 4.5 12 9 12 9s2-4.5 4.5-4.5a3 3 0 0 1 0 4.5" />
+    </svg>
+  );
+}
+
+export function BookOpenIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4 5.5A4.5 4.5 0 0 1 8.5 2H20v17H8.5A4.5 4.5 0 0 0 4 23V5.5Z" />
+      <path d="M4 5.5A4.5 4.5 0 0 1 8.5 2H20" />
+      <path d="M9 7h6M9 11h6M9 15h4" />
+    </svg>
+  );
+}
+
 export function RefreshIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
       <path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5" />
+    </svg>
+  );
+}
+
+export function SnowflakeIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 2v20M4.2 7l15.6 10M19.8 7 4.2 17" />
+      <path d="m9 4 3 2 3-2M9 20l3-2 3 2M5.4 9.2 2.5 7.5M18.6 14.8l2.9 1.7M18.6 9.2l2.9-1.7M5.4 14.8l-2.9 1.7" />
+    </svg>
+  );
+}
+
+export function CalendarIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M8 3v4M16 3v4M3.5 10h17" />
+    </svg>
+  );
+}
+
+export function GemIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
+      <path d="M6 3h12l4 6-10 12L2 9l4-6Z" opacity=".9" />
+      <path d="M2 9h20M6 3l4 6 2-6 2 6 4-6" fill="none" stroke="currentColor" strokeWidth={1.2} opacity=".55" />
+    </svg>
+  );
+}
+
+export function ShopIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M4 8h16l-1.5 11h-13L4 8Z" />
+      <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+    </svg>
+  );
+}
+
+export function SearchIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
     </svg>
   );
 }
