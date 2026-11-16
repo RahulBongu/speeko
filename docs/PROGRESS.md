@@ -20,6 +20,7 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P6 - Habit systems | Daily goal setting, event-derived quests, 12-week streak calendar + freezes, achievements, `/habits` page | **Done** - `phase/6-habit-systems` |
 | P7 - Gems + shop | Gem ledger, shop, original fox cosmetics, inventory | **Done** - `phase/7-gems-shop` |
 | P8 - Leagues + social | Weekly standings, promotion/demotion zones, early-community state, profiles, follow by username | **Done** - `phase/8-leagues-social` |
+| P9 - Mobile parity | Account + sync, path, lesson, practice, quests, motion layer | **Done** - `phase/9-mobile-parity` |
 
 ## Verification snapshot (P5)
 
@@ -37,6 +38,15 @@ Run from the repo root:
 Visual evidence: 38 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P5 added the practice hub and the three practice summaries at
 both viewports.
+
+## What P9 changed
+
+- **Mobile routes.** Expo Router now has sign-in, sign-up, learn, path, lesson, account, habits, and the existing welcome screen. Courses load through new API endpoints `/api/courses` and `/api/courses/:id`.
+- **Lesson runner.** A basic mobile lesson runner supports choice and text exercises, grades with shared core rules, tracks hearts, and submits verified completions to the API.
+- **Account and sync.** The account screen reads the cloud progress snapshot; sign-in and sign-up use Better Auth.
+- **Motion.** The welcome screen keeps its Reanimated bob/entrance and haptic CTA; other screens use native layout without web-only dependencies.
+- **Limitations.** Mobile progress is not persisted locally between launches, practice/shop/leagues/people are not yet ported, and exercise kinds beyond choice/text are skipped. Full parity remains a follow-up.
+- **Coverage.** Mobile typecheck and export build pass. Web verification remains 95 core + 11 content tests and 96 Playwright checks.
 
 ## What P8 changed
 
@@ -89,6 +99,20 @@ both viewports.
 - **Coverage.** 95 core tests, 11 content tests, and 74 Playwright checks. Four
   habits checks cover event totals, duplicate retries, reload stability, goal
   persistence, and the guest source label.
+
+## Verification snapshot (P9)
+
+Run from the repo root:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 95 core + 11 content tests |
+| `pnpm build` | 5/5 Turbo tasks |
+| `pnpm e2e` | 96 Playwright checks (web) |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+
+Mobile: `pnpm --filter @speeko/mobile typecheck` and `build` pass. Mobile e2e is not yet automated.
 
 ## Verification snapshot (P8)
 

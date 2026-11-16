@@ -9,6 +9,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { INDIAN_LOCALES, LOCALE_LABEL } from '@speeko/core';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -37,6 +38,7 @@ const MUTED = '#7A6156';
 const EASE_OUT = Easing.bezier(0.23, 1, 0.32, 1);
 
 export default function Home() {
+  const router = useRouter();
   const reduced = useReducedMotion();
   const bob = useSharedValue(0);
   const ctaScale = useSharedValue(1);
@@ -66,6 +68,7 @@ export default function Home() {
     });
     // Same frame as the press — success haptic, visuals still carry the meaning.
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    router.push('/learn');
   };
 
   const entrance = (delay: number) =>

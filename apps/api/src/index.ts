@@ -8,6 +8,7 @@ import { lessonCompletionRoutes } from './routes/lesson-completions.js';
 import { habitRoutes } from './routes/habits.js';
 import { shopRoutes } from './routes/shop.js';
 import { socialRoutes } from './routes/social.js';
+import { courseRoutes } from './routes/courses.js';
 import { closeDb, runMigrations } from './db/client.js';
 
 const app = Fastify({ logger: true });
@@ -32,6 +33,7 @@ async function main() {
   await app.register(habitRoutes);
   await app.register(shopRoutes);
   await app.register(socialRoutes);
+  await app.register(courseRoutes);
   app.addHook('onClose', async () => {
     await closeDb();
   });

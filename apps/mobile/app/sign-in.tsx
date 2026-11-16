@@ -1,0 +1,62 @@
+import { useState } from 'react';
+import { Pressable, Text, TextInput, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { API_URL, ORIGIN } from '../lib/api';
+
+export default function SignIn() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function submit() {
+    setBusy(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_URL}/api/auth/sign-in/email`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', origin: ORIGIN },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) throw new Error('Sign in failed.');
+      router.replace('/learn');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Sign in failed.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+      <Text style={{ fontSize: 28, fontWeight: '900' }}>Sign in</Text>
+      <TextInput
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Email"
+        autoCapitalize="none"
+        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 12, padding: 12 }}
+      />
+      <TextInput
+        value={password}
+        onChangeText={setPassword}
+        placeholder="Password"
+        secureTextEntry
+        style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 12, padding: 12 }}
+      />
+      {error ? <Text style={{ color: '#b91c1c' }}>{error}</Text> : null}
+      <Pressable
+        onPress={submit}
+        disabled={busy}
+        style={{ backgroundColor: '#16a34a', borderRadius: 12, padding: 14, alignItems: 'center' }}
+      >
+        <Text style={{ color: '#fff', fontWeight: '800' }}>{busy ? 'Signing in…' : 'Sign in'}</Text>
+      </Pressable>
+      <Pressable onPress={() => router.push('/sign-up')}>
+        <Text style={{ color: '#16a34a', fontWeight: '700' }}>Create account</Text>
+      </Pressable>
+    </View>
+  );
+}

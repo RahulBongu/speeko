@@ -78,3 +78,10 @@ phase report or `PROGRESS.md`, not here.
 | D37 | **Promotion and demotion are rank zones, not stored tiers.** | The current week shows promotion/safe/demotion zones from real standings. No tier is invented or persisted. |
 | D38 | **Profiles and follows are real-account only.** | A profile is created on demand for an authenticated user. Guests cannot appear in leagues or follow lists. |
 | D39 | **Usernames are unique and collision-safe.** | `ensureProfile` derives a slug from the account name or email and appends a random suffix when needed. |
+
+## P9 — Mobile parity
+
+| ID | Decision | Rationale / impact |
+| --- | --- | --- |
+| D40 | **Mobile uses the shared API for course data.** | `/api/courses` and `/api/courses/:id` serve the compiled course bundle so mobile does not duplicate the content pipeline. |
+| D41 | **Mobile parity is incremental.** | This phase ports auth, learn, path, a basic lesson runner, account, and habits. Practice, shop, leagues, and people remain web-first until a later pass. |
