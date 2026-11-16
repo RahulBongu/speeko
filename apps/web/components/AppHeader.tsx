@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Fox } from './Fox';
 import { AuthMenu } from './AuthMenu';
-import { FlameIcon, ShopIcon } from './icons';
+import { FlameIcon, ShopIcon, TrophyIcon } from './icons';
 
 export function Brand({ href = '/' }: { href?: string }) {
   return (
@@ -17,7 +17,7 @@ export function Brand({ href = '/' }: { href?: string }) {
 export function SiteHeader({
   active,
 }: {
-  active?: 'learn' | 'practice' | 'habits' | 'shop' | 'studio' | 'account';
+  active?: 'learn' | 'practice' | 'habits' | 'shop' | 'leagues' | 'studio' | 'account';
 }) {
   const linkClass = (isActive: boolean) =>
     `focus-ring whitespace-nowrap rounded-xl px-1.5 py-2 font-display text-sm font-bold transition sm:px-3 ${
@@ -49,6 +49,14 @@ export function SiteHeader({
           >
             <ShopIcon className="h-4 w-4" />
             <span className="hidden sm:inline">Shop</span>
+          </Link>
+          <Link
+            href="/leagues"
+            aria-label="Leagues"
+            className={`${linkClass(active === 'leagues')} inline-flex items-center gap-1.5`}
+          >
+            <TrophyIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Leagues</span>
           </Link>
           <Link
             href="/studio"

@@ -19,6 +19,7 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P5 - Practice hub | Leitner SRS 1/2/4/8/16 with read-time SM-2 migration, `/practice` hub, due/trouble/unit practice modes, practice-only sessions | **Done** - branch `phase/5-practice-hub` |
 | P6 - Habit systems | Daily goal setting, event-derived quests, 12-week streak calendar + freezes, achievements, `/habits` page | **Done** - `phase/6-habit-systems` |
 | P7 - Gems + shop | Gem ledger, shop, original fox cosmetics, inventory | **Done** - `phase/7-gems-shop` |
+| P8 - Leagues + social | Weekly standings, promotion/demotion zones, early-community state, profiles, follow by username | **Done** - `phase/8-leagues-social` |
 
 ## Verification snapshot (P5)
 
@@ -36,6 +37,15 @@ Run from the repo root:
 Visual evidence: 38 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P5 added the practice hub and the three practice summaries at
 both viewports.
+
+## What P8 changed
+
+- **Social schema.** `user_profiles` stores a unique username, display name, and bio; `follows` stores follower/followee pairs. Migration `0004_leagues_social.sql` adds both tables.
+- **Profiles on demand.** `ensureProfile` creates a profile the first time a learner touches a social route, with a collision-safe username. `/api/profiles/me`, `/api/profiles/:username`, and `/api/profiles/search` expose real stats from progress snapshots and verified lesson events.
+- **Follow by username.** `POST/DELETE /api/follows` follow or unfollow a real learner. Profile pages show follower/following counts and a working follow button.
+- **Weekly leagues.** `/api/leagues` aggregates verified lesson events since Monday in Asia/Kolkata, ranks real learners by weekly XP, and reports promotion/demotion zones. Under 10 active learners it reports an honest early-community state instead of a league.
+- **Web pages.** `/leagues`, `/people`, and `/profile/[username]` show standings, search, and profiles. The header links to Leagues.
+- **Coverage.** 95 core tests, 11 content tests, and 92 Playwright checks. Six social checks cover unauthenticated access, profile creation, follow/unfollow, and the early-community report.
 
 ## What P7 changed
 
@@ -79,6 +89,21 @@ both viewports.
 - **Coverage.** 95 core tests, 11 content tests, and 74 Playwright checks. Four
   habits checks cover event totals, duplicate retries, reload stability, goal
   persistence, and the guest source label.
+
+## Verification snapshot (P8)
+
+Run from the repo root:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 95 core + 11 content tests |
+| `pnpm build` | 5/5 Turbo tasks |
+| `pnpm e2e` | 92 Playwright checks across routes, onboarding, rewards, practice, habits, shop, and social |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+
+Visual evidence: 48 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
+contact sheets. P8 added `/leagues` and `/people` route screenshots at both viewports.
 
 ## Verification snapshot (P7)
 

@@ -45,6 +45,8 @@ routes at viewport size (not full-page).
 | `habits-signed-in.png` | `/habits` | signed-in summary after a verified lesson |
 | `habits-goal.png` | `/habits` | goal picker with 80 XP selected |
 | `shop.png` | `/shop` | guest sign-in prompt |
+| `leagues.png` | `/leagues` | guest sign-in prompt |
+| `people.png` | `/people` | guest sign-in prompt |
 Every capture also asserts the HTTP status is below 400, no uncaught page
 errors occur, and no console errors are emitted. Fonts are awaited before the
 shot so text does not render in a fallback face.

@@ -141,6 +141,49 @@ export const gemLedger = pgTable(
  * Owned shop items. Cosmetics are one-time purchases (quantity 1); consumables
  * such as streak freezes can have a quantity greater than one.
  */
+/**
+ * Public learner profile. One row per account; `username` is the follow target.
+ */
+export const userProfiles = pgTable(
+  'user_profiles',
+  {
+    userId: text('user_id')
+      .primaryKey()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    username: text('username').notNull().unique(),
+    displayName: text('display_name'),
+    bio: text('bio'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+);
+
+/**
+ * Follow relationships. A row means `followerId` follows `followeeId`.
+ */
+export const follows = pgTable(
+  'follows',
+  {
+    followerId: text('follower_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    followeeId: text('followee_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    pairIdx: uniqueIndex('follows_pair_idx').on(t.followerId, t.followeeId),
+  }),
+);
+
+/**
+ * Owned shop items. Cosmetics are one-time purchases (quantity 1); consumables
+ * such as streak freezes can have a quantity greater than one.
+ */
 export const userInventory = pgTable(
   'user_inventory',
   {

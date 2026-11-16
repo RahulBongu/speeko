@@ -69,3 +69,12 @@ phase report or `PROGRESS.md`, not here.
 | D33 | **The shop sells original fox cosmetics and streak freezes only.** | No real-money payments, ads, or external services. Cosmetics are one-time purchases; streak freezes add a freeze credit up to the existing cap of two. |
 | D34 | **Purchases are serialized per user.** | `SELECT ... FOR UPDATE` on the user row plus a unique `sourceKey` prevents double-spend under concurrent requests. Insufficient gems, already-owned, and full-freeze states return honest 409 responses. |
 | D35 | **Quest gems are awarded for completed daily quests.** | Daily quest completion credits +10 gems idempotently. Weekly quests remain progress-only. |
+
+## P8 — Leagues and social
+
+| ID | Decision | Rationale / impact |
+| --- | --- | --- |
+| D36 | **Leagues are global weekly standings until real grouping exists.** | With fewer than 10 active learners, the page shows an early-community state. There are no fabricated league members or groups. |
+| D37 | **Promotion and demotion are rank zones, not stored tiers.** | The current week shows promotion/safe/demotion zones from real standings. No tier is invented or persisted. |
+| D38 | **Profiles and follows are real-account only.** | A profile is created on demand for an authenticated user. Guests cannot appear in leagues or follow lists. |
+| D39 | **Usernames are unique and collision-safe.** | `ensureProfile` derives a slug from the account name or email and appends a random suffix when needed. |
