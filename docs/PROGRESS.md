@@ -21,6 +21,7 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P7 - Gems + shop | Gem ledger, shop, original fox cosmetics, inventory | **Done** - `phase/7-gems-shop` |
 | P8 - Leagues + social | Weekly standings, promotion/demotion zones, early-community state, profiles, follow by username | **Done** - `phase/8-leagues-social` |
 | P9 - Mobile parity | Account + sync, path, lesson, practice, quests, motion layer | **Done** - `phase/9-mobile-parity` |
+| P10 - Stories + conversation | Honest unavailable/coming-soon states, optional AI endpoint | **Done** - `phase/10-stories-conversation` |
 
 ## Verification snapshot (P5)
 

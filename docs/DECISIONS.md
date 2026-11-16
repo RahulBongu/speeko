@@ -85,3 +85,10 @@ phase report or `PROGRESS.md`, not here.
 | --- | --- | --- |
 | D40 | **Mobile uses the shared API for course data.** | `/api/courses` and `/api/courses/:id` serve the compiled course bundle so mobile does not duplicate the content pipeline. |
 | D41 | **Mobile parity is incremental.** | This phase ports auth, learn, path, a basic lesson runner, account, and habits. Practice, shop, leagues, and people remain web-first until a later pass. |
+
+## P10 — Stories and conversation
+
+| ID | Decision | Rationale / impact |
+| --- | --- | --- |
+| D42 | **Stories and conversation practice are optional.** | They ship only with original reviewed content. No Indic content is mass-generated. |
+| D43 | **AI providers are server-side only and optional.** | `/api/ai/status` and `/api/ai/conversation` return an honest unavailable state unless configured. No client ever calls a provider directly. |
