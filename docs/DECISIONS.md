@@ -92,3 +92,10 @@ phase report or `PROGRESS.md`, not here.
 | --- | --- | --- |
 | D42 | **Stories and conversation practice are optional.** | They ship only with original reviewed content. No Indic content is mass-generated. |
 | D43 | **AI providers are server-side only and optional.** | `/api/ai/status` and `/api/ai/conversation` return an honest unavailable state unless configured. No client ever calls a provider directly. |
+
+## P11 — Hardening
+
+| ID | Decision | Rationale / impact |
+| --- | --- | --- |
+| D44 | **Reduced motion is global.** | A single `prefers-reduced-motion` media query disables animation and transition durations across the web app. |
+| D45 | **Offline state is visible, not silent.** | An offline banner appears when `navigator.onLine` is false so progress sync status is honest. |

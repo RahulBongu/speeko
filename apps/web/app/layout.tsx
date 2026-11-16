@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { ProgressSync } from '@/components/ProgressSync';
+import { OfflineBanner } from '@/components/OfflineBanner';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="min-h-screen bg-cream-50 text-bark-800 antialiased">
+        <OfflineBanner />
         <ProgressSync />
         {children}
       </body>
