@@ -12,9 +12,16 @@ import { useProgress } from '@/lib/use-progress';
 
 /**
  * In-path course switcher. Changing the select updates the learner's last
- * course and routes to that path; browser Back returns to the previous one.
+ * course. On the path it routes to that course; on the practice hub the page
+ * re-renders from the progress event, so no navigation is needed.
  */
-export function CourseSwitcher({ courseId }: { courseId: string }) {
+export function CourseSwitcher({
+  courseId,
+  destination = 'learn',
+}: {
+  courseId: string;
+  destination?: 'learn' | 'practice';
+}) {
   const router = useRouter();
   const progress = useProgress();
   const [manifest, setManifest] = useState<CourseManifestEntry[] | null>(null);
@@ -40,7 +47,9 @@ export function CourseSwitcher({ courseId }: { courseId: string }) {
     if (progress) {
       saveProgress({ ...progress, lastCourseId: nextId });
     }
-    router.push(`/learn/${nextId}`);
+    if (destination === 'learn') {
+      router.push(`/learn/${nextId}`);
+    }
   }
 
   return (

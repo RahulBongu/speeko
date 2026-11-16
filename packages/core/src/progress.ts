@@ -182,8 +182,8 @@ function newestCompletion(progress: ProgressState): string | null {
 }
 
 /**
- * Merge two SRS card maps. For entries present in both, keep the card with
- * more repetitions (more evidence); ties broken by more lapses (learner
+ * Merge two SRS card maps. For entries present in both, keep the card in the
+ * higher Leitner box (more evidence); ties broken by more lapses (learner
  * struggled → review sooner), then by earlier dueAt.
  */
 function mergeSrs(a: Record<string, SrsCard>, b: Record<string, SrsCard>): Record<string, SrsCard> {
@@ -200,7 +200,7 @@ function mergeSrs(a: Record<string, SrsCard>, b: Record<string, SrsCard>): Recor
 }
 
 function pickReviewCard(x: SrsCard, y: SrsCard): SrsCard {
-  if (x.repetitions !== y.repetitions) return x.repetitions > y.repetitions ? x : y;
+  if (x.box !== y.box) return x.box > y.box ? x : y;
   if (x.lapses !== y.lapses) return x.lapses > y.lapses ? x : y;
   return x.dueAt <= y.dueAt ? x : y;
 }
@@ -212,7 +212,7 @@ export interface SrsReview {
 
 /**
  * Applies an answered-exercise review set to a progress snapshot, creating
- * cards as needed and advancing each card's schedule (SM-2).
+ * cards as needed and advancing each card through its Leitner box.
  */
 export function applyReviews(
   progress: ProgressState,

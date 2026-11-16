@@ -67,7 +67,14 @@ describe('progress v2 migration', () => {
     expect(migrated.completed).toEqual(v1Snapshot.completed);
     expect(migrated.lastCourseId).toBe('hi-starter');
     expect(migrated.lastLessonId).toBe('hi-starter-u1-l1');
-    expect(migrated.srs).toEqual(v1Snapshot.srs);
+    expect(migrated.srs).toEqual({
+      'hi:नमस्ते': {
+        skillId: 'hi:नमस्ते',
+        box: 1,
+        dueAt: 1_763_200_000_000,
+        lapses: 0,
+      },
+    });
     expect(migrated.dailyGoal).toBe(DAILY_GOAL);
     expect(migrated.timeZone).toBeNull();
 
@@ -89,13 +96,50 @@ describe('progress v2 migration', () => {
   });
 
   it('upgradeProgress defaults new fields for v1 and passes v2 through', () => {
-    const upgraded = upgradeProgress(v1Snapshot);
+    const upgraded = upgradeProgress(ProgressSnapshotSchema.parse(v1Snapshot));
     expect(upgraded.version).toBe(2);
     expect(upgraded.dailyGoal).toBe(DAILY_GOAL);
     expect(upgraded.timeZone).toBeNull();
 
     const v2 = migrateProgress(v1Snapshot, NOW);
     expect(upgradeProgress(v2)).toBe(v2);
+  });
+
+  it('maps legacy SM-2 intervals onto Leitner boxes without changing dueAt', () => {
+    const dueAt = 1_763_200_000_000;
+    const legacy = (intervalDays: number, repetitions: number, lapses = 0) => ({
+      skillId: 'hi:card',
+      ease: 2.5,
+      intervalDays,
+      repetitions,
+      dueAt,
+      lapses,
+    });
+    const migrated = migrateProgress(
+      {
+        ...v1Snapshot,
+        srs: {
+          'hi:new': { ...legacy(0, 0), skillId: 'hi:new' },
+          'hi:tomorrow': { ...legacy(1, 1), skillId: 'hi:tomorrow' },
+          'hi:two': { ...legacy(2, 2), skillId: 'hi:two' },
+          'hi:four': { ...legacy(4, 3), skillId: 'hi:four' },
+          'hi:eight': { ...legacy(8, 4), skillId: 'hi:eight' },
+          'hi:sixteen': { ...legacy(16, 5), skillId: 'hi:sixteen' },
+          'hi:missed': { ...legacy(1, 0, 2), skillId: 'hi:missed' },
+        },
+      },
+      NOW,
+    );
+
+    expect(migrated.srs['hi:new']?.box).toBe(0);
+    expect(migrated.srs['hi:tomorrow']?.box).toBe(1);
+    expect(migrated.srs['hi:two']?.box).toBe(2);
+    expect(migrated.srs['hi:four']?.box).toBe(3);
+    expect(migrated.srs['hi:eight']?.box).toBe(4);
+    expect(migrated.srs['hi:sixteen']?.box).toBe(5);
+    expect(migrated.srs['hi:missed']?.box).toBe(1);
+    expect(migrated.srs['hi:missed']?.lapses).toBe(2);
+    expect(Object.values(migrated.srs).every((card) => card.dueAt === dueAt)).toBe(true);
   });
 
   it('is lenient with corrupt data and stale daily XP', () => {

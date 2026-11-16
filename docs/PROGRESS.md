@@ -5,7 +5,7 @@ Living status document. One phase per session; a phase is done only when
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-15
+**Updated:** 2026-11-16
 
 ## Phase status
 
@@ -16,27 +16,54 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P2 — Server-verified rewards | Lesson-completion endpoint, server re-grade, append-only events, `attemptId` idempotency, signed-in save UI | **Done** — `4f514ad`, branch `phase/2-server-rewards` |
 | P3 - Onboarding + path | Onboarding flow, course switcher, unit guidebook, review/chest/checkpoint path nodes, continue button | **Done** - branch `phase/3-onboarding-path` |
 | P4 - Content pipeline | Schema additions, validator rules, importer, one 5x5 draft pilot course, Studio draft badges | **Done** - branch `phase/4-content-pipeline` |
+| P5 - Practice hub | Leitner SRS 1/2/4/8/16 with read-time SM-2 migration, `/practice` hub, due/trouble/unit practice modes, practice-only sessions | **Done** - branch `phase/5-practice-hub` |
 
-Next phase is selected by the owner; P5 is not started. Later phases (practice,
-content depth, SRS, economy, social, settings, mobile parity) follow the master plan.
-Hosting is deferred by the owner until the UI/product phases are done.
+P6 (habit systems) is next and is not started. Later phases (gems/shop, leagues,
+mobile parity, stories, hardening) follow the master plan. Hosting is deferred by
+the owner until the UI/product phases are done.
 
-## Verification snapshot (P4)
+## Verification snapshot (P5)
 
 Run from the repo root:
 
 | Command | Result |
 | --- | --- |
 | `pnpm typecheck` | 6/6 Turbo tasks (5 package typechecks + dependency builds) |
-| `pnpm test` | 76 tests — 65 core + 11 content (255 exercises graded) |
+| `pnpm test` | 84 tests — 73 core + 11 content (255 exercises graded) |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm lint` | Passes; one intentional `<img>` warning in the lesson player |
-| `pnpm e2e` | 48 Playwright checks (11 routes × 2 viewports, rewards × 2, onboarding × 2) |
+| `pnpm e2e` | 62 Playwright checks across routes, onboarding, rewards, and practice |
 | `pnpm verify` | typecheck → test → build → e2e, all green |
 
-Visual evidence: 30 screenshots in [`docs/qa/`](./qa/), plus desktop and
-mobile contact sheets. P4 added Studio draft badges; no new route screenshots were
-needed. The P3 route defects remain fixed.
+Visual evidence: 38 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
+contact sheets. P5 added the practice hub and the three practice summaries at
+both viewports.
+
+## What P5 changed
+
+- **SRS is Leitner 1/2/4/8/16.** A miss returns a card to box 1 for tomorrow; a
+  correct answer moves it one box forward, capped at box 5. Legacy SM-2 cards
+  are normalised on read to the nearest box from their old interval, with
+  `dueAt` preserved. Stored v1 data is never rewritten.
+- **Practice hub at `/practice`.** Due, trouble, and long-term counts, box
+  distribution, and per-unit entry points are computed only from SRS cards that
+  map to completed lessons. A fresh learner sees an honest empty state; unseen
+  units stay locked. The header now links to Practice on desktop and mobile.
+- **Three real practice modes.** Due review, trouble words (`lapses > 0`), and
+  per-unit practice. Unit practice mixes exercises round-robin across that
+  unit's completed lessons and never reveals unfinished lessons.
+- **Practice is practice-only.** Synthetic modes write no completion record, no
+  XP, and no `lesson_events` row. Feedback says "Review scheduled" instead of an
+  XP amount. Answers still update the SRS schedule; finished sessions sync
+  through the existing snapshot layer.
+- **Coverage.** Six core practice-planning tests, Leitner/migration tests, and
+  twelve Playwright checks (six flows × two viewports): empty hub, populated
+  counts and locks, due review, trouble words, unit practice, and locked-unit
+  explanation. Each completion test asserts XP and completion records did not
+  change.
+- **P4 validator fix.** The duplicate-`vocabId` rule was removed: `vocabId` is a
+  vocabulary-item identity and is intentionally repeated by the exercises that
+  practice one word. Unit/lesson/exercise IDs remain unique.
 
 ## What P4 changed
 
@@ -98,25 +125,26 @@ needed. The P3 route defects remain fixed.
   retry, attemptId mismatch, incomplete attempt, signed-in save, and failed-save
   Retry.
 
-## Known gaps after P3
+## Known gaps after P5
 
 These are product gaps, not regressions. Details and evidence are in
 [`AUDIT.md`](./AUDIT.md).
 
-- Chest nodes are honest recap entry points; there is no gem/shop reward yet. Checkpoint
-  nodes are practice-only and never write lesson progress or XP. The real gem economy
-  is P7.
-- Onboarding stores preferences, but does not enable reminders or adapt content; those
-  belong to later habit/SRS phases.
-- Review and checkpoint sessions update SRS locally without a `lesson_events` row. SRS
-  is simplified SM-2, not the mandated Leitner 1/2/4/8/16 boxes.
-- `timeZone` is captured on onboarding and stored, but day boundaries still use the
-  browser/server local day. Timezone-aware days are a later phase.
-- Content now has an optional `reviewStatus` field and a draft pilot course, but no
-  course has been reviewed by a native speaker. The importer is a utility, not a
-  full open-data pipeline with provenance checks.
-- Content is 4 units / 8 lessons / 24 exercises per course (240 exercises). There is no
-  `reviewStatus` field yet; new Indic content becomes `draft` from P4 onward.
+- Practice SRS updates sync through the snapshot layer (`PUT /api/progress`),
+  not `lesson_events`. Practice has no authoritative server-side event log yet;
+  that belongs with the later hardening/social phases.
+- Trouble words are historical: once a card has a lapse it stays available for
+  another pass. There is no "retired" state or automatic clearing.
+- Unit practice can include two exercises for the same word, so one session may
+  advance that card more than one box. Due and trouble plans use one exercise
+  per skill.
+- Chest nodes are honest recap entry points; there is no gem/shop reward yet.
+  The real gem economy is P7, and leagues remain gated by D2.
+- `timeZone` is captured on onboarding and stored, but day boundaries still use
+  the browser/server local day. Timezone-aware days are a later phase.
+- No course has been reviewed by a native speaker. The two Hindi courses
+  (starter + pilot) are `reviewStatus: "draft"`, and the importer remains a
+  utility rather than a full open-data pipeline with provenance checks.
 - Mobile remains a branded welcome screen. The release APK exists at
   `dist/speeko-release.apk` but has not been launch-verified on hardware.
 - No `LICENSE`; the repo is currently all rights reserved by default.

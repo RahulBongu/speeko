@@ -57,22 +57,35 @@ describe('gamification', () => {
 });
 
 describe('srs', () => {
-  it('new card is due now', () => {
+  it('new card starts in box 0 and is due now', () => {
     const c = newCard('skill-1', 1000);
+    expect(c.box).toBe(0);
     expect(isDue(c, 1000)).toBe(true);
   });
-  it('failed review resets interval', () => {
-    const c = newCard('skill-1', 0);
-    const r = review(c, 1, 0);
-    expect(r.intervalDays).toBe(1);
-    expect(r.lapses).toBe(1);
-    expect(r.repetitions).toBe(0);
+  it('failed review returns the card to box 1 for tomorrow', () => {
+    const now = 5_000_000;
+    const c = { ...newCard('skill-1', 0), box: 4, lapses: 2 };
+    const r = review(c, 1, now);
+    expect(r.box).toBe(1);
+    expect(r.dueAt).toBe(now + 86_400_000);
+    expect(r.lapses).toBe(3);
   });
-  it('perfect review grows interval', () => {
+  it('correct reviews climb the 1/2/4/8/16 day boxes', () => {
+    const day = 86_400_000;
     let c = newCard('skill-1', 0);
-    c = review(c, 5, 0);
-    c = review(c, 5, 86_400_000);
-    expect(c.intervalDays).toBeGreaterThanOrEqual(6);
+    const intervals: number[] = [];
+    for (let i = 0; i < 5; i += 1) {
+      const before = c.dueAt;
+      c = review(c, 5, before);
+      intervals.push((c.dueAt - before) / day);
+    }
+    expect(c.box).toBe(5);
+    expect(intervals).toEqual([1, 2, 4, 8, 16]);
+  });
+  it('box 5 stays capped', () => {
+    const now = 0;
+    const c = { ...newCard('skill-1', 0), box: 5 };
+    expect(review(c, 5, now).box).toBe(5);
   });
 });
 

@@ -50,7 +50,8 @@ Web pages:
 - `/learn` — language picker and continue-learning card
 - `/learn/[courseId]` — unit path with locked/current/completed lessons, review and recap nodes, checkpoint practice nodes
 - `/learn/[courseId]/guidebook/[unitIndex]` — unit guidebook extracted from the exercises ahead
-- `/lesson/[courseId]/[lessonId]` — the lesson player (including practice-only checkpoints)
+- `/lesson/[courseId]/[lessonId]` — the lesson player (including review, checkpoints, trouble words, and per-unit practice)
+- `/practice` — practice hub with due reviews, trouble words, and unit practice built from completed lessons
 - `/sign-in`, `/sign-up` — account access
 - `/account` — profile, cloud sync status, and sign out
 - `/studio` — course JSON authoring with live validation and download
@@ -64,6 +65,7 @@ Each lesson starts with **5 hearts**, one answer per exercise, and a progress ba
 - **Feedback** shows the correction, removes a heart on a wrong answer, and tracks XP and combo. A match-pairs mismatch blocks submission and offers a board reset without losing a heart.
 - **Speaking** uses browser speech recognition when available and falls back to typed input; listening exercises expose a "Show the phrase" fallback when no Indic voice is installed.
 - **Exit guard**, out-of-hearts screen, retry, completion summary, confetti, and next-lesson navigation are all implemented.
+- **Practice modes** reuse real exercises from completed lessons: due review, trouble words, and per-unit practice. They award no XP and write no course completion, but they do move each practiced word through its spaced-repetition box.
 - **Mascot:** Speeko the fox is an original inline SVG with idle, happy, sad, and celebrate moods. A Rive animation can replace it later without changing the player shell.
 
 ## Progress and accounts
@@ -76,12 +78,13 @@ Guests learn without an account. Progress is stored in the browser under `speeko
 - Total XP, level, streak, and last active date
 - Daily XP toward a goal (default 50 XP; the preference is stored, the settings UI is not built yet)
 - Last course and lesson for the continue card
+- Spaced-repetition cards in Leitner boxes 1/2/4/8/16; legacy SM-2 cards are normalised on read without changing their due date
 
 Snapshot `v1` remains readable and is never rewritten in place. `v2` adds `dailyGoal` and `timeZone`; loading an old snapshot runs a lenient migration that drops corrupt lesson/SRS entries, clamps negatives, resets stale daily XP, and writes `v2` on the next save.
 
 Signing up merges the local snapshot into the account, so nothing earned as a guest is lost. While signed in, a finished lesson is sent to `POST /api/lesson-completions` as raw answers. The server re-grades the attempt against the tracked course JSON, applies the same combo/hearts/XP rules from `@speeko/core`, and writes an append-only `lesson_events` row keyed by `(user_id, attempt_id)`. A retry with the same attempt id returns the original event instead of awarding XP twice.
 
-If that save cannot reach the server, the learner sees **Reward not saved** with a Retry button; signed-in attempts are not awarded locally. Guests (and review sessions) still save locally and work fully offline.
+If that save cannot reach the server, the learner sees **Reward not saved** with a Retry button; signed-in attempts are not awarded locally. Guests and practice sessions still save locally and work fully offline.
 
 Authentication uses Better Auth email + password sessions. The API mounts the Better Auth handler at `/api/auth/*` and protects progress and lesson-completion routes with the session cookie.
 
@@ -131,10 +134,10 @@ content/      Per-locale course JSON
 ## Verification
 
 - `pnpm typecheck` — 5 packages clean (6 Turbo tasks including dependency builds)
-- `pnpm test` — 76 tests (65 core + 11 content), all passing
+- `pnpm test` — 84 tests (73 core + 11 content), all passing
 - `pnpm build` — web, API, mobile-web export, and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
-- `pnpm e2e` — 48 Playwright checks across routes, onboarding, guidebook, rewards, and lesson-path regressions at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
+- `pnpm e2e` — 62 Playwright checks across routes, onboarding, rewards, and practice at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
 - `pnpm verify` — runs typecheck → test → build → e2e in order
 - Migrations are applied on API startup. P2's `lesson_events` migration was smoke-tested against a fresh pglite directory; there is no separate automated migration test.
 

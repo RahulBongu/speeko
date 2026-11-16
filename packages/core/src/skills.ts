@@ -45,7 +45,7 @@ export function skillIdFor(locale: Locale, exercise: Exercise): string | null {
   return `${locale}:${normalized}`;
 }
 
-/** Quality score (0..5) for SM-2 from an answered exercise outcome. */
+/** Quality score (0..5) from an answered exercise outcome; <3 is a miss. */
 export function qualityForOutcome(correct: boolean, hadPriorMiss: boolean): number {
   if (!correct) return 2; // incorrect but remembered — SM-2 "hard" grade
   return hadPriorMiss ? 4 : 5; // 5 = perfect recall, 4 = correct with effort

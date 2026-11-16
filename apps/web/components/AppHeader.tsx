@@ -13,7 +13,7 @@ export function Brand({ href = '/' }: { href?: string }) {
   );
 }
 
-export function SiteHeader({ active }: { active?: 'learn' | 'studio' | 'account' }) {
+export function SiteHeader({ active }: { active?: 'learn' | 'practice' | 'studio' | 'account' }) {
   const linkClass = (isActive: boolean) =>
     `focus-ring whitespace-nowrap rounded-xl px-2 py-2 font-display text-sm font-bold transition sm:px-3 ${
       isActive ? 'bg-speeko-100 text-speeko-700' : 'text-bark-500 hover:bg-cream-100 hover:text-bark-700'
@@ -26,7 +26,13 @@ export function SiteHeader({ active }: { active?: 'learn' | 'studio' | 'account'
           <Link href="/learn" className={linkClass(active === 'learn')}>
             Learn
           </Link>
-          <Link href="/studio" className={linkClass(active === 'studio')}>
+          <Link href="/practice" className={linkClass(active === 'practice')}>
+            Practice
+          </Link>
+          <Link
+            href="/studio"
+            className={`${linkClass(active === 'studio')} hidden sm:inline-block`}
+          >
             Studio
           </Link>
           <span className="mx-1 hidden h-5 w-px bg-cream-200 sm:block" aria-hidden="true" />

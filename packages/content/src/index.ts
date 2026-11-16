@@ -43,7 +43,6 @@ export function validateCourseFile(filePath: string): ValidationResult {
   // Check unique ids within course.
   const course = res.data;
   const ids = new Set<string>();
-  const vocabIds = new Set<string>();
   const checkReviewed = (scope: string, status: string, reviewer?: string) => {
     if (status === 'reviewed' && (!reviewer || reviewer.trim().length === 0)) {
       errors.push(`${scope}: reviewed content requires a reviewer`);
@@ -61,10 +60,6 @@ export function validateCourseFile(filePath: string): ValidationResult {
       for (const e of l.exercises) {
         if (ids.has(e.id)) errors.push(`duplicate exercise id: ${e.id}`);
         ids.add(e.id);
-        if (e.vocabId) {
-          if (vocabIds.has(e.vocabId)) errors.push(`duplicate vocabId: ${e.vocabId}`);
-          vocabIds.add(e.vocabId);
-        }
       }
     }
   }

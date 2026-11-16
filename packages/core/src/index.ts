@@ -7,4 +7,5 @@ export * from './session.js';
 export * from './attempt.js';
 export * from './grading.js';
 export * from './progress.js';
+export * from './practice.js';
 export * from './morphology.js';

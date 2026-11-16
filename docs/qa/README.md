@@ -26,6 +26,10 @@ routes at viewport size (not full-page).
 | `learn.png` | `/learn` | Hindi course link rendered |
 | `course-hi-starter.png` | `/learn/hi-starter` | first lesson link rendered |
 | `lesson-hi-starter-u1-l1.png` | `/lesson/hi-starter/hi-starter-u1-l1` | Check button visible |
+| `practice.png` | `/practice` | "Make it stick." heading (fresh guest) |
+| `practice-hub.png` | `/practice` | seeded due/trouble/long-term cards and a started unit |
+| `practice-trouble-complete.png` | trouble practice | summary with "Trouble words done!" |
+| `practice-unit-complete.png` | unit practice | summary with "Unit practice complete!" |
 | `sign-in.png` | `/sign-in` | heading |
 | `sign-up.png` | `/sign-up` | heading |
 | `account.png` | `/account` | guest heading |
@@ -43,10 +47,16 @@ errors occur, and no console errors are emitted. Fonts are awaited before the
 shot so text does not render in a fallback face.
 
 `contact-desktop.png` and `contact-mobile.png` are convenience composites of
-the individual files. The per-route PNGs are the source of truth.
+the individual files (19 images each). The per-route PNGs are the source of truth.
 
 ## Inspection log
 
+- **2026-11-16 — P5:** practice hub, empty state, and both practice summaries
+  inspected at desktop and mobile. Found the summary count-up captured mid-frame
+  (94% instead of 100%); the practice tests now emulate reduced motion before
+  the summary, matching the reward suite. Also caught and fixed the feedback bar
+  claiming "+XP" during practice; it now says "Review scheduled". No overflow or
+  clipped controls; mobile header keeps Learn/Practice/Sign in and hides Studio.
 - **2026-11-15 — P4:** Studio list now shows Draft/Reviewed badges from the manifest; no new screenshots were needed. Existing route screenshots remain valid.
 - **2026-11-15 — P2:** signed-in success and failed-save Retry screens
   inspected at both viewports. Layout, save-status copy, and Retry fit without
@@ -65,7 +75,7 @@ the individual files. The per-route PNGs are the source of truth.
 - **Web only.** The Expo welcome screen and the release APK are not captured.
 - **Interaction coverage is still narrow.** Deep lesson flow beyond completion,
   hearts exhaustion, pair reset, sign-out, and cloud sync on a second device
-  need more tests. Onboarding, path switching, guidebook, checkpoint gating, and
-  the six-tap guest flow are covered.
+  need more tests. Onboarding, path switching, guidebook, checkpoint gating,
+  practice due/trouble/unit flows, and the six-tap guest flow are covered.
 - **Static viewport.** Screenshots do not catch overflow below the fold, dark
   mode (not implemented), or reduced-motion variants.
