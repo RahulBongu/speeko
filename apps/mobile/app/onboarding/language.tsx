@@ -6,6 +6,7 @@ import { apiFetch } from '../../lib/api';
 import { readOnboardingDraft, saveOnboardingDraft } from '../../lib/onboarding';
 import { ENGLISH } from '../../lib/locale-meta';
 import { OnboardingFrame } from '../../components/onboarding/OnboardingFrame';
+import { Screen } from '../../components/Screen';
 import { TactileButton } from '../../components/Tactile';
 import { COLORS } from '../../lib/theme';
 
@@ -79,39 +80,42 @@ export default function LanguageStep() {
 
   if (loading && courses === null) {
     return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: COLORS.cream,
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 12,
-          padding: 24,
-        }}
-      >
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Loading courses…</Text>
-      </View>
+      <Screen>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 12,
+            padding: 24,
+          }}
+        >
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Loading courses…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (error && courses === null) {
     return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: COLORS.cream,
-          justifyContent: 'center',
-          gap: 12,
-          padding: 24,
-        }}
-      >
-        <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
-          Courses couldn&apos;t load
-        </Text>
-        <Text style={{ color: COLORS.red }}>{error}</Text>
-        <TactileButton label="Try again" onPress={() => void load()} />
-      </View>
+      <Screen>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            gap: 12,
+            padding: 24,
+          }}
+        >
+          <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
+            Courses couldn&apos;t load
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 

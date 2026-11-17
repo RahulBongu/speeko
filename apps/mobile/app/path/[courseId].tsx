@@ -6,6 +6,7 @@ import { LOCALE_LABEL, eligibleExercises, lessonKey } from '@speeko/core';
 import { apiFetch } from '../../lib/api';
 import { loadProgress } from '../../lib/progress';
 import { AppNav } from '../../components/AppNav';
+import { Screen } from '../../components/Screen';
 import {
   ProgressTrack,
   SpeekoAppBar,
@@ -171,25 +172,27 @@ export default function Path() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ fontWeight: '700', color: COLORS.muted }}>Opening the path…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ fontWeight: '700', color: COLORS.muted }}>Opening the path…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (error || !course) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 20, fontWeight: '900', color: COLORS.dark }}>
-          Course unavailable
-        </Text>
-        <Text style={{ color: COLORS.red }}>{error ?? 'Course could not load.'}</Text>
-        <TactileButton label="Try again" onPress={() => void load()} />
-        <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 10 }}>
-          <Text style={{ color: COLORS.dark, fontWeight: '800', textAlign: 'center' }}>Back</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 20, fontWeight: '900', color: COLORS.dark }}>
+            Course unavailable
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error ?? 'Course could not load.'}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 
@@ -211,10 +214,11 @@ export default function Path() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream, flexGrow: 1 }}
-    >
-      <SpeekoAppBar
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream, flexGrow: 1 }}
+      >
+        <SpeekoAppBar
         subtitle={`${LOCALE_LABEL[course.locale]} · ${course.difficulty}`}
         streak={progress?.streak ?? 0}
         xp={progress?.xp ?? 0}
@@ -339,6 +343,7 @@ export default function Path() {
       </TactilePressable>
 
       <AppNav active="learn" />
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

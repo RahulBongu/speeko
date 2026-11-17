@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Screen } from '../Screen';
 import { COLORS } from '../../lib/theme';
 
 export const ONBOARDING_STEPS = 5;
@@ -21,7 +21,7 @@ export function OnboardingFrame({
 }) {
   const router = useRouter();
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.cream }} edges={['top', 'left', 'right']}>
+    <Screen>
       <View
         style={{
           flexDirection: 'row',
@@ -150,6 +150,6 @@ export function OnboardingFrame({
           </Pressable>
         ) : null}
       </ScrollView>
-    </SafeAreaView>
+    </Screen>
   );
 }

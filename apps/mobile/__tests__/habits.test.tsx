@@ -124,7 +124,9 @@ describe('mobile habits', () => {
 
     await render(<Habits />);
     expect(await screen.findByText('Verified server history')).toBeTruthy();
-    await fireEvent.press(screen.getByText('30'));
+    // The streak/XP pills in the app bar also render "30", so target the goal
+    // option by its combined accessible name.
+    await fireEvent.press(screen.getByRole('button', { name: '30 XP' }));
 
     expect(await screen.findByText('Goal saved and synced.')).toBeTruthy();
     const put = mockedFetch.mock.calls.find(

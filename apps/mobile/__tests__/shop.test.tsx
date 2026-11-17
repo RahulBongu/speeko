@@ -109,7 +109,7 @@ describe('mobile shop', () => {
     });
 
     await render(<Shop />);
-    expect(await screen.findByText('Gems: 10')).toBeTruthy();
+    expect(await screen.findByLabelText('10 gems available')).toBeTruthy();
 
     await fireEvent.press(screen.getByText('Buy for 6 gems'));
 
@@ -137,7 +137,7 @@ describe('mobile shop', () => {
     });
 
     await render(<Shop />);
-    expect(await screen.findByText('Gems: 4')).toBeTruthy();
+    expect(await screen.findByLabelText('4 gems available')).toBeTruthy();
     await fireEvent.press(screen.getByText('Equip'));
 
     expect(await screen.findByText('You do not own this cosmetic.')).toBeTruthy();
@@ -160,7 +160,7 @@ describe('mobile shop', () => {
     });
 
     await render(<Shop />);
-    expect(await screen.findByText('Gems: 4')).toBeTruthy();
+    expect(await screen.findByLabelText('4 gems available')).toBeTruthy();
     await fireEvent.press(screen.getByText('Equip'));
     expect(await screen.findByText('Cosmetic equipped and synced.')).toBeTruthy();
     expect(screen.getByText('Equipped')).toBeTruthy();

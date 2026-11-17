@@ -6,6 +6,7 @@ import { LOCALE_LABEL, type Locale } from '@speeko/core';
 import { apiFetch } from '../lib/api';
 import { loadProgress } from '../lib/progress';
 import { AppNav } from '../components/AppNav';
+import { Screen } from '../components/Screen';
 import {
   ProgressTrack,
   SpeekoAppBar,
@@ -84,22 +85,28 @@ export default function Learn() {
 
   if (loading && courses === null) {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Loading courses…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Loading courses…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (error && courses === null) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
-          Courses couldn&apos;t load
-        </Text>
-        <Text style={{ color: COLORS.red }}>{error}</Text>
-        <TactileButton label="Try again" onPress={() => void load()} />
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
+            Courses couldn&apos;t load
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+        <AppNav active="learn" />
+      </Screen>
     );
   }
 
@@ -111,10 +118,11 @@ export default function Learn() {
   const continueDone = continueEntry ? completedInCourse(progress, continueEntry.id) : 0;
 
   return (
-    <ScrollView
-      contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream, flexGrow: 1 }}
-    >
-      <SpeekoAppBar
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream, flexGrow: 1 }}
+      >
+        <SpeekoAppBar
         subtitle="Ten Indian languages · draft review"
         streak={progress?.streak ?? 0}
         xp={progress?.xp ?? 0}
@@ -237,6 +245,7 @@ export default function Learn() {
       </Text>
 
       <AppNav active="learn" />
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

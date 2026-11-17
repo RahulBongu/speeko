@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { apiFetch } from '../lib/api';
+import { Screen } from '../components/Screen';
+import {
+  TactileButton,
+  TactilePressable,
+} from '../components/Tactile';
 import { COLORS } from '../lib/theme';
 
 interface Standing {
@@ -55,63 +60,65 @@ export default function Leagues() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Reading this week&apos;s standings…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Reading this week&apos;s standings…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (signedOut) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark }}>
-          Leagues need an account
-        </Text>
-        <Text style={{ color: COLORS.muted }}>
-          Weekly standings come from verified lessons. Sign in to see where you stand.
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push('/sign-in')}
-          style={{ backgroundColor: COLORS.green, borderRadius: 12, padding: 14, alignItems: 'center' }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>Sign in</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark }}>
+            Leagues need an account
+          </Text>
+          <Text style={{ color: COLORS.muted }}>
+            Weekly standings come from verified lessons. Sign in to see where you stand.
+          </Text>
+          <TactileButton label="Sign in" onPress={() => router.push('/sign-in')} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 
   if (error || !state) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ color: COLORS.red }}>{error ?? 'Leagues could not load.'}</Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => void load()}
-          style={{ backgroundColor: COLORS.green, borderRadius: 12, padding: 14, alignItems: 'center' }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>Try again</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
+            Leagues could not load
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error ?? 'Leagues could not load.'}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream }}>
-      <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>This week&apos;s race</Text>
-      <Text style={{ color: COLORS.muted }}>
-        Standings come from verified lessons finished since {state.weekStart}. No fabricated players,
-        no pretend ranks.
-      </Text>
+    <Screen>
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream }}>
+        <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>This week&apos;s race</Text>
+        <Text style={{ color: COLORS.muted }}>
+          Standings come from verified lessons finished since {state.weekStart}. No fabricated players,
+          no pretend ranks.
+        </Text>
 
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push('/people')}
-        style={{ alignSelf: 'flex-start', backgroundColor: COLORS.white, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10, borderWidth: 1, borderColor: COLORS.line }}
-      >
-        <Text style={{ fontWeight: '800', color: COLORS.dark }}>Find people →</Text>
-      </Pressable>
+        <TactilePressable
+          tone="white"
+          accessibilityLabel="Find people"
+          onPress={() => router.push('/people')}
+          style={{ alignSelf: 'flex-start' }}
+          contentStyle={{ paddingVertical: 10, paddingHorizontal: 14 }}
+        >
+          <Text style={{ fontWeight: '800', color: COLORS.dark }}>Find people →</Text>
+        </TactilePressable>
 
       {state.earlyCommunity ? (
         <View style={{ padding: 16, borderRadius: 14, backgroundColor: COLORS.white, gap: 4 }}>
@@ -142,6 +149,8 @@ export default function Leagues() {
             return (
               <View
                 key={entry.userId}
+                accessible={isMe || undefined}
+                accessibilityLabel={isMe ? `You, rank ${entry.rank}` : undefined}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -173,9 +182,8 @@ export default function Leagues() {
           You are rank {state.me.rank} · {state.me.zone}
         </Text>
       ) : null}
-      <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 8 }}>
-        <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Back</Text>
-      </Pressable>
-    </ScrollView>
+        <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+      </ScrollView>
+    </Screen>
   );
 }

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { apiFetch } from '../lib/api';
+import { ORIGIN, apiFetch } from '../lib/api';
+import { Screen } from '../components/Screen';
+import { TactileButton } from '../components/Tactile';
 import { COLORS } from '../lib/theme';
 
 interface SearchResult {
@@ -78,6 +80,7 @@ export default function People() {
       try {
         const response = await apiFetch('/api/follows', {
           method: isFollowing ? 'DELETE' : 'POST',
+          headers: { origin: ORIGIN },
           body: JSON.stringify({ username }),
         });
         if (response.status === 401) {
@@ -101,30 +104,25 @@ export default function People() {
 
   if (signedOut) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark }}>
-          People need an account
-        </Text>
-        <Text style={{ color: COLORS.muted }}>
-          Sign in to search for learners and follow their progress.
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.push('/sign-in')}
-          style={{ backgroundColor: COLORS.green, borderRadius: 12, padding: 14, alignItems: 'center' }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>Sign in</Text>
-        </Pressable>
-        <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 8 }}>
-          <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Back</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark }}>
+            People need an account
+          </Text>
+          <Text style={{ color: COLORS.muted }}>
+            Sign in to search for learners and follow their progress.
+          </Text>
+          <TactileButton label="Sign in" onPress={() => router.push('/sign-in')} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream }}>
-      <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Find learners</Text>
+    <Screen>
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream }}>
+        <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Find learners</Text>
       <Text style={{ color: COLORS.muted }}>
         Search by username or display name. Following only changes what you see; nothing is
         fabricated.
@@ -153,7 +151,7 @@ export default function People() {
           <Text style={{ color: COLORS.muted }}>Searching…</Text>
         </View>
       ) : null}
-      {error ? <Text style={{ color: COLORS.red }}>{error}</Text> : null}
+      {error ? <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error}</Text> : null}
 
       {results.map((result) => {
         const isFollowing = Boolean(following[result.username]);
@@ -180,6 +178,7 @@ export default function People() {
             </View>
             <Pressable
               accessibilityRole="button"
+              accessibilityState={{ disabled: isPending }}
               disabled={isPending}
               onPress={() => void toggleFollow(result.username)}
               style={{
@@ -190,7 +189,7 @@ export default function People() {
               }}
             >
               <Text style={{ fontWeight: '800', color: isFollowing ? COLORS.dark : COLORS.white }}>
-                {isPending ? '…' : isFollowing ? 'Following' : 'Follow'}
+                {isPending ? '…' : isFollowing ? 'Unfollow' : 'Follow'}
               </Text>
             </Pressable>
           </View>
@@ -204,9 +203,8 @@ export default function People() {
         <Text style={{ color: COLORS.muted }}>Type at least two characters.</Text>
       ) : null}
 
-      <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 8 }}>
-        <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Back</Text>
-      </Pressable>
-    </ScrollView>
+      <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+      </ScrollView>
+    </Screen>
   );
 }

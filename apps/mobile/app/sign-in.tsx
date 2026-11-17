@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { ORIGIN, apiFetch } from '../lib/api';
 import { syncProgress } from '../lib/sync';
+import { Screen } from '../components/Screen';
 import { TactileButton } from '../components/Tactile';
 import { COLORS } from '../lib/theme';
 
@@ -53,6 +55,12 @@ export default function SignIn() {
       } catch {
         // Intentionally non-fatal.
       }
+      // Signed in — let the fox celebrate with you. Haptics never block navigation.
+      try {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch {
+        // Intentionally non-fatal.
+      }
       router.replace('/learn');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Sign in failed.');
@@ -62,16 +70,17 @@ export default function SignIn() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        padding: 20,
-        gap: 14,
-        backgroundColor: COLORS.cream,
-        flexGrow: 1,
-        justifyContent: 'center',
-      }}
-      keyboardShouldPersistTaps="handled"
-    >
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{
+          padding: 20,
+          gap: 14,
+          backgroundColor: COLORS.cream,
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
       {/* Top minimal bar */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Pressable
@@ -116,22 +125,13 @@ export default function SignIn() {
             speek<Text style={{ color: COLORS.fox }}>o</Text>
           </Text>
         </View>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Help and language"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 12,
-            borderWidth: 2,
-            borderColor: COLORS.dark,
-            backgroundColor: COLORS.white,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ fontWeight: '900', color: COLORS.dark }}>?</Text>
-        </Pressable>
+        {/* Balances the back button so the wordmark stays centered. Decorative
+            only — hidden from assistive tech, like the sign-up spacer. */}
+        <View
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+          style={{ width: 44, height: 44 }}
+        />
       </View>
 
       {/* Mascot and speech bubble */}
@@ -211,6 +211,7 @@ export default function SignIn() {
         </Pressable>
         <Pressable
           accessibilityRole="button"
+          accessibilityState={{ selected: false }}
           onPress={() => router.push('/sign-up')}
           style={{
             flex: 1,
@@ -285,6 +286,7 @@ export default function SignIn() {
       >
         <Text style={{ color: COLORS.dark, fontWeight: '700' }}>Back</Text>
       </Pressable>
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

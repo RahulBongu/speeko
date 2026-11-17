@@ -12,6 +12,8 @@ import {
 import { apiFetch } from '../../lib/api';
 import { loadProgress, saveProgress } from '../../lib/progress';
 import { ExerciseBody } from '../../components/ExerciseBody';
+import { Screen } from '../../components/Screen';
+import { TactileButton, TactileCard } from '../../components/Tactile';
 import {
   canSubmit,
   initialDraft,
@@ -149,63 +151,79 @@ export default function PracticeRunner() {
 
   if (phase === 'loading') {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ fontWeight: '700', color: COLORS.muted }}>Building your review…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ fontWeight: '700', color: COLORS.muted }}>Building your review…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (phase === 'error') {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 20, fontWeight: '900', color: COLORS.dark }}>
-          Practice unavailable
-        </Text>
-        <Text style={{ color: COLORS.red }}>{loadError}</Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => void load()}
-          style={{ backgroundColor: COLORS.green, borderRadius: 12, padding: 14, alignItems: 'center' }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>Try again</Text>
-        </Pressable>
-        <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 10 }}>
-          <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Back</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <TactileCard tone="white">
+            <Text style={{ fontSize: 20, fontWeight: '900', color: COLORS.dark }}>
+              Practice unavailable
+            </Text>
+            <Text accessibilityRole="alert" style={{ color: COLORS.red, marginTop: 4 }}>{loadError}</Text>
+          </TactileCard>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 
   if (phase === 'empty') {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark }}>
-          Nothing to review
-        </Text>
-        <Text style={{ textAlign: 'center', color: COLORS.muted }}>{emptyMessage}</Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.back()}
-          style={{ backgroundColor: COLORS.green, borderRadius: 12, padding: 14, minWidth: 200, alignItems: 'center' }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>Back to practice</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+          <TactileCard tone="white" style={{ alignSelf: 'stretch' }}>
+            <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark, textAlign: 'center' }}>
+              Nothing to review
+            </Text>
+            <Text style={{ textAlign: 'center', color: COLORS.muted, marginTop: 4 }}>
+              {emptyMessage}
+            </Text>
+          </TactileCard>
+          <TactileButton
+            label="Back to practice"
+            onPress={() => router.back()}
+            style={{ alignSelf: 'stretch' }}
+          />
+        </View>
+      </Screen>
     );
   }
 
   if (phase === 'summary') {
     const correct = outcomes.filter((outcome) => outcome.correct).length;
     return (
-      <ScrollView contentContainerStyle={{ padding: 24, gap: 14, alignItems: 'center' }}>
-        <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Review complete!</Text>
-        <Text style={{ fontSize: 18, fontWeight: '800', color: COLORS.dark }}>
-          {correct} of {outcomes.length} correct
-        </Text>
-        <Text style={{ textAlign: 'center', color: COLORS.muted }}>
-          No XP is awarded in practice. Your answers move each word through its review box.
-        </Text>
+      <Screen>
+        <ScrollView
+          contentContainerStyle={{
+            padding: 24,
+            gap: 14,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: COLORS.cream,
+            flexGrow: 1,
+          }}
+        >
+          <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Review complete!</Text>
+          <TactileCard tone="white" style={{ alignSelf: 'stretch' }}>
+            <View style={{ alignItems: 'center', gap: 4 }}>
+              <Text style={{ fontSize: 18, fontWeight: '800', color: COLORS.dark }}>
+                {correct} of {outcomes.length} correct
+              </Text>
+              <Text style={{ textAlign: 'center', color: COLORS.muted }}>
+                No XP is awarded in practice. Your answers move each word through its review box.
+              </Text>
+            </View>
+          </TactileCard>
 
         {saveState === 'saving' ? (
           <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
@@ -220,40 +238,33 @@ export default function PracticeRunner() {
         ) : null}
         {saveState === 'error' ? (
           <View style={{ gap: 8, alignItems: 'center' }}>
-            <Text style={{ fontWeight: '800', color: COLORS.red }}>{saveError}</Text>
-            <Pressable
-              accessibilityRole="button"
+            <Text accessibilityRole="alert" style={{ fontWeight: '800', color: COLORS.red }}>{saveError}</Text>
+            <TactileButton
+              label="Try saving again"
               onPress={() => void saveReviews()}
-              style={{ backgroundColor: COLORS.green, borderRadius: 12, padding: 12, minWidth: 180, alignItems: 'center' }}
-            >
-              <Text style={{ color: COLORS.white, fontWeight: '800' }}>Try saving again</Text>
-            </Pressable>
+              style={{ alignSelf: 'stretch', minWidth: 180 }}
+            />
           </View>
         ) : null}
 
-        <Pressable
-          accessibilityRole="button"
+        <TactileButton
+          label="Done"
           onPress={() => router.back()}
           disabled={saveState === 'saving'}
-          style={{
-            backgroundColor: saveState === 'saving' ? COLORS.disabled : COLORS.green,
-            borderRadius: 12,
-            padding: 14,
-            minWidth: 200,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>Done</Text>
-        </Pressable>
-      </ScrollView>
+          style={{ alignSelf: 'stretch', marginTop: 6 }}
+        />
+        </ScrollView>
+      </Screen>
     );
   }
 
   if (!exercise) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center' }}>
-        <Text style={{ color: COLORS.red }}>This review has no exercises.</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center' }}>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>This review has no exercises.</Text>
+        </View>
+      </Screen>
     );
   }
 
@@ -261,13 +272,31 @@ export default function PracticeRunner() {
   const ready = phase === 'playing' && supported && canSubmit(exercise, draft);
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 20, gap: 16, backgroundColor: COLORS.cream, flexGrow: 1 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontWeight: '800', color: COLORS.muted }}>
-          Card {index + 1} of {exercises.length}
-        </Text>
-        <Text style={{ fontWeight: '800', color: COLORS.muted }}>Practice · no XP</Text>
-      </View>
+    <Screen>
+      <ScrollView contentContainerStyle={{ padding: 20, gap: 16, backgroundColor: COLORS.cream, flexGrow: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Exit practice"
+            onPress={() => router.back()}
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 19,
+              borderWidth: 2,
+              borderColor: COLORS.dark,
+              backgroundColor: COLORS.white,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontWeight: '900', color: COLORS.dark, fontSize: 16 }}>✕</Text>
+          </Pressable>
+          <Text style={{ flex: 1, fontWeight: '800', color: COLORS.muted }}>
+            Card {index + 1} of {exercises.length}
+          </Text>
+          <Text style={{ fontWeight: '800', color: COLORS.muted }}>Practice · no XP</Text>
+        </View>
       <Text style={{ fontSize: 20, fontWeight: '800', color: COLORS.dark }}>{exercise.prompt}</Text>
       {exercise.transliteration ? (
         <Text style={{ color: COLORS.muted, fontWeight: '600' }}>{exercise.transliteration}</Text>
@@ -285,6 +314,7 @@ export default function PracticeRunner() {
 
       {phase === 'feedback' && grade ? (
         <View
+          accessibilityRole="alert"
           style={{
             padding: 14,
             borderRadius: 14,
@@ -304,39 +334,21 @@ export default function PracticeRunner() {
       ) : null}
 
       {!supported ? (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => router.back()}
-          style={{ backgroundColor: COLORS.creamDeep, borderRadius: 12, padding: 14, alignItems: 'center' }}
-        >
-          <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Back to practice</Text>
-        </Pressable>
+        <TactileButton label="Back to practice" tone="cream" onPress={() => router.back()} />
       ) : phase === 'feedback' ? (
-        <Pressable
-          accessibilityRole="button"
+        <TactileButton
+          label={index + 1 >= exercises.length ? 'See results' : 'Continue'}
           onPress={next}
-          style={{ backgroundColor: COLORS.green, borderRadius: 14, padding: 14, alignItems: 'center' }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>
-            {index + 1 >= exercises.length ? 'See results' : 'Continue'}
-          </Text>
-        </Pressable>
+        />
       ) : (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ disabled: !ready }}
+        <TactileButton
+          label="Check"
           onPress={check}
           disabled={!ready}
-          style={{
-            backgroundColor: ready ? COLORS.green : COLORS.disabled,
-            borderRadius: 14,
-            padding: 14,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>Check</Text>
-        </Pressable>
+          accessibilityState={{ disabled: !ready }}
+        />
       )}
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

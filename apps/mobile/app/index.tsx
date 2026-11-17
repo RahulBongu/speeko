@@ -6,14 +6,13 @@
 //  - Content fades up on mount with staggered delays (entering animations).
 //  - The CTA scales to 0.97 on press with a spring and fires a success haptic.
 //  - Reduced motion: bob and overshoot are dropped, only opacity remains.
-import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { INDIAN_LOCALES, LOCALE_LABEL } from '@speeko/core';
 import { readCompletedOnboarding } from '../lib/onboarding';
 import { loadProgress } from '../lib/progress';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Screen } from '../components/Screen';
 import Animated, {
   FadeIn,
   FadeInUp,
@@ -29,7 +28,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
-const CREAM = '#FFF9E0';
 const CREAM_DEEP = '#FDF0D5';
 const GREEN = '#16A34A';
 const GREEN_DARK = '#15803D';
@@ -89,8 +87,7 @@ export default function Home() {
       : FadeInUp.delay(delay).duration(480).easing(EASE_OUT);
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-      <StatusBar style="dark" />
+    <Screen>
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -129,6 +126,7 @@ export default function Home() {
           entering={entrance(420)}
           horizontal
           showsHorizontalScrollIndicator={false}
+          style={{ flexGrow: 0, maxHeight: 52 }}
           contentContainerStyle={styles.chips}
         >
           {INDIAN_LOCALES.map((locale) => (
@@ -154,15 +152,11 @@ export default function Home() {
           <Text style={styles.finePrint}>Free to start · progress stays on your device</Text>
         </Animated.View>
       </ScrollView>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: CREAM,
-  },
   scroll: {
     flexGrow: 1,
     alignItems: 'center',
@@ -227,6 +221,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     gap: 8,
     paddingHorizontal: 2,
+    alignSelf: 'center',
   },
   chip: {
     borderRadius: 999,
