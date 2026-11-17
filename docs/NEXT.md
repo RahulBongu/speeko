@@ -1,8 +1,30 @@
-# M1 — Android app renders
+# Speeko — Milestones
+
+> This file now summarizes the current state. M1 historical record lives at the bottom.
+
+## Current state (2026-11-17) — Phase 4
+
+- **Phase 1 landed** (`next/M2`): M2 headless sign-off; M4 hardening — rate limiting (429 + Retry-After), no-store on `/api/*`, secrets-in-bundle guard wired into `pnpm verify`, production boot guard (≥32-char `BETTER_AUTH_SECRET`).
+- **Phase 2 landed**: mobile onboarding ported (6 taps to first lesson, guest-first) and `wordBank` / `arrangeSentence` / `typeWhatYouHear` / `speak` shipped with mobile test coverage (77 Jest tests).
+- **Phase 3 landed**: tactile/safe-area consistency pass (every route screens under `<Screen>`); dead-end error/signed-out states eliminated (single recovery CTA + Back); web design-token + a11y polish; focus rings; contrast fixes; corporate ramps; studio re-skin; `/not-found`, `/error`, `/global-error`.
+- **Phase 4 landed**: alpha build verified (`pnpm verify` green; 148/148 e2e); Android AAB builds (`app-release.aab`, SHA-256 `BFB0A0F9…`); `.github/workflows/verify.yml`; `CHANGELOG.md`; `docs/deploy-runbook.md`; Play store listing copy in `docs/store/metadata/en-US/` (content is explicitly draft, honest).
+- **Not merged / not published**: `next/M1`, `next/M2` are review branches; no store accounts exist; no license chosen; native speakers have reviewed nothing.
+
+### What the owner must do next
+
+1. License decision + OFL attribution + LICENSE file.
+2. Hosting/database authorization + backups + secret rotation.
+3. Native-speaker review of the 305 draft exercises.
+4. Audio decision for listenChoose (10 items), or formally keep them excluded.
+5. Store accounts (Play Console) + re-sign keystore/devOps (AAB from a clean prebuild, no cleartext exception).
+
+---
+
+## M1 — Android app renders (closed 2026-11-17)
 
 ## Result: PASS (release APK) — cold-starts to the learn screen; loads, fetches, navigates, no fatals
 
-Debug render also passed (2026-11-17). Full functional QA (M2) is still pending.
+Debug render also passed (2026-11-17). Full functional QA on-device is not complete (headless M2 is; see NEXT section in `docs/PROGRESS.md`).
 
 ### Verified on 2026-11-17
 
@@ -43,12 +65,7 @@ Debug render also passed (2026-11-17). Full functional QA (M2) is still pending.
 
 `apps/mobile/__tests__/root-layout.test.tsx` renders the root layout in Jest (mocks `expo-router`/`expo-status-bar`). It proves only that the layout module executes — not a device render. Device evidence is the screenshots and dumps above.
 
-### Git state
+### Not verified yet (on-device)
 
-Branch `next/M1` (based on `de57065`); pushed. Evidence was collected 2026-11-17 with the owner actively using the device.
-
-### Not verified yet (M2)
-
-- Sign-up and sign-in on device, completing a lesson, cross-device progress sync, shop, habits, sign-out.
-- The M2 test account (`m2-qa2@speeko.test`) exists on the local PGlite DB; its credentials are stored in `apps/api/data/qa-account.local.json` (gitignored), not in git or chat.
+- Functional M2 pass remains open on hardware (headless coverage exists instead).
 - Note: the debug→release handoff required uninstalling the debug build (signature mismatch), which wiped device-local guest progress.

@@ -5,7 +5,17 @@ Living status document. One phase per session; a phase is done only when
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-17
+**Updated:** 2026-11-17 (Phase 4 landed)
+
+## Current state (Phase 4)
+
+- **Alpha cut built and verified.** `pnpm verify` green: typecheck 6/6, tests (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (134 files, 0 hits), e2e **148/148**.
+- **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Note: produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
+- **Phases 1–3 landed** (`next/M2`): M2 headless sign-off, M4 hardening (rate limit, no-store, secrets gate), mobile onboarding, all four missing exercise kinds, tactile/safe-area consistency pass, web design-token + a11y polish.
+- **Phase 4 landed:** `.github/workflows/verify.yml`, `CHANGELOG.md`, `docs/deploy-runbook.md`, honest store listing copy under `docs/store/metadata/en-US/`.
+- **Still open (owner):** license (draft rights), native-speaker review, hosting + backups + secret rotation, audio decision, store accounts.
+- **Not merged:** `next/M1` and `next/M2` are review branches; merge order owner's call.
+
 
 ## Phase status
 
