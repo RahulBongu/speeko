@@ -61,6 +61,27 @@ Artifact:
 - Path: `apps/mobile/android/app/build/outputs/apk/release/app-release.apk`
 - Size: 21993757 bytes
 - SHA-256: `150DE370B66B31C09B669B6A19378D458560A19A266D05D53C14CA200F5B9B2A`
+- Modification time of the current APK: 2026-11-17 16:52:19
+
+### Byte-reproducibility check (2026-11-17, prompted by identical hashes)
+
+Identical hashes across builds are not automatically trustworthy as
+reproducibility evidence — gradle may leave an `UP-TO-DATE` task untouched.
+Verified explicitly:
+
+1. First rebuild (bundle-output deleted, APK present): log lines
+   `:app:createBundleReleaseJsAndAssets` (executed),
+   `:app:mergeReleaseAssets UP-TO-DATE`,
+   `:app:packageRelease UP-TO-DATE` — the APK at 16:19:27 was NOT rewritten.
+   The identical hash there proved only that the bundle task is deterministic,
+   not that the APK was rebuilt.
+2. Forced rewrite: the generated bundle assets and the APK were removed, then
+   `assembleRelease` was re-run **without** `EXPO_NO_METRO_WORKSPACE_ROOT`:
+   `:app:createBundleReleaseJsAndAssets` (executed),
+   `:app:packageRelease` (executed) — `BUILD SUCCESSFUL in 2m 42s`.
+   The new APK (mtime 16:52:19) has **the same size and the same SHA-256**
+   (`150DE370…`) as the 16:19 build. Byte-for-byte reproducibility in this
+   environment is confirmed, not inferred from an up-to-date no-op.
 
 The APK is a build output and is **not** committed to git (gitignored with
 `apps/mobile/android/`).
