@@ -149,6 +149,20 @@ describe('quests, calendar, and achievements', () => {
     ]);
   });
 
+  it('can keep practice activity out of quest progress', () => {
+    const activity: HabitDay[] = [{ day: '2026-11-18', xp: 0, lessons: 3 }];
+    const rewards: HabitDay[] = [{ day: '2026-11-18', xp: 21, lessons: 1 }];
+    const report = buildHabitReport(activity, {
+      asOfDay: '2026-11-18',
+      timeZone: 'Asia/Kolkata',
+      dailyGoal: 50,
+      questHistory: rewards,
+    });
+    expect(report.today).toMatchObject({ xp: 0, lessons: 3 });
+    expect(report.streak.current).toBe(1);
+    expect(report.quests.map((quest) => quest.progress)).toEqual([21, 1, 1]);
+  });
+
   it('keeps weekly quests on a Monday boundary', () => {
     const before = computeQuests(
       [{ day: '2026-11-15', xp: 50, lessons: 2 }],

@@ -4,32 +4,12 @@ import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   type Course,
-  type Exercise,
+  eligibleExercises,
+  guidebookItems,
 } from '@speeko/core';
 import { ArrowLeftIcon, BookOpenIcon, CheckIcon } from '@/components/icons';
 import { Fox } from '@/components/Fox';
 import { LOCALE_META, fetchCourse } from '@/lib/courses';
-
-function targetItemsFor(exercise: Exercise): string[] {
-  switch (exercise.kind) {
-    case 'chooseMeaning':
-    case 'listenChoose':
-    case 'chooseImage':
-    case 'fillBlank':
-      return exercise.options[exercise.answerIndex] ? [exercise.options[exercise.answerIndex]!] : [];
-    case 'typeTranslation':
-    case 'typeWhatYouHear':
-    case 'speak':
-      return exercise.expected[0] ? [exercise.expected[0]!] : [];
-    case 'wordBank':
-    case 'arrangeSentence':
-      return exercise.answer.length > 0 ? [exercise.answer.join(' ')] : [];
-    case 'matchPairs':
-      return exercise.pairs.map(([, target]) => target);
-    default:
-      return [];
-  }
-}
 
 export default function UnitGuidebookPage({
   params,
@@ -103,16 +83,10 @@ export default function UnitGuidebookPage({
   }
 
   const meta = LOCALE_META[course.locale];
-  const targetItems = new Map<string, { prompt: string; kind: string }>();
-  for (const lesson of unit.lessons) {
-    for (const exercise of lesson.exercises as Exercise[]) {
-      for (const target of targetItemsFor(exercise)) {
-        if (target && !targetItems.has(target)) {
-          targetItems.set(target, { prompt: exercise.prompt, kind: exercise.kind });
-        }
-      }
-    }
-  }
+  const extracted = guidebookItems(unit.lessons.flatMap((lesson) => lesson.exercises));
+  const targetItems = new Map<string, { prompt: string; kind: string }>(
+    extracted.map((item) => [item.target, { prompt: item.prompt, kind: item.kind }]),
+  );
 
   return (
     <div className="min-h-screen bg-cream-50">
@@ -208,7 +182,7 @@ export default function UnitGuidebookPage({
                     {index + 1}. {lesson.title}
                   </span>
                   <span className="block text-xs font-semibold text-bark-400">
-                    {lesson.exercises.length} exercises · {lesson.xpReward} XP
+                    {eligibleExercises(lesson.exercises).length} exercises · {lesson.xpReward} XP
                   </span>
                 </span>
                 <span className="rounded-full bg-speeko-50 px-3 py-1 font-display text-[10px] font-extrabold uppercase tracking-[0.14em] text-speeko-700">

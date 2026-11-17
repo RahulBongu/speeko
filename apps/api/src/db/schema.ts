@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, jsonb, boolean, serial, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, text, integer, timestamp, jsonb, boolean, serial, index, uniqueIndex } from 'drizzle-orm/pg-core';
 import type { GradedAnswer, ProgressState } from '@speeko/core';
 import { user } from './auth-schema.js';
 
@@ -111,6 +111,37 @@ export const lessonEvents = pgTable(
   },
   (t) => ({
     userAttemptIdx: uniqueIndex('lesson_events_user_attempt_idx').on(t.userId, t.attemptId),
+  }),
+);
+
+/**
+ * Append-only ledger of first-completion lesson rewards. One row per
+ * learner/course/lesson: the unique index is the durable invariant that makes
+ * replaying a completed lesson practice-only, even with a new `attemptId` or
+ * concurrent requests. `xp` is the completion XP credited for that lesson;
+ * historical rows are backfilled from the earliest lesson event so existing
+ * balances are preserved without minting a second reward.
+ */
+export const lessonCompletionRewards = pgTable(
+  'lesson_completion_rewards',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    courseId: text('course_id').notNull(),
+    lessonId: text('lesson_id').notNull(),
+    attemptId: text('attempt_id').notNull(),
+    xp: integer('xp').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    userLessonIdx: uniqueIndex('lesson_completion_rewards_user_lesson_idx').on(
+      t.userId,
+      t.courseId,
+      t.lessonId,
+    ),
+    createdIdx: index('lesson_completion_rewards_created_idx').on(t.createdAt),
   }),
 );
 

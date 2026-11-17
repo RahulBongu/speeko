@@ -8,6 +8,7 @@ import type { Course, Exercise } from './content.js';
 import { lessonKey, type ProgressState } from './progress.js';
 import { skillIdFor } from './skills.js';
 import { isDue, MAX_BOX } from './srs.js';
+import { isExerciseEligible } from './eligibility.js';
 
 export interface PracticePlan {
   exercises: Exercise[];
@@ -59,6 +60,7 @@ export function buildSkillExerciseIndex(
     for (const lesson of unit.lessons) {
       if (progress && !progress.completed[lessonKey(course.id, lesson.id)]) continue;
       for (const exercise of lesson.exercises) {
+        if (!isExerciseEligible(exercise)) continue;
         const skillId = skillIdFor(course.locale, exercise);
         if (skillId && !index.has(skillId)) index.set(skillId, exercise);
       }
@@ -135,7 +137,9 @@ export function buildUnitPracticePlan(
   const completed = unit.lessons.filter(
     (lesson) => progress.completed[lessonKey(course.id, lesson.id)],
   );
-  const buckets = completed.map((lesson) => lesson.exercises).filter((items) => items.length > 0);
+  const buckets = completed
+    .map((lesson) => lesson.exercises.filter(isExerciseEligible))
+    .filter((items) => items.length > 0);
   const matched = buckets.reduce((total, items) => total + items.length, 0);
   if (limit <= 0 || buckets.length === 0) return { exercises: [], matched };
 
@@ -176,7 +180,7 @@ export function practiceOverview(
     ).length;
     const learnedExercises = unit.lessons
       .filter((lesson) => progress.completed[lessonKey(course.id, lesson.id)])
-      .reduce((total, lesson) => total + lesson.exercises.length, 0);
+      .reduce((total, lesson) => total + lesson.exercises.filter(isExerciseEligible).length, 0);
     return {
       index: index + 1,
       id: unit.id,

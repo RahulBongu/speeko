@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const CONTENT_DIR = path.resolve(here, '../../../content/dist');
+const CONTENT_DIR = path.resolve(here, '../../../../content/dist');
 
 export async function courseRoutes(app: FastifyInstance) {
   app.get('/api/courses', async (_request, reply) => {

@@ -138,7 +138,7 @@
               "options": [
                 "ಎರಡು",
                 "ಒಂದು",
-                "ஐದು",
+                "ಐದು",
                 "ಮೂರು"
               ],
               "answerIndex": 0
@@ -170,7 +170,7 @@
               "prompt": "Four",
               "options": [
                 "ನಾಲ್ಕು",
-                "ஐದು",
+                "ಐದು",
                 "ಒಂದು",
                 "ಎರಡು"
               ],
@@ -181,24 +181,12 @@
               "kind": "chooseMeaning",
               "prompt": "Five",
               "options": [
-                "ஐದು",
+                "ಐದು",
                 "ನಾಲ್ಕು",
                 "ಮೂರು",
                 "ಒಂದು"
               ],
               "answerIndex": 0
-            },
-            {
-              "id": "kn-starter-u2-l2-e3",
-              "kind": "fillBlank",
-              "prompt": "Fill in the blank",
-              "sentence": "I have ___ apples.",
-              "options": [
-                "one",
-                "two",
-                "three"
-              ],
-              "answerIndex": 1
             }
           ]
         }

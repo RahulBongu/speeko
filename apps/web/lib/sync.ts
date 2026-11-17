@@ -53,6 +53,11 @@ export interface LessonCompletionEvent {
 export interface LessonCompletionResult {
   duplicate: boolean;
   event: LessonCompletionEvent;
+  completion: {
+    rewarded: boolean;
+    xp: number;
+    gems: number;
+  };
   progress: ProgressState;
 }
 

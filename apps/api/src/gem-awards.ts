@@ -1,44 +1,51 @@
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
-import { GEM_DAILY_QUEST_REWARD, GEM_LESSON_REWARD } from '@speeko/core';
-import { computeQuests, dayKeyInTimeZone, historyFromLessonEvents } from '@speeko/core';
-import { getDb } from './db/client.js';
-import { gemLedger, lessonEvents } from './db/schema.js';
+import {
+  GEM_DAILY_QUEST_REWARD,
+  computeQuests,
+  dayKeyInTimeZone,
+  historyFromLessonEvents,
+} from '@speeko/core';
+import { gemLedger, lessonCompletionRewards } from './db/schema.js';
 import type { Db } from './db/client.js';
 
-export async function awardLessonGem(db: Db, userId: string, attemptId: string): Promise<void> {
-  await db
-    .insert(gemLedger)
-    .values({
-      id: randomUUID(),
-      userId,
-      amount: GEM_LESSON_REWARD,
-      reason: 'lesson',
-      sourceKey: `lesson:${attemptId}`,
-    })
-    .onConflictDoNothing({ target: [gemLedger.userId, gemLedger.sourceKey] });
+/**
+ * Stable gem identity for a first lesson completion. It is deliberately
+ * independent of the client's `attemptId`, so a replay with a new attempt
+ * cannot mint a second gem. Colons cannot appear in `attemptId`, so this can
+ * never collide with the historical `lesson:<attemptId>` keys.
+ */
+export function lessonGemSourceKey(courseId: string, lessonId: string): string {
+  return `lesson:${courseId}:${lessonId}`;
 }
 
+/**
+ * Daily quest gems derive from the first-completion reward ledger, not raw
+ * attempts. Practice replays still record events and keep streaks alive, but
+ * they cannot complete "finish two lessons today" or the daily XP goal again.
+ * This function is read-time/idempotent: if a previous award failed, the next
+ * gem or shop read grants the same once-per-day quest safely.
+ */
 export async function awardQuestGems(
   db: Db,
   userId: string,
   timeZone: string | null,
   dailyGoal: number,
 ): Promise<void> {
-  const events = await db
+  const rewards = await db
     .select({
-      attemptId: lessonEvents.attemptId,
-      createdAt: lessonEvents.createdAt,
-      xpEarned: lessonEvents.xpEarned,
+      attemptId: lessonCompletionRewards.attemptId,
+      createdAt: lessonCompletionRewards.createdAt,
+      xp: lessonCompletionRewards.xp,
     })
-    .from(lessonEvents)
-    .where(eq(lessonEvents.userId, userId));
+    .from(lessonCompletionRewards)
+    .where(eq(lessonCompletionRewards.userId, userId));
 
   const history = historyFromLessonEvents(
-    events.map((event) => ({
-      attemptId: event.attemptId,
-      createdAt: event.createdAt,
-      xp: event.xpEarned,
+    rewards.map((reward) => ({
+      attemptId: reward.attemptId,
+      createdAt: reward.createdAt,
+      xp: reward.xp,
     })),
     timeZone,
   );

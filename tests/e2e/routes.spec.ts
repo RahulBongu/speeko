@@ -110,7 +110,7 @@ for (const route of ROUTES) {
     await expect(route.ready(page)).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
 
-    const dir = path.join('docs', 'qa', testInfo.project.name);
+    const dir = path.join('test-results', 'screenshots', testInfo.project.name);
     fs.mkdirSync(dir, { recursive: true });
     await page.screenshot({
       path: path.join(dir, `${route.name}.png`),
@@ -177,7 +177,7 @@ test('guest can answer the first exercise and sees feedback', async ({ page }, t
   await check.click();
 
   await expect(page.getByText(/Correct!|Not quite/)).toBeVisible();
-  const dir = path.join('docs', 'qa', testInfo.project.name);
+  const dir = path.join('test-results', 'screenshots', testInfo.project.name);
   fs.mkdirSync(dir, { recursive: true });
   await page.screenshot({
     path: path.join(dir, 'lesson-feedback.png'),
