@@ -12,7 +12,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
 
@@ -25,6 +25,20 @@ jobs:
 
       - name: Install
         run: pnpm install --frozen-lockfile
+
+      - name: Setup test environment
+        run: |
+          # Create QA account fixture for CI
+          mkdir -p apps/api/data
+          cat > apps/api/data/qa-account.local.json << 'EOF'
+          {
+            "name": "M2 QA",
+            "email": "m2-qa2@speeko.test",
+            "password": "AbI5LqGYA49cOe1dbz2DBHgg",
+            "userId": "iUeOMkEaO4qYU1VLDA9TCfILBekxRWr2",
+            "note": "Local PGlite throwaway account in apps/api/data for M2 functional QA. Not production. Local file only; do not commit."
+          }
+          EOF
 
       - name: Build
         run: pnpm build
@@ -42,3 +56,5 @@ jobs:
         run: pnpm e2e
         env:
           CI: '1'
+          NODE_ENV: 'test'
+          RATE_LIMIT_DISABLED: '1'

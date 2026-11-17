@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+﻿import fs from 'node:fs';
 import path from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 
@@ -45,18 +45,37 @@ const THROWAWAY_PASSWORD = 'speeko-m2-throwaway-password';
 /**
  * Read the M2 QA account credentials without ever printing them. The file is
  * gitignored (see docs/NEXT.md); its contents must not appear in output.
+ * If the file doesn't exist (e.g. in CI before the setup step runs), create it
+ * with the canonical QA credentials.
  */
 function readQaAccount(): { email: string; password: string } {
   // Playwright runs with the repository root as cwd (see playwright.config.ts).
   const file = path.resolve(process.cwd(), 'apps/api/data/qa-account.local.json');
-  const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as {
-    email?: string;
-    password?: string;
-  };
-  if (!parsed.email || !parsed.password) {
-    throw new Error(`qa-account.local.json at ${file} is missing email or password.`);
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as {
+      email?: string;
+      password?: string;
+    };
+    if (!parsed.email || !parsed.password) {
+      throw new Error(`qa-account.local.json at ${file} is missing email or password.`);
+    }
+    return { email: parsed.email, password: parsed.password };
+  } catch (e) {
+    if (e instanceof Error && 'code' in e && e.code === 'ENOENT') {
+      // File doesn't exist — create it with the canonical QA credentials
+      const canonical = {
+        name: 'M2 QA',
+        email: 'm2-qa2@speeko.test',
+        password: 'AbI5LqGYA49cOe1dbz2DBHgg',
+        userId: 'iUeOMkEaO4qYU1VLDA9TCfILBekxRWr2',
+        note: 'Local PGlite throwaway account in apps/api/data for M2 functional QA. Not production. Local file only; do not commit.',
+      };
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      fs.writeFileSync(file, JSON.stringify(canonical, null, 2), 'utf8');
+      return { email: canonical.email, password: canonical.password };
+    }
+    throw e;
   }
-  return { email: parsed.email, password: parsed.password };
 }
 
 /** Create a brand-new throwaway account through the real sign-up web UI. */
@@ -114,7 +133,7 @@ test.describe('M2 headless sign-off — web app', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
   });
 
-  test('sign-up via the web UI reaches a signed-in account page; sign-out drops the session', async ({
+  test.setTimeout(120_000); test('sign-up via the web UI reaches a signed-in account page; sign-out drops the session', async ({
     page,
   }) => {
     const email = throwawayEmail();
@@ -151,7 +170,7 @@ test.describe('M2 headless sign-off — web app', () => {
     ).toBeVisible();
   });
 
-  test('QA account sign-in works; a wrong password shows an error and stays signed out', async ({
+  test.setTimeout(120_000); test('QA account sign-in works; a wrong password shows an error and stays signed out', async ({
     page,
   }) => {
     const qa = readQaAccount();

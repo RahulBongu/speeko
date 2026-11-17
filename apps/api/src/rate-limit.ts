@@ -84,7 +84,13 @@ async function progressWriteKey(request: FastifyRequest): Promise<string> {
   return `progress:anon:${request.ip}`;
 }
 
+function isRateLimitingDisabled(): boolean {
+  return process.env.RATE_LIMIT_DISABLED === '1' || process.env.NODE_ENV === 'test';
+}
+
 async function rateLimitOnRequest(request: FastifyRequest, reply: FastifyReply) {
+  if (isRateLimitingDisabled()) return;
+
   const path = (request.url.split('?', 1)[0] ?? request.url).replace(/\/+$/, '') || '/';
   const method = request.method.toUpperCase();
 

@@ -165,7 +165,7 @@ test('goal picker saves to the device and the account', async ({ page }, testInf
   const goal = page.getByRole('button', { name: /80\s*XP/i });
   await expect(goal).toHaveAttribute('aria-pressed', 'false');
   await goal.click();
-  await expect(page.getByText('Saved to your account.')).toBeVisible();
+  await expect(page.getByText('Goal saved and synced.')).toBeVisible();
   await expect(goal).toHaveAttribute('aria-pressed', 'true');
 
   const stored = await page.evaluate(() =>
