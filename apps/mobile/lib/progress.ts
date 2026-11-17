@@ -1,15 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { emptyProgress, migrateProgress, type ProgressState } from '@speeko/core';
+import { emptyProgress, migrateProgress, browserTimeZone, type ProgressState } from '@speeko/core';
 
 const KEY = 'speeko.mobile.progress.v2';
 
 export async function loadProgress(): Promise<ProgressState> {
   try {
     const raw = await AsyncStorage.getItem(KEY);
-    if (!raw) return emptyProgress();
-    return migrateProgress(JSON.parse(raw));
+    if (!raw) return { ...emptyProgress(), timeZone: browserTimeZone() };
+    return migrateProgress(JSON.parse(raw), new Date(), browserTimeZone());
   } catch {
-    return emptyProgress();
+    return { ...emptyProgress(), timeZone: browserTimeZone() };
   }
 }
 

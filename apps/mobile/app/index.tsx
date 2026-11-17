@@ -11,6 +11,8 @@ import { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { INDIAN_LOCALES, LOCALE_LABEL } from '@speeko/core';
+import { readCompletedOnboarding } from '../lib/onboarding';
+import { loadProgress } from '../lib/progress';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   FadeIn,
@@ -68,7 +70,17 @@ export default function Home() {
     });
     // Same frame as the press — success haptic, visuals still carry the meaning.
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    router.push('/learn');
+    void (async () => {
+      const completed = await readCompletedOnboarding();
+      if (!completed) {
+        const progress = await loadProgress();
+        if (progress.xp === 0) {
+          router.push('/onboarding');
+          return;
+        }
+      }
+      router.push('/learn');
+    })();
   };
 
   const entrance = (delay: number) =>
