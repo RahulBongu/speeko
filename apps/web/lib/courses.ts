@@ -26,17 +26,19 @@ export interface LocaleMeta {
 }
 
 export const LOCALE_META: Record<Locale, LocaleMeta> = {
-  en: { native: 'English', english: 'English', glyph: 'A', gradient: 'from-slate-400 to-slate-500', speech: 'en-US' },
-  hi: { native: 'हिन्दी', english: 'Hindi', glyph: 'अ', gradient: 'from-emerald-400 to-teal-500', speech: 'hi-IN' },
-  bn: { native: 'বাংলা', english: 'Bengali', glyph: 'অ', gradient: 'from-sky-400 to-blue-500', speech: 'bn-IN' },
-  mr: { native: 'मराठी', english: 'Marathi', glyph: 'म', gradient: 'from-orange-400 to-amber-500', speech: 'mr-IN' },
-  te: { native: 'తెలుగు', english: 'Telugu', glyph: 'తె', gradient: 'from-violet-400 to-purple-500', speech: 'te-IN' },
-  ta: { native: 'தமிழ்', english: 'Tamil', glyph: 'த', gradient: 'from-rose-400 to-pink-500', speech: 'ta-IN' },
-  kn: { native: 'ಕನ್ನಡ', english: 'Kannada', glyph: 'ಕ', gradient: 'from-cyan-400 to-sky-500', speech: 'kn-IN' },
-  ml: { native: 'മലയാളം', english: 'Malayalam', glyph: 'മ', gradient: 'from-lime-400 to-emerald-500', speech: 'ml-IN' },
-  gu: { native: 'ગુજરાતી', english: 'Gujarati', glyph: 'ગ', gradient: 'from-fuchsia-400 to-purple-500', speech: 'gu-IN' },
-  pa: { native: 'ਪੰਜਾਬੀ', english: 'Punjabi', glyph: 'ਗ', gradient: 'from-amber-400 to-orange-500', speech: 'pa-IN' },
-  or: { native: 'ଓଡ଼ିଆ', english: 'Odia', glyph: 'ଓ', gradient: 'from-indigo-400 to-violet-500', speech: 'or-IN' },
+  // On-brand two-stop ramps. Every stop is >= 4.5:1 against white text
+  // (fox-700 4.6, speeko-700 5.9, bark-500 6.6 and darker).
+  en: { native: 'English', english: 'English', glyph: 'A', gradient: 'from-bark-500 to-bark-800', speech: 'en-US' },
+  hi: { native: 'हिन्दी', english: 'Hindi', glyph: 'अ', gradient: 'from-speeko-700 to-speeko-800', speech: 'hi-IN' },
+  bn: { native: 'বাংলা', english: 'Bengali', glyph: 'অ', gradient: 'from-speeko-700 to-bark-800', speech: 'bn-IN' },
+  mr: { native: 'मराठी', english: 'Marathi', glyph: 'म', gradient: 'from-fox-700 to-bark-800', speech: 'mr-IN' },
+  te: { native: 'తెలుగు', english: 'Telugu', glyph: 'తె', gradient: 'from-bark-600 to-speeko-800', speech: 'te-IN' },
+  ta: { native: 'தமிழ்', english: 'Tamil', glyph: 'த', gradient: 'from-fox-700 to-speeko-800', speech: 'ta-IN' },
+  kn: { native: 'ಕನ್ನಡ', english: 'Kannada', glyph: 'ಕ', gradient: 'from-bark-500 to-speeko-800', speech: 'kn-IN' },
+  ml: { native: 'മലയാളം', english: 'Malayalam', glyph: 'മ', gradient: 'from-speeko-800 to-bark-800', speech: 'ml-IN' },
+  gu: { native: 'ગુજરાતી', english: 'Gujarati', glyph: 'ગ', gradient: 'from-bark-600 to-fox-700', speech: 'gu-IN' },
+  pa: { native: 'ਪੰਜਾਬੀ', english: 'Punjabi', glyph: 'ਗ', gradient: 'from-bark-500 to-bark-700', speech: 'pa-IN' },
+  or: { native: 'ଓଡ଼ିଆ', english: 'Odia', glyph: 'ଓ', gradient: 'from-bark-700 to-speeko-800', speech: 'or-IN' },
 };
 
 export const COURSE_ORDER: readonly Locale[] = ['hi', 'bn', 'mr', 'te', 'ta', 'kn', 'ml', 'gu', 'pa', 'or'];

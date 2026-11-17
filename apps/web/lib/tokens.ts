@@ -31,6 +31,21 @@ export const colors = {
     600: '#ef6a1c',
     700: '#c84e12',
   },
+  // Gold (gems / XP highlights) — mirrors tailwind.config.ts
+  gold: {
+    100: '#fff9e0',
+    200: '#ffe9a8',
+    700: '#a06b00',
+  },
+  // Ice (streak freezes) — mirrors tailwind.config.ts
+  ice: {
+    100: '#e8f4ff',
+    200: '#d9edff',
+    300: '#9ccdf4',
+    400: '#8fc8f2',
+    600: '#3b82b8',
+    700: '#2f74a8',
+  },
   // Cream surfaces — Speeko Brand
   cream: {
     50: '#fffaf2',

@@ -100,7 +100,7 @@ export default function UnitGuidebookPage({
             <ArrowLeftIcon className="h-5 w-5" />
           </Link>
           <div className="min-w-0">
-            <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-speeko-600">
+            <p className="eyebrow">
               Unit {unitPosition} guidebook
             </p>
             <p className="truncate font-display text-sm font-extrabold text-bark-800">
@@ -158,7 +158,7 @@ export default function UnitGuidebookPage({
                     <span className="mt-0.5 block text-xs font-semibold text-bark-400">
                       {info.prompt}
                     </span>
-                    <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-bark-300">
+                    <span className="mt-1 block text-[11px] font-bold uppercase tracking-[0.12em] text-bark-500">
                       {info.kind}
                     </span>
                   </span>
@@ -185,7 +185,7 @@ export default function UnitGuidebookPage({
                     {eligibleExercises(lesson.exercises).length} exercises · {lesson.xpReward} XP
                   </span>
                 </span>
-                <span className="rounded-full bg-speeko-50 px-3 py-1 font-display text-[10px] font-extrabold uppercase tracking-[0.14em] text-speeko-700">
+                <span className="rounded-full bg-speeko-50 px-3 py-1 font-display text-[11px] font-extrabold uppercase tracking-[0.14em] text-speeko-700">
                   Lesson
                 </span>
               </li>

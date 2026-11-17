@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-const COLORS = ['#37b02c', '#ff8a3d', '#ffd166', '#4cc9f0', '#f72585', '#b5179e', '#58c94d', '#ef6a1c'];
+const COLORS = ['#37b02c', '#58c94d', '#1f741d', '#ff8a3d', '#ef6a1c', '#c84e12', '#fff4e4', '#bcedb4'];
 
 interface Piece {
   left: number;

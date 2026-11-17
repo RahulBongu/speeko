@@ -21,6 +21,19 @@ const config: Config = {
           800: '#1b5c1c',
           900: '#174c1a',
         },
+        gold: {
+          100: '#fff9e0',
+          200: '#ffe9a8',
+          700: '#a06b00',
+        },
+        ice: {
+          100: '#e8f4ff',
+          200: '#d9edff',
+          300: '#9ccdf4',
+          400: '#8fc8f2',
+          600: '#3b82b8',
+          700: '#2f74a8',
+        },
         fox: {
           100: '#fff1e8',
           200: '#ffd9c2',
@@ -56,6 +69,7 @@ const config: Config = {
         green: '0 4px 0 0 #1f741d',
         'green-sm': '0 2px 0 0 #1f741d',
         fox: '0 4px 0 0 #c84e12',
+        'speeko-200': '0 3px 0 0 #bcedb4',
       },
       keyframes: {
         bob: {

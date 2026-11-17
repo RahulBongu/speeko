@@ -17,13 +17,13 @@ const FEATURES = [
     title: 'Three-minute lessons',
     body: 'Bite-size exercises that fit between chai and the next meeting. Ten question types, zero fluff.',
     icon: <BoltIcon className="h-5 w-5" />,
-    tone: 'bg-[#fff9e0] text-[#a06b00]',
+    tone: 'bg-gold-100 text-gold-700',
   },
   {
     title: 'A streak worth keeping',
     body: 'Daily goals, XP, combos and hearts keep the habit gentle but real. Miss a day? Start again without shame.',
     icon: <FlameIcon className="h-5 w-5" />,
-    tone: 'bg-[#fff1e8] text-fox-700',
+    tone: 'bg-fox-100 text-fox-700',
   },
   {
     title: 'Ten scripts, one fox',
@@ -149,7 +149,7 @@ export default function HomePage() {
                     aria-label="Open habits, daily goal, and streak calendar"
                   >
                     <div className="flex items-baseline justify-between gap-3">
-                      <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-bark-400">
+                      <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-bark-500">
                         Today&apos;s goal
                       </p>
                       <p className="font-display text-xs font-extrabold text-bark-600">
@@ -162,14 +162,14 @@ export default function HomePage() {
                       barClassName="bg-speeko-400"
                       label="Daily XP goal"
                     />
-                    <span className="mt-2 flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-speeko-600">
+                    <span className="eyebrow mt-2 flex items-center gap-1">
                       Habits
                       <ArrowRightIcon className="h-3 w-3 transition group-hover:translate-x-0.5" />
                     </span>
                   </Link>
                 </>
               ) : (
-                <p className="mt-5 text-xs font-bold uppercase tracking-[0.12em] text-bark-300">
+                <p className="mt-5 text-xs font-bold uppercase tracking-[0.12em] text-bark-500">
                   No sign-up needed — progress saves in this browser
                 </p>
               )}
@@ -230,7 +230,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl px-5 py-14">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-speeko-600">
+              <p className="eyebrow">
                 Choose your script
               </p>
               <h2 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-bark-800">

@@ -23,7 +23,7 @@ export function OfflineBanner() {
     <div
       role="status"
       aria-live="polite"
-      className="border-b border-[#ffd9c2] bg-[#fff1e8] px-4 py-2 text-center text-sm font-extrabold text-fox-700"
+      className="border-b border-fox-200 bg-fox-100 px-4 py-2 text-center text-sm font-extrabold text-fox-700"
     >
       You are offline. Progress stays on this device and syncs when you reconnect.
     </div>
