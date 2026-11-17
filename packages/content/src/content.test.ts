@@ -51,6 +51,98 @@ describe('validateCourseFile', () => {
       expect(res.errors.length).toBeGreaterThan(0);
     });
   });
+
+  it('warns, but does not fail, on an empty listenChoose audioUrl', () => {
+    withTempDir((dir) => {
+      const course = scaffoldCourse('hi', 'warn-audio');
+      course.units[0]!.lessons[0]!.exercises.push({
+        id: 'warn-audio-u1-l1-e9',
+        kind: 'listenChoose',
+        prompt: 'Listen and choose',
+        audioUrl: '',
+        options: ['नमस्ते', 'धन्यवाद'],
+        answerIndex: 0,
+      });
+      const file = join(dir, 'warn.json');
+      writeFileSync(file, JSON.stringify(course));
+      const res = validateCourseFile(file);
+      expect(res.ok).toBe(true);
+      expect(res.warnings?.some((w) => w.includes('empty audioUrl'))).toBe(true);
+    });
+  });
+
+  it('errors on an unusable listenChoose audioUrl', () => {
+    withTempDir((dir) => {
+      const course = scaffoldCourse('hi', 'bad-audio');
+      course.units[0]!.lessons[0]!.exercises.push({
+        id: 'bad-audio-u1-l1-e9',
+        kind: 'listenChoose',
+        prompt: 'Listen and choose',
+        audioUrl: 'not a url',
+        options: ['नमस्ते', 'धन्यवाद'],
+        answerIndex: 0,
+      });
+      const file = join(dir, 'bad-audio.json');
+      writeFileSync(file, JSON.stringify(course));
+      const res = validateCourseFile(file);
+      expect(res.ok).toBe(false);
+      expect(res.errors.some((e) => e.includes('audioUrl'))).toBe(true);
+    });
+  });
+
+  it('warns when a production answer is not in the course script', () => {
+    withTempDir((dir) => {
+      const course = scaffoldCourse('hi', 'warn-script');
+      course.units[0]!.lessons[0]!.exercises.push({
+        id: 'warn-script-u1-l1-e9',
+        kind: 'typeTranslation',
+        prompt: 'Type "one"',
+        expected: ['two'],
+        acceptTypos: false,
+      });
+      const file = join(dir, 'warn-script.json');
+      writeFileSync(file, JSON.stringify(course));
+      const res = validateCourseFile(file);
+      expect(res.ok).toBe(true);
+      expect(res.warnings?.some((w) => w.includes('no hi script'))).toBe(true);
+    });
+  });
+
+  it('errors on duplicate option strings', () => {
+    withTempDir((dir) => {
+      const course = scaffoldCourse('hi', 'dup-options');
+      course.units[0]!.lessons[0]!.exercises.push({
+        id: 'dup-options-u1-l1-e9',
+        kind: 'chooseMeaning',
+        prompt: 'Hello',
+        options: ['नमस्ते', 'नमस्ते'],
+        answerIndex: 0,
+      });
+      const file = join(dir, 'dup.json');
+      writeFileSync(file, JSON.stringify(course));
+      const res = validateCourseFile(file);
+      expect(res.ok).toBe(false);
+      expect(res.errors.some((e) => e.includes('duplicate option strings'))).toBe(true);
+    });
+  });
+
+  it('errors when answerIndex is out of bounds for the options array', () => {
+    withTempDir((dir) => {
+      const course = scaffoldCourse('hi', 'oob-index');
+      course.units[0]!.lessons[0]!.exercises.push({
+        id: 'oob-index-u1-l1-e9',
+        kind: 'chooseMeaning',
+        prompt: 'Hello',
+        options: ['नमस्ते', 'धन्यवाद'],
+        answerIndex: 7,
+      });
+      const file = join(dir, 'oob.json');
+      writeFileSync(file, JSON.stringify(course));
+      const res = validateCourseFile(file);
+      expect(res.ok).toBe(false);
+      expect(res.errors.some((e) => e.includes('answerIndex'))).toBe(true);
+    });
+  });
 });
 
 describe('validateDirectory', () => {

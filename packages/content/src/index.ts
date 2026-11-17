@@ -20,24 +20,26 @@ export interface ValidationResult {
   file: string;
   ok: boolean;
   errors: string[];
+  warnings?: string[];
 }
 
 export { scaffoldCourse } from './scaffold.js';
 
 export function validateCourseFile(filePath: string): ValidationResult {
   const errors: string[] = [];
+  const warnings: string[] = [];
   let parsed: unknown;
   try {
     parsed = JSON.parse(readFileSync(filePath, 'utf8'));
   } catch (e) {
-    return { file: filePath, ok: false, errors: [`JSON parse error: ${(e as Error).message}`] };
+    return { file: filePath, ok: false, errors: [`JSON parse error: ${(e as Error).message}`], warnings };
   }
   const res = CourseSchema.safeParse(parsed);
   if (!res.success) {
     for (const issue of res.error.issues) {
       errors.push(`${issue.path.join('.') || '(root)'}: ${issue.message}`);
     }
-    return { file: filePath, ok: false, errors };
+    return { file: filePath, ok: false, errors, warnings };
   }
   // Cross-check: locale must be a supported locale (already enforced by enum).
   // Check unique ids within course.
@@ -46,6 +48,42 @@ export function validateCourseFile(filePath: string): ValidationResult {
   const checkReviewed = (scope: string, status: string, reviewer?: string) => {
     if (status === 'reviewed' && (!reviewer || reviewer.trim().length === 0)) {
       errors.push(`${scope}: reviewed content requires a reviewer`);
+    }
+  };
+  const SCRIPT: Partial<Record<string, RegExp>> = {
+    hi: /[\u0900-\u097F]/,
+    mr: /[\u0900-\u097F]/,
+    bn: /[\u0980-\u09FF]/,
+    ta: /[\u0B80-\u0BFF]/,
+    te: /[\u0C00-\u0C7F]/,
+    kn: /[\u0C80-\u0CFF]/,
+    ml: /[\u0D00-\u0D7F]/,
+    gu: /[\u0A80-\u0AFF]/,
+    pa: /[\u0A00-\u0A7F]/,
+    or: /[\u0B00-\u0B7F]/,
+  };
+  const script = SCRIPT[course.locale];
+  // Production-ish kinds teach the target language; their output must contain
+  // at least one code point from the course's script. Advisedly bad template
+  // defects (e.g. English fillBlanks in an Indic course) are caught here.
+  const targetText = (exercise: (typeof course.units)[number]['lessons'][number]['exercises'][number]): string[] => {
+    switch (exercise.kind) {
+      case 'listenChoose':
+      case 'typeWhatYouHear':
+      case 'typeTranslation':
+      case 'speak': {
+        const expected = 'expected' in exercise ? exercise.expected : undefined;
+        return expected?.[0] ? [expected[0]] : [];
+      }
+      case 'fillBlank':
+        return exercise.options[exercise.answerIndex] ? [exercise.options[exercise.answerIndex]!] : [];
+      case 'wordBank':
+      case 'arrangeSentence':
+        return exercise.answer.length > 0 ? [exercise.answer.join(' ')] : [];
+      case 'matchPairs':
+        return exercise.pairs.map(([, target]) => target);
+      default:
+        return [];
     }
   };
   checkReviewed('course', course.reviewStatus ?? 'draft', course.reviewer);
@@ -60,10 +98,39 @@ export function validateCourseFile(filePath: string): ValidationResult {
       for (const e of l.exercises) {
         if (ids.has(e.id)) errors.push(`duplicate exercise id: ${e.id}`);
         ids.add(e.id);
+        if (e.kind === 'listenChoose') {
+          const audioUrl = 'audioUrl' in e ? String(e.audioUrl ?? '') : '';
+          if (audioUrl.length === 0) {
+            warnings.push(`${l.id}: listenChoose exercise ${e.id} has an empty audioUrl (renders the no-audio fallback)`);
+          } else if (!/^https?:\/\/|^\/[^/]/.test(audioUrl)) {
+            errors.push(`${l.id}: listenChoose exercise ${e.id} has an audioUrl that is not an http(s) or site-relative URL`);
+          }
+        }
+        if (script) {
+          for (const target of targetText(e)) {
+            if (target && !script.test(target)) {
+              warnings.push(
+                `${l.id}: ${e.kind} exercise ${e.id} answer "${target}" contains no ${course.locale} script code points — check the target language of the content`,
+              );
+            }
+          }
+        }
+        if ('options' in e && Array.isArray(e.options)) {
+          const unique = new Set(e.options);
+          if (unique.size !== e.options.length) {
+            errors.push(`${l.id}: exercise ${e.id} has duplicate option strings`);
+          }
+          const answerIndex = (e as { answerIndex?: number }).answerIndex;
+          if (typeof answerIndex === 'number' && (answerIndex < 0 || answerIndex >= e.options.length)) {
+            errors.push(
+              `${l.id}: exercise ${e.id} answerIndex ${answerIndex} is out of bounds for ${e.options.length} options`,
+            );
+          }
+        }
       }
     }
   }
-  return { file: filePath, ok: errors.length === 0, errors };
+  return { file: filePath, ok: errors.length === 0, errors, warnings };
 }
 
 export function validateDirectory(dir: string): ValidationResult[] {

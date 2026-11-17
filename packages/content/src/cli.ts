@@ -40,6 +40,10 @@ if (cmd === 'validate') {
       console.log(`FAIL ${r.file}`);
       for (const e of r.errors) console.log(`     - ${e}`);
     }
+    for (const w of r.warnings ?? []) console.log(`WARN ${r.file}`);
+    if (r.warnings?.length) {
+      for (const w of r.warnings) console.log(`     ~ ${w}`);
+    }
   }
   console.log(`\n${results.length - failed}/${results.length} valid`);
   process.exit(failed > 0 ? 1 : 0);

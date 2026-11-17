@@ -187,18 +187,6 @@
                 "ఒకటి"
               ],
               "answerIndex": 0
-            },
-            {
-              "id": "te-starter-u2-l2-e3",
-              "kind": "fillBlank",
-              "prompt": "Fill in the blank",
-              "sentence": "I have ___ apples.",
-              "options": [
-                "one",
-                "two",
-                "three"
-              ],
-              "answerIndex": 1
             }
           ]
         }
