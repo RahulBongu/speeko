@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased (0.1.0-alpha cut)
+## Unreleased (alpha cut)
 
 ### Trust & integrity
 - One-time completion rewards per lesson (XP + gems), replay-safe; practice never mints XP
@@ -12,7 +12,7 @@
 
 ### Mobile
 - Cold-start renders the learn screen (release APK, verified on device)
-- Full onboarding: language → motivation → level → daily goal → first lesson (6 taps)
+- Full onboarding: language -> motivation -> level -> daily goal -> first lesson (6 taps)
 - All published exercise kinds supported, including word bank, arrange-the-sentence, listen-and-type, and record-yourself speaking (no automatic scoring)
 - Tactile UI consistent across screens; safe-area aware layout; no dead-ends in empty/error/signed-out states
 
@@ -24,6 +24,6 @@
 - All curriculum content remains `reviewStatus: "draft"`; no native-speaker review has been completed
 - Listening exercises are unavailable until licensed audio exists
 - No store listing, no public release
-- Android functional QA is headless-verified; on-device pass is pending
+- Android functional QA was verified headlessly against web/API; no on-device functional pass has been completed
 
 No public release has occurred; version remains 0.0.1 pending an owner decision.

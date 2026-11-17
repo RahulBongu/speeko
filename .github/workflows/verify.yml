@@ -1,6 +1,6 @@
 name: verify
 
-on:
+'on':
   push:
     branches: ['next/*', 'phase/*', 'main']
   pull_request:
