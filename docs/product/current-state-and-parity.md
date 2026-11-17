@@ -6,8 +6,7 @@ working tree. It distinguishes what is **implemented and verified**, what is
 reviewed, published, launched, or hardware-tested unless it says so.
 
 **Snapshot date:** 2026-11-16, updated 2026-11-18
-**Branch state:** `main` is `e5a06c2` (PR #4 merged) plus the one-commit
-follow-up `d5d6a74` on `next/M2` (league profile batching). Nothing is published to a store.
+**Branch state:** `main` is `82f0f3c` — PR #4 (M2/M4, CI, e2e isolation) and PR #5 (league profile batching, handoff docs) are merged. Nothing is published to a store.
 
 ## Verification baseline (this cycle, from the repo root)
 

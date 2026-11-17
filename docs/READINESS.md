@@ -1,9 +1,8 @@
 # Speeko — Release Readiness
 
 **Date:** 2026-11-16, updated 2026-11-18
-**Basis:** `main` `e5a06c2` (merge of PR #4) plus the one-commit follow-up `d5d6a74` on
-`next/M2` (league profile-lookup fix). Every command below was run in this cycle and its
-real output captured. The Android device was
+**Basis:** `main` `82f0f3c` (PR #4, then PR #5 — the league profile-lookup fix and the 2026-11-18 handoff docs).
+Every command below was run in this cycle and its real output captured. The Android device was
 accessed during M1 (2026-11-17, debug and release render); no native reviewer, hosting provider, or
 license grant has been accessed — those dependencies are marked as such.
 
@@ -16,8 +15,8 @@ scripted replay farming of completion XP/gems — are closed and verified at the
 database level.
 
 Speeko is **not** release-ready for the public. No automated engineering work
-remains for the internal alpha, and `next/M2` is one green commit ahead of
-`main` awaiting an owner merge. Blocking external requirements: a
+remains for the internal alpha, and `main` (`82f0f3c`) is the state to reference.
+Blocking external requirements: a
 native-speaker review for every course, a hosting/database decision, a license,
 and store accounts. On-device functional QA is waived for the internal alpha by
 owner instruction (D78); headless web/API verification is the accepted
@@ -134,9 +133,10 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 
 ## Merge state
 
-`next/M2` (`d5d6a74`) is one green commit ahead of `main`; the league
-performance fix awaits an owner PR/merge. This is not a release blocker, but
-`main` does not contain it yet. Version remains `0.0.1`; nothing is published.
+Nothing awaits an engineering merge. PR #5 merged `next/M2` (`d5d6a74` league
+fix + `5e3c999` handoff docs) into `main` on 2026-11-18 (`82f0f3c`). Version
+remains `0.0.1`; nothing is published. The follow-up docs touch-ups that landed
+on `next/M2` after the merge ride the next follow-up PR; they change no code.
 
 ## Blockers for a public release
 

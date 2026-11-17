@@ -6,12 +6,12 @@
 
 **Repository state**
 
-| Ref | SHA | Contents | CI |
-| --- | --- | --- | --- |
-| `main` | `e5a06c2` (merge of PR #4) | Everything through `d83bf46`: M1 render work, M2 headless sign-off, M4 hardening, self-provisioned e2e accounts, isolated rate-limit contract | Green on `d83bf46` — push run `44150758432`, PR run `44150769644` |
-| `next/M2` | `d5d6a74` | `main` + league profile batching (one commit) | Green — push run `44153146831`, job `134286617487` |
+| Ref | Contents | CI |
+| --- | --- | --- |
+| `main` | `82f0f3c` (merge of PR #5) — everything: M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs refresh (`5e3c999`) | Push run `44167051237` on `82f0f3c` |
+| `next/M2` | identical to `main` at the PR #5 merge (`5e3c999`) | Push run `44164188885` |
 
-- `next/M1` is already merged into `main`; `next/M2` is exactly one commit ahead of `main` (the league N+1 fix). The only remaining engineering merge is a follow-up PR `next/M2 → main`.
+- `next/M1`, and both `next/M2` commits (league batching + docs refresh), are merged into `main` via PRs #4 and #5. No engineering work is pending a merge.
 - Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, no open pull requests, nothing published.
 - Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, secrets **0 hits / 151 files**, e2e **148/148 in 5.9m with 0 flakes**.
 
@@ -25,13 +25,12 @@
 
 ### What the owner must do next
 
-1. Open and merge the follow-up PR `next/M2 → main` for `d5d6a74` (CI already green on that exact SHA).
-2. License decision + OFL attribution + `LICENSE` file.
-3. Hosting/database authorization + backups + secret rotation.
-4. Native-speaker review of the 305 draft exercises (10 locales).
-5. Audio decision for `listenChoose` (10 items), or formally keep them excluded.
-6. Store accounts (Play Console) + a clean release keystore/prebuild (no cleartext exception).
-7. Optional, owner-only: an on-device functional pass. The assistant must not reconnect the phone; headless web/API verification is the accepted evidence for this alpha.
+1. License decision + OFL attribution + `LICENSE` file.
+2. Hosting/database authorization + backups + secret rotation.
+3. Native-speaker review of the 305 draft exercises (10 locales).
+4. Audio decision for `listenChoose` (10 items), or formally keep them excluded.
+5. Store accounts (Play Console) + a clean release prebuild (no cleartext exception).
+6. Optional, owner-only: an on-device functional pass. The assistant must not reconnect the phone; headless web/API verification is the accepted evidence for this alpha.
 
 ---
 

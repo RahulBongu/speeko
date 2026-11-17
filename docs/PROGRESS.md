@@ -10,8 +10,8 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 ## Current state (post-M4, 2026-11-18)
 
 - **Engineering is complete and green.** Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (151 files, 0 hits), e2e **148/148** in 5.9m with zero flakes.
-- **`main` is `e5a06c2`** — the merge of PR #4, which brought `d83bf46` (M2 headless sign-off, M4 hardening, self-provisioned e2e accounts, isolated rate-limit contract) into `main`. `next/M1` was merged earlier.
-- **`next/M2` is `d5d6a74`** — exactly one commit ahead of `main`: the league profile-lookup fix. CI is green on that SHA (run `44153146831`, job `134286617487`). A follow-up PR `next/M2 → main` is the only remaining merge.
+- **`main` is `82f0f3c`** — the merge of PR #5 (`82f0f3c`), which followed PR #4 (`e5a06c2`). `main` now contains the league profile-lookup fix (`d5d6a74`) and the 2026-11-18 docs refresh (`5e3c999`). `next/M1` was merged earlier.
+- **`next/M2` tracks the PR #5 merge** (`5e3c999`); nothing awaits an engineering merge. The internal alpha is feature-complete and green.
 - **Hardening shipped:** `/api/auth/*` 60 requests/min per IP; `PUT /api/progress` 30/min per account+IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`.
 - **Phase 1–4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
 - **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
@@ -41,8 +41,9 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P15 - AI linguistic review | `scripts/ai-review-content.mjs` — all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done — merged via PR #4** — `05d2adb`, branch `next/M1` |
 | P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done — merged via PR #4** — `07b01cd` (core/API/web) + `2d22c69` (mobile) + `53ab85e` (parity matrix, release-ops doc), branch `next/M1` |
 | P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done — merged via PR #4** — `07b01cd`, branch `next/M1` |
+| P18 - Closure: league performance + handoff docs | League profile batching (`social.ts`), CHANGELOG performance entry, full docs refresh (merge state, verification counts, D76–D78) | **Done — merged via PR #5** — `d5d6a74` + `5e3c999`, branch `next/M2` |
 
-P12–P17 and the M2/M4 work are merged into `main` via PR #4 (`e5a06c2`); the branch names in the table record where each phase was originally committed.
+P12–P18 work is merged into `main` via PR #4 (`e5a06c2`) and PR #5 (`82f0f3c`); the branch names in the table record where each phase was originally committed.
 
 
 ## What P12 changed
