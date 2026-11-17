@@ -154,22 +154,6 @@ Run from the repo root on 2026-11-16:
 
 No native-speaker review exists. (No Android device verification existed at the time of this 2026-11-16 snapshot; superseded 2026-11-17 by M1 — see "M1 — Android render verification" below.)
 
-
-
-Run from the repo root on 2026-11-16:
-
-| Command | Result |
-| --- | --- |
-| `pnpm typecheck` | 6/6 Turbo tasks |
-| `pnpm test` | 101 core + 11 content (Vitest), 54 mobile (Jest, 13 suites) |
-| `pnpm build` | 5/5 Turbo tasks; mobile web export bundles 16 static routes |
-| `pnpm e2e` | 102 Playwright checks pass; zero console/page errors |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
-
-Visual evidence for the web remains in `docs/qa/`; this 2026-11-16 cycle produced no mobile
-device or emulator screenshots. (Superseded 2026-11-17 by M1 — see "M1 — Android render
-verification" below.)
-
 ## What P14 changed
 
 - **Deterministic structural audit** runs across all 305 exercises via
@@ -352,7 +336,7 @@ Visual evidence: 42 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P6 added the `/habits` route plus guest, signed-in, and goal-picker
 screenshots at both viewports.
 
-## What P6 changed
+## What P5 changed
 
 - **SRS is Leitner 1/2/4/8/16.** A miss returns a card to box 1 for tomorrow; a
   correct answer moves it one box forward, capped at box 5. Legacy SM-2 cards
@@ -580,8 +564,10 @@ These are product gaps, not regressions. Details and evidence are in
 [`product/current-state-and-parity.md`](./product/current-state-and-parity.md).
 
 - **Android render verification exists (M1, 2026-11-17)**, with limits. The debug APK was
-  installed, launched, and inspected on a Vivo V2336: it rendered the learn screen
-  (evidence: `docs/qa/mobile-first-screen-success.png`, `docs/NEXT.md`). The release APK
+  installed, launched, and inspected on a Vivo V2336: the uiautomator dump shows the
+  learn screen rendered (evidence: `docs/qa/mobile/learn-screen-ui-dump.xml`,
+  `docs/NEXT.md`; no screenshot exists — all captures were corrupt and are rejected, see
+  `docs/qa/rejected-captures/`). The release APK
   builds cleanly but its on-device render is not verified yet — the phone is
   disconnected (`docs/qa/mobile/release-build.md`). Full functional device QA (sign-up,
   lesson completion, sync, shop, habits, sign-out) has not been performed on hardware.
@@ -599,8 +585,8 @@ These are product gaps, not regressions. Details and evidence are in
   `typeWhatYouHear` are unsupported and fail safely on mobile.
 - **Stories and conversation** ship as honest unavailable/coming-soon states on web;
   they are not on mobile.
-- **Mobile has no onboarding flow**; shot evidence exists from M1 on-device runs
-  (`docs/qa/mobile-first-screen-success.png` and the M1 section below), and full
+- **Mobile has no onboarding flow**; render evidence from M1 is the uiautomator
+  dump (`docs/qa/mobile/learn-screen-ui-dump.xml`); full
   on-device functional QA has not been performed. The welcome screen hands
   off directly to `/learn`.
 
@@ -610,26 +596,35 @@ These are product gaps, not regressions. Details and evidence are in
   (`07b01cd`, `2d22c69`, `05d2adb`, `53ab85e`).
 - **Device:** Vivo V2336 (`10BE2A1B5Q00054`), Android 16.
 - **Debug render: PASS.** `./gradlew assembleDebug` built; `adb install -r`; the app
-  launched against Metro (port 8081, `EXPO_NO_METRO_WORKSPACE_ROOT=1` in
-  `apps/mobile/android/gradle.properties`) and rendered the learn screen —
+  launched against Metro (port 8081; the dev server was started with
+  `EXPO_NO_METRO_WORKSPACE_ROOT=1` exported) and rendered the learn screen —
   `speeko`, `Ten Indian languages · draft review`, `Learn`, `Bengali`,
   `8 lessons · 23 exercises · A1`, `0 of 8 lessons complete`, `All courses`.
-  Evidence: `docs/qa/mobile-first-screen-success.png` (passing run),
-  `docs/qa/mobile-first-screen-after-fix.png` (first attempt after the Metro fix),
-  `docs/qa/mobile-first-screen-error.png` (pre-fix Hermes failure).
-- **Release render: built, not yet verified on device.** `assembleRelease` succeeded
-  (`BUILD SUCCESSFUL in 10m 14s`; `app-release.apk`, 21,993,757 bytes, SHA-256
-  `150DE370B66B31C09B669B6A19378D458560A19A266D05D53C14CA200F5B9B2A`) after exporting
-  `EXPO_NO_METRO_WORKSPACE_ROOT=1` for the Metro subprocess. Install/launch is blocked:
-  the Vivo V2336 is disconnected (no ADB enumeration, no wireless-debugging service, no
-  USB PNP interface). No release-screen screenshot or logcat is claimed — see
-  `docs/qa/mobile/release-build.md`.
+  Evidence: `docs/qa/mobile/learn-screen-ui-dump.xml` (intact `adb pull` dump from the
+  passing session). All four screencap PNGs from 2026-11-17 were transcoded to UTF-16LE
+  by PowerShell redirection and are corrupt; they are rejected and live in
+  `docs/qa/rejected-captures/` — no screenshot evidence exists (see its README).
+- **Release render: built, not yet verified on device.** `assembleRelease` succeeds
+  without any environment export after the Metro workspace-root fix in
+  `apps/mobile/metro.config.js` (`BUILD SUCCESSFUL in 2m 51s`; `app-release.apk`,
+  21,993,757 bytes, SHA-256
+  `150DE370B66B31C09B669B6A19378D458560A19A266D05D53C14CA200F5B9B2A`). Install/launch
+  is blocked: the Vivo V2336 is disconnected (no ADB enumeration, no wireless-debugging
+  service, no USB PNP interface). No release-screen screenshot or logcat is claimed —
+  see `docs/qa/mobile/release-build.md`. A clean-clone `pnpm install --frozen-lockfile`
+  of `next/M1` passes (lockfile complete).
 - **Fixes:** Metro `resolver.unstable_conditionNames = ['require']` (Hermes
-  `_interopRequireDefault is not a function`), explicit `expo-linking` dependency
-  (native module was not autolinked), API `CONTENT_DIR` repointed to repo-root
+  `_interopRequireDefault is not a function`); Metro workspace root pinned to the app in
+  `metro.config.js` (`release/bundle` no longer depends on
+  `EXPO_NO_METRO_WORKSPACE_ROOT` being exported; the `process.env` line in
+  `metro.config.js` must stay **before** `require('@expo/metro-config')`);
+  explicit `expo-linking` dependency
+  (native module was not autolinked); API `CONTENT_DIR` repointed to repo-root
   `content/dist` (`/api/courses` was 500).
 - **Regression coverage:** root-layout Jest render test in
-  `apps/mobile/__tests__/root-layout.test.tsx` (passing).
+  `apps/mobile/__tests__/root-layout.test.tsx` (passing). It only proves the layout
+  module executes under Jest — it does not demonstrate a device render; the device
+  evidence is `docs/qa/mobile/learn-screen-ui-dump.xml`.
 - **Not verified on device:** the release APK render (blocked — phone disconnected),
   sign-up/sign-in, completing a lesson, cross-device progress sync, shop, habits,
   sign-out. M2 tracks this.
@@ -643,6 +638,7 @@ pnpm verify          # typecheck + test + build + e2e
 pnpm lint            # web + mobile
 ```
 
-Screenshots are written to `docs/qa/<project>/`. The e2e config reuses an
-already-running dev server outside CI, but a fresh `pnpm build` is required
+Curated screenshots are kept in `docs/qa/<project>/`; `pnpm e2e` writes fresh,
+gitignored captures to `test-results/screenshots/<project>/` (see `docs/qa/README.md`).
+The e2e config reuses an already-running dev server outside CI, but a fresh `pnpm build` is required
 because Playwright starts the production web server and the compiled API.

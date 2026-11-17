@@ -88,8 +88,8 @@ lessons/quests/purchases, Hindi audio.
 | Typecheck | **Pass** | 6/6 turbo tasks |
 | Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 16 static routes) |
 | Lint | **Pass** (0 errors) | web: 1 documented `<img>` warning; mobile: clean |
-| Android device QA | **Partial** | M1 (2026-11-17): the debug APK rendered the learn screen on a Vivo V2336 (`docs/qa/mobile-first-screen-success.png`; `docs/NEXT.md`); the release APK was rebuilt (SHA-256 `150DE370…`, `docs/qa/mobile/release-build.md`) but its on-device render and the functional checklist in `docs/qa/android-device-qa.md` remain unverified |
-| Mobile E2E / screenshots | **Missing** (manual shots exist) | no emulator-attached suite; on-device debug screenshots exist (`docs/qa/mobile-first-screen-success.png`); no release-APK screenshot or logcat exists; web images in `docs/qa/` |
+| Android device QA | **Partial** | M1 (2026-11-17): the debug APK rendered the learn screen on a Vivo V2336 (uiautomator dump `docs/qa/mobile/learn-screen-ui-dump.xml`; `docs/NEXT.md`); no screenshot exists — all captures were corrupt and are rejected (`docs/qa/rejected-captures/`). The release APK was rebuilt (SHA-256 `150DE370…`, `docs/qa/mobile/release-build.md`) but its on-device render and the functional checklist in `docs/qa/android-device-qa.md` remain unverified |
+| Mobile E2E / screenshots | **Missing** | no emulator-attached suite; render evidence is the M1 uiautomator dump (`docs/qa/mobile/learn-screen-ui-dump.xml`); no valid screenshot or logcat exists (all captures corrupt/rejected); web images in `docs/qa/` |
 
 ## 4. Curriculum
 

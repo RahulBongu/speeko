@@ -9,7 +9,7 @@ function localDateKey(date = new Date()): string {
 }
 
 async function screenshot(page: Page, testInfo: { project: { name: string } }, name: string) {
-  const dir = path.join('docs', 'qa', testInfo.project.name);
+  const dir = path.join('test-results', 'screenshots', testInfo.project.name);
   fs.mkdirSync(dir, { recursive: true });
   await page.screenshot({
     path: path.join(dir, name),

@@ -89,7 +89,7 @@ async function screenshot(
   testInfo: { project: { name: string } },
   name: string,
 ): Promise<void> {
-  const dir = path.join('docs', 'qa', testInfo.project.name);
+  const dir = path.join('test-results', 'screenshots', testInfo.project.name);
   fs.mkdirSync(dir, { recursive: true });
   await page.screenshot({ path: path.join(dir, name), animations: 'disabled' });
 }
