@@ -568,8 +568,10 @@ These are product gaps, not regressions. Details and evidence are in
   `docs/qa/mobile/learn-screen-ui-dump.xml`, `docs/NEXT.md`; debug-era captures were
   corrupt and are rejected, see `docs/qa/rejected-captures/`). The **release** APK was
   also verified on device: it cold-starts and renders the Bengali course path
-  (screenshot, UI dump and logcat in `docs/qa/mobile/`; on-device APK hash matches the
-  build). Full functional device QA (sign-up,
+  (screenshot, UI dumps and logcat in `docs/qa/mobile/`, incl. fresh-guest dumps showing
+  the same 0/8 + UNIT 1 state as the learn screen; on-device APK hash matches the
+  build). No like-for-like learn-screen capture was obtained (device in active use).
+  Full functional device QA (sign-up,
   lesson completion, sync, shop, habits, sign-out) has not been performed on hardware.
 - **No native-speaker review.** All 305 exercises remain `reviewStatus: "draft"`. The
   review package is exported and ready; playable does not mean correct.
@@ -605,12 +607,16 @@ These are product gaps, not regressions. Details and evidence are in
   by PowerShell redirection and are corrupt; they are rejected and live in
   `docs/qa/rejected-captures/` — no screenshot evidence exists (see its README).
 - **Release render: verified on device (2026-11-17).** Release APK installed, cold-start
-  renders the Bengali course path (lesson nodes, "0/2 lessons done"), on-device APK hash
-  matches the local file (`36A5D41D…`), logcat shows no fatal/hermes errors for the app,
-  screenshot signature `89 50 4E 47` (1080×2400) — see `docs/qa/mobile/release-build.md`.
-  The render path needed a loopback-only cleartext network config (local-only,
-  `android/` is gitignored) and an uninstall of the debug build (signature mismatch;
-  wiped device-local guest progress). **Functional device QA is still pending — M2.**
+  loads the bundle and renders real server-fed content (Bengali course path);
+  on-device APK hash matches the build (`36A5D41D…`); logcat shows no fatal/hermes
+  errors from the app; screenshot is a valid PNG (1080×2400). No like-for-like
+  learn-screen comparison against debug was captured — the welcome/learn screen could
+  not be frozen while the device was in active use; the fresh-guest state is proven by
+  `pm clear` dumps (`UNIT 1 Greetings`, `START · LESSON 1`, `0 of 8 lessons complete` —
+  identical to the debug fresh-guest learn screen). Loopback-only cleartext for the QA
+  build now ships as a committed, QA-gated config plugin
+  (`apps/mobile/plugins/withQaLoopbackCleartext.js`; no-op unless
+  `SPEEKO_QA_LOOPBACK_CLEARTEXT=1`). **Functional device QA is still pending — M2.**
 - **Fixes:** Metro `resolver.unstable_conditionNames = ['require']` (Hermes
   `_interopRequireDefault is not a function`); Metro workspace root pinned to the app in
   `metro.config.js` (`release/bundle` no longer depends on

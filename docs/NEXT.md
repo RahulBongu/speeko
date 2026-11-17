@@ -1,6 +1,12 @@
 # M1 — Android app renders
 
-## Result: PASS (release APK) — release render verified on device
+## Result: PASS (release APK) — loads and renders real server-fed content, no fatals
+
+Not compared like-for-like to the debug screen: the debug dump shows the learn
+screen, the release dumps show the Bengali course path (the app cold-starts there for
+returning guests; fresh guests for this course see UNIT 1 "START · LESSON 1"). The
+debug-era corrupt captures were thrown out; no like-for-like learn screen was captured
+on release during this run.
 
 Debug render also passed (2026-11-17). Full functional QA (M2) is still pending.
 
@@ -14,9 +20,10 @@ Debug render also passed (2026-11-17). Full functional QA (M2) is still pending.
 
 ### Release-APK evidence
 
-- `docs/qa/mobile/release-first-screen.png` — valid PNG 1080×2400, sig `89 50 4E 47`; course path screen
+- `docs/qa/mobile/release-first-screen.png` — valid PNG 1080×2400, sig `89 50 4E 47`; course path screen (device in live use; UNIT 2 visible)
 - `docs/qa/mobile/release-ui-dump.xml` — UI hierarchy of the same screen (UNIT 2 Numbers … "0/2 lessons done")
-- `docs/qa/mobile/logcat.txt` — no fatal/hermes errors for the app process; chromium/system noise annotated in `docs/qa/mobile/release-build.md`
+- `docs/qa/mobile/release-first-launch-dump.xml`, `release-welcome-dump.xml` — same path screen for a fresh guest (`pm clear`): UNIT 1 Greetings, `START · LESSON 1`, `0 of 8 lessons complete` (UNIT 2 unlocked earlier is explained in `release-build.md`)
+- `docs/qa/mobile/logcat.txt` — no fatal/hermes errors for any app process; `E fatal : runForegroundReporters` attributed to `com.instagram.android` (PID 29827, per `ps -A`); PIDs 12520/17213/19097/19328 = app; full record in `release-build.md`
 - APK `versionName=0.0.1`, `versionCode=1`; on-device sha256 == local sha256
 - Full record: `docs/qa/mobile/release-build.md`
 
@@ -26,7 +33,7 @@ Debug render also passed (2026-11-17). Full functional QA (M2) is still pending.
 2. Metro workspace root pinned to the app via `process.env.EXPO_NO_METRO_WORKSPACE_ROOT = '1'` **before** `require('@expo/metro-config')` — release build and dev bundle now work with no shell export.
 3. Explicit `expo-linking` dependency (native module was not autolinked).
 4. API `CONTENT_DIR` repointed to repo-root `content/dist`.
-5. Android release build: loopback-only cleartext allowed via a network security config (local, gitignored `android/` tree) so the QA release reaches `http://localhost:3001`; see `release-build.md`.
+5. Android release build: loopback-only cleartext allowed via `apps/mobile/plugins/withQaLoopbackCleartext.js`, a QA-only config plugin (no-op unless `SPEEKO_QA_LOOPBACK_CLEARTEXT=1` at prebuild; store/release builds carry no cleartext exception). See `release-build.md`.
 
 ### Regression coverage (and its limit)
 
@@ -35,7 +42,9 @@ Debug render also passed (2026-11-17). Full functional QA (M2) is still pending.
 ### Evidence files
 
 - `docs/qa/mobile/learn-screen-ui-dump.xml` — intact UI dump from the debug passing session
-- `docs/qa/mobile/release-first-screen.png`, `release-ui-dump.xml`, `logcat.txt` — release-render evidence
+- `docs/qa/mobile/release-first-screen.png`, `release-ui-dump.xml` — release render evidence (path screen)
+- `docs/qa/mobile/release-first-launch-dump.xml`, `release-welcome-dump.xml` — fresh-guest release dumps
+- `docs/qa/mobile/logcat.txt` — filtered logcat; attribution in `release-build.md`
 - `docs/qa/mobile/release-build.md` — build + reproducibility + on-device record
 - `docs/qa/rejected-captures/` — earlier corrupt captures (UTF-16 transcodes), rejected
 

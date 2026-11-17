@@ -115,8 +115,15 @@ What happened, in order:
    blocks cleartext; a domain-config permits it ONLY for `localhost` and `127.0.0.1`),
    referenced as `android:networkSecurityConfig` on the `<application>` element. Nothing
    else is permitted in cleartext.
-   **The `apps/mobile/android/` directory is gitignored, so this config is NOT in git.**
-   A fresh `expo prebuild` needs the same two edits; the file contents are:
+   **The `android/` directory is gitignored** — but as of the latest commit the edit is
+   reproducible from git: `apps/mobile/plugins/withQaLoopbackCleartext.js` is a config
+   plugin (wired in `app.json` under `plugins`) that applies exactly this XML and this
+   attribute **only when `SPEEKO_QA_LOOPBACK_CLEARTEXT=1`** is set at prebuild time;
+   without it the plugin is a no-op, so release/store builds carry no cleartext
+   exception. Verified: after `SPEEKO_QA_LOOPBACK_CLEARTEXT=1 npx expo prebuild
+   --no-install --platform android`, the `xml` file and manifest attribute are
+   identical to this hand edit, and everything else in the tree is unchanged except a
+   trailing newline in `gradle.properties`.
 
    ```xml
    <network-security-config>
@@ -150,13 +157,34 @@ What happened, in order:
    done", guidebook/lesson nodes) — the app restores the last course (Bengali), unlike the
    first-launch learn screen the debug dump showed. `docs/qa/mobile/release-ui-dump.xml`
    carries the same text nodes. A returning-guest dump, not a first-launch dump.
-6. **Logcat.** `docs/qa/mobile/logcat.txt` — filter `hermes|fatal|ReactNative|
-   AndroidRuntime|SIGABRT`. No fatal/hermes errors from any com.speeko.app process
-   (release-run PIDs 17213, 19097, 19328 all logged `ReactNativeJS: Running "main"`).
-   The `E fatal : runForegroundReporters` entries are chromium/system processes
-   (PIDs 15035, 29827) — not the app. The `AndroidRuntime: Using default boot image`
-   entries are ART system noise.
-7. **Functional QA is NOT done** — sign-up/sign-in, completing a lesson, sync, shop,
+   A true fresh-guest state was captured with `pm clear` + cold start and is in
+   `release-first-launch-dump.xml` and `release-welcome-dump.xml`: UNIT 1 Greetings,
+   `START · LESSON 1`, `0 of 8 lessons complete`. Both captures were taken while the
+   phone was in active use; the visible path screen is user-navigated (the code has
+   no auto-route — checked `index.tsx`, `learn.tsx`; expo-router cold-starts to `/`).
+   The debug fresh-guest dump showed the learn screen; no like-for-like learn-screen
+   capture was obtained on release during this run.
+6. **Unit 2 was explained, not assumed.** The server held zero lesson completions for
+   the QA account (`/api/progress` → `completed: {}`, `/api/habits` totals 0 XP / 0
+   lessons) and `bmgr list sets` reports "No restore sets" — so no seeding and no
+   backup restore occurred. The device was in active use during verification (the API
+   log shows `te-starter` course fetches and `401` lesson-completions from the phone
+   at 17:26–17:27) — the "Unit 2 unlocked" observation came from live use on the
+   device, not from seeded state. `adb shell pm clear com.speeko.app` resets the app to
+   a fresh guest: it cold-starts to the Bengali course path with `UNIT 1 · Greetings`,
+   `START · LESSON 1`, and `0 of 8 lessons complete` (see
+   `release-first-launch-dump.xml` / `release-welcome-dump.xml`).
+7. **Logcat PID attribution.** `com.speeko.app` PIDs across this session: 12520
+   (debug build, 17:11), 17213, 19097, 19328 (release builds). None logged fatal or
+   hermes errors. The `E fatal : runForegroundReporters` entries come from PID 29827,
+   which `ps -A` identifies as `com.instagram.android` (a Chromium-based process);
+   PID 15035 exited before it could be mapped and was not com.speeko.app either — the
+   mapping for that one was not checked and is recorded as not checked.
+8. **Known harmless warning.** `ReactNativeJNI: Component property map contains
+   multiple entries for 'borderColor'/'borderStyle'` appears on every launch; it is a
+   React Native prop-map duplicate (RN internal), not an app defect; no action taken;
+   track it if RN is upgraded.
+9. **Functional QA is NOT done** — sign-up/sign-in, completing a lesson, sync, shop,
    habits, sign-out: all pending (M2). This run verified render only.
 
 The earlier "unexecuted" list is superseded by this section. The APK hash above is the
