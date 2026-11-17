@@ -33,7 +33,7 @@ export function OnboardingFrame({
           <div className="flex items-center justify-between gap-4">
             <Fox className="h-16 w-16 shrink-0 sm:h-20 sm:w-20" />
             <div className="min-w-0">
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-speeko-600">
+              <p className="eyebrow">
                 Step {step} of {ONBOARDING_STEPS}
               </p>
               <h1 className="mt-1 font-display text-2xl font-extrabold leading-tight text-bark-800 sm:text-3xl">

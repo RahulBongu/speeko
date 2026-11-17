@@ -35,7 +35,6 @@
 }
 
 :root {
-  --speeko-green: #37b02c;
   --font-display: 'Baloo 2', 'Segoe UI', system-ui, sans-serif;
 }
 
@@ -57,19 +56,23 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply inline-flex select-none items-center justify-center gap-2 rounded-2xl bg-speeko-500 px-6 py-3 font-display text-sm font-extrabold uppercase tracking-wide text-white shadow-green transition duration-150 hover:bg-speeko-400 active:translate-y-[3px] active:shadow-green-sm disabled:cursor-not-allowed disabled:bg-cream-300 disabled:text-bark-300 disabled:shadow-none;
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-2xl bg-speeko-700 px-6 py-3 font-display text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_4px_0_#174c1a] transition duration-150 hover:bg-speeko-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-speeko-300 active:translate-y-[3px] active:shadow-[0_1px_0_#174c1a] disabled:cursor-not-allowed disabled:bg-cream-300 disabled:text-bark-300 disabled:shadow-none;
   }
 
   .btn-danger {
-    @apply inline-flex select-none items-center justify-center gap-2 rounded-2xl bg-red-500 px-6 py-3 font-display text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_4px_0_#b91c1c] transition duration-150 hover:bg-red-400 active:translate-y-[3px] active:shadow-[0_1px_0_#b91c1c] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-2xl bg-red-600 px-6 py-3 font-display text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_4px_0_#b91c1c] transition duration-150 hover:bg-red-700 active:translate-y-[3px] active:shadow-[0_1px_0_#b91c1c] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-speeko-300 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply inline-flex select-none items-center justify-center gap-2 rounded-2xl border-2 border-cream-200 bg-white px-5 py-3 font-display text-sm font-extrabold uppercase tracking-wide text-bark-600 shadow-card-sm transition duration-150 hover:bg-cream-50 active:translate-y-[2px] active:shadow-none disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-2xl border-2 border-cream-200 bg-white px-5 py-3 font-display text-sm font-extrabold uppercase tracking-wide text-bark-600 shadow-card-sm transition duration-150 hover:bg-cream-50 active:translate-y-[2px] active:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-speeko-300 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-3 py-2 font-display text-sm font-bold text-bark-500 transition hover:bg-cream-100 hover:text-bark-700;
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-3 py-2 font-display text-sm font-bold text-bark-500 transition hover:bg-cream-100 hover:text-bark-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-speeko-300;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-extrabold uppercase tracking-[0.18em] text-speeko-700;
   }
 
   .card {
@@ -88,19 +91,6 @@ body {
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
   .hero-dots {
     background-image: radial-gradient(#f0d7ba 1.5px, transparent 1.5px);
     background-size: 26px 26px;

@@ -8,6 +8,20 @@ const RiveLayer = dynamic(() => import('./RiveLayer').then((module) => module.Ri
   ssr: false,
 });
 
+// One HEAD check per source per page load, shared by every Fox instance.
+const riveCheckCache = new Map<string, Promise<boolean>>();
+
+function checkRiveAvailable(src: string): Promise<boolean> {
+  let cached = riveCheckCache.get(src);
+  if (!cached) {
+    cached = fetch(src, { method: 'HEAD' })
+      .then((response) => response.ok)
+      .catch(() => false);
+    riveCheckCache.set(src, cached);
+  }
+  return cached;
+}
+
 export type FoxMood = 'idle' | 'happy' | 'sad' | 'celebrate';
 
 export interface FoxProps {
@@ -32,21 +46,14 @@ const MOOD_LABEL: Record<FoxMood, string> = {
  */
 export function Fox({ mood = 'idle', className, title, riveSrc, accessory = null }: FoxProps) {
   const resolvedRiveSrc = riveSrc ?? process.env.NEXT_PUBLIC_RIVE_FOX_URL;
-  const [riveAvailable, setRiveAvailable] = useState(Boolean(resolvedRiveSrc) === false);
+  const [riveAvailable, setRiveAvailable] = useState(false);
 
   useEffect(() => {
-    if (!resolvedRiveSrc) {
-      setRiveAvailable(false);
-      return;
-    }
+    if (!resolvedRiveSrc) return;
     let cancelled = false;
-    fetch(resolvedRiveSrc, { method: 'HEAD' })
-      .then((response) => {
-        if (!cancelled) setRiveAvailable(response.ok);
-      })
-      .catch(() => {
-        if (!cancelled) setRiveAvailable(false);
-      });
+    checkRiveAvailable(resolvedRiveSrc).then((available) => {
+      if (!cancelled) setRiveAvailable(available);
+    });
     return () => {
       cancelled = true;
     };
@@ -256,19 +263,18 @@ export function Fox({ mood = 'idle', className, title, riveSrc, accessory = null
         <g>
           <path
             d="M62 92h116l-18-34H80Z"
-            fill="#7c3aed"
-            stroke="#5b21b6"
+            className="fill-gold-200 stroke-gold-700"
             strokeWidth="3"
             strokeLinejoin="round"
           />
-          <circle cx="120" cy="58" r="8" fill="#fbbf24" />
+          <circle cx="120" cy="58" r="8" className="fill-gold-700" />
         </g>
       ) : null}
       {accessory === 'glasses' ? (
-        <g>
-          <circle cx="96" cy="101" r="16" fill="none" stroke="#1f2937" strokeWidth="3" />
-          <circle cx="144" cy="101" r="16" fill="none" stroke="#1f2937" strokeWidth="3" />
-          <path d="M112 101h16" stroke="#1f2937" strokeWidth="3" />
+        <g className="stroke-bark-800" strokeWidth="3" fill="none">
+          <circle cx="96" cy="101" r="16" />
+          <circle cx="144" cy="101" r="16" />
+          <path d="M112 101h16" />
         </g>
       ) : null}
     </svg>

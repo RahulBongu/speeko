@@ -230,11 +230,11 @@ describe('mobile lesson runner', () => {
     mockCourse(
       courseWith([
         {
-          id: 'e-bank',
-          kind: 'wordBank',
-          prompt: 'Build the sentence',
-          words: ['मैं', 'हूँ'],
-          expected: ['मैं हूँ'],
+          id: 'e-image',
+          kind: 'chooseImage',
+          prompt: 'Which one is it?',
+          options: ['नमस्ते', 'धन्यवाद'],
+          answerIndex: 0,
         },
       ]),
     );
@@ -247,6 +247,101 @@ describe('mobile lesson runner', () => {
     expect(screen.getByText('Back to lessons')).toBeTruthy();
     expect(completionPosts()).toHaveLength(0);
     expect(screen.queryByText('Lesson complete!')).toBeNull();
+  });
+
+  it('plays the newly supported kinds end to end', async () => {
+    // 401 fallback: the app awards device XP from core's per-kind table
+    // (wordBank 3, arrangeSentence 4, typeWhatYouHear 4, speak 5).
+    mockedFetch.mockImplementation(async (path: string) => {
+      if (path === '/api/courses/hi-starter') {
+        return reply(
+          200,
+          courseWith([
+            {
+              id: 'e-wordbank',
+              kind: 'wordBank',
+              prompt: 'Build this phrase',
+              words: ['मैं', 'हूँ', 'ठीक'],
+              answer: ['मैं', 'ठीक', 'हूँ'],
+            },
+            {
+              id: 'e-arrange',
+              kind: 'arrangeSentence',
+              prompt: 'Arrange the words',
+              tiles: ['किताब', 'यह', 'है'],
+              answer: ['यह', 'किताब', 'है'],
+            },
+            {
+              id: 'e-twyh',
+              kind: 'typeWhatYouHear',
+              prompt: 'Write what you hear',
+              expected: ['नमस्ते'],
+            },
+            {
+              id: 'e-speak',
+              kind: 'speak',
+              prompt: 'Say the phrase',
+              expected: ['धन्यवाद'],
+              softScore: true,
+            },
+          ]),
+        );
+      }
+      if (path === '/api/lesson-completions') return reply(401, { error: 'Unauthorized' });
+      throw new Error(`Unexpected request: ${path}`);
+    });
+
+    await render(<Lesson />);
+    expect(await screen.findByText('Question 1 of 4')).toBeTruthy();
+    expect(screen.getAllByText('BUILD THE TRANSLATION').length).toBeGreaterThan(0);
+
+    // wordBank — tap the words in answer order.
+    await fireEvent.press(screen.getByText('मैं'));
+    await fireEvent.press(screen.getByText('ठीक'));
+    await fireEvent.press(screen.getByText('हूँ'));
+    await fireEvent.press(screen.getByText('Check'));
+    expect(await screen.findByText('Correct!')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Continue'));
+
+    // arrangeSentence — tap the tiles in answer order.
+    expect(await screen.findByText('Question 2 of 4')).toBeTruthy();
+    expect(screen.getAllByText('ARRANGE THE SENTENCE').length).toBeGreaterThan(0);
+    await fireEvent.press(screen.getByText('यह'));
+    await fireEvent.press(screen.getByText('किताब'));
+    await fireEvent.press(screen.getByText('है'));
+    await fireEvent.press(screen.getByText('Check'));
+    expect(await screen.findByText('Correct!')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Continue'));
+
+    // typeWhatYouHear — honest degrade: no audio, the phrase is shown.
+    expect(await screen.findByText('Question 3 of 4')).toBeTruthy();
+    expect(
+      screen.getByText('Audio is not available on this build — the phrase is shown.'),
+    ).toBeTruthy();
+    await fireEvent.changeText(screen.getByLabelText('Type what you hear'), 'नमस्ते');
+    await fireEvent.press(screen.getByText('Check'));
+    expect(await screen.findByText('Correct!')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Continue'));
+
+    // speak — fallback-only: the learner types what they said, no mic.
+    expect(await screen.findByText('Question 4 of 4')).toBeTruthy();
+    expect(screen.getByText('I said it out loud')).toBeTruthy();
+    await fireEvent.changeText(screen.getByLabelText('Type what you said'), 'धन्यवाद');
+    await fireEvent.press(screen.getByText('Check'));
+    expect(await screen.findByText('Correct!')).toBeTruthy();
+    await fireEvent.press(screen.getByText('See results'));
+
+    expect(await screen.findByText('100% accuracy')).toBeTruthy();
+    expect(screen.getByText('4 of 4 correct')).toBeTruthy();
+    // 10 lesson bonus + 3 + 4 + 4 + 5 exercise XP, saved on this device (401 fallback).
+    expect(await screen.findByText('+26 XP saved on this device')).toBeTruthy();
+
+    const posts = completionPosts();
+    expect(posts).toHaveLength(1);
+    const body = JSON.parse(String(posts[0]![1]?.body));
+    expect(
+      body.answers.map((answer: { input: { kind: string } }) => answer.input.kind),
+    ).toEqual(['tokens', 'tokens', 'text', 'speak']);
   });
 
   it('falls back to device progress when the server rejects as unauthenticated', async () => {

@@ -11,6 +11,10 @@ const secret =
 if (isProduction && !process.env.BETTER_AUTH_SECRET) {
   throw new Error('BETTER_AUTH_SECRET must be set in production.');
 }
+if (isProduction && (process.env.BETTER_AUTH_SECRET ?? '').length < 32) {
+  // A short secret is a credential; better-auth only warns — we refuse to boot.
+  throw new Error('BETTER_AUTH_SECRET must be at least 32 characters in production.');
+}
 
 const trustedOrigins = (process.env.CLIENT_ORIGINS ?? 'http://localhost:3000')
   .split(',')

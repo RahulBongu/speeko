@@ -1,6 +1,8 @@
+import { gradeExercise } from '@speeko/core';
 import {
   canSubmit,
   choiceOptions,
+  deterministicShuffle,
   earnedExerciseXp,
   expectedChoice,
   initialDraft,
@@ -8,6 +10,7 @@ import {
   matchPairOrder,
   SUPPORTED_EXERCISE_KINDS,
   toAnswerInput,
+  getTokenPool,
 } from '../lib/exercise';
 
 const choose = {
@@ -55,12 +58,51 @@ const pairs = {
   ],
 } as any;
 
-const unsupported = {
+const wordBank = {
   id: 'bank-1',
   kind: 'wordBank',
   prompt: 'Build the sentence',
   words: ['मैं', 'हूँ'],
-  expected: ['मैं हूँ'],
+  answer: ['मैं', 'हूँ'],
+} as any;
+
+const arrangeSentence = {
+  id: 'arrange-1',
+  kind: 'arrangeSentence',
+  prompt: 'Arrange the sentence',
+  tiles: ['है', 'यह', 'किताब'],
+  answer: ['यह', 'किताब', 'है'],
+} as any;
+
+const typeWhatYouHear = {
+  id: 'type-what-you-hear-1',
+  kind: 'typeWhatYouHear',
+  prompt: 'Type what you hear',
+  expected: ['नमस्ते'],
+} as any;
+
+const speak = {
+  id: 'speak-1',
+  kind: 'speak',
+  prompt: 'Say it out loud',
+  expected: ['नमस्ते'],
+  softScore: true,
+} as any;
+
+const speakStrict = {
+  id: 'speak-2',
+  kind: 'speak',
+  prompt: 'Say it precisely',
+  expected: ['नमस्ते'],
+  softScore: false,
+} as any;
+
+const unsupported = {
+  id: 'image-1',
+  kind: 'chooseImage',
+  prompt: 'Which one is it?',
+  options: ['hello-image.png', 'goodbye-image.png'],
+  answerIndex: 0,
 } as any;
 
 describe('mobile exercise drafts', () => {
@@ -76,15 +118,37 @@ describe('mobile exercise drafts', () => {
     expect(initialDraft(pairs)).toEqual({ kind: 'pairs', mismatches: 0, matched: 0 });
   });
 
-  it('advertises exactly the five published exercise kinds', () => {
+  it('starts the newly supported kinds from an empty draft', () => {
+    expect(initialDraft(wordBank)).toEqual({ kind: 'tokens', value: [] });
+    expect(initialDraft(arrangeSentence)).toEqual({ kind: 'tokens', value: [] });
+    expect(initialDraft(typeWhatYouHear)).toEqual({ kind: 'text', value: '' });
+    expect(initialDraft(speak)).toEqual({ kind: 'speak', transcript: '', selfReported: false });
+  });
+
+  it('advertises exactly the nine published exercise kinds', () => {
     expect([...SUPPORTED_EXERCISE_KINDS].sort()).toEqual(
-      ['chooseMeaning', 'fillBlank', 'listenChoose', 'matchPairs', 'typeTranslation'].sort(),
+      [
+        'chooseMeaning',
+        'listenChoose',
+        'fillBlank',
+        'typeTranslation',
+        'matchPairs',
+        'wordBank',
+        'arrangeSentence',
+        'typeWhatYouHear',
+        'speak',
+      ].sort(),
     );
+    expect(SUPPORTED_EXERCISE_KINDS).toHaveLength(9);
     expect(isSupportedExercise(choose)).toBe(true);
     expect(isSupportedExercise(listen)).toBe(true);
     expect(isSupportedExercise(blank)).toBe(true);
     expect(isSupportedExercise(type)).toBe(true);
     expect(isSupportedExercise(pairs)).toBe(true);
+    expect(isSupportedExercise(wordBank)).toBe(true);
+    expect(isSupportedExercise(arrangeSentence)).toBe(true);
+    expect(isSupportedExercise(typeWhatYouHear)).toBe(true);
+    expect(isSupportedExercise(speak)).toBe(true);
     expect(isSupportedExercise(unsupported)).toBe(false);
   });
 });
@@ -97,6 +161,20 @@ describe('mobile exercise submission rules', () => {
     expect(canSubmit(type, { kind: 'text', value: 'नमस्ते' })).toBe(true);
     expect(canSubmit(pairs, { kind: 'pairs', mismatches: 0, matched: 2 })).toBe(false);
     expect(canSubmit(pairs, { kind: 'pairs', mismatches: 1, matched: 3 })).toBe(true);
+  });
+
+  it('requires at least one token before a token board can submit', () => {
+    expect(canSubmit(wordBank, { kind: 'tokens', value: [] })).toBe(false);
+    expect(canSubmit(wordBank, { kind: 'tokens', value: [0] })).toBe(true);
+    expect(canSubmit(arrangeSentence, { kind: 'tokens', value: [] })).toBe(false);
+    expect(canSubmit(arrangeSentence, { kind: 'tokens', value: [2] })).toBe(true);
+  });
+
+  it('requires a transcript or a self-report before speaking can submit', () => {
+    expect(canSubmit(speak, { kind: 'speak', transcript: '', selfReported: false })).toBe(false);
+    expect(canSubmit(speak, { kind: 'speak', transcript: '   ', selfReported: false })).toBe(false);
+    expect(canSubmit(speak, { kind: 'speak', transcript: 'नमस्ते', selfReported: false })).toBe(true);
+    expect(canSubmit(speak, { kind: 'speak', transcript: '', selfReported: true })).toBe(true);
   });
 
   it('never lets an unsupported kind submit', () => {
@@ -120,9 +198,62 @@ describe('mobile exercise submission rules', () => {
       kind: 'text',
       value: 'नमस्ते',
     });
+    expect(toAnswerInput(typeWhatYouHear, { kind: 'text', value: 'नमस्ते' })).toEqual({
+      kind: 'text',
+      value: 'नमस्ते',
+    });
     expect(
       toAnswerInput(pairs, { kind: 'pairs', mismatches: 2, matched: 3 }),
     ).toEqual({ kind: 'pairs', mismatches: 2 });
+  });
+
+  it('maps token drafts to token answers in tap order', () => {
+    expect(toAnswerInput(wordBank, { kind: 'tokens', value: [1, 0] })).toEqual({
+      kind: 'tokens',
+      value: ['हूँ', 'मैं'],
+    });
+    expect(toAnswerInput(wordBank, { kind: 'tokens', value: [0, 1] })).toEqual({
+      kind: 'tokens',
+      value: ['मैं', 'हूँ'],
+    });
+    expect(toAnswerInput(arrangeSentence, { kind: 'tokens', value: [1, 2, 0] })).toEqual({
+      kind: 'tokens',
+      value: ['यह', 'किताब', 'है'],
+    });
+    expect(toAnswerInput(wordBank, { kind: 'tokens', value: [] })).toBeNull();
+    expect(toAnswerInput(type, { kind: 'tokens', value: [0] })).toBeNull();
+  });
+
+  it('produces a tokens input the grader joins back into the answer', () => {
+    const input = toAnswerInput(wordBank, { kind: 'tokens', value: [0, 1] });
+    expect(input).toEqual({ kind: 'tokens', value: ['मैं', 'हूँ'] });
+    expect(input && gradeExercise(wordBank, input).correct).toBe(true);
+    expect(gradeExercise(wordBank, { kind: 'tokens', value: ['हूँ', 'मैं'] }).correct).toBe(false);
+
+    const tiles = toAnswerInput(arrangeSentence, { kind: 'tokens', value: [1, 2, 0] });
+    expect(tiles && gradeExercise(arrangeSentence, tiles).correct).toBe(true);
+  });
+
+  it('maps speak drafts to speak answers', () => {
+    expect(
+      toAnswerInput(speak, { kind: 'speak', transcript: 'नमस्ते', selfReported: true }),
+    ).toEqual({ kind: 'speak', transcript: 'नमस्ते', selfReported: true });
+    expect(
+      toAnswerInput(speak, { kind: 'speak', transcript: '', selfReported: false }),
+    ).toBeNull();
+  });
+
+  it('soft-scores self-reported speaking only when softScore allows it', () => {
+    expect(
+      gradeExercise(speak, { kind: 'speak', transcript: '', selfReported: true }).correct,
+    ).toBe(true);
+    expect(
+      gradeExercise(speakStrict, { kind: 'speak', transcript: '', selfReported: true }).correct,
+    ).toBe(false);
+    expect(
+      gradeExercise(speakStrict, { kind: 'speak', transcript: 'नमस्ते', selfReported: false })
+        .correct,
+    ).toBe(true);
   });
 
   it('reports the expected choice text on reveal', () => {
@@ -137,6 +268,24 @@ describe('mobile exercise submission rules', () => {
     const second = matchPairOrder(pairs.pairs, pairs.id);
     expect(second).toEqual(first);
     expect([...first].sort()).toEqual([0, 1, 2]);
+  });
+
+  it('shuffles token pools deterministically without losing tokens', () => {
+    const first = deterministicShuffle(wordBank.words, wordBank.id);
+    expect(deterministicShuffle(wordBank.words, wordBank.id)).toEqual(first);
+    expect([...first].sort()).toEqual([...wordBank.words].sort());
+    expect(first).toHaveLength(wordBank.words.length);
+
+    const tiles = deterministicShuffle(arrangeSentence.tiles, arrangeSentence.id);
+    expect(deterministicShuffle(arrangeSentence.tiles, arrangeSentence.id)).toEqual(tiles);
+    expect([...tiles].sort()).toEqual([...arrangeSentence.tiles].sort());
+  });
+
+  it('reads the token pool for each token kind', () => {
+    expect(getTokenPool(wordBank)).toBe(wordBank.words);
+    expect(getTokenPool(arrangeSentence)).toBe(arrangeSentence.tiles);
+    expect(getTokenPool(type)).toBeNull();
+    expect(getTokenPool(speak)).toBeNull();
   });
 
   it('awards exercise XP only for correct answers, matching the web session', () => {

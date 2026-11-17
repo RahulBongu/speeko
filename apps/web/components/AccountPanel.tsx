@@ -10,7 +10,7 @@ import { fetchGems } from '@/lib/shop';
 import { Fox } from './Fox';
 import { ProgressBar } from './ProgressBar';
 import { StatPill } from './AppHeader';
-import { BoltIcon, FlameIcon, TrophyIcon, CheckIcon, StarIcon, LockIcon, GemIcon } from './icons';
+import { BoltIcon, FlameIcon, TrophyIcon, CheckIcon, StarIcon, GemIcon } from './icons';
 
 /**
  * Solo XP milestones. These are not a league: there are no peers and nothing
@@ -158,7 +158,7 @@ export function AccountPanel() {
         </div>
         <span
           className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 font-display text-xs font-extrabold uppercase tracking-wide ${
-            syncFailed ? 'bg-amber-50 text-amber-700' : 'bg-speeko-50 text-speeko-700'
+            syncFailed ? 'bg-fox-100 text-fox-700' : 'bg-speeko-50 text-speeko-700'
           }`}
         >
           <CheckIcon className="h-4 w-4" />
@@ -168,36 +168,53 @@ export function AccountPanel() {
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
         {[
-          <StatPill key="streak" icon={<FlameIcon className="h-4 w-4 animate-bob" />} value={<span className="inline-block animate-pop">{effectiveStreak}</span>} label="Day streak" tone="streak" />,
-          <StatPill key="xp" icon={<BoltIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:120ms]">{`${effectiveXp} XP`}</span>} label="Total XP" tone="xp" />,
-          <StatPill key="lessons" icon={<TrophyIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:240ms]">{completed}</span>} label="Lessons completed" />,
-          <StatPill
-            key="goal"
-            icon={<BoltIcon className="h-4 w-4" />}
-            value={<span className="inline-block animate-pop [animation-delay:360ms]">{`${Math.min(todayXp, dailyGoal)}/${dailyGoal} XP`}</span>}
-            label="Daily XP goal"
-            tone="goal"
-          />,
-          <StatPill
-            key="gems"
-            icon={<GemIcon className="h-4 w-4" />}
-            value={<span className="inline-block animate-pop [animation-delay:440ms]">{gemBalance ?? '—'}</span>}
-            label="Gems"
-            tone="xp"
-          />,
-        ].map((pill, index) => (
+          {
+            key: 'streak',
+            node: <StatPill icon={<FlameIcon className="h-4 w-4 animate-bob" />} value={<span className="inline-block animate-pop">{effectiveStreak}</span>} label="Day streak" tone="streak" />,
+          },
+          {
+            key: 'xp',
+            node: <StatPill icon={<BoltIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:120ms]">{`${effectiveXp} XP`}</span>} label="Total XP" tone="xp" />,
+          },
+          {
+            key: 'lessons',
+            node: <StatPill icon={<TrophyIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:240ms]">{completed}</span>} label="Lessons completed" />,
+          },
+          {
+            key: 'goal',
+            node: (
+              <StatPill
+                icon={<BoltIcon className="h-4 w-4" />}
+                value={<span className="inline-block animate-pop [animation-delay:360ms]">{`${Math.min(todayXp, dailyGoal)}/${dailyGoal} XP`}</span>}
+                label="Daily XP goal"
+                tone="goal"
+              />
+            ),
+          },
+          {
+            key: 'gems',
+            node: (
+              <StatPill
+                icon={<GemIcon className="h-4 w-4" />}
+                value={<span className="inline-block animate-pop [animation-delay:440ms]">{gemBalance ?? '—'}</span>}
+                label="Gems"
+                tone="xp"
+              />
+            ),
+          },
+        ].map(({ key, node }, index) => (
           <div
-            key={index}
+            key={key}
             className="animate-rise"
             style={{ animationDelay: `${index * 80 + 80}ms` }}
           >
-            {pill}
+            {node}
           </div>
         ))}
       </div>
 
       {syncFailed ? (
-        <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800">
+        <p className="rounded-2xl border border-fox-200 bg-fox-100 px-4 py-3 text-xs font-semibold text-fox-700">
           Your account could not be reached, so the numbers above come from this device, not the
           cloud. Sign in again or retry later for verified totals.
         </p>
@@ -208,7 +225,7 @@ export function AccountPanel() {
           <h2 className="font-display text-lg font-extrabold text-bark-800">
             Your milestones
           </h2>
-          <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#fff9e0] px-3 py-1.5 font-display text-xs font-extrabold uppercase tracking-wide text-[#a06b00]">
+          <span className="inline-flex items-center gap-1.5 rounded-xl bg-gold-100 px-3 py-1.5 font-display text-xs font-extrabold uppercase tracking-wide text-gold-700">
             <StarIcon className="h-4 w-4" />
             {milestone.current.name}
           </span>
@@ -224,9 +241,9 @@ export function AccountPanel() {
           barClassName="bg-gradient-to-r from-fox-400 to-fox-600"
           label="Milestone progress"
         />
-        <div className="mt-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-bark-300">
-          <LockIcon className="h-3.5 w-3.5" />
-          Shop &amp; more milestones — coming soon
+        <div className="mt-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-bark-500">
+          <GemIcon className="h-3.5 w-3.5" />
+          Your next milestone awaits in the shop — every gem earned
         </div>
       </div>
 

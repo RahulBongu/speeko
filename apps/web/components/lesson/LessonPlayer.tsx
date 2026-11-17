@@ -152,6 +152,9 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [answeredExercise, setAnsweredExercise] = useState<Exercise | null>(null);
   const [xpGained, setXpGained] = useState(0);
   const [showExit, setShowExit] = useState(false);
+  const exitDialogRef = useRef<HTMLDivElement | null>(null);
+  const keepPracticingRef = useRef<HTMLButtonElement | null>(null);
+  const exitRestoreRef = useRef<HTMLElement | null>(null);
   const [postProgress, setPostProgress] = useState<ProgressState | null>(null);
   const [saveState, setSaveState] = useState<SaveState>({ status: 'idle' });
   const { data: authSession, isPending: authPending, error: authError } = authClient.useSession();
@@ -495,6 +498,39 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [phase, ready, showExit, handleCheck, handleContinue]);
 
+  // Exit dialog: move focus to the safe action on open, trap Tab inside,
+  // and hand focus back to the quit button on close.
+  useEffect(() => {
+    if (!showExit) return undefined;
+    exitRestoreRef.current = document.activeElement as HTMLElement | null;
+    keepPracticingRef.current?.focus();
+    return () => {
+      const target = exitRestoreRef.current;
+      exitRestoreRef.current = null;
+      target?.focus();
+    };
+  }, [showExit]);
+
+  const trapExitTab = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab') return;
+    const dialog = exitDialogRef.current;
+    if (!dialog) return;
+    const focusables = Array.from(dialog.querySelectorAll<HTMLElement>('button, a[href]'));
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (!first || !last) return;
+    const active = document.activeElement as HTMLElement | null;
+    if (event.shiftKey) {
+      if (active === first || !dialog.contains(active)) {
+        event.preventDefault();
+        last.focus();
+      }
+    } else if (active === last || !dialog.contains(active)) {
+      event.preventDefault();
+      first.focus();
+    }
+  }, []);
+
   if (phase === 'loading') {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
@@ -581,7 +617,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               ))}
             </div>
             {session.combo >= 2 ? (
-              <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-[#fff4d6] px-2 py-1 font-display text-xs font-extrabold text-[#a06b00]">
+              <span className="flex shrink-0 items-center gap-0.5 rounded-full bg-gold-100 px-2 py-1 font-display text-xs font-extrabold text-gold-700">
                 <BoltIcon className="h-3.5 w-3.5" />×{session.combo}
               </span>
             ) : null}
@@ -613,7 +649,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           }`}
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <p className="font-display text-xs font-extrabold uppercase tracking-[0.16em] text-bark-400">
+            <p className="font-display text-xs font-extrabold uppercase tracking-[0.16em] text-bark-500">
               Exercise {displayNumber} of {total}
             </p>
             <p className="truncate font-display text-xs font-bold text-bark-400">
@@ -652,7 +688,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
 
           {phase === 'playing' ? (
             <div className="mt-6 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="hidden text-xs font-semibold text-bark-300 sm:block">
+              <p className="hidden text-xs font-semibold text-bark-400 sm:block">
                 Press Enter to check
               </p>
               <button
@@ -691,6 +727,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             role="dialog"
             aria-modal="true"
             aria-labelledby="exit-title"
+            ref={exitDialogRef}
+            onKeyDown={trapExitTab}
             onClick={(event) => event.stopPropagation()}
           >
             <Fox className="mx-auto h-24 w-24" />
@@ -703,7 +741,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
                 : "Your answers so far won't be saved. You can restart any time."}
             </p>
             <div className="mt-5 flex flex-col gap-2">
-              <button type="button" className="btn-primary" onClick={() => setShowExit(false)}>
+              <button type="button" className="btn-primary" ref={keepPracticingRef} onClick={() => setShowExit(false)}>
                 Keep practicing
               </button>
               <Link href={practiceRoute ? '/practice' : `/learn/${course.id}`} className="btn-secondary">
@@ -909,7 +947,7 @@ function SummaryScreen({
       {!isPractice && saveState.status === 'error' ? (
         <div
           role="alert"
-          className="mt-4 flex flex-col gap-3 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+          className="mt-4 flex flex-col gap-3 rounded-2xl border-2 border-fox-200 bg-fox-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
         >
           <div>
             <p className="font-display text-sm font-extrabold text-fox-700">
@@ -928,7 +966,7 @@ function SummaryScreen({
 
       {isPractice ? (
         <div className="card mt-4 p-5 text-center">
-          <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
+          <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-500">
             {kind === 'review'
               ? 'Spaced repetition'
               : kind === 'checkpoint'
@@ -946,7 +984,7 @@ function SummaryScreen({
       ) : postProgress ? (
         <div className="card mt-4 p-5">
           <div className="flex items-baseline justify-between gap-3">
-            <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
+            <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-500">
               Daily goal
             </p>
             <p className="font-display text-sm font-extrabold text-bark-600">
@@ -967,7 +1005,7 @@ function SummaryScreen({
         </div>
       ) : (
         <div className="card mt-4 p-5 text-center">
-          <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-400">
+          <p className="font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-500">
             Daily goal
           </p>
           <p className="mt-2 text-sm font-semibold text-bark-500">
@@ -977,7 +1015,7 @@ function SummaryScreen({
       )}
 
       {!isPractice && postProgress ? (
-        <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border-2 border-[#ffd9c2] bg-[#fff1e8] px-4 py-3 font-display text-sm font-extrabold text-fox-700">
+        <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border-2 border-fox-200 bg-fox-100 px-4 py-3 font-display text-sm font-extrabold text-fox-700">
           <FlameIcon className="h-5 w-5 animate-bob" />
           {streak > 0 ? `${streak} day streak` : 'Streak started'}
         </div>
@@ -1030,9 +1068,9 @@ function StatCard({
   tone: 'xp' | 'green' | 'streak';
 }) {
   const tones = {
-    xp: 'bg-[#fff9e0] text-[#a06b00] border-[#ffe9a8]',
+    xp: 'bg-gold-100 text-gold-700 border-gold-200',
     green: 'bg-speeko-50 text-speeko-700 border-speeko-200',
-    streak: 'bg-[#fff1e8] text-fox-700 border-[#ffd9c2]',
+    streak: 'bg-fox-100 text-fox-700 border-fox-200',
   } as const;
   return (
     <div className={`rounded-2xl border-2 px-3 py-3 text-center ${tones[tone]}`}>
@@ -1076,7 +1114,7 @@ function OutOfHeartsScreen({
           <p className="font-display text-2xl font-extrabold text-bark-800">
             {Math.round(accuracy * 100)}%
           </p>
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-bark-400">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-bark-500">
             Accuracy
           </p>
         </div>
@@ -1084,7 +1122,7 @@ function OutOfHeartsScreen({
           <p className="font-display text-2xl font-extrabold text-bark-800">
             {session.answers.length}
           </p>
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-bark-400">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-bark-500">
             Answered
           </p>
         </div>

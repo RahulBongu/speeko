@@ -23,44 +23,46 @@ export function SiteHeader({
     `focus-ring whitespace-nowrap rounded-xl px-1.5 py-2 font-display text-sm font-bold transition sm:px-3 ${
       isActive ? 'bg-speeko-100 text-speeko-700' : 'text-bark-500 hover:bg-cream-100 hover:text-bark-700'
     }`;
+  const current = (isActive: boolean) => (isActive ? ('page' as const) : undefined);
   return (
     <header className="border-b border-cream-200/80 bg-cream-50/80 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-5">
         <Brand />
         <nav className="flex items-center gap-0.5 sm:gap-1" aria-label="Main">
-          <Link href="/learn" className={linkClass(active === 'learn')}>
+          <Link href="/learn" className={linkClass(active === 'learn')} aria-current={current(active === 'learn')}>
             Learn
           </Link>
-          <Link href="/practice" className={linkClass(active === 'practice')}>
+          <Link href="/practice" className={linkClass(active === 'practice')} aria-current={current(active === 'practice')}>
             Practice
           </Link>
           <Link
             href="/habits"
-            aria-label="Habits"
+            aria-current={current(active === 'habits')}
             className={`${linkClass(active === 'habits')} inline-flex items-center gap-1.5`}
           >
             <FlameIcon className="h-4 w-4" />
-            <span className="hidden sm:inline">Habits</span>
+            <span className="sr-only sm:not-sr-only">Habits</span>
           </Link>
           <Link
             href="/shop"
-            aria-label="Shop"
+            aria-current={current(active === 'shop')}
             className={`${linkClass(active === 'shop')} inline-flex items-center gap-1.5`}
           >
             <ShopIcon className="h-4 w-4" />
-            <span className="hidden sm:inline">Shop</span>
+            <span className="sr-only sm:not-sr-only">Shop</span>
           </Link>
           <Link
             href="/leagues"
-            aria-label="Leagues"
+            aria-current={current(active === 'leagues')}
             className={`${linkClass(active === 'leagues')} inline-flex items-center gap-1.5`}
           >
             <TrophyIcon className="h-4 w-4" />
-            <span className="hidden sm:inline">Leagues</span>
+            <span className="sr-only sm:not-sr-only">Leagues</span>
           </Link>
           <Link
             href="/studio"
             className={`${linkClass(active === 'studio')} hidden sm:inline-block`}
+            aria-current={current(active === 'studio')}
           >
             Studio
           </Link>
@@ -85,14 +87,13 @@ export function StatPill({
 }) {
   const tones = {
     default: 'bg-white text-bark-700 border-cream-200',
-    streak: 'bg-[#fff1e8] text-fox-700 border-[#ffd9c2]',
-    xp: 'bg-[#fff9e0] text-[#a06b00] border-[#ffe9a8]',
+    streak: 'bg-fox-100 text-fox-700 border-fox-200',
+    xp: 'bg-gold-100 text-gold-700 border-gold-200',
     goal: 'bg-speeko-50 text-speeko-700 border-speeko-200',
   } as const;
   return (
     <div
       className={`flex items-center justify-center gap-2 rounded-2xl border-2 px-3 py-1.5 ${tones[tone]}`}
-      title={label}
     >
       <span className="flex h-5 w-5 items-center justify-center">{icon}</span>
       <span className="font-display text-sm font-extrabold leading-none">{value}</span>

@@ -5,7 +5,17 @@ Living status document. One phase per session; a phase is done only when
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-17
+**Updated:** 2026-11-17 (Phase 4 landed)
+
+## Current state (Phase 4)
+
+- **Alpha cut built and verified.** `pnpm verify` green: typecheck 6/6, tests (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (134 files, 0 hits), e2e **148/148**.
+- **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Note: produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
+- **Phases 1–3 landed** (`next/M2`): M2 headless sign-off, M4 hardening (rate limit, no-store, secrets gate), mobile onboarding, all four missing exercise kinds, tactile/safe-area consistency pass, web design-token + a11y polish.
+- **Phase 4 landed:** `.github/workflows/verify.yml`, `CHANGELOG.md`, `docs/deploy-runbook.md`, honest store listing copy under `docs/store/metadata/en-US/`.
+- **Still open (owner):** license (draft rights), native-speaker review, hosting + backups + secret rotation, audio decision, store accounts.
+- **Not merged:** `next/M1` and `next/M2` are review branches; merge order owner's call.
+
 
 ## Phase status
 
@@ -606,17 +616,17 @@ These are product gaps, not regressions. Details and evidence are in
   passing session). All four screencap PNGs from 2026-11-17 were transcoded to UTF-16LE
   by PowerShell redirection and are corrupt; they are rejected and live in
   `docs/qa/rejected-captures/` — no screenshot evidence exists (see its README).
-- **Release render: verified on device (2026-11-17).** Release APK installed, cold-start
-  loads the bundle and renders real server-fed content (Bengali course path);
-  on-device APK hash matches the build (`36A5D41D…`); logcat shows no fatal/hermes
-  errors from the app; screenshot is a valid PNG (1080×2400). No like-for-like
-  learn-screen comparison against debug was captured — the welcome/learn screen could
-  not be frozen while the device was in active use; the fresh-guest state is proven by
-  `pm clear` dumps (`UNIT 1 Greetings`, `START · LESSON 1`, `0 of 8 lessons complete` —
-  identical to the debug fresh-guest learn screen). Loopback-only cleartext for the QA
-  build now ships as a committed, QA-gated config plugin
+- **Release render: verified on device (2026-11-17).** Release APK cold-starts to the
+  **learn screen** (~2 s after launch; `release-cold-start-learn-dump.xml` +
+  `release-cold-start-learn.png`) with the same key text as the debug fresh-guest dump.
+  Loads the bundle, fetches server-fed content (course list, lesson nodes, guidebook),
+  navigates (path → lesson → guidebook), and logs no fatal/hermes errors for the app.
+  On-device APK hash matches the build (`36A5D41D…`). The phone was in active use during
+  capture; see `release-build.md` for the attribution notes. Loopback-only cleartext for
+  QA builds now ships as a committed, QA-gated config plugin
   (`apps/mobile/plugins/withQaLoopbackCleartext.js`; no-op unless
-  `SPEEKO_QA_LOOPBACK_CLEARTEXT=1`). **Functional device QA is still pending — M2.**
+  `SPEEKO_QA_LOOPBACK_CLEARTEXT=1`; hard-refuses when `EAS_BUILD_PROFILE=production`).
+  **Functional device QA is still pending — M2.**
 - **Fixes:** Metro `resolver.unstable_conditionNames = ['require']` (Hermes
   `_interopRequireDefault is not a function`); Metro workspace root pinned to the app in
   `metro.config.js` (`release/bundle` no longer depends on
@@ -656,3 +666,10 @@ Curated screenshots are kept in `docs/qa/<project>/`; `pnpm e2e` writes fresh,
 gitignored captures to `test-results/screenshots/<project>/` (see `docs/qa/README.md`).
 The e2e config reuses an already-running dev server outside CI, but a fresh `pnpm build` is required
 because Playwright starts the production web server and the compiled API.
+
+The shared e2e API runs with the rate limiter disabled because every spec calls
+it from the same localhost IP; `tests/e2e/rate-limit.spec.ts` instead starts its
+own API process on a free port with the limiter forced on and a throwaway PGlite
+data directory, so the 429 contract is still verified. E2E accounts — including
+the M2 sign-in account — are created through the real sign-up endpoint during the
+run; no QA credentials are stored in the repository or CI configuration.

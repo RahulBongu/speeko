@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { ProgressState } from '@speeko/core';
+import * as Haptics from 'expo-haptics';
 import { ORIGIN, apiFetch } from '../lib/api';
 import { loadProgress, saveProgress } from '../lib/progress';
 import { syncProgress } from '../lib/sync';
 import { AppNav } from '../components/AppNav';
+import { Screen } from '../components/Screen';
 import {
   SpeekoAppBar,
   StatPill,
@@ -120,6 +122,12 @@ export default function Shop() {
           tone: 'ok',
           message: body.duplicate ? 'Purchase already recorded.' : `Purchased ${item.name}.`,
         });
+        // Celebrate the purchase, but never let haptics fail the flow.
+        try {
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } catch {
+          // Haptics are decorative.
+        }
         // Refresh balance, ownership, and affordability together.
         const refreshed = await apiFetch('/api/shop');
         if (refreshed.ok) setShop((await refreshed.json()) as ShopState);
@@ -215,56 +223,66 @@ export default function Shop() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ fontWeight: '700', color: COLORS.muted }}>Loading shop…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ fontWeight: '700', color: COLORS.muted }}>Loading shop…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (loadError) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ color: COLORS.red }}>{loadError}</Text>
-        <TactileButton label="Try again" onPress={() => void load()} />
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
+            The shop could not load
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{loadError}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+        <AppNav active="shop" />
+      </Screen>
     );
   }
 
   if (signedIn === false || !shop) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark }}>
-          The shop needs an account
-        </Text>
-        <Text style={{ color: COLORS.muted }}>
-          Gems are earned from verified lessons. Sign in to spend them on fox cosmetics and streak
-          freezes.
-        </Text>
-        <TactileButton label="Sign in" onPress={() => router.push('/sign-in')} />
-        <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 10 }}>
-          <Text style={{ color: COLORS.dark, fontWeight: '800', textAlign: 'center' }}>Back</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark }}>
+            The shop needs an account
+          </Text>
+          <Text style={{ color: COLORS.muted }}>
+            Gems are earned from verified lessons. Sign in to spend them on fox cosmetics and streak
+            freezes.
+          </Text>
+          <TactileButton label="Sign in" onPress={() => router.push('/sign-in')} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+        <AppNav active="shop" />
+      </Screen>
     );
   }
 
   const equipped = progress?.equippedCosmetic ?? null;
 
   return (
-    <ScrollView
-      contentContainerStyle={{ padding: 16, gap: 10, backgroundColor: COLORS.cream, flexGrow: 1 }}
-    >
-      <SpeekoAppBar subtitle="Fox cosmetics & streak freezes" />
-      <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Shop</Text>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontWeight: '800', color: COLORS.dark }}>Gems: {shop.balance}</Text>
-        <StatPill
-          icon="⚡"
-          value={shop.balance}
-          label={`${shop.balance} gems available`}
-        />
-      </View>
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{ padding: 16, gap: 10, backgroundColor: COLORS.cream, flexGrow: 1 }}
+      >
+        <SpeekoAppBar subtitle="Fox cosmetics & streak freezes" />
+        <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Shop</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <StatPill
+            icon="💎"
+            value={shop.balance}
+            label={`${shop.balance} gems available`}
+          />
+        </View>
       {status ? (
         <Text
           accessibilityRole="alert"
@@ -322,9 +340,8 @@ export default function Shop() {
                 </Text>
               </View>
             </View>
-            <Text style={{ fontWeight: '800', color: COLORS.dark }}>{item.price} gems</Text>
 
-          {item.kind === 'cosmetic' && item.owned ? (
+            {item.kind === 'cosmetic' && item.owned ? (
               <View style={{ gap: 6 }}>
                 <Text style={{ color: COLORS.greenDark, fontWeight: '800' }}>Owned</Text>
                 <TactileButton
@@ -358,6 +375,7 @@ export default function Shop() {
       ))}
 
       <AppNav active="shop" />
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

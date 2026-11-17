@@ -1,12 +1,19 @@
 import { API_URL } from './auth-client';
 
+export const SHOP_COSMETIC_IDS = ['scarf', 'hat', 'glasses'] as const;
+export type ShopCosmeticId = (typeof SHOP_COSMETIC_IDS)[number];
+
+export function isShopCosmeticId(value: string | null | undefined): value is ShopCosmeticId {
+  return value != null && (SHOP_COSMETIC_IDS as readonly string[]).includes(value);
+}
+
 export interface ShopItem {
   id: string;
   name: string;
   description: string;
   price: number;
   kind: 'cosmetic' | 'freeze';
-  cosmeticId?: string;
+  cosmeticId?: ShopCosmeticId;
   owned: boolean;
   quantity: number;
   canAfford: boolean;

@@ -6,6 +6,7 @@ import { practiceOverview } from '@speeko/core';
 import { apiFetch } from '../lib/api';
 import { loadProgress } from '../lib/progress';
 import { AppNav } from '../components/AppNav';
+import { Screen } from '../components/Screen';
 import {
   SpeekoAppBar,
   TactileButton,
@@ -73,25 +74,42 @@ export default function Practice() {
 
   if (loading && learned === 0 && !error) {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Reading your review queue…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Reading your review queue…</Text>
+        </View>
+      </Screen>
+    );
+  }
+
+  if (error) {
+    return (
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
+            Practice couldn&apos;t load
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+        <AppNav active="practice" />
+      </Screen>
     );
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={{ padding: 18, gap: 12, backgroundColor: COLORS.cream, flexGrow: 1 }}
-    >
-      <SpeekoAppBar subtitle="Your due review queue" />
-      <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Practice</Text>
-      <Text style={{ color: COLORS.muted }}>
-        Spaced repetition from lessons you have actually finished. Practice never awards XP and
-        never unlocks unseen lessons.
-      </Text>
-
-      {error ? <Text style={{ color: COLORS.red }}>{error}</Text> : null}
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{ padding: 18, gap: 12, backgroundColor: COLORS.cream, flexGrow: 1 }}
+      >
+        <SpeekoAppBar subtitle="Your due review queue" />
+        <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Practice</Text>
+        <Text style={{ color: COLORS.muted }}>
+          Spaced repetition from lessons you have actually finished. Practice never awards XP and
+          never unlocks unseen lessons.
+        </Text>
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
         {[
@@ -135,7 +153,8 @@ export default function Practice() {
         </TactileCard>
       )}
 
-      <AppNav active="practice" />
-    </ScrollView>
+        <AppNav active="practice" />
+      </ScrollView>
+    </Screen>
   );
 }

@@ -12,6 +12,7 @@ import {
 import { apiFetch, ORIGIN } from '../../../lib/api';
 import { loadProgress, saveProgress } from '../../../lib/progress';
 import { ExerciseBody } from '../../../components/ExerciseBody';
+import { Screen } from '../../../components/Screen';
 import {
   ProgressTrack,
   TactileButton,
@@ -38,6 +39,10 @@ const CATEGORY_LABEL: Partial<Record<Exercise['kind'], string>> = {
   listenChoose: 'LISTEN AND CHOOSE',
   typeTranslation: 'TYPE THE TRANSLATION',
   matchPairs: 'MATCH THE PAIRS',
+  wordBank: 'BUILD THE TRANSLATION',
+  arrangeSentence: 'ARRANGE THE SENTENCE',
+  typeWhatYouHear: 'LISTEN, THEN WRITE IT',
+  speak: 'SPEAKING PRACTICE',
 };
 
 function newAttemptId() {
@@ -257,42 +262,46 @@ export default function LessonPlayer() {
 
   if (phase === 'loading') {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ fontWeight: '700', color: COLORS.muted }}>Loading lesson…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ fontWeight: '700', color: COLORS.muted }}>Loading lesson…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (phase === 'error') {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 20, fontWeight: '900', color: COLORS.dark }}>
-          Lesson unavailable
-        </Text>
-        <Text style={{ color: COLORS.red }}>{loadError}</Text>
-        <TactileButton label="Try again" onPress={() => void load()} />
-        <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 20, fontWeight: '900', color: COLORS.dark }}>
+            Lesson unavailable
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{loadError}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 
   if (phase === 'hearts') {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Out of hearts</Text>
-        <Text style={{ textAlign: 'center', color: COLORS.muted }}>
-          This attempt is over and awarded no XP. Look at what tripped you up, then try again.
-        </Text>
-        <TactileButton
-          label="Try the lesson again"
-          onPress={restart}
-          style={{ alignSelf: 'stretch' }}
-        />
-        <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 10 }}>
-          <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Back to lessons</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Out of hearts</Text>
+          <Text style={{ textAlign: 'center', color: COLORS.muted }}>
+            This attempt is over and awarded no XP. Look at what tripped you up, then try again.
+          </Text>
+          <TactileButton
+            label="Try the lesson again"
+            onPress={restart}
+            style={{ alignSelf: 'stretch' }}
+          />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} style={{ alignSelf: 'stretch' }} />
+        </View>
+      </Screen>
     );
   }
 
@@ -302,16 +311,17 @@ export default function LessonPlayer() {
         ? 0
         : outcomes.filter((outcome) => outcome.correct).length / outcomes.length;
     return (
-      <ScrollView
-        contentContainerStyle={{
-          padding: 24,
-          gap: 14,
-          backgroundColor: COLORS.cream,
-          flexGrow: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <Screen>
+        <ScrollView
+          contentContainerStyle={{
+            padding: 24,
+            gap: 14,
+            backgroundColor: COLORS.cream,
+            flexGrow: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
         <Text style={{ fontSize: 30, fontWeight: '900', color: COLORS.dark }}>
           {saveState === 'practice' ? 'Practice complete!' : 'Lesson complete!'}
         </Text>
@@ -358,7 +368,7 @@ export default function LessonPlayer() {
 
         {saveState === 'error' ? (
           <View style={{ gap: 8, alignSelf: 'stretch', alignItems: 'center' }}>
-            <Text style={{ fontWeight: '800', color: COLORS.red, textAlign: 'center' }}>
+            <Text accessibilityRole="alert" style={{ fontWeight: '800', color: COLORS.red, textAlign: 'center' }}>
               The lesson is finished, but your reward wasn&apos;t saved.
             </Text>
             <Text style={{ textAlign: 'center', color: COLORS.muted }}>{saveError}</Text>
@@ -376,15 +386,18 @@ export default function LessonPlayer() {
           disabled={saveState === 'saving'}
           style={{ alignSelf: 'stretch', marginTop: 6 }}
         />
-      </ScrollView>
+        </ScrollView>
+      </Screen>
     );
   }
 
   if (!exercise) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center' }}>
-        <Text style={{ color: COLORS.red }}>This lesson has no exercises to show.</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center' }}>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>This lesson has no exercises to show.</Text>
+        </View>
+      </Screen>
     );
   }
 
@@ -394,14 +407,15 @@ export default function LessonPlayer() {
   const total = lesson?.exercises.length ?? 0;
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        padding: 18,
-        gap: 14,
-        backgroundColor: COLORS.cream,
-        flexGrow: 1,
-      }}
-    >
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{
+          padding: 18,
+          gap: 14,
+          backgroundColor: COLORS.cream,
+          flexGrow: 1,
+        }}
+      >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <Pressable
           accessibilityRole="button"
@@ -427,6 +441,8 @@ export default function LessonPlayer() {
           />
         </View>
         <View
+          accessible
+          accessibilityRole="text"
           accessibilityLabel={`${hearts} of 5 hearts left`}
           style={{
             flexDirection: 'row',
@@ -484,10 +500,12 @@ export default function LessonPlayer() {
         onChange={setDraft}
         disabled={phase !== 'playing'}
         reveal={grade}
+        locale={course?.locale}
       />
 
       {phase === 'feedback' && grade ? (
         <View
+          accessibilityRole="alert"
           style={{
             padding: 14,
             borderRadius: 14,
@@ -529,6 +547,7 @@ export default function LessonPlayer() {
           accessibilityState={{ disabled: !ready }}
         />
       )}
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

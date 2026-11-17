@@ -1,0 +1,27 @@
+Speeko is a Duolingo-style language-learning app built for learners of Indian languages.
+
+WHAT YOU GET
+- Ten language starters plus a Hindi pilot: Bengali, Gujarati, Hindi, Kannada, Marathi, Malayalam, Odia, Punjabi, Tamil, Telugu
+- Short A1 lessons (about 8 lessons per language, 23 exercises each) with a shared exercise engine across web and Android
+- Multiple exercise kinds: choice, type-the-translation, match pairs, word bank, arrange-the-sentence, listen-and-choose, and speaking practice
+- Real practice loops: every correct answer feeds your spaced-repetition queue — due reviews, trouble words, per-unit practice
+- Progress that matters: XP, hearts, daily goals, streaks with freezes, daily quests, gems, a friends-free league, and a shop of original fox cosmetics
+- Account sync across devices, offline-guest mode that merges when you sign in
+
+AN HONEST ALPHA
+Speeko is pre-release software. Every lesson and exercise is marked as a draft and none has been reviewed by a native speaker yet. Playable does not mean correct. If something reads wrong, it is wrong — tell us, and help us fix it.
+
+WHY WE EXIST
+Language learning should be approachable for every Indian language community, with content created with, and verified by, native speakers. We build honest software: no fake urgency, no artificial streak pressure dressed as design, rewards that can't be farmed by tapping twice.
+
+NO ACCOUNT REQUIRED
+You can learn as a guest. Progress stays on your device and merges when you create an account.
+
+KNOWN GAPS (as of this alpha)
+- Content is unreviewed draft material
+- Speaking practice is record-yourself only (no automatic scoring)
+- Listening exercises may be limited until licensed audio exists
+- Full on-device functional QA is still being completed
+
+WHAT WE ASK
+If you try Speeko, treat it as a draft: enjoy the flow, flag the mistakes. Native speakers — we need you.

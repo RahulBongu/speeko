@@ -6,7 +6,10 @@
 // android project and points the <application> element at it. It is ENABLED
 // ONLY when SPEEKO_QA_LOOPBACK_CLEARTEXT=1 is set at prebuild time — without
 // it the plugin is a no-op and release/store builds carry no cleartext
-// exception.
+// exception. If EAS_BUILD_PROFILE=production (EAS sets it on its builds),
+// the plugin hard-refuses and fails the build instead of silently shipping
+// the exception. NODE_ENV is intentionally NOT used as a gate (local QA
+// builds run with NODE_ENV=production).
 //
 // Usage (QA builds only):
 //   SPEEKO_QA_LOOPBACK_CLEARTEXT=1 npx expo prebuild --no-install
@@ -32,6 +35,16 @@ const SECURITY_CONFIG_XML = `<?xml version="1.0" encoding="utf-8"?>
 `;
 
 module.exports = function withQaLoopbackCleartext(config) {
+  if (
+    process.env.SPEEKO_QA_LOOPBACK_CLEARTEXT === '1' &&
+    process.env.EAS_BUILD_PROFILE === 'production'
+  ) {
+    // Hard refusal: EAS sets EAS_BUILD_PROFILE on its builds. The QA
+    // exception must never reach a production/store artifact.
+    throw new Error(
+      'withQaLoopbackCleartext: SPEEKO_QA_LOOPBACK_CLEARTEXT is set for a production EAS build; refusing to apply the localhost cleartext exception. Unset it before building production.',
+    );
+  }
   if (process.env.SPEEKO_QA_LOOPBACK_CLEARTEXT !== '1') {
     return config;
   }

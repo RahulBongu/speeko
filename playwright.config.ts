@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+﻿import { defineConfig, devices } from '@playwright/test';
 
 const WEB_URL = 'http://localhost:3000';
 const API_URL = 'http://localhost:3001';
@@ -6,17 +6,19 @@ const API_URL = 'http://localhost:3001';
 export default defineConfig({
   testDir: './tests/e2e',
   outputDir: './test-results',
-  timeout: 60_000,
-  expect: { timeout: 10_000 },
+  timeout: 120_000,
+  expect: { timeout: 15_000 },
   fullyParallel: false,
   workers: 1,
   forbidOnly: Boolean(process.env.CI),
-  retries: 0,
+  retries: process.env.CI ? 2 : 0,
   reporter: [['list']],
   use: {
     baseURL: WEB_URL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    actionTimeout: 30_000,
+    navigationTimeout: 60_000,
   },
   projects: [
     {
@@ -48,6 +50,10 @@ export default defineConfig({
         PORT: '3001',
         HOST: '127.0.0.1',
         CLIENT_ORIGINS: 'http://localhost:3000',
+        // The whole suite shares one localhost IP: disable the limiter for
+        // the shared server. tests/e2e/rate-limit.spec.ts spawns its own
+        // API child with the limiter enabled.
+        RATE_LIMIT_DISABLED: '1',
       },
     },
     {

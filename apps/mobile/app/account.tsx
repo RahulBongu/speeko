@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Image, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { ProgressState } from '@speeko/core';
+import * as Haptics from 'expo-haptics';
 import { ORIGIN, apiFetch, setCookie } from '../lib/api';
 import { clearProgress, loadProgress } from '../lib/progress';
 import { syncProgress } from '../lib/sync';
 import { AppNav } from '../components/AppNav';
+import { Screen } from '../components/Screen';
 import {
   SpeekoAppBar,
   TactilePressable,
@@ -129,6 +131,12 @@ export default function Account() {
       setEmail(null);
       setProgress(await loadProgress());
       setStatus('Signed out. Local progress was cleared from this device.');
+      // Confirm the sign-out with a success haptic. Never let it block the redirect.
+      try {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch {
+        // Intentionally non-fatal.
+      }
       router.replace('/');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not sign out. Try again.');
@@ -138,10 +146,11 @@ export default function Account() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={{ padding: 18, gap: 14, backgroundColor: COLORS.cream, flexGrow: 1 }}
-    >
-      <SpeekoAppBar
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{ padding: 18, gap: 14, backgroundColor: COLORS.cream, flexGrow: 1 }}
+      >
+        <SpeekoAppBar
         subtitle={
           signedIn
             ? verified
@@ -155,8 +164,13 @@ export default function Account() {
 
       <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Account</Text>
 
-      {loading ? <Text style={{ color: COLORS.muted }}>Loading account…</Text> : null}
-      {error ? <Text style={{ color: COLORS.red }}>{error}</Text> : null}
+      {loading ? (
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Loading…</Text>
+        </View>
+      ) : null}
+      {error ? <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error}</Text> : null}
       {status ? (
         <Text style={{ color: COLORS.greenDark, fontWeight: '700' }}>{status}</Text>
       ) : null}
@@ -283,6 +297,7 @@ export default function Account() {
           onPress={() => void signOut()}
           disabled={busy}
           tone="cream"
+          accessibilityHint="Clears this device's saved progress"
         >
           <Text style={{ fontWeight: '800', color: COLORS.dark }}>
             {busy ? 'Signing out…' : 'Sign out and clear this device'}
@@ -306,6 +321,7 @@ export default function Account() {
       )}
 
       <AppNav active="account" />
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

@@ -68,7 +68,7 @@ test('profiles are created on demand and follow works by username', async ({ req
 
 test('weekly leagues report an honest early-community state', async ({ request }) => {
   await signUp(request, 'league');
-  await request.post(`${API_URL}/api/lesson-completions`, {
+  const completion = await request.post(`${API_URL}/api/lesson-completions`, {
     headers: { origin: ORIGIN },
     data: {
       attemptId: `attempt-league-${Date.now()}`,
@@ -81,6 +81,8 @@ test('weekly leagues report an honest early-community state', async ({ request }
       ],
     },
   });
+  // The standings below only prove anything if a reward was actually minted.
+  expect(completion.status(), await completion.text()).toBe(201);
 
   const leagues = await request.get(`${API_URL}/api/leagues`, { headers: { origin: ORIGIN } });
   expect(leagues.status(), await leagues.text()).toBe(200);

@@ -31,7 +31,7 @@ export interface ExerciseBodyProps extends BaseBoardProps {
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-bark-400">
+    <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-bark-500">
       {children}
     </p>
   );
@@ -277,7 +277,7 @@ function TokenBoard({
         aria-label="Your answer"
       >
         {selectedTokens.length === 0 ? (
-          <p className="px-2 text-sm font-semibold text-bark-300">
+          <p className="px-2 text-sm font-semibold text-bark-400">
             Tap the words below to build your answer.
           </p>
         ) : (
@@ -473,8 +473,8 @@ function PairsBoard({
       </div>
 
       {complete && mismatches > 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-amber-300 bg-amber-50 p-4 text-center">
-          <p className="text-sm font-bold text-amber-800">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-gold-200 bg-gold-100 p-4 text-center">
+          <p className="text-sm font-bold text-gold-700">
             One pair didn&apos;t match, so this attempt won&apos;t count. Reset and try again — no
             heart lost.
           </p>
@@ -550,7 +550,7 @@ function SpeakBoard({
       </div>
 
       <div className="flex flex-col items-center gap-3 rounded-3xl border-2 border-cream-200 bg-cream-50 px-5 py-6 text-center">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-bark-400">
+        <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-bark-500">
           Say this in {meta.native}
         </p>
         <p
@@ -597,12 +597,12 @@ function SpeakBoard({
         </div>
       ) : supported === false ? (
         <div className="space-y-2">
-          <p className="rounded-2xl border-2 border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+          <p className="rounded-2xl border-2 border-gold-200 bg-gold-100 px-4 py-3 text-sm font-semibold text-gold-700">
             Speech recognition isn&apos;t available in this browser. Type what you said to keep
             practicing.
           </p>
           <label className="block">
-            <span className="mb-1.5 block text-xs font-extrabold uppercase tracking-[0.16em] text-bark-400">
+            <span className="mb-1.5 block text-xs font-extrabold uppercase tracking-[0.16em] text-bark-500">
               Type what you said
             </span>
             <input
@@ -623,7 +623,7 @@ function SpeakBoard({
 
       {transcript ? (
         <div className="rounded-2xl border-2 border-speeko-200 bg-speeko-50 px-4 py-3 text-center">
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-speeko-600">
+          <p className="eyebrow">
             We heard
           </p>
           <p lang={locale} className="script-text mt-1 text-xl font-bold text-speeko-800">

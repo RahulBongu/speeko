@@ -61,6 +61,7 @@ interface TactilePressableProps {
   style?: StyleProp<ViewStyle> | undefined;
   contentStyle?: StyleProp<ViewStyle> | undefined;
   accessibilityLabel?: string | undefined;
+  accessibilityHint?: string | undefined;
   accessibilityState?: { disabled?: boolean; selected?: boolean } | undefined;
 }
 
@@ -72,6 +73,7 @@ export function TactilePressable({
   tone = 'green',
   style,
   accessibilityLabel,
+  accessibilityHint,
   accessibilityState,
   contentStyle,
 }: TactilePressableProps) {
@@ -81,6 +83,7 @@ export function TactilePressable({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
         accessibilityState={accessibilityState ?? { disabled }}
         disabled={disabled}
         onPress={onPress}

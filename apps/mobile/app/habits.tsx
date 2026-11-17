@@ -12,6 +12,12 @@ import {
 import { ORIGIN, apiFetch, getCookie } from '../lib/api';
 import { loadProgress, saveProgress } from '../lib/progress';
 import { AppNav } from '../components/AppNav';
+import { Screen } from '../components/Screen';
+import {
+  SpeekoAppBar,
+  TactileButton,
+  TactileCard,
+} from '../components/Tactile';
 import { COLORS } from '../lib/theme';
 
 type GoalStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -50,12 +56,17 @@ function calendarTone(day: CalendarDay): string {
 }
 
 function Bar({ value, color }: { value: number; color: string }) {
+  const clamped = Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
   return (
-    <View style={{ height: 6, borderRadius: 3, backgroundColor: COLORS.creamDeep, overflow: 'hidden' }}>
+    <View
+      accessibilityRole="progressbar"
+      accessibilityValue={{ min: 0, max: 100, now: Math.round(clamped * 100) }}
+      style={{ height: 6, borderRadius: 3, backgroundColor: COLORS.creamDeep, overflow: 'hidden' }}
+    >
       <View
         style={{
           height: 6,
-          width: `${Math.max(0, Math.min(1, value)) * 100}%`,
+          width: `${clamped * 100}%`,
           backgroundColor: color,
         }}
       />
@@ -163,36 +174,40 @@ export default function Habits() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ fontWeight: '700', color: COLORS.muted }}>Reading your habit history…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ fontWeight: '700', color: COLORS.muted }}>Reading your habit history…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (error) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
-          Habits could not load
-        </Text>
-        <Text style={{ color: COLORS.red }}>{error}</Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => void load()}
-          style={{ backgroundColor: COLORS.green, borderRadius: 12, padding: 14, alignItems: 'center' }}
-        >
-          <Text style={{ color: COLORS.white, fontWeight: '800' }}>Try again</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
+            Habits could not load
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+        <AppNav active="habits" />
+      </Screen>
     );
   }
 
   if (!report || !progress) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center' }}>
-        <Text style={{ color: COLORS.muted }}>No habit history yet.</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ color: COLORS.muted }}>No habit history yet.</Text>
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+        <AppNav active="habits" />
+      </Screen>
     );
   }
 
@@ -203,21 +218,14 @@ export default function Habits() {
   );
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 14, backgroundColor: COLORS.cream }}>
-      <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Habits</Text>
-      <View
-        style={{
-          alignSelf: 'flex-start',
-          backgroundColor: signedIn ? COLORS.greenSoft : COLORS.creamDeep,
-          borderRadius: 20,
-          paddingHorizontal: 10,
-          paddingVertical: 5,
-        }}
-      >
-        <Text style={{ fontSize: 11, fontWeight: '800', color: signedIn ? COLORS.greenDark : COLORS.muted }}>
-          {signedIn ? 'Verified server history' : 'This device only'}
-        </Text>
-      </View>
+    <Screen>
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 14, backgroundColor: COLORS.cream }}>
+        <SpeekoAppBar
+          subtitle={signedIn ? 'Verified server history' : 'This device only'}
+          streak={progress?.streak ?? 0}
+          xp={progress?.xp ?? 0}
+        />
+        <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Habits</Text>
 
       {empty ? (
         <View style={{ padding: 16, borderRadius: 14, backgroundColor: COLORS.white, gap: 6 }}>
@@ -231,15 +239,15 @@ export default function Habits() {
         </View>
       ) : (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          <View style={{ flex: 1, minWidth: 140, padding: 14, borderRadius: 14, backgroundColor: COLORS.green, gap: 2 }}>
+          <TactileCard tone="green" style={{ flex: 1, minWidth: 140 }}>
             <Text style={{ fontSize: 10, fontWeight: '800', color: '#DCFCE7' }}>TODAY&apos;S XP</Text>
             <Text style={{ fontSize: 26, fontWeight: '900', color: COLORS.white }}>
               {report.today.xp}
               <Text style={{ fontSize: 14, color: '#DCFCE7' }}> / {report.dailyGoal}</Text>
             </Text>
             <Bar value={report.dailyGoal === 0 ? 0 : report.today.xp / report.dailyGoal} color={COLORS.white} />
-          </View>
-          <View style={{ flex: 1, minWidth: 140, padding: 14, borderRadius: 14, backgroundColor: COLORS.white, gap: 2 }}>
+          </TactileCard>
+          <TactileCard tone="white" style={{ flex: 1, minWidth: 140 }}>
             <Text style={{ fontSize: 10, fontWeight: '800', color: COLORS.muted }}>STREAK</Text>
             <Text style={{ fontSize: 26, fontWeight: '900', color: COLORS.dark }}>
               {report.streak.current}
@@ -249,7 +257,7 @@ export default function Habits() {
               Longest {report.streak.longest} · Freezes {report.streak.freezesAvailable}/
               {report.streak.maxFreezes}
             </Text>
-          </View>
+          </TactileCard>
         </View>
       )}
 
@@ -391,10 +399,8 @@ export default function Habits() {
           ? 'Quests, streaks, and the calendar are derived from verified lesson events.'
           : 'This report uses only activity saved on this device. Sign in for verified history.'}
       </Text>
-      <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 8 }}>
-        <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Back</Text>
-      </Pressable>
       <AppNav active="habits" />
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

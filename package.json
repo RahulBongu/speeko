@@ -2,7 +2,7 @@
   "name": "speeko",
   "version": "0.0.1",
   "private": true,
-  "description": "Speeko — language-learning app (Duolingo-style, original content & mascot)",
+  "description": "Speeko - language-learning app (Duolingo-style, original content and mascot)",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -10,7 +10,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "e2e": "playwright test",
-    "verify": "pnpm typecheck && pnpm test && pnpm build && pnpm e2e",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "verify": "pnpm typecheck && pnpm test && pnpm build && pnpm check:secrets && pnpm e2e",
     "sync:content": "node apps/web/scripts/sync-courses.mjs"
   },
   "devDependencies": {
@@ -20,7 +21,7 @@
     "typescript": "^5.6.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13"
   },
   "packageManager": "pnpm@11.22.0",
   "dependencies": {

@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-nati
 import type { Course } from '@speeko/core';
 import { LOCALE_LABEL, eligibleExercises, guidebookItems } from '@speeko/core';
 import { apiFetch } from '../../../lib/api';
+import { Screen } from '../../../components/Screen';
 import {
   SpeekoAppBar,
   TactileButton,
@@ -53,49 +54,54 @@ export default function Guidebook() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-        <ActivityIndicator color={COLORS.green} />
-        <Text style={{ fontWeight: '700', color: COLORS.muted }}>Opening the guidebook…</Text>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+          <ActivityIndicator color={COLORS.green} />
+          <Text style={{ fontWeight: '700', color: COLORS.muted }}>Opening the guidebook…</Text>
+        </View>
+      </Screen>
     );
   }
 
   if (error || !course) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
-          Couldn&apos;t open this guidebook
-        </Text>
-        <Text style={{ color: COLORS.red }}>{error ?? 'The course could not load.'}</Text>
-        <TactileButton label="Try again" onPress={() => void load()} />
-        <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ padding: 10 }}>
-          <Text style={{ color: COLORS.dark, fontWeight: '800', textAlign: 'center' }}>Back</Text>
-        </Pressable>
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
+            Couldn&apos;t open this guidebook
+          </Text>
+          <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error ?? 'The course could not load.'}</Text>
+          <TactileButton label="Try again" onPress={() => void load()} />
+          <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 
   if (!unit) {
     return (
-      <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
-        <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
-          That unit does not exist
-        </Text>
-        <Text style={{ color: COLORS.muted }}>
-          Pick a unit from the course path and try again.
-        </Text>
-        <TactileButton label="Back to the path" onPress={() => router.back()} />
-      </View>
+      <Screen>
+        <View style={{ flex: 1, padding: 24, justifyContent: 'center', gap: 12 }}>
+          <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
+            That unit does not exist
+          </Text>
+          <Text style={{ color: COLORS.muted }}>
+            Pick a unit from the course path and try again.
+          </Text>
+          <TactileButton label="Back to the path" onPress={() => router.back()} />
+        </View>
+      </Screen>
     );
   }
 
   const items = guidebookItems(unit.lessons.flatMap((lesson) => lesson.exercises));
 
   return (
-    <ScrollView
-      contentContainerStyle={{ padding: 16, gap: 14, backgroundColor: COLORS.cream, flexGrow: 1 }}
-    >
-      <SpeekoAppBar subtitle={`Unit ${position} guidebook · ${LOCALE_LABEL[course.locale]}`} />
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{ padding: 16, gap: 14, backgroundColor: COLORS.cream, flexGrow: 1 }}
+      >
+        <SpeekoAppBar subtitle={`Unit ${position} guidebook · ${LOCALE_LABEL[course.locale]}`} />
       <Pressable accessibilityRole="button" onPress={() => router.back()} style={{ alignSelf: 'flex-start' }}>
         <Text style={{ fontWeight: '800', color: COLORS.muted }}>← Path</Text>
       </Pressable>
@@ -199,6 +205,7 @@ export default function Guidebook() {
           ))}
         </View>
       </TactileCard>
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

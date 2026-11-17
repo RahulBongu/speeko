@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { ORIGIN, apiFetch } from '../lib/api';
 import { syncProgress } from '../lib/sync';
+import { Screen } from '../components/Screen';
 import { TactileButton } from '../components/Tactile';
 import { COLORS } from '../lib/theme';
 
@@ -51,6 +53,12 @@ export default function SignUp() {
       } catch {
         // Non-fatal: the account screen retries the merge.
       }
+      // Account created — celebrate. Haptics never block navigation.
+      try {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch {
+        // Intentionally non-fatal.
+      }
       router.replace('/learn');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Sign up failed.');
@@ -62,16 +70,17 @@ export default function SignUp() {
   const ready = name.trim().length > 0 && email.trim().length > 0 && password.length >= 8;
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        padding: 20,
-        gap: 14,
-        backgroundColor: COLORS.cream,
-        flexGrow: 1,
-        justifyContent: 'center',
-      }}
-      keyboardShouldPersistTaps="handled"
-    >
+    <Screen>
+      <ScrollView
+        contentContainerStyle={{
+          padding: 20,
+          gap: 14,
+          backgroundColor: COLORS.cream,
+          flexGrow: 1,
+          justifyContent: 'center',
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
       {/* Top minimal bar */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Pressable
@@ -116,7 +125,13 @@ export default function SignUp() {
             speek<Text style={{ color: COLORS.fox }}>o</Text>
           </Text>
         </View>
-        <View style={{ width: 44, height: 44 }} />
+        {/* Empty spacer balancing the back button so the wordmark stays centered.
+            Decorative only — hidden from assistive tech. */}
+        <View
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+          style={{ width: 44, height: 44 }}
+        />
       </View>
 
       <View style={{ alignItems: 'center', gap: 10 }}>
@@ -160,6 +175,7 @@ export default function SignUp() {
       >
         <Pressable
           accessibilityRole="button"
+          accessibilityState={{ selected: false }}
           onPress={() => router.replace('/sign-in')}
           style={{
             flex: 1,
@@ -253,6 +269,7 @@ export default function SignUp() {
       >
         <Text style={{ color: COLORS.dark, fontWeight: '700' }}>Back</Text>
       </Pressable>
-    </ScrollView>
+      </ScrollView>
+    </Screen>
   );
 }

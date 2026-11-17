@@ -43,9 +43,9 @@ function PathNode({
   lockedReason?: string;
 }) {
   const tones = {
-    chest: 'bg-[#fff1e8] text-fox-700 border-[#ffd9c2]',
+    chest: 'bg-fox-100 text-fox-700 border-fox-200',
     review: 'bg-speeko-50 text-speeko-700 border-speeko-200',
-    checkpoint: 'bg-[#fff9e0] text-[#a06b00] border-[#ffe9a8]',
+    checkpoint: 'bg-gold-100 text-gold-700 border-gold-200',
   } as const;
   const circle = (
     <span
@@ -65,7 +65,7 @@ function PathNode({
       >
         {label}
       </span>
-      <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-[0.1em] text-bark-400">
+      <span className="mt-0.5 block text-[11px] font-bold uppercase tracking-[0.1em] text-bark-500">
         {sub}
       </span>
     </span>
@@ -137,7 +137,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
         <Fox className="h-28 w-28 animate-bob" />
-        <p className="font-display text-sm font-extrabold uppercase tracking-[0.16em] text-bark-400">
+        <p className="font-display text-sm font-extrabold uppercase tracking-[0.16em] text-bark-500">
           Loading the path…
         </p>
       </div>
@@ -343,11 +343,11 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                               {lesson.title}
                             </p>
                             {status === 'current' ? (
-                              <span className="mt-1 inline-block rounded-md bg-fox-100 px-2 py-0.5 font-display text-[10px] font-extrabold uppercase tracking-[0.14em] text-fox-700">
+                              <span className="mt-1 inline-block rounded-md bg-fox-100 px-2 py-0.5 font-display text-[11px] font-extrabold uppercase tracking-[0.14em] text-fox-700">
                                 Start now
                               </span>
                             ) : (
-                              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-bark-300">
+                              <p className="mt-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-bark-500">
                                 {status === 'completed'
                                   ? 'Completed'
                                   : `${eligibleExercises(lesson.exercises).length} exercises`}
