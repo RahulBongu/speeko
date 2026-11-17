@@ -38,6 +38,10 @@ const CATEGORY_LABEL: Partial<Record<Exercise['kind'], string>> = {
   listenChoose: 'LISTEN AND CHOOSE',
   typeTranslation: 'TYPE THE TRANSLATION',
   matchPairs: 'MATCH THE PAIRS',
+  wordBank: 'BUILD THE TRANSLATION',
+  arrangeSentence: 'ARRANGE THE SENTENCE',
+  typeWhatYouHear: 'LISTEN, THEN WRITE IT',
+  speak: 'SPEAKING PRACTICE',
 };
 
 function newAttemptId() {
@@ -484,6 +488,7 @@ export default function LessonPlayer() {
         onChange={setDraft}
         disabled={phase !== 'playing'}
         reveal={grade}
+        locale={course?.locale}
       />
 
       {phase === 'feedback' && grade ? (

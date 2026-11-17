@@ -3,14 +3,18 @@ import { xpForExercise } from '@speeko/core';
 
 /**
  * Answer shapes the mobile app can capture. These mirror the web player's
- * drafts, but the mobile build only renders the exercise kinds the published
- * course bundles actually contain.
+ * drafts. The mobile build renders chooseMeaning, listenChoose, fillBlank,
+ * typeTranslation, typeWhatYouHear, matchPairs, wordBank and arrangeSentence,
+ * plus speak in a fallback-only mode (no microphone — the learner types what
+ * they said, or self-reports saying it out loud). chooseImage remains blocked
+ * and is shown as an honest unsupported state.
  */
 export type DraftAnswer =
   | { kind: 'choice'; index: number | null }
   | { kind: 'text'; value: string }
   | { kind: 'pairs'; mismatches: number; matched: number }
-  | { kind: 'tokens'; value: number[] };
+  | { kind: 'tokens'; value: number[] }
+  | { kind: 'speak'; transcript: string; selfReported: boolean };
 
 /**
  * Exercise kinds the mobile player renders. Anything else is shown as an
@@ -23,6 +27,10 @@ export const SUPPORTED_EXERCISE_KINDS = [
   'fillBlank',
   'typeTranslation',
   'matchPairs',
+  'wordBank',
+  'arrangeSentence',
+  'typeWhatYouHear',
+  'speak',
 ] as const;
 
 export type SupportedExerciseKind = (typeof SUPPORTED_EXERCISE_KINDS)[number];
@@ -42,6 +50,11 @@ export function initialDraft(exercise: Exercise): DraftAnswer {
       return { kind: 'text', value: '' };
     case 'matchPairs':
       return { kind: 'pairs', mismatches: 0, matched: 0 };
+    case 'wordBank':
+    case 'arrangeSentence':
+      return { kind: 'tokens', value: [] };
+    case 'speak':
+      return { kind: 'speak', transcript: '', selfReported: false };
     default:
       return { kind: 'text', value: '' };
   }
@@ -78,6 +91,8 @@ export function canSubmit(exercise: Exercise, draft: DraftAnswer): boolean {
       );
     case 'tokens':
       return draft.value.length > 0;
+    case 'speak':
+      return draft.transcript.trim().length > 0 || draft.selfReported;
     default:
       return false;
   }
@@ -96,19 +111,60 @@ export function toAnswerInput(
     case 'pairs':
       return { kind: 'pairs', mismatches: draft.mismatches };
     case 'tokens': {
-      if (exercise.kind !== 'wordBank' && exercise.kind !== 'arrangeSentence') {
-        return null;
-      }
-      const pool = exercise.kind === 'wordBank' ? exercise.words : exercise.tiles;
+      const pool = getTokenPool(exercise);
+      if (!pool) return null;
       const value = draft.value
         .map((index) => pool[index])
         .filter((token): token is string => typeof token === 'string');
       if (value.length !== draft.value.length || value.length === 0) return null;
       return { kind: 'tokens', value };
     }
+    case 'speak':
+      return {
+        kind: 'speak',
+        transcript: draft.transcript,
+        selfReported: draft.selfReported,
+      };
     default:
       return null;
   }
+}
+
+/**
+ * The pool of tokens a token board can offer, in content order. wordBank
+ * draws from `words`, arrangeSentence from `tiles`; anything else has no pool.
+ */
+export function getTokenPool(exercise: Exercise): string[] | null {
+  switch (exercise.kind) {
+    case 'wordBank':
+      return exercise.words;
+    case 'arrangeSentence':
+      return exercise.tiles;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Deterministic shuffle for a token pool: the same exercise id always yields
+ * the same display order, so boards render identically on every open and
+ * tests stay stable. FNV-1a seeded by the exercise id feeds a Fisher-Yates
+ * pass. Implemented fresh here — no cross-imports from the web player.
+ */
+export function deterministicShuffle<T>(pool: readonly T[], exerciseId: string): T[] {
+  let hash = 2166136261 >>> 0;
+  for (let i = 0; i < exerciseId.length; i += 1) {
+    hash = Math.imul(hash ^ exerciseId.charCodeAt(i), 16777619) >>> 0;
+  }
+  const indexes = Array.from({ length: pool.length }, (_, index) => index);
+  for (let i = indexes.length - 1; i > 0; i -= 1) {
+    hash = Math.imul(hash ^ (hash >>> 13), 1274126177) >>> 0;
+    const j = Math.abs(hash) % (i + 1);
+    const current = indexes[i]!;
+    indexes[i] = indexes[j]!;
+    indexes[j] = current;
+  }
+  return indexes.map((index) => pool[index]!);
 }
 
 /**

@@ -280,6 +280,7 @@ export default function PracticeRunner() {
         onChange={setDraft}
         disabled={phase !== 'playing'}
         reveal={grade}
+        locale={course?.locale}
       />
 
       {phase === 'feedback' && grade ? (
