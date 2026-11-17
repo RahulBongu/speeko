@@ -5,23 +5,24 @@ working tree. It distinguishes what is **implemented and verified**, what is
 **partial**, and what is **missing or unverified**. Nothing here is claimed as
 reviewed, published, launched, or hardware-tested unless it says so.
 
-**Snapshot date:** 2026-11-16, updated 2026-11-17
-**Branch state:** work sits on top of `de57065` (phase/11-hardening merge). Nothing
-has been committed, pushed, or released in this cycle.
+**Snapshot date:** 2026-11-16, updated 2026-11-18
+**Branch state:** `main` is `e5a06c2` (PR #4 merged) plus the one-commit
+follow-up `d5d6a74` on `next/M2` (league profile batching). Nothing is published to a store.
 
 ## Verification baseline (this cycle, from the repo root)
 
 | Command | Result |
 | --- | --- |
 | `pnpm typecheck` | **6/6 Turbo tasks** successful (5 package typechecks + `^build`) |
-| `pnpm test` | **108 core + 16 content** (Vitest) and **56 mobile** (Jest, 13 suites). All pass. |
+| `pnpm test` | **201 unit tests** — 108 core + 16 content (Vitest) and 77 mobile (Jest, 15 suites). All pass. |
 | `pnpm build` | **5/5 Turbo tasks** (core, content, web, API, mobile web export) |
-| `pnpm e2e` | **130 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
-| Mobile export | 16 static routes exported (`dist/`) |
+| `pnpm e2e` | **148 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
+| `pnpm verify` | typecheck → test → build → secrets → e2e, all green |
+| Mobile export | 22 static routes exported (`dist/`) |
 
-Visual evidence for the web surfaces is in `docs/qa/`; the mobile app has
-**no screenshot record** (no device or emulator capture exists for this cycle).
+Visual evidence for the web surfaces is in `docs/qa/`; the release APK render is
+recorded in `docs/qa/mobile/` (screenshot, UI dumps, logcat). Functional device
+QA is waived for the internal alpha (D78).
 
 ## Web
 
@@ -58,18 +59,22 @@ Known web limitations:
 
 Implemented:
 
-- Welcome (motion-rich), sign-in, sign-up (server errors surfaced, 8-char password
-  hint, progress merge on auth), learn, path (with unit guidebook buttons), lesson,
-  practice hub, practice runner, account, habits, shop, leagues, people, app navigation.
+- Onboarding (`/onboarding/*`: language → motivation → level → daily goal →
+  commitment; 6 taps to the first lesson), welcome (motion-rich), sign-in, sign-up
+  (server errors surfaced, 8-char password hint, progress merge on auth), learn,
+  path (with unit guidebook buttons), lesson, practice hub, practice runner,
+  account, habits, shop, leagues, people, app navigation.
 - Unit guidebook at `/guidebook/[courseId]/[unitIndex]` renders target words straight
   from tracked course exercises (shared `@speeko/core#guidebookItems`) plus a lesson
   plan. The words are never hand-authored.
-- Lesson runner supports exactly `chooseMeaning`, `fillBlank`,
-  `listenChoose`, `typeTranslation`, and `matchPairs` **when they are playable**.
-  Empty-audio `listenChoose` items are excluded from every playable queue today
-  via `eligibleExercises()` in `@speeko/core` (applied to lesson queues, practice/review,
-  SRS index, and the server grading path). Everything else fails safely with a
-  blocking screen and can never submit or complete a lesson.
+- Lesson runner supports 9 published kinds: `chooseMeaning`, `fillBlank`,
+  `typeTranslation`, `matchPairs`, `wordBank`, `arrangeSentence`,
+  `typeWhatYouHear`, `speak`, and `listenChoose` **when audio exists**.
+  Empty-audio `listenChoose` items are excluded from every playable queue via
+  `eligibleExercises()` in `@speeko/core` (lesson queues, practice/review, SRS
+  index, and the server grading path). `chooseImage` is the only unsupported
+  kind; it fails safely with a blocking screen and can never submit or complete
+  a lesson, and no curriculum item uses it.
 - Practice runs a **due-only** SRS session from local Leitner cards, awarding
   no XP and writing no completion record. Answers update the SRS schedule and
   persist locally.
@@ -94,7 +99,7 @@ Implemented:
   and segmented switcher, profile header) applied across the app. See
   **Stitch integration** below for exact scope and limits.
 
-Mobile test evidence (Jest, 13 suites / 56 tests, `npx jest` in `apps/mobile`):
+Mobile test evidence (Jest, 15 suites / 77 tests, `npx jest` in `apps/mobile`):
 
 - Unit: shared exercise layer (XP-only-on-correct rule), sync merge/push rules,
   progress snapshot migration/corruption handling, API cookie persistence.
@@ -113,21 +118,23 @@ Mobile test evidence (Jest, 13 suites / 56 tests, `npx jest` in `apps/mobile`):
 
 Partially done / missing on mobile:
 
-- `wordBank`, `arrangeSentence`, `speak`, `typeWhatYouHear` are not runnable.
-  None of these kinds occurs in the current 305-item curriculum, so they do
-  not block launch content; a lesson containing one still fails closed.
+- `chooseImage` is not runnable. It does not occur in the current 305-item
+  curriculum, so it does not block launch content; a lesson containing one
+  still fails closed.
 - Practice is not synced to any server SRS endpoint; it stays on-device.
 - Lesson completion shows the server's reward result: first completion reports
   saved XP; a replay says “Practice complete!” / “Lesson saved — practice only,
   no new completion XP.” The server still grants lesson/quest gems internally.
-- **No Android device or emulator was available.** The SDK is installed (platforms,
-  emulator binary) but no AVDs, no system images, no command line tools, no JDK on PATH,
-  and WHPX is disabled — so no APK launch is possible or claimed. `docs/qa/android-device-qa.md`
-  documents the exact checklist required for a device run.
-- No mobile onboarding flow (still welcome → learn directly). Account creation
-  exists via **Account → Sign in → Create account**; guests can use the whole
-  learning flow without an account.
-- No mobile screenshots, no mobile E2E suite.
+- **Android render is verified; functional device QA is waived.** The release APK
+  cold-starts to the learn screen on a Vivo V2336 (2026-11-17); screenshot, UI
+  dumps, and logcat are in `docs/qa/mobile/`. The owner instructed that the phone
+  must not be connected again, so no adb/emulator functional pass is performed
+  (D78). `docs/qa/android-device-qa.md` keeps the checklist for a future
+  owner-run public-release pass.
+- Account creation exists via **Account → Sign in → Create account**; guests can
+  use the whole learning flow without an account.
+- No emulator-attached mobile E2E suite; the native app is not instrumented.
+  Release-render screenshots and dumps are the device record.
 
 ## Mobile feature-coverage matrix (source + test evidence)
 
@@ -138,10 +145,10 @@ core/web e2e suite where stated. **None of it is device evidence** — see
 
 | Capability | Web | Android / Expo | Evidence |
 | --- | --- | --- | --- |
-| Onboarding | Full `/onboarding`: language, motivation, level, daily goal, commitment | **Missing.** Welcome screen → `/learn`; no language/goal onboarding. Guest flow works. | `apps/web/app/onboarding/*`; `apps/mobile/app/index.tsx`; Playwright `onboarding.spec.ts` |
+| Onboarding | Full `/onboarding`: language, motivation, level, daily goal, commitment | Full `/onboarding/*`: language, motivation, level, daily goal, commitment; 6 taps to the first lesson. Guest flow works. | `apps/web/app/onboarding/*`, `apps/mobile/app/onboarding/*`; Playwright `onboarding.spec.ts`; Jest `onboarding.test.tsx` |
 | Account creation | Email + password sign-up, merge of guest progress | Email + password sign-up from Account tab; server errors inline; 8-char password hint; merge after auth | `sign-up.tsx`, `sign-in.tsx`; Jest `account.test.tsx` |
-| Exercise kinds present in curriculum | `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10 — all playable on web | `chooseMeaning`, `typeTranslation`, `matchPairs` playable. `listenChoose` playable **only with non-empty `audioUrl`**; all 10 current items are empty and excluded. | Content inventory; `eligibility.ts`; `exercise.test.ts`, `lesson-runner.test.tsx` |
-| Extra kinds implemented but not in curriculum | `fillBlank`, `wordBank`, `arrangeSentence`, `chooseImage`, `typeWhatYouHear`, `speak` | `fillBlank` only; other four render a blocking “not available” screen and cannot submit | `ExerciseBody.tsx`; `lesson-runner.test.tsx` unsupported-kind test |
+| Exercise kinds present in curriculum | `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10 — all playable on web | `chooseMeaning`, `typeTranslation`, `matchPairs` playable; `listenChoose` playable **only with non-empty `audioUrl`** (all 10 current items are empty and excluded). The four added kinds are also playable. | Content inventory; `eligibility.ts`; `exercise.test.ts`, `lesson-runner.test.tsx` |
+| Extra kinds implemented but not in curriculum | `fillBlank`, `wordBank`, `arrangeSentence`, `chooseImage`, `typeWhatYouHear`, `speak` | All except `chooseImage` are playable; `chooseImage` renders a blocking “not available” screen and cannot submit | `ExerciseBody.tsx`; `lesson-runner.test.tsx` unsupported-kind test |
 | Lesson completion | Server re-grades raw answers; guest path saved locally | Server re-grades; signed-out 401 falls back to device save; other save errors award nothing and offer Retry; hearts exhaustion awards nothing | Core `scoreLessonAttempt`; `lesson-completions.ts`; Jest runner tests; Playwright `rewards.spec.ts` |
 | Progress persistence / reconciliation | Local snapshot + `/api/progress` merge; events authoritative for rewards | Local `speeko.mobile.progress.v2` + cloud merge (union completed, higher-wins XP, cosmetic rules); sign-out clears cookie and local snapshot | `lib/sync.ts`; Jest `sync.test.ts`, `progress.test.ts`, `account.test.tsx` |
 | Practice / review | SRS review route, due/trouble/unit practice, checkpoints; no XP | Due-only SRS practice with local schedule, no XP; no server SRS sync | `packages/core/src/practice.ts`; Jest `practice-plan.test.ts`, `practice-runner.test.tsx` |
@@ -161,6 +168,11 @@ Implemented and verified:
 - Server-authoritative grading, first-completion XP/gems, freeze credits, social
   profiles/follows. Replays keep graded attempt history but earn no completion
   reward.
+- Abuse and cache guards: `/api/auth/*` 60 requests/min per IP; `PUT /api/progress`
+  30/min per account+IP; `429` + `Retry-After`; `Cache-Control: no-store` on
+  `/api/*`; production boot requires a ≥32-char `BETTER_AUTH_SECRET`.
+- `/api/leagues` resolves active learners’ profiles in one batched read; weekly
+  latency is independent of the total registered-user count.
 - Public profile XP/lessons derive from `lesson_completion_rewards`; the streak
   derives from `lesson_events`. Neither is readable from a client snapshot.
 - `/api/progress` validates equipped cosmetics against real ownership,
@@ -213,7 +225,7 @@ behaviour):
 | `profile.html` | Account profile header (avatar, verified/device-only label), app bar with fox avatar + real streak/XP pills |
 | `brand-board.html` | Palette already matches (cream/green/fox/ink); `speeko` wordmark used in app bars |
 | `progress.html` | Progress-track treatment reused; board-specific layouts not ported |
-| `choose-language.html` | **Not integrated.** No onboarding flow exists on mobile; no Indic language copy can ship unreviewed |
+| `choose-language.html` | **Not integrated.** A functionally equivalent screen shipped as `/onboarding/language`; no Stitch markup or Indic copy was carried over |
 
 Not imported, and why:
 
@@ -231,14 +243,15 @@ Not imported, and why:
 
 ## Highest-impact remaining gaps
 
-1. **No real device verification.** Nothing touches Android hardware or an
-   emulator; no AVD exists, WHPX is disabled, and a device run is an owner
-   call. See `docs/qa/android-device-qa.md`.
+1. **No functional device verification.** The release APK render is verified on
+   a Vivo V2336 (2026-11-17), but the functional pass is waived for the internal
+   alpha (D78). A public launch still needs an owner-run device pass; see
+   `docs/qa/android-device-qa.md`.
 2. **No native-speaker review.** All 305 exercises are draft. Export and the
    review protocol (`scripts/export-review.mjs`, `review/REVIEW.md`) are ready;
    nothing is certified and nothing may ship as "reviewed".
-3. **Mobile exercise parity** — wordBank/arrangeSentence/speak/typeWhatYouHear
-   are blocked on mobile.
+3. **Mobile `chooseImage`** is not rendered; it is not used by any curriculum
+   item and fails closed.
 4. **Offline/sync edge cases** for a second device are only partially covered
    by unit-level sync tests; no two-device live run exists.
 5. **No license.** The repo remains all rights reserved by default; the
@@ -249,10 +262,10 @@ Not imported, and why:
 ## Definition of done for a release
 
 The mobile app in this tree is a working alpha suitable for a controlled
-internal trial on Android hardware: it can create/import progress, playable
-draft lessons, honest fail-closed states, and account-synced rewards. It is
-**not** a production release candidate until at least (1) a native-speaker
-review pass, (2) on-device QA of the release build, (3) a hosting/database
-choice, and (4) a license decision are complete. The progress endpoint's
-reward integrity is verified at the database boundary (P13 + P17); visual and
-linguistic authenticity are not yet verified anywhere.
+internal trial: playable draft lessons, onboarding, honest fail-closed states,
+and account-synced rewards. It is **not** a production release candidate until
+at least (1) a native-speaker review pass, (2) an owner-run functional device
+pass on the release build, (3) a hosting/database choice, and (4) a license
+decision are complete. The progress endpoint's reward integrity is verified at
+the database boundary (P13 + P17); visual and linguistic authenticity are not
+yet verified anywhere.

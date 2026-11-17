@@ -5,16 +5,18 @@ Living status document. One phase per session; a phase is done only when
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-17 (Phase 4 landed)
+**Updated:** 2026-11-18 (engineering complete; one follow-up fix awaiting owner merge)
 
-## Current state (Phase 4)
+## Current state (post-M4, 2026-11-18)
 
-- **Alpha cut built and verified.** `pnpm verify` green: typecheck 6/6, tests (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (134 files, 0 hits), e2e **148/148**.
-- **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Note: produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
-- **Phases 1–3 landed** (`next/M2`): M2 headless sign-off, M4 hardening (rate limit, no-store, secrets gate), mobile onboarding, all four missing exercise kinds, tactile/safe-area consistency pass, web design-token + a11y polish.
-- **Phase 4 landed:** `.github/workflows/verify.yml`, `CHANGELOG.md`, `docs/deploy-runbook.md`, honest store listing copy under `docs/store/metadata/en-US/`.
+- **Engineering is complete and green.** Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (151 files, 0 hits), e2e **148/148** in 5.9m with zero flakes.
+- **`main` is `e5a06c2`** — the merge of PR #4, which brought `d83bf46` (M2 headless sign-off, M4 hardening, self-provisioned e2e accounts, isolated rate-limit contract) into `main`. `next/M1` was merged earlier.
+- **`next/M2` is `d5d6a74`** — exactly one commit ahead of `main`: the league profile-lookup fix. CI is green on that SHA (run `44153146831`, job `134286617487`). A follow-up PR `next/M2 → main` is the only remaining merge.
+- **Hardening shipped:** `/api/auth/*` 60 requests/min per IP; `PUT /api/progress` 30/min per account+IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`.
+- **Phase 1–4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
+- **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
 - **Still open (owner):** license (draft rights), native-speaker review, hosting + backups + secret rotation, audio decision, store accounts.
-- **Not merged:** `next/M1` and `next/M2` are review branches; merge order owner's call.
+- **Not claimed:** on-device functional QA. The owner waived it; see D78 and `docs/READINESS.md`.
 
 
 ## Phase status
@@ -33,12 +35,15 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P9 - Mobile parity | Account + sync, path, lesson, practice, quests, motion layer | **Done** - `phase/9-mobile-parity` |
 | P10 - Stories + conversation | Honest unavailable/coming-soon states, optional AI endpoint | **Done** - `phase/10-stories-conversation` |
 | P11 - Hardening | Accessibility, reduced motion, offline/error states | **Done** - `phase/11-hardening` |
-| P12 - Mobile parity hardening + Stitch design | Jest harness fix, shared mobile exercise layer, server/local save split, shop cosmetics validation, Stitch tactile design pass | **Done (unreleased)** — `2d22c69`, branch `next/M1` |
-| P13 - Security boundary + curriculum audit | Public profiles event-derived, verified-vs-device account display, API-boundary E2E, 10 defective exercises removed, validator upgrade, Android QA package, hosting/LICENSE packages, review package export | **Done (unreleased)** — `07b01cd` (API/web boundary) + `05d2adb` (review package) + `53ab85e` (Android QA + decision docs), branch `next/M1` |
-| P14 - Curriculum self-audit (deterministic) | `scripts/audit-content.mjs` deterministic audit → `review/audit-ledger.json`; hi pilot (20 items) documented; validator strengthened; **zero source corrections, zero native approvals** | **Done (unreleased)** — `05d2adb`, branch `next/M1` |
-| P15 - AI linguistic review | `scripts/ai-review-content.mjs` — all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done (unreleased)** — `05d2adb`, branch `next/M1` |
-| P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done (unreleased)** — `07b01cd` (core/API/web) + `2d22c69` (mobile) + `53ab85e` (parity matrix, release-ops doc), branch `next/M1` |
-| P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done (unreleased)** — `07b01cd`, branch `next/M1` |
+| P12 - Mobile parity hardening + Stitch design | Jest harness fix, shared mobile exercise layer, server/local save split, shop cosmetics validation, Stitch tactile design pass | **Done — merged via PR #4** — `2d22c69`, branch `next/M1` |
+| P13 - Security boundary + curriculum audit | Public profiles event-derived, verified-vs-device account display, API-boundary E2E, 10 defective exercises removed, validator upgrade, Android QA package, hosting/LICENSE packages, review package export | **Done — merged via PR #4** — `07b01cd` (API/web boundary) + `05d2adb` (review package) + `53ab85e` (Android QA + decision docs), branch `next/M1` |
+| P14 - Curriculum self-audit (deterministic) | `scripts/audit-content.mjs` deterministic audit → `review/audit-ledger.json`; hi pilot (20 items) documented; validator strengthened; **zero source corrections, zero native approvals** | **Done — merged via PR #4** — `05d2adb`, branch `next/M1` |
+| P15 - AI linguistic review | `scripts/ai-review-content.mjs` — all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done — merged via PR #4** — `05d2adb`, branch `next/M1` |
+| P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done — merged via PR #4** — `07b01cd` (core/API/web) + `2d22c69` (mobile) + `53ab85e` (parity matrix, release-ops doc), branch `next/M1` |
+| P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done — merged via PR #4** — `07b01cd`, branch `next/M1` |
+
+P12–P17 and the M2/M4 work are merged into `main` via PR #4 (`e5a06c2`); the branch names in the table record where each phase was originally committed.
+
 
 ## What P12 changed
 
@@ -582,7 +587,8 @@ These are product gaps, not regressions. Details and evidence are in
   the same 0/8 + UNIT 1 state as the learn screen; on-device APK hash matches the
   build). No like-for-like learn-screen capture was obtained (device in active use).
   Full functional device QA (sign-up,
-  lesson completion, sync, shop, habits, sign-out) has not been performed on hardware.
+  lesson completion, sync, shop, habits, sign-out) has not been performed on hardware;
+  it is waived for the internal alpha (D78).
 - **No native-speaker review.** All 305 exercises remain `reviewStatus: "draft"`. The
   review package is exported and ready; playable does not mean correct.
 - **`PUT /api/progress` remains a non-authoritative guest-import layer.** Leagues,
@@ -593,14 +599,15 @@ These are product gaps, not regressions. Details and evidence are in
 - **Trouble words are historical**; a card with a lapse never automatically retires.
 - **Hosting/database choice is deferred** and no `LICENSE` exists; both are owner
   decisions with packages prepared this cycle. Nothing is provisioned or signed.
-- **Mobile exercise parity** is partial: `wordBank`, `arrangeSentence`, `speak`,
-  `typeWhatYouHear` are unsupported and fail safely on mobile.
+- **Mobile exercise parity is effectively complete** for the shipped curriculum:
+  `wordBank`, `arrangeSentence`, `typeWhatYouHear`, and `speak` are all supported on
+  mobile. Only `chooseImage` is unsupported and fails safely; it is not used by any
+  curriculum item.
 - **Stories and conversation** ship as honest unavailable/coming-soon states on web;
   they are not on mobile.
-- **Mobile has no onboarding flow**; render evidence from M1 is the uiautomator
-  dump (`docs/qa/mobile/learn-screen-ui-dump.xml`); full
-  on-device functional QA has not been performed. The welcome screen hands
-  off directly to `/learn`.
+- **Mobile has onboarding** (`/onboarding/language` → motivation → level → daily goal → commitment; 6 taps to the first lesson); render evidence from M1 is the uiautomator
+  dump (`docs/qa/mobile/learn-screen-ui-dump.xml`). Full
+  on-device functional QA has not been performed; it is waived for the internal alpha (D78).
 
 ## M1 — Android render verification (2026-11-17)
 
@@ -626,7 +633,7 @@ These are product gaps, not regressions. Details and evidence are in
   QA builds now ships as a committed, QA-gated config plugin
   (`apps/mobile/plugins/withQaLoopbackCleartext.js`; no-op unless
   `SPEEKO_QA_LOOPBACK_CLEARTEXT=1`; hard-refuses when `EAS_BUILD_PROFILE=production`).
-  **Functional device QA is still pending — M2.**
+  **Functional device QA remains unperformed; waived for the internal alpha (D78).**
 - **Fixes:** Metro `resolver.unstable_conditionNames = ['require']` (Hermes
   `_interopRequireDefault is not a function`); Metro workspace root pinned to the app in
   `metro.config.js` (`release/bundle` no longer depends on
@@ -639,8 +646,9 @@ These are product gaps, not regressions. Details and evidence are in
   `apps/mobile/__tests__/root-layout.test.tsx` (passing). It only proves the layout
   module executes under Jest — it does not demonstrate a device render; the device
   evidence is `docs/qa/mobile/learn-screen-ui-dump.xml`.
-- **Not verified on device (M2):** sign-up/sign-in, completing a lesson,
-  cross-device progress sync, shop, habits, sign-out. M2 tracks this.
+- **Not verified on device:** sign-up/sign-in, completing a lesson,
+  cross-device progress sync, shop, habits, sign-out. The owner waived the
+  functional pass for the internal alpha (D78); headless coverage exists instead.
   See `docs/NEXT.md` for commands and raw output.
 - **Commit map (fix → commit):**
   - Metro `unstable_conditionNames = ['require']` → `2d22c69`

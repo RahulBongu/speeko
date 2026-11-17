@@ -1,7 +1,11 @@
 # Speeko — Android Device QA
 
-**Status:** build, unit suite, and static export are verified. **No physical device
-or emulator ran the app this cycle.** Nothing in this document claims otherwise.
+**Status:** build, unit suite, static export, and a one-time **release-APK
+render pass** (2026-11-17, Vivo V2336) are verified. The functional device QA
+pass has **not** been run and is waived for the internal alpha by owner
+instruction (D78, 2026-11-18) — the phone must not be reconnected. Nothing in
+this document claims the flows in the checklist below were exercised on
+hardware.
 
 ## Phase P findings (2026-11-17)
 
@@ -36,7 +40,7 @@ or emulator ran the app this cycle.** Nothing in this document claims otherwise.
 - Timestamp: 2026-11-17 10:18:15
 - SHA-256: `1B21E50F44CF6907F55FBF50EEDF7EECAF30F93B19CA82DC3479B98282C9B417`
 - Dependency: `@react-native-async-storage/async-storage` 2.1.2 (Expo-compatible)
-- Full `pnpm verify`: 130/130 E2E, all green.
+- Full `pnpm verify` (2026-11-18, `d5d6a74`): 148/148 E2E, all green.
 
 - JDK 17.0.12 was found at `C:\Program Files\Java\jdk-17\bin\java.exe` but was not on PATH; it was supplied via `JAVA_HOME` for the build command only.
 - Command attempted: `.\gradlew.bat assembleDebug` from `apps/mobile/android`, with `JAVA_HOME=C:\Program Files\Java\jdk-17`, `ANDROID_HOME=C:\Users\rahul\AppData\Local\Android\Sdk`.
@@ -77,19 +81,24 @@ additionally requires command-line tools and a system image (≈1 GB download)
 plus WHPX/HAXM or an Android device with `adb tcpip` over USB — all involve a
 system-level change or significant download the owner should authorize first.
 
-## What is verified instead of the device
+## What is verified
 
+- **Release-APK render pass (2026-11-17).** The release APK cold-starts to the
+  learn screen on a Vivo V2336; screenshot, UI dumps, and logcat are in
+  `docs/qa/mobile/`; on-device APK hash matches the build. Navigation was
+  observed through path → lesson → guidebook. See `docs/NEXT.md` and
+  `docs/qa/mobile/release-build.md`.
 - `pnpm --filter @speeko/mobile build` (Expo web export) compiles the full app
-  through Metro with no runtime import errors; 16 static routes render.
-- `pnpm --filter @speeko/mobile test` — 56 Jest tests across 13 suites
-  (component + mocked-integration), including lesson/practice/shop/habits/account.
+  through Metro with no runtime import errors; 22 static routes render.
+- `pnpm --filter @speeko/mobile test` — 77 Jest tests across 15 suites
+  (component + mocked-integration), including onboarding, lesson/practice/
+  shop/habits/account.
 - `pnpm typecheck` covers all native-code TypeScript (`@speeko/mobile`).
-- The release APK exists but is stale and unverified. Treat it as a build
-  artifact, not as a working deliverable.
 
-**None of the above is device evidence.** They prove the code compiles and the
-component contracts hold with mocked network/storage; they do not prove Hermes,
-Reanimated, haptics, fonts, keyboard, or APK packaging work on hardware.
+**None of this is functional device evidence.** It proves the code compiles,
+the component contracts hold with mocked network/storage, and the APK renders
+its first screen. It does not prove sign-up, a completed lesson, sync, shop,
+habits, or sign-out on hardware.
 
 ## Prerequisites to unblock (none executed)
 
@@ -128,8 +137,10 @@ Run these on one mid-range Android device (8 GB RAM class) against the
 
 ### Onboarding and accounts
 
-5. [ ] Start → `/learn`; course list renders with real data and draft badges.
-   There is **no mobile onboarding flow**; this is the expected flow, not a bug.
+5. [ ] Start → onboarding (`/onboarding/language` → motivation → level →
+   daily goal → commitment; 6 taps) → first lesson; for existing/returning
+   guests, course list renders with real data and draft badges. The onboarding
+   flow is expected for first-run guests.
 6. [ ] Account tab → **Create account**: email + 8-character password, server
    errors shown inline; a successful sign-up lands in the app with the guest
    snapshot merged. Then sign out and sign in with the same account.
@@ -213,4 +224,6 @@ Run these on one mid-range Android device (8 GB RAM class) against the
 A release candidate cannot be declared until every item above is checked, with
 `docs/qa/android-*.logcat` excerpts, screenshots, and the APK SHA-256 retained.
 Everything here is necessarily a **real device** assertion; none of it can be
-honestly derived from CI.
+honestly derived from CI. The internal alpha proceeds without this pass only
+because the owner waived it (D78); the public release does not have that
+waiver.
