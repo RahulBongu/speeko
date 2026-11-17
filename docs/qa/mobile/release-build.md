@@ -40,8 +40,11 @@ Proof: `./gradlew.bat assembleRelease` in a shell **without**
 `EXPO_NO_METRO_WORKSPACE_ROOT` → `BUILD SUCCESSFUL in 2m 51s`;
 `:app:createBundleReleaseJsAndAssets` wrote
 `android\app\build\generated\assets\createBundleReleaseJsAndAssets\index.android.bundle`.
-The resulting APK is byte-identical to the previous build (same SHA-256), as
-expected — no source changed, only the resolver root.
+
+The paragraph that previously claimed the resulting APK was "byte-identical, as
+expected" is **superseded** and removed — in that run `packageRelease` was
+`UP-TO-DATE`, so the hash match proved nothing about the APK. See
+"Byte-reproducibility check" below for the forced-rewrite measurement.
 
 ### What was done
 
@@ -83,6 +86,10 @@ Verified explicitly:
    (`150DE370…`) as the 16:19 build. Byte-for-byte reproducibility in this
    environment is confirmed, not inferred from an up-to-date no-op.
 
+**Scope:** the APK is gitignored and is not committed; the reproducibility
+claim rests on the hashes recorded in this document, not on anything a
+reviewer can diff in git.
+
 The APK is a build output and is **not** committed to git (gitignored with
 `apps/mobile/android/`).
 
@@ -99,7 +106,8 @@ Therefore the following remain **unexecuted and unclaimed**:
 
 - `adb install -r apps/mobile/android/app/build/outputs/apk/release/app-release.apk`
 - Launching the release app on the phone
-- `docs/qa/mobile/release-first-screen.png` — NOT captured (would be fabricated)
+- `docs/qa/mobile/release-first-screen.png` — NOT captured (would be fabricated); PNG signature check not performed
+- `docs/qa/mobile/release-ui-dump.xml` — NOT captured (would be fabricated); dump text comparison against debug not performed
 - `docs/qa/mobile/logcat.txt` — NOT captured (would be fabricated)
 
 The release render is only proven when those steps run with the phone attached.
@@ -116,14 +124,29 @@ The release render is only proven when those steps run with the phone attached.
    see `docs/qa/rejected-captures/`):
 
    ```
-   adb shell screencap -p /sdcard/release.png
-   adb pull /sdcard/release.png docs/qa/mobile/release-first-screen.png
-   # or: cmd /c "adb exec-out screencap -p > docs\qa\mobile\release-first-screen.png"
+   adb shell screencap -p /sdcard/release-first-screen.png
+   adb pull /sdcard/release-first-screen.png docs/qa/mobile/release-first-screen.png
    ```
 
-6. Capture filtered logs (binary-safe redirection also applies):
-   `adb logcat -d > docs/qa/mobile/logcat-raw.txt` then
-   `Select-String -Path docs/qa/mobile/logcat-raw.txt -Pattern 'hermes|fatal|ReactNative' -CaseInsensitive > docs/qa/mobile/logcat.txt`
+   Confirm the pulled file is a real PNG before accepting it:
+   `xxd -l 8 docs/qa/mobile/release-first-screen.png` must start with
+   `89 50 4E 47`. If it doesn't, it is corrupt — do not commit it.
+
+   5b. Capture the text hierarchy of the same screen (the only text-comparable
+   render evidence; lets a reviewer diff release against debug):
+
+   ```
+   adb shell uiautomator dump /sdcard/release-dump.xml
+   adb pull /sdcard/release-dump.xml docs/qa/mobile/release-ui-dump.xml
+   ```
+
+6. Capture filtered logs with `cmd` (raw bytes — PowerShell's `>` writes
+   UTF-16, the same failure that corrupted the screenshots):
+
+   ```
+   cmd /c "adb logcat -d | findstr /i \"hermes fatal ReactNative AndroidRuntime\" > docs\qa\mobile\logcat.txt"
+   ```
+
 7. Flip `docs/NEXT.md` and `docs/PROGRESS.md` to "PASS (release APK)" with the evidence.
 
 ### Clean-clone install check (2026-11-17)
