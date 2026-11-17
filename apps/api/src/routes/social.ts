@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { and, eq, gte, ilike, or, sql } from 'drizzle-orm';
+import { and, eq, gte, ilike, inArray, or, sql } from 'drizzle-orm';
 import {
   computeStreak,
   dayKeyInTimeZone,
@@ -34,7 +34,11 @@ async function ensureProfile(db: ReturnType<typeof getDb>, userId: string) {
     .where(eq(userProfiles.userId, userId))
     .limit(1);
   if (existing) return existing;
+  return createProfile(db, userId);
+}
 
+/** Create the profile row for a user that is known to lack one. */
+async function createProfile(db: ReturnType<typeof getDb>, userId: string) {
   const [account] = await db.select().from(user).where(eq(user.id, userId)).limit(1);
   const base = slugify(account?.name || account?.email?.split('@')[0] || 'learner') || 'learner';
 
@@ -58,6 +62,24 @@ async function ensureProfile(db: ReturnType<typeof getDb>, userId: string) {
     }
   }
   throw new Error('Could not create a unique username.');
+}
+
+/**
+ * Ensure a batch of users has profiles with one lookup instead of one query
+ * per user. `/api/leagues` calls this for every active learner, so a per-user
+ * select made the endpoint's latency grow linearly with the week's learners.
+ * Only genuinely missing profiles are inserted (at most once per account).
+ */
+async function ensureProfiles(db: ReturnType<typeof getDb>, userIds: string[]) {
+  if (userIds.length === 0) return;
+  const existing = await db
+    .select({ userId: userProfiles.userId })
+    .from(userProfiles)
+    .where(inArray(userProfiles.userId, userIds));
+  const known = new Set(existing.map((profile) => profile.userId));
+  for (const userId of userIds) {
+    if (!known.has(userId)) await createProfile(db, userId);
+  }
 }
 
 /**
@@ -151,14 +173,17 @@ export async function socialRoutes(app: FastifyInstance) {
     }
 
     // Ensure every active learner has a profile so usernames are followable.
-    for (const activeUserId of totals.keys()) {
-      await ensureProfile(db, activeUserId);
-    }
+    const activeIds = [...totals.keys()];
+    await ensureProfiles(db, activeIds);
 
     const activeUsers = totals.size;
     const earlyCommunity = activeUsers < LEAGUE_MIN_PLAYERS;
 
-    const profiles = await db.select().from(userProfiles);
+    // Scope the profile read to this week's learners: leagues must not get
+    // slower as the total registered-user count grows.
+    const profiles = activeIds.length
+      ? await db.select().from(userProfiles).where(inArray(userProfiles.userId, activeIds))
+      : [];
     const profileByUser = new Map(profiles.map((profile) => [profile.userId, profile]));
 
     const standings = [...totals.entries()]

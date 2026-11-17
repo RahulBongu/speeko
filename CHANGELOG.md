@@ -20,6 +20,9 @@
 - Focus rings on all interactive elements; contrast-corrected palette; gold/ice tokens; on-brand locale ramps
 - Studio re-skinned to the house style; global `not-found`/`error` routes; per-route metadata
 
+### Performance
+- League standings resolve active learners' profiles in one batch per request instead of one query per learner (with ~1.4k weekly learners in a test database, the endpoint dropped from 16-30s to under 1s locally)
+
 ### Honest limits
 - All curriculum content remains `reviewStatus: "draft"`; no native-speaker review has been completed
 - Listening exercises are unavailable until licensed audio exists
