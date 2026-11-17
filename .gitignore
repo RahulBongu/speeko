@@ -23,5 +23,6 @@ coverage
 .session/
 test-results/
 playwright-report/
+apps/web/out
 
 *.tsbuildinfo

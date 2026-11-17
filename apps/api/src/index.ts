@@ -11,6 +11,8 @@ import { socialRoutes } from './routes/social.js';
 import { courseRoutes } from './routes/courses.js';
 import { aiRoutes } from './routes/ai.js';
 import { closeDb, runMigrations } from './db/client.js';
+import { rateLimitPlugin } from './rate-limit.js';
+import cacheHeadersPlugin from './cache-headers.js';
 
 const app = Fastify({ logger: true });
 
@@ -27,6 +29,8 @@ async function main() {
     allowedHeaders: ['Content-Type', 'Authorization'],
     maxAge: 86400,
   });
+  await app.register(rateLimitPlugin);
+  await app.register(cacheHeadersPlugin);
   await app.register(healthRoutes);
   await app.register(authRoutes);
   await app.register(progressRoutes);
