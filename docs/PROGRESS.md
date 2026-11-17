@@ -606,17 +606,17 @@ These are product gaps, not regressions. Details and evidence are in
   passing session). All four screencap PNGs from 2026-11-17 were transcoded to UTF-16LE
   by PowerShell redirection and are corrupt; they are rejected and live in
   `docs/qa/rejected-captures/` — no screenshot evidence exists (see its README).
-- **Release render: verified on device (2026-11-17).** Release APK installed, cold-start
-  loads the bundle and renders real server-fed content (Bengali course path);
-  on-device APK hash matches the build (`36A5D41D…`); logcat shows no fatal/hermes
-  errors from the app; screenshot is a valid PNG (1080×2400). No like-for-like
-  learn-screen comparison against debug was captured — the welcome/learn screen could
-  not be frozen while the device was in active use; the fresh-guest state is proven by
-  `pm clear` dumps (`UNIT 1 Greetings`, `START · LESSON 1`, `0 of 8 lessons complete` —
-  identical to the debug fresh-guest learn screen). Loopback-only cleartext for the QA
-  build now ships as a committed, QA-gated config plugin
+- **Release render: verified on device (2026-11-17).** Release APK cold-starts to the
+  **learn screen** (~2 s after launch; `release-cold-start-learn-dump.xml` +
+  `release-cold-start-learn.png`) with the same key text as the debug fresh-guest dump.
+  Loads the bundle, fetches server-fed content (course list, lesson nodes, guidebook),
+  navigates (path → lesson → guidebook), and logs no fatal/hermes errors for the app.
+  On-device APK hash matches the build (`36A5D41D…`). The phone was in active use during
+  capture; see `release-build.md` for the attribution notes. Loopback-only cleartext for
+  QA builds now ships as a committed, QA-gated config plugin
   (`apps/mobile/plugins/withQaLoopbackCleartext.js`; no-op unless
-  `SPEEKO_QA_LOOPBACK_CLEARTEXT=1`). **Functional device QA is still pending — M2.**
+  `SPEEKO_QA_LOOPBACK_CLEARTEXT=1`; hard-refuses when `EAS_BUILD_PROFILE=production`).
+  **Functional device QA is still pending — M2.**
 - **Fixes:** Metro `resolver.unstable_conditionNames = ['require']` (Hermes
   `_interopRequireDefault is not a function`); Metro workspace root pinned to the app in
   `metro.config.js` (`release/bundle` no longer depends on
