@@ -629,6 +629,17 @@ These are product gaps, not regressions. Details and evidence are in
   sign-up/sign-in, completing a lesson, cross-device progress sync, shop, habits,
   sign-out. M2 tracks this.
   See `docs/NEXT.md` for commands and raw output.
+- **Commit map (fix → commit):**
+  - Metro `unstable_conditionNames = ['require']` → `2d22c69`
+  - `expo-linking` dependency added → `2d22c69`
+  - API `CONTENT_DIR` repointed to repo-root `content/dist` → `2d22c69`
+  - Metro workspace-root pinning (`process.env.EXPO_NO_METRO_WORKSPACE_ROOT` before
+    `require('@expo/metro-config')`) → `12c8044` (message under-describes the commit;
+    do not rewrite pushed history)
+  - e2e screenshot output moved to gitignored `test-results/screenshots/<project>/` →
+    `12c8044`
+  - Release-build evidence, rejected captures, APK reproducibility check, doc fixes →
+    `ea95aee`, `12c8044`, `47f8bfd`, `73ebfff`
 
 ## Re-running the safety net
 

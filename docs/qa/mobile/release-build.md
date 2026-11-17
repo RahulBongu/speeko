@@ -129,7 +129,7 @@ The release render is only proven when those steps run with the phone attached.
    `xxd -l 8 docs/qa/mobile/release-first-screen.png` must start with
    `89 50 4E 47`. If it doesn't, it is corrupt — do not commit it.
 
-   5b. Capture the text hierarchy of the same screen (the only text-comparable
+   6. Capture the text hierarchy of the same screen (the only text-comparable
    render evidence; lets a reviewer diff release against debug):
 
    ```
@@ -137,14 +137,14 @@ The release render is only proven when those steps run with the phone attached.
    adb pull /sdcard/release-dump.xml docs/qa/mobile/release-ui-dump.xml
    ```
 
-6. Capture filtered logs with `cmd` (raw bytes — PowerShell's `>` writes
+7. Capture filtered logs with `cmd` (raw bytes — PowerShell's `>` writes
    UTF-16, the same failure that corrupted the screenshots):
 
    ```
    cmd /c "adb logcat -d | findstr /i \"hermes fatal ReactNative AndroidRuntime\" > docs\qa\mobile\logcat.txt"
    ```
 
-7. Flip `docs/NEXT.md` and `docs/PROGRESS.md` to "PASS (release APK)" with the evidence.
+8. Flip `docs/NEXT.md` and `docs/PROGRESS.md` to "PASS (release APK)" with the evidence.
 
 ### Clean-clone install check (2026-11-17)
 
