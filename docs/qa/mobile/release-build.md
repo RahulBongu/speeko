@@ -2,7 +2,7 @@
 
 ## Status: APK builds without any environment variable; on-device release render NOT verified (device disconnected)
 
-### Metro workspace-root root cause (fixed 2026-11-17, commit follows)
+### Metro workspace-root root cause (fixed 2026-11-17 in `12c8044`)
 
 The first release attempt failed with `Unable to resolve module ./index.ts from
 C:\duo/.` Exporting `EXPO_NO_METRO_WORKSPACE_ROOT=1` in the shell made the build
@@ -89,9 +89,6 @@ Verified explicitly:
 **Scope:** the APK is gitignored and is not committed; the reproducibility
 claim rests on the hashes recorded in this document, not on anything a
 reviewer can diff in git.
-
-The APK is a build output and is **not** committed to git (gitignored with
-`apps/mobile/android/`).
 
 ### What could not be done
 
