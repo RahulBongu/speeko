@@ -1,6 +1,11 @@
 # M1 — Release APK build evidence (2026-11-17)
 
-## Status: APK builds without any environment variable; on-device release render NOT verified (device disconnected)
+## Status: PASS (release APK) — M1 complete on device (2026-11-17)
+
+The release APK installs, cold-starts, loads the bundle (`ReactNativeJS: Running
+"main"`), renders real course content (Bengali course path with lesson nodes), and
+shows no fatal/hermes errors in logcat. The APK on the device is byte-identical to
+the file that was built.
 
 ### Metro workspace-root root cause (fixed 2026-11-17 in `12c8044`)
 
@@ -90,26 +95,78 @@ Verified explicitly:
 claim rests on the hashes recorded in this document, not on anything a
 reviewer can diff in git.
 
-### What could not be done
+### On-device verification (2026-11-17, completed)
 
-The Vivo V2336 (`10BE2A1B5Q00054`) is not attached:
+Device: Vivo V2336 (`10BE2A1B5Q00054`), Android 16. API running on the host at
+`127.0.0.1:3001` (PGlite at `apps/api/data`), reached via `adb reverse tcp:3001 tcp:3001`.
 
-- `adb devices -l` → empty list
-- `adb kill-server` + daemon restart → still empty
-- `adb mdns services` → no wireless-debugging services found
-- Windows PNP scan for V2336/vivo/BBK/ADB/MTP interfaces → none present
+What happened, in order:
 
-Therefore the following remain **unexecuted and unclaimed**:
+1. **Signature mismatch on install.** `adb install -r` failed with
+   `INSTALL_FAILED_UPDATE_INCOMPATIBLE: Existing package com.speeko.app signatures do not
+   match newer version` — the installed app was the debug build (debug key); the release
+   APK is signed with `release.keystore`. The debug build was uninstalled (wipes
+   device-local guest progress) and the release APK installed cleanly.
+2. **"Courses couldn't load — Network request failed".** The release app could not reach
+   `http://localhost:3001`: the debug manifest sets `usesCleartextTraffic="true"`; the
+   main (release) manifest does not, so Android blocks cleartext HTTP by default. Fixed
+   with a **loopback-only** network security config
+   (`apps/mobile/android/app/src/main/res/xml/network_security_config.xml`: base-config
+   blocks cleartext; a domain-config permits it ONLY for `localhost` and `127.0.0.1`),
+   referenced as `android:networkSecurityConfig` on the `<application>` element. Nothing
+   else is permitted in cleartext.
+   **The `apps/mobile/android/` directory is gitignored, so this config is NOT in git.**
+   A fresh `expo prebuild` needs the same two edits; the file contents are:
 
-- `adb install -r apps/mobile/android/app/build/outputs/apk/release/app-release.apk`
-- Launching the release app on the phone
-- `docs/qa/mobile/release-first-screen.png` — NOT captured (would be fabricated); PNG signature check not performed
-- `docs/qa/mobile/release-ui-dump.xml` — NOT captured (would be fabricated); dump text comparison against debug not performed
-- `docs/qa/mobile/logcat.txt` — NOT captured (would be fabricated)
+   ```xml
+   <network-security-config>
+     <base-config cleartextTrafficPermitted="false">
+       <trust-anchors><certificates src="system" /></trust-anchors>
+     </base-config>
+     <domain-config cleartextTrafficPermitted="true">
+       <domain includeSubdomains="false">localhost</domain>
+       <domain includeSubdomains="false">127.0.0.1</domain>
+     </domain-config>
+   </network-security-config>
+   ```
 
-The release render is only proven when those steps run with the phone attached.
+   If loopback cleartext is ever needed permanently for release QA, the durable decision
+   (prebuild/config plugin) belongs to the owner.
+3. **Rebuilt and re-verified.** `assembleRelease` → `BUILD SUCCESSFUL in 6m 3s`
+   (37 executed, 441 up-to-date). **The APK is no longer `150DE370…`** — the manifest and
+   the new resource changed it. Current artifact:
+   - Path: `apps/mobile/android/app/build/outputs/apk/release/app-release.apk`
+   - Size: 21,994,289 bytes
+   - SHA-256: `36A5D41D1D0872C80E0226894E75ADFA390421BB4BD19F1BBEAA1B1365625400`
+   - `versionName=0.0.1`, `versionCode=1` (from `dumpsys package`)
+4. **Install + hash check.** `adb install -r` succeeded. On-device APK:
+   `adb shell pm path` →
+   `/data/app/~~OGKYgJb4skPfE_9dsriQNA==/com.speeko.app-Pi2JRZBlxKEISWSd6sL9MQ==/base.apk`;
+   `adb shell sha256sum` → `36a5d41d1d0872c80e0226894e75adfa390421bb4bd19f1bbeaa1b1365625400`
+   — **identical to the local file**, size 21,994,289 bytes.
+5. **Render evidence.** `docs/qa/mobile/release-first-screen.png` — valid PNG,
+   1080×2400, 167,435 bytes, signature `89 50 4E 47 0D 0A 1A 0A` (checked before commit).
+   It shows the **course path** screen (UNIT 2 Numbers, UNIT 3 Essentials, "0/2 lessons
+   done", guidebook/lesson nodes) — the app restores the last course (Bengali), unlike the
+   first-launch learn screen the debug dump showed. `docs/qa/mobile/release-ui-dump.xml`
+   carries the same text nodes. A returning-guest dump, not a first-launch dump.
+6. **Logcat.** `docs/qa/mobile/logcat.txt` — filter `hermes|fatal|ReactNative|
+   AndroidRuntime|SIGABRT`. No fatal/hermes errors from any com.speeko.app process
+   (release-run PIDs 17213, 19097, 19328 all logged `ReactNativeJS: Running "main"`).
+   The `E fatal : runForegroundReporters` entries are chromium/system processes
+   (PIDs 15035, 29827) — not the app. The `AndroidRuntime: Using default boot image`
+   entries are ART system noise.
+7. **Functional QA is NOT done** — sign-up/sign-in, completing a lesson, sync, shop,
+   habits, sign-out: all pending (M2). This run verified render only.
 
-### To finish on-device verification
+The earlier "unexecuted" list is superseded by this section. The APK hash above is the
+one built for device verification; the byte-reproducibility evidence below refers to
+`150DE370…`, the pre-manifest-fix build.
+
+### Device steps (COMPLETED 2026-11-17 — kept for reference)
+
+The steps below were executed as written (plus the uninstall and the network
+security config noted above). The output lives in the files named, not in prose.
 
 1. Reconnect the Vivo V2336 with USB debugging authorized.
 2. `adb reverse tcp:3001 tcp:3001` and start the API on 3001 (or point `app.json extra` at a reachable host).

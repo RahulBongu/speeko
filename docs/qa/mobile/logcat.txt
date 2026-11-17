@@ -1,0 +1,33 @@
+11-17 16:54:04.920 30676 30676 I AndroidRuntime: Using default boot image
+11-17 16:54:04.920 30676 30676 I AndroidRuntime: Leaving lock profiling enabled
+11-17 16:57:47.022 29827 31699 E fatal   : runForegroundReporters
+11-17 17:07:51.717 15035  6319 E fatal   : runForegroundReporters
+11-17 17:09:28.274 29827  9275 E fatal   : runForegroundReporters
+11-17 17:10:34.244 29827  9275 E fatal   : runForegroundReporters
+11-17 17:11:05.809 12520 12563 W ReactNativeJNI: Component property map contains multiple entries for 'borderColor'. Ensure all calls to convertRawProp use a consistent prefix, name and suffix.
+11-17 17:11:05.809 12520 12563 W ReactNativeJNI: Component property map contains multiple entries for 'borderStyle'. Ensure all calls to convertRawProp use a consistent prefix, name and suffix.
+11-17 17:11:06.053 12520 12567 I ReactNativeJS: Running "main"
+11-17 17:11:36.308 13042 13042 I AndroidRuntime: Using default boot image
+11-17 17:11:36.308 13042 13042 I AndroidRuntime: Leaving lock profiling enabled
+11-17 17:18:02.645 12520 12563 I ReactNativeJNI: Memory warning (pressure level: TRIM_MEMORY_UI_HIDDEN) received by JS VM, ignoring because it's non-severe
+11-17 17:19:18.621 29827 16099 E fatal   : runForegroundReporters
+11-17 17:19:39.197 17213 17249 W ReactNativeJNI: Component property map contains multiple entries for 'borderColor'. Ensure all calls to convertRawProp use a consistent prefix, name and suffix.
+11-17 17:19:39.199 17213 17249 W ReactNativeJNI: Component property map contains multiple entries for 'borderStyle'. Ensure all calls to convertRawProp use a consistent prefix, name and suffix.
+11-17 17:19:39.363 17213 17250 I ReactNativeJS: Running "main"
+11-17 17:20:11.010 17586 17586 I AndroidRuntime: Using default boot image
+11-17 17:20:11.010 17586 17586 I AndroidRuntime: Leaving lock profiling enabled
+11-17 17:21:19.694 17213 17249 I ReactNativeJNI: Memory warning (pressure level: TRIM_MEMORY_UI_HIDDEN) received by JS VM, ignoring because it's non-severe
+11-17 17:22:34.704 18916 18916 I AndroidRuntime: Using default boot image
+11-17 17:22:34.704 18916 18916 I AndroidRuntime: Leaving lock profiling enabled
+11-17 17:23:03.329 19097 19126 W ReactNativeJNI: Component property map contains multiple entries for 'borderColor'. Ensure all calls to convertRawProp use a consistent prefix, name and suffix.
+11-17 17:23:03.329 19097 19126 W ReactNativeJNI: Component property map contains multiple entries for 'borderStyle'. Ensure all calls to convertRawProp use a consistent prefix, name and suffix.
+11-17 17:23:03.446 19097 19128 I ReactNativeJS: Running "main"
+11-17 17:23:09.274 19158 19158 I AndroidRuntime: Using default boot image
+11-17 17:23:09.274 19158 19158 I AndroidRuntime: Leaving lock profiling enabled
+11-17 17:23:26.051 19183 19183 I AndroidRuntime: Using default boot image
+11-17 17:23:26.051 19183 19183 I AndroidRuntime: Leaving lock profiling enabled
+11-17 17:23:57.150 19328 19356 W ReactNativeJNI: Component property map contains multiple entries for 'borderColor'. Ensure all calls to convertRawProp use a consistent prefix, name and suffix.
+11-17 17:23:57.150 19328 19356 W ReactNativeJNI: Component property map contains multiple entries for 'borderStyle'. Ensure all calls to convertRawProp use a consistent prefix, name and suffix.
+11-17 17:23:57.263 19328 19358 I ReactNativeJS: Running "main"
+11-17 17:24:22.165 19554 19554 I AndroidRuntime: Using default boot image
+11-17 17:24:22.165 19554 19554 I AndroidRuntime: Leaving lock profiling enabled

@@ -563,13 +563,13 @@ These are product gaps, not regressions. Details and evidence are in
 [`AUDIT.md`](./AUDIT.md), [`READINESS.md`](./READINESS.md), and
 [`product/current-state-and-parity.md`](./product/current-state-and-parity.md).
 
-- **Android render verification exists (M1, 2026-11-17)**, with limits. The debug APK was
-  installed, launched, and inspected on a Vivo V2336: the uiautomator dump shows the
-  learn screen rendered (evidence: `docs/qa/mobile/learn-screen-ui-dump.xml`,
-  `docs/NEXT.md`; no screenshot exists — all captures were corrupt and are rejected, see
-  `docs/qa/rejected-captures/`). The release APK
-  builds cleanly but its on-device render is not verified yet — the phone is
-  disconnected (`docs/qa/mobile/release-build.md`). Full functional device QA (sign-up,
+- **Android render verification exists (M1, 2026-11-17)**. The debug APK was
+  installed, launched, and inspected on a Vivo V2336 (render evidence:
+  `docs/qa/mobile/learn-screen-ui-dump.xml`, `docs/NEXT.md`; debug-era captures were
+  corrupt and are rejected, see `docs/qa/rejected-captures/`). The **release** APK was
+  also verified on device: it cold-starts and renders the Bengali course path
+  (screenshot, UI dump and logcat in `docs/qa/mobile/`; on-device APK hash matches the
+  build). Full functional device QA (sign-up,
   lesson completion, sync, shop, habits, sign-out) has not been performed on hardware.
 - **No native-speaker review.** All 305 exercises remain `reviewStatus: "draft"`. The
   review package is exported and ready; playable does not mean correct.
@@ -604,15 +604,13 @@ These are product gaps, not regressions. Details and evidence are in
   passing session). All four screencap PNGs from 2026-11-17 were transcoded to UTF-16LE
   by PowerShell redirection and are corrupt; they are rejected and live in
   `docs/qa/rejected-captures/` — no screenshot evidence exists (see its README).
-- **Release render: built, not yet verified on device.** `assembleRelease` succeeds
-  without any environment export after the Metro workspace-root fix in
-  `apps/mobile/metro.config.js` (`BUILD SUCCESSFUL in 2m 51s`; `app-release.apk`,
-  21,993,757 bytes, SHA-256
-  `150DE370B66B31C09B669B6A19378D458560A19A266D05D53C14CA200F5B9B2A`). Install/launch
-  is blocked: the Vivo V2336 is disconnected (no ADB enumeration, no wireless-debugging
-  service, no USB PNP interface). No release-screen screenshot or logcat is claimed —
-  see `docs/qa/mobile/release-build.md`. A clean-clone `pnpm install --frozen-lockfile`
-  of `next/M1` passes (lockfile complete).
+- **Release render: verified on device (2026-11-17).** Release APK installed, cold-start
+  renders the Bengali course path (lesson nodes, "0/2 lessons done"), on-device APK hash
+  matches the local file (`36A5D41D…`), logcat shows no fatal/hermes errors for the app,
+  screenshot signature `89 50 4E 47` (1080×2400) — see `docs/qa/mobile/release-build.md`.
+  The render path needed a loopback-only cleartext network config (local-only,
+  `android/` is gitignored) and an uninstall of the debug build (signature mismatch;
+  wiped device-local guest progress). **Functional device QA is still pending — M2.**
 - **Fixes:** Metro `resolver.unstable_conditionNames = ['require']` (Hermes
   `_interopRequireDefault is not a function`); Metro workspace root pinned to the app in
   `metro.config.js` (`release/bundle` no longer depends on
@@ -625,9 +623,8 @@ These are product gaps, not regressions. Details and evidence are in
   `apps/mobile/__tests__/root-layout.test.tsx` (passing). It only proves the layout
   module executes under Jest — it does not demonstrate a device render; the device
   evidence is `docs/qa/mobile/learn-screen-ui-dump.xml`.
-- **Not verified on device:** the release APK render (blocked — phone disconnected),
-  sign-up/sign-in, completing a lesson, cross-device progress sync, shop, habits,
-  sign-out. M2 tracks this.
+- **Not verified on device (M2):** sign-up/sign-in, completing a lesson,
+  cross-device progress sync, shop, habits, sign-out. M2 tracks this.
   See `docs/NEXT.md` for commands and raw output.
 - **Commit map (fix → commit):**
   - Metro `unstable_conditionNames = ['require']` → `2d22c69`
