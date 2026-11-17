@@ -11,6 +11,12 @@ const packagesDir = path.resolve(monorepoRoot, 'packages');
 
 const config = getDefaultConfig(projectRoot);
 
+// Force the resolver to prefer CommonJS helpers. The default
+// ['require', 'import'] causes `@babel/runtime/helpers/interopRequireDefault`
+// to resolve to the ESM variant, which exposes a default export object and
+// breaks Babel-generated CJS call sites at runtime.
+config.resolver.unstable_conditionNames = ['require'];
+
 // The pnpm store lives under the monorepo root and packages are hoisted
 // there. Only watch the folders Metro actually needs to resolve: the
 // monorepo node_modules plus the workspace packages.

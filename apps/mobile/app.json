@@ -16,6 +16,10 @@
       "expo-router",
       "expo-asset"
     ],
+    "extra": {
+      "apiUrl": "http://localhost:3001",
+      "webOrigin": "http://localhost:3000"
+    },
     "experiments": {
       "typedRoutes": true
     },
