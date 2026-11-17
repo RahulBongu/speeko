@@ -23,12 +23,12 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P9 - Mobile parity | Account + sync, path, lesson, practice, quests, motion layer | **Done** - `phase/9-mobile-parity` |
 | P10 - Stories + conversation | Honest unavailable/coming-soon states, optional AI endpoint | **Done** - `phase/10-stories-conversation` |
 | P11 - Hardening | Accessibility, reduced motion, offline/error states | **Done** - `phase/11-hardening` |
-| P12 - Mobile parity hardening + Stitch design | Jest harness fix, shared mobile exercise layer, server/local save split, shop cosmetics validation, Stitch tactile design pass | **Done (unreleased)** - not committed; HEAD remains `de57065` |
-| P13 - Security boundary + curriculum audit | Public profiles event-derived, verified-vs-device account display, API-boundary E2E, 10 defective exercises removed, validator upgrade, Android QA package, hosting/LICENSE packages, review package export | **Done (unreleased)** - not committed; HEAD remains `de57065` |
-| P14 - Curriculum self-audit (deterministic) | `scripts/audit-content.mjs` deterministic audit → `review/audit-ledger.json`; hi pilot (20 items) documented; validator strengthened; **zero source corrections, zero native approvals** | **Done (unreleased)** - not committed; HEAD remains `de57065` |
-| P15 - AI linguistic review | `scripts/ai-review-content.mjs` — all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done (unreleased)** - not committed; HEAD remains `de57065` |
-| P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done (unreleased)** - not committed; HEAD remains `de57065` |
-| P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done (unreleased)** - not committed; HEAD remains `de57065` |
+| P12 - Mobile parity hardening + Stitch design | Jest harness fix, shared mobile exercise layer, server/local save split, shop cosmetics validation, Stitch tactile design pass | **Done (unreleased)** — `2d22c69`, branch `next/M1` |
+| P13 - Security boundary + curriculum audit | Public profiles event-derived, verified-vs-device account display, API-boundary E2E, 10 defective exercises removed, validator upgrade, Android QA package, hosting/LICENSE packages, review package export | **Done (unreleased)** — `07b01cd` (API/web boundary) + `05d2adb` (review package) + `53ab85e` (Android QA + decision docs), branch `next/M1` |
+| P14 - Curriculum self-audit (deterministic) | `scripts/audit-content.mjs` deterministic audit → `review/audit-ledger.json`; hi pilot (20 items) documented; validator strengthened; **zero source corrections, zero native approvals** | **Done (unreleased)** — `05d2adb`, branch `next/M1` |
+| P15 - AI linguistic review | `scripts/ai-review-content.mjs` — all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done (unreleased)** — `05d2adb`, branch `next/M1` |
+| P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done (unreleased)** — `07b01cd` (core/API/web) + `2d22c69` (mobile) + `53ab85e` (parity matrix, release-ops doc), branch `next/M1` |
+| P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done (unreleased)** — `07b01cd`, branch `next/M1` |
 
 ## What P12 changed
 
@@ -152,7 +152,7 @@ Run from the repo root on 2026-11-16:
 | `pnpm verify` | typecheck → test → build → e2e, all green |
 | `node scripts/export-review.mjs` | 305 items across 10 locales; 0 marked reviewed |
 
-No Android device verification exists; no native-speaker review exists.
+No native-speaker review exists. (No Android device verification existed at the time of this 2026-11-16 snapshot; superseded 2026-11-17 by M1 — see "M1 — Android render verification" below.)
 
 
 
@@ -166,8 +166,9 @@ Run from the repo root on 2026-11-16:
 | `pnpm e2e` | 102 Playwright checks pass; zero console/page errors |
 | `pnpm verify` | typecheck → test → build → e2e, all green |
 
-Visual evidence for the web remains in `docs/qa/`; this cycle produced **no** mobile
-device or emulator screenshots. The release APK has not been relaunched.
+Visual evidence for the web remains in `docs/qa/`; this 2026-11-16 cycle produced no mobile
+device or emulator screenshots. (Superseded 2026-11-17 by M1 — see "M1 — Android render
+verification" below.)
 
 ## What P14 changed
 
@@ -561,8 +562,10 @@ Run from the repo root on 2026-11-17:
 | `pnpm verify` | typecheck → test → build → e2e, all green |
 
 Migration 0005: fresh-database apply and populated pre-0005 backfill both
-verified; no historical events or gem balances were modified. No Android device
-verification and no native-speaker review exist.
+verified; no historical events or gem balances were modified. No native-speaker review
+exists. (No Android device verification existed at the time of this 2026-11-17 P17
+snapshot; superseded later the same day by M1 — see "M1 — Android render verification"
+below.)
 
 ## Phase I — Reward ledger temporal integrity audit
 
@@ -576,10 +579,12 @@ These are product gaps, not regressions. Details and evidence are in
 [`AUDIT.md`](./AUDIT.md), [`READINESS.md`](./READINESS.md), and
 [`product/current-state-and-parity.md`](./product/current-state-and-parity.md).
 
-- **No Android device or emulator verification.** The app passes Jest, typecheck, and
-  the web export build, but nothing has been installed, launched, or inspected on
-  hardware this cycle. Hermes/Reanimated paths and the release APK are unverified;
-  the SDK exists but has no attached device, AVD, system image, JDK, or WHPX.
+- **Android render verification exists (M1, 2026-11-17)**, with limits. The debug APK was
+  installed, launched, and inspected on a Vivo V2336: it rendered the learn screen
+  (evidence: `docs/qa/mobile-first-screen-success.png`, `docs/NEXT.md`). The release APK
+  builds cleanly but its on-device render is not verified yet — the phone is
+  disconnected (`docs/qa/mobile/release-build.md`). Full functional device QA (sign-up,
+  lesson completion, sync, shop, habits, sign-out) has not been performed on hardware.
 - **No native-speaker review.** All 305 exercises remain `reviewStatus: "draft"`. The
   review package is exported and ready; playable does not mean correct.
 - **`PUT /api/progress` remains a non-authoritative guest-import layer.** Leagues,
@@ -594,8 +599,41 @@ These are product gaps, not regressions. Details and evidence are in
   `typeWhatYouHear` are unsupported and fail safely on mobile.
 - **Stories and conversation** ship as honest unavailable/coming-soon states on web;
   they are not on mobile.
-- **Mobile has no onboarding flow and no E2E/shot evidence**; the welcome screen hands
+- **Mobile has no onboarding flow**; shot evidence exists from M1 on-device runs
+  (`docs/qa/mobile-first-screen-success.png` and the M1 section below), and full
+  on-device functional QA has not been performed. The welcome screen hands
   off directly to `/learn`.
+
+## M1 — Android render verification (2026-11-17)
+
+- **Branch:** `next/M1`, based on `de57065`. P12–P17 are committed on this branch
+  (`07b01cd`, `2d22c69`, `05d2adb`, `53ab85e`).
+- **Device:** Vivo V2336 (`10BE2A1B5Q00054`), Android 16.
+- **Debug render: PASS.** `./gradlew assembleDebug` built; `adb install -r`; the app
+  launched against Metro (port 8081, `EXPO_NO_METRO_WORKSPACE_ROOT=1` in
+  `apps/mobile/android/gradle.properties`) and rendered the learn screen —
+  `speeko`, `Ten Indian languages · draft review`, `Learn`, `Bengali`,
+  `8 lessons · 23 exercises · A1`, `0 of 8 lessons complete`, `All courses`.
+  Evidence: `docs/qa/mobile-first-screen-success.png` (passing run),
+  `docs/qa/mobile-first-screen-after-fix.png` (first attempt after the Metro fix),
+  `docs/qa/mobile-first-screen-error.png` (pre-fix Hermes failure).
+- **Release render: built, not yet verified on device.** `assembleRelease` succeeded
+  (`BUILD SUCCESSFUL in 10m 14s`; `app-release.apk`, 21,993,757 bytes, SHA-256
+  `150DE370B66B31C09B669B6A19378D458560A19A266D05D53C14CA200F5B9B2A`) after exporting
+  `EXPO_NO_METRO_WORKSPACE_ROOT=1` for the Metro subprocess. Install/launch is blocked:
+  the Vivo V2336 is disconnected (no ADB enumeration, no wireless-debugging service, no
+  USB PNP interface). No release-screen screenshot or logcat is claimed — see
+  `docs/qa/mobile/release-build.md`.
+- **Fixes:** Metro `resolver.unstable_conditionNames = ['require']` (Hermes
+  `_interopRequireDefault is not a function`), explicit `expo-linking` dependency
+  (native module was not autolinked), API `CONTENT_DIR` repointed to repo-root
+  `content/dist` (`/api/courses` was 500).
+- **Regression coverage:** root-layout Jest render test in
+  `apps/mobile/__tests__/root-layout.test.tsx` (passing).
+- **Not verified on device:** the release APK render (blocked — phone disconnected),
+  sign-up/sign-in, completing a lesson, cross-device progress sync, shop, habits,
+  sign-out. M2 tracks this.
+  See `docs/NEXT.md` for commands and raw output.
 
 ## Re-running the safety net
 

@@ -1,10 +1,10 @@
 # Speeko — Release Readiness
 
 **Date:** 2026-11-16, updated 2026-11-17
-**Basis:** the working tree on top of `de57065` (unreleased, uncommitted). Every
-command below was run in this cycle and its real output captured. No external
-system (Android device, native reviewer, hosting provider, license grant) has
-been accessed; those dependencies are marked as such.
+**Basis:** `next/M1`, based on `de57065` (unreleased, committed, not merged). Every
+command below was run in this cycle and its real output captured. The Android device was
+accessed during M1 (2026-11-17, debug render); no native reviewer, hosting provider, or
+license grant has been accessed — those dependencies are marked as such.
 
 ## Verdict
 
@@ -27,7 +27,7 @@ possible with the constraints below.
 | Product completeness | **Pass for alpha; unfinished for launch** | mixed |
 | Testing & build | **Pass** on CI-grade checks | engineering (this tree) |
 | Curriculum authenticity | **Blocked** — tooling ready, review not started | native speaker × 10 locales |
-| Android device QA | **Blocked** — SDK present, cannot run | owner + device |
+| Android device QA | **Partial** — debug render verified on a Vivo V2336 (2026-11-17); release APK built; on-device release render + functional QA blocked (phone disconnected) | owner + device |
 | Hosting & operations | **Recommended, awaiting owner** | owner |
 | License & rights | **Blocked** — decision package ready | owner |
 
@@ -88,8 +88,8 @@ lessons/quests/purchases, Hindi audio.
 | Typecheck | **Pass** | 6/6 turbo tasks |
 | Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 16 static routes) |
 | Lint | **Pass** (0 errors) | web: 1 documented `<img>` warning; mobile: clean |
-| Android device QA | **Blocked** | see `docs/qa/android-device-qa.md` — SDK present, devices/images/JDK/WHPX unavailable; the existing APK is stale; no device claims are made |
-| Mobile E2E / screenshots | **Missing** | no emulator-attached suite; `docs/qa/` images are web-only |
+| Android device QA | **Partial** | M1 (2026-11-17): the debug APK rendered the learn screen on a Vivo V2336 (`docs/qa/mobile-first-screen-success.png`; `docs/NEXT.md`); the release APK was rebuilt (SHA-256 `150DE370…`, `docs/qa/mobile/release-build.md`) but its on-device render and the functional checklist in `docs/qa/android-device-qa.md` remain unverified |
+| Mobile E2E / screenshots | **Missing** (manual shots exist) | no emulator-attached suite; on-device debug screenshots exist (`docs/qa/mobile-first-screen-success.png`); no release-APK screenshot or logcat exists; web images in `docs/qa/` |
 
 ## 4. Curriculum
 
@@ -130,7 +130,7 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 ## Blockers for a public release
 
 1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
-2. **Android device QA** on a **freshly rebuilt** release APK (blocked; checklist in `docs/qa/android-device-qa.md`; the existing APK predates this tree).
+2. **Android device QA**: the release APK was rebuilt on 2026-11-17 (SHA-256 `150DE370…`) but the install/screen/logcat pass and the functional checklist (`docs/qa/android-device-qa.md`) are blocked until the Vivo V2336 is reconnected.
 3. **Hosting/database choice** (owner; option A/B/C in the hosting package).
 4. **LICENSE file** with OFL font attribution and `content/README.md` right-reserved note (owner; see license package).
 5. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
