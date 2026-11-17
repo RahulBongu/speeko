@@ -1,9 +1,10 @@
 # Speeko — Release Readiness
 
-**Date:** 2026-11-16, updated 2026-11-17
-**Basis:** `next/M1`, based on `de57065` (unreleased, committed, not merged). Every
-command below was run in this cycle and its real output captured. The Android device was
-accessed during M1 (2026-11-17, debug render); no native reviewer, hosting provider, or
+**Date:** 2026-11-16, updated 2026-11-18
+**Basis:** `main` `e5a06c2` (merge of PR #4) plus the one-commit follow-up `d5d6a74` on
+`next/M2` (league profile-lookup fix). Every command below was run in this cycle and its
+real output captured. The Android device was
+accessed during M1 (2026-11-17, debug and release render); no native reviewer, hosting provider, or
 license grant has been accessed — those dependencies are marked as such.
 
 ## Verdict
@@ -14,10 +15,13 @@ risks found — client-controlled progress corruption of rewards/profiles and
 scripted replay farming of completion XP/gems — are closed and verified at the
 database level.
 
-Speeko is **not** release-ready for the public. Blocking external requirements:
-a native-speaker review for every course, on-device Android verification, a
-hosting/database decision, and a license. A controlled internal trial is
-possible with the constraints below.
+Speeko is **not** release-ready for the public. No automated engineering work
+remains for the internal alpha, and `next/M2` is one green commit ahead of
+`main` awaiting an owner merge. Blocking external requirements: a
+native-speaker review for every course, a hosting/database decision, a license,
+and store accounts. On-device functional QA is waived for the internal alpha by
+owner instruction (D78); headless web/API verification is the accepted
+evidence. A controlled internal trial is possible with the constraints below.
 
 ## Gate summary
 
@@ -27,7 +31,7 @@ possible with the constraints below.
 | Product completeness | **Pass for alpha; unfinished for launch** | mixed |
 | Testing & build | **Pass** on CI-grade checks | engineering (this tree) |
 | Curriculum authenticity | **Blocked** — tooling ready, review not started | native speaker × 10 locales |
-| Android device QA | **Pass (render)** — functional QA pending | release APK verified on a Vivo V2336 (2026-11-17); full M2 checklist open | owner + device |
+| Android device QA | **Pass (render)**; functional QA waived — release APK verified on a Vivo V2336 (2026-11-17), functional device QA waived by owner (D78) | engineering + owner |
 | Hosting & operations | **Recommended, awaiting owner** | owner |
 | License & rights | **Blocked** — decision package ready | owner |
 
@@ -47,14 +51,15 @@ possible with the constraints below.
 
 **Remaining security limitations:** the progress snapshot still stores
 guest/offline XP client-side and the merge keeps the max value — by design
-(D12); it never reaches a reward path. The public web serve does not set
-long-lived caching for dynamic bookmarks; cache headers default to Next's
-behaviour. No rate-limiting beyond Fastify defaults; add before public
-launch to `/api/auth/*` only — **owner decision**, do not deploy blindly.
-Separately, the replay economy is now closed: a completed lesson pays its
-completion XP and one gem only once per learner/course/lesson, and later
-attempts are practice-only while still recording grading/SRS history. The
-migration backfilled existing lifetime XP without retroactive gems. Public
+(D12); it never reaches a reward path. Rate limiting and cache policy now ship:
+`/api/auth/*` is capped at 60 requests/min per IP, `PUT /api/progress` at
+30/min per account+IP, both returning `429` with `Retry-After`, and every
+`/api/*` response sets `Cache-Control: no-store`. The limiter is in-memory
+and per process, so a multi-instance deployment needs a shared store (owner
+hosting decision). Separately, the replay economy is closed: a completed lesson
+pays its completion XP and one gem only once per learner/course/lesson, and
+later attempts are practice-only while still recording grading/SRS history.
+The migration backfilled existing lifetime XP without retroactive gems. Public
 leagues and the gem economy can therefore rely on the reward ledger; only the
 owner's launch gates remain.
 
@@ -62,8 +67,8 @@ owner's launch gates remain.
 
 | Requirement | Status | Evidence |
 | --- | --- | --- |
-| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 130 checks total incl. integrity suites); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
-| Advertised exercise types behave correctly | **Pass for the curriculum; fail-closed for extras** | The curriculum uses 4 kinds: `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10. Web supports all ten kinds. Mobile supports `chooseMeaning`, `fillBlank`, `typeTranslation`, `matchPairs`, and `listenChoose` **only with audio**; the other kinds block honestly and cannot complete a lesson (Jest-covered). No curriculum item is an unimplemented-kind. |
+| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 148 checks total incl. integrity suites); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
+| Advertised exercise types behave correctly | **Pass; unsupported kinds fail closed** | The curriculum uses 4 kinds: `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10. Web supports all ten published kinds. Mobile supports 9 (`chooseMeaning`, `listenChoose` with audio, `fillBlank`, `typeTranslation`, `matchPairs`, `wordBank`, `arrangeSentence`, `typeWhatYouHear`, `speak`); `chooseImage` blocks honestly and cannot complete a lesson. No curriculum item is an unimplemented-kind. |
 | Missing-audio safeguard | **Pass** | `eligibleExercises()` in `@speeko/core` excludes empty-audio `listenChoose` from lesson queues, review/practice plans, the SRS index, and the API grading path. The 10 items keep their IDs/content and are blocked in the audit ledger. Core + mobile tests cover skip and playable-audio branches. |
 | Progress restores and synchronizes | **Pass** | Web guest→account merge (D12), mobile local/cloud merge (`lib/sync.ts`), migration from v1 snapshot, corrupt-JSON tolerance. |
 | Shop, practice, habits work | **Pass** | Purchase/equip/rollback/un-equip e2e; practice-only SRS due review; habits track verified events; goals persist. |
@@ -71,10 +76,9 @@ owner's launch gates remain.
 | Guidebook pre-lesson review (curriculum) | **Pass** | Shared `@speeko/core#guidebookItems`; web + mobile unit guidebooks render from it; +6 core tests. |
 | Accounts, leagues, people | **Pass** | Verified against real accounts; leagues show honest early-community state under 10 learners; profiles now show verified XP/streak/lessons. |
 
-**Does not exist yet (unchanged):** mobile onboarding flow, mobile wordBank /
-arrangeSentence / speak / typeWhatYouHear, stories and conversation on mobile,
-server-side review history sync for learner reviews, gems from anywhere but
-lessons/quests/purchases, Hindi audio.
+**Does not exist yet (unchanged):** mobile `chooseImage` rendering, stories
+and conversation on mobile, server-side review history sync for learner reviews,
+gem sources beyond lessons/quests/purchases, and any licensed audio.
 
 ## 3. Testing
 
@@ -82,14 +86,14 @@ lessons/quests/purchases, Hindi audio.
 | --- | --- | --- |
 | Unit (core) | **Pass** | `pnpm --filter @speeko/core test` — **108 passed** (includes 4 eligibility tests, the empty-lesson guard, practice-plan coverage, and the practice-vs-quest habit split) |
 | Unit (content) | **Pass** | `pnpm --filter @speeko/content test` — **16 passed** (all 305 exercises graded, validation/test suites incl. answerIndex bounds) |
-| Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` — **56 passed across 13 suites** (includes missing-audio skip and playable-audio branch) |
-| API integration | **Pass** | `progress-integrity.spec.ts` — 7 scenarios and `reward-integrity.spec.ts` — 7 scenarios against the real API+DB (14 checks each across both viewports); plus reward, habits, shop, social suites |
-| Browser E2E | **Pass** | `pnpm e2e` — **130 checks** at 1280×800 and 390×844, zero console/page errors |
+| Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` — **77 passed across 15 suites** (includes missing-audio skip, playable-audio branch, and the added exercise kinds) |
+| API integration | **Pass** | `progress-integrity.spec.ts` — 7 scenarios and `reward-integrity.spec.ts` — 7 scenarios against the real API+DB (14 checks each across both viewports); plus reward, habits, shop, social, and the isolated rate-limit contract (`rate-limit.spec.ts`) |
+| Browser E2E | **Pass** | `pnpm e2e` — **148 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run |
 | Typecheck | **Pass** | 6/6 turbo tasks |
-| Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 16 static routes) |
+| Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 22 static routes) |
 | Lint | **Pass** (0 errors) | web: 1 documented `<img>` warning; mobile: clean |
-| Android device QA | **Pass (render)** — full functional QA pending | M1 (2026-11-17): release APK installed on Vivo V2336; cold start renders the Bengali course path; APK hash matches local build (`36A5D41D…`); screenshot/UI dump/logcat in `docs/qa/mobile/`; `docs/NEXT.md`. Functional checklist in `docs/qa/android-device-qa.md` still open (M2) |
-| Mobile E2E / screenshots | **Missing** | no emulator-attached suite; release-render evidence now valid (`docs/qa/mobile/release-first-screen.png`, 1080×2400, PNG signature verified; `release-ui-dump.xml`); web images in `docs/qa/` |
+| Android device QA | **Pass (render)**; functional QA waived | M1 (2026-11-17): release APK installed on Vivo V2336; cold start renders the Bengali course path; APK hash matches local build (`36A5D41D…`); screenshot/UI dump/logcat in `docs/qa/mobile/`. Functional device QA is waived by owner instruction (D78) |
+| Mobile E2E / screenshots | **Headless only** | No emulator-attached suite. Playwright runs the web export + compiled API at both viewports; the native app is not instrumented. Release-render evidence (`docs/qa/mobile/release-first-screen.png`, 1080×2400, PNG signature verified; `release-ui-dump.xml`) is the device record |
 
 ## 4. Curriculum
 
@@ -122,15 +126,22 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 | Hosting/database decision documented | **Pass** — awaiting owner authorization | `docs/decisions/2026-11-16-hosting-and-database.md` — 3 options, costs, regions, backups, rollback; recommended: Neon + Render/Fly + Vercel for alpha, single Singapore VPS for public |
 | Release operations checklist | **Pass** — prepared, nothing executed | `docs/decisions/2026-11-16-release-and-operations.md` — GO/NO-GO gates, env/secret handling, migrations, backup+restore drill, rollback, rate limits, logging, post-deploy smoke tests |
 | Environment configuration | **Pass** | `.env.example` for API+web documents all vars; production requires `BETTER_AUTH_SECRET`; mobile endpoints via `app.json extra` (D63); pglite is dev-only |
+| Rate limiting, cache, secrets gate | **Pass** | In-memory fixed-window limiter (`apps/api/src/rate-limit.ts`): 60/min per IP for `/api/auth/*`, 30/min per account+IP for `PUT /api/progress`, `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; `scripts/check-secrets.mjs` wired into `pnpm verify`; production boot requires a ≥32-char `BETTER_AUTH_SECRET`. Contract tested against an isolated API with the limiter on (`tests/e2e/rate-limit.spec.ts`). |
 | Backup and recovery | **Requirement on file** | nightly `pg_dump` or provider PITR; a tested restore is a pre-launch gate in the operations checklist and hosting package |
 | Migrations | **Pass** | applied on API start; append-only table strategy keeps forwards-only restores possible; migration target is Postgres |
 | Secrets handling | **Pass** | none in repo (`.gitignore` enforced; `apps/api/.env.example` documents placeholders only) |
 | License & content rights | **Blocked** — decision package ready | `docs/decisions/2026-11-16-license.md` — options (Apache-2.0 code / CC-BY-NC content recommended), font OFL attribution noted, brand reserved; **nothing published** |
 
+## Merge state
+
+`next/M2` (`d5d6a74`) is one green commit ahead of `main`; the league
+performance fix awaits an owner PR/merge. This is not a release blocker, but
+`main` does not contain it yet. Version remains `0.0.1`; nothing is published.
+
 ## Blockers for a public release
 
 1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
-2. **Android device QA (render)**: done 2026-11-17 — release APK cold-start verified on the Vivo V2336 (`36A5D41D…`); the **functional** checklist (`docs/qa/android-device-qa.md`) remains open (M2).
+2. **Android device QA**: the release-APK render pass is done (2026-11-17, Vivo V2336, `36A5D41D…`). Functional device QA is **waived for the internal alpha** by owner instruction (D78); headless Playwright covers the functional flows. A public launch still needs a real-device pass by the owner.
 3. **Hosting/database choice** (owner; option A/B/C in the hosting package).
 4. **LICENSE file** with OFL font attribution and `content/README.md` right-reserved note (owner; see license package).
 5. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
@@ -139,7 +150,7 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 
 A controlled internal trial may run against the current build: it is
 fail-closed, honest about content draft status, cannot pay out into fake
-rewards, keeps guests' offline work, and never claims device verification.
+rewards, keeps guests' offline work, and never claims functional device verification.
 Constraint: no external users, no store submission, no public domain yet,
 and the trialers understand lessons are unreviewed draft. This is an
 **AI-assisted-review-only** internal alpha: the owner accepts that risk
@@ -148,13 +159,13 @@ readiness.
 
 ## How the evidence was produced
 
-Re-run everything: `pnpm verify` (typecheck + test + build + e2e),
+Re-run everything: `pnpm verify` (typecheck + test + build + secrets + e2e),
 `pnpm --filter @speeko/content build:courses` for the dist bundle,
 `pnpm sync:content` for the web bundle, `pnpm --filter @speeko/content test`
 for the content validator, `pnpm --filter @speeko/mobile build` for the
-16 static routes, `node scripts/export-review.mjs` for the review package, and
+22 static routes, `node scripts/export-review.mjs` for the review package, and
 `npx playwright test tests/e2e/progress-integrity.spec.ts` for the boundary
 suite against the production-built API and database.
 
 Historical counts (from the P12 cycle) are no longer the record; this document
-reflects the current tree.
+reflects `d5d6a74` as run on 2026-11-18. Earlier snapshots remain in `docs/PROGRESS.md`.

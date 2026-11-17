@@ -33,9 +33,10 @@ launch (already implemented in `eligibleExercises()`). The owner picks.
 the 305 draft items for publication (internal AI review is not sign-off).
 *Until then: content is draft everywhere; no "reviewed" badge claims.*
 
-**GATE D — Device.** Native Android launch verification of an APK **freshly
-rebuilt from this tree**. Blocking items: no JDK on PATH, no AVD, no
-system-images, WHPX disabled; the existing `dist/speeko-release.apk` is stale.
+**GATE D — Device.** The release APK render pass is done (2026-11-17, Vivo
+V2336). Functional device QA is waived for the internal alpha by owner
+instruction (D78); a public launch still needs an owner-run functional pass on
+an APK freshly rebuilt from the release tree.
 
 **GATE B — Backups.** A tested restore of a `pg_dump`/PITR into a fresh
 Postgres must complete before any real user writes data.
@@ -48,9 +49,9 @@ only PII. Ensure rate limiting on auth and any logging that reveals them.
 ## Release checklist (owner or owner-designated operator walks through it)
 
 ### 1. Source and build verification
-- [ ] `pnpm verify` green (typecheck 6/6, 108 core + 16 content + 56 mobile tests, build 5/5, e2e 130/130).
+- [ ] `pnpm verify` green (typecheck 6/6, 201 unit tests — 108 core + 16 content + 77 mobile, build 5/5, secrets 0 hits, e2e 148/148).
 - [ ] `pnpm lint` clean (0 errors; one documented web `<img>` warning).
-- [ ] `pnpm --filter @speeko/mobile build` exports 16 static routes.
+- [ ] `pnpm --filter @speeko/mobile build` exports 22 static routes.
 - [ ] dist bundle and `apps/web/public/courses` regenerated from tracked sources
       (`pnpm sync:content`) so no stale content artifacts ship.
 - [ ] `docs/qa/*.png` refreshed and inspected.
@@ -76,11 +77,15 @@ only PII. Ensure rate limiting on auth and any logging that reveals them.
       nowhere print request bodies, only statuses).
 - [ ] `Content-Security-Policy`/`Permissions-Policy` headers unchanged.
 
-### 4. Rate limiting and abuse guards (owner's call; none are implemented today)
-- [ ] Add at least one of: `@fastify/rate-limit` on `/api/auth/*` +
-      `/api/shop/purchase`; or an outer proxy (Cloudflare) with per-IP
-      throttling. 10 req/min on login, 30/min on purchase is plenty.
-- [ ] Confirm `/api/lesson-completions` auth guard still rejects unauthenticated
+### 4. Rate limiting and abuse guards (app-level guards implemented)
+- [x] App-level fixed-window limiter: 60 requests/min per IP on `/api/auth/*`;
+      30/min per account+IP on `PUT /api/progress`; `429` + `Retry-After`.
+      Contract verified by `tests/e2e/rate-limit.spec.ts` against an isolated API
+      with the limiter forced on.
+- [ ] Decide whether the alpha also needs an outer proxy/WAF (owner hosting
+      decision). The limiter is in-memory and per process; a multi-instance
+      deployment needs a shared store.
+- [x] Confirm `/api/lesson-completions` auth guard still rejects unauthenticated
       callers (`tests/e2e/progress-integrity.spec.ts` shows it does).
 - [x] **Replay-reward policy decided and implemented.** `POST
       /api/lesson-completions` earns completion XP and one lesson gem only on

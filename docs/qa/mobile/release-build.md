@@ -192,7 +192,7 @@ What happened, in order:
    React Native prop-map duplicate (RN internal), not an app defect; no action taken;
    track it if RN is upgraded.
 9. **Functional QA is NOT done** ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â sign-up/sign-in, completing a lesson, sync, shop,
-   habits, sign-out: all pending (M2). This run verified render only.
+   habits, sign-out: all unperformed; waived for the internal alpha (D78). This run verified render only.
 
 The earlier "unexecuted" list is superseded by this section. The APK hash above is the
 one built for device verification; the byte-reproducibility evidence below refers to
