@@ -24,5 +24,8 @@ coverage
 test-results/
 playwright-report/
 apps/web/out
+apps/api/.tmp-*.mjs
+kotlin-insight.txt
+package-lock.json
 
 *.tsbuildinfo
