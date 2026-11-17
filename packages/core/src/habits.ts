@@ -96,6 +96,12 @@ export interface HabitReportOptions {
   asOfDay: string;
   timeZone: string | null;
   dailyGoal?: number;
+  /**
+   * Optional first-completion history for quests. Activity, streaks, and the
+   * calendar still use the main history (practice keeps a streak alive), while
+   * quest progress only advances on lessons that granted a completion reward.
+   */
+  questHistory?: readonly HabitDay[];
   /** Totals from a legacy snapshot, used only when history cannot supply them. */
   lifetimeXp?: number;
   lifetimeLessons?: number;
@@ -473,6 +479,9 @@ export function buildHabitReport(
   if (!isDayKey(asOfDay)) throw new Error(`Invalid day key: ${asOfDay}`);
   const dailyGoal = Math.max(1, Math.floor(options.dailyGoal ?? DAILY_GOAL_DEFAULT));
   const days = normalizeHistory(history).filter((day) => day.day <= asOfDay);
+  const questDays = options.questHistory
+    ? normalizeHistory(options.questHistory).filter((day) => day.day <= asOfDay)
+    : days;
   const streak = computeStreak(days, asOfDay);
   const todayEntry = days.find((day) => day.day === asOfDay);
   const todayXp = todayEntry?.xp ?? 0;
@@ -495,7 +504,7 @@ export function buildHabitReport(
       goalRemaining: Math.max(0, dailyGoal - todayXp),
     },
     streak,
-    quests: computeQuests(days, asOfDay, dailyGoal),
+    quests: computeQuests(questDays, asOfDay, dailyGoal),
     calendar: buildCalendar(days, asOfDay, dailyGoal, streak.frozenDays),
     achievements,
     totals,

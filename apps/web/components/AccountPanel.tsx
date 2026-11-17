@@ -40,15 +40,27 @@ function milestoneForXp(xp: number): { current: Milestone; next: Milestone | nul
   return { current, next };
 }
 
+interface VerifiedStats {
+  xp: number;
+  streak: number;
+  lessons: number;
+  todayXp: number;
+  dailyGoal: number;
+}
+
 export function AccountPanel() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const progress = useProgress();
   const [gemBalance, setGemBalance] = useState<number | null>(null);
+  const [verified, setVerified] = useState<VerifiedStats | null>(null);
+  const [syncFailed, setSyncFailed] = useState(false);
 
   useEffect(() => {
     if (!session) {
       setGemBalance(null);
+      setVerified(null);
+      setSyncFailed(false);
       return;
     }
     let active = true;
@@ -58,6 +70,35 @@ export function AccountPanel() {
       })
       .catch(() => {
         if (active) setGemBalance(null);
+      });
+    fetch('/api/habits', { credentials: 'include' })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Habits failed with ${response.status}`);
+        return (await response.json()) as {
+          habits?: {
+            today?: { xp?: number };
+            streak?: { current?: number };
+            totals?: { xp?: number; lessons?: number };
+            dailyGoal?: number;
+          };
+        };
+      })
+      .then((data) => {
+        const habits = data.habits;
+        if (!habits) throw new Error('Habits response was empty.');
+        setVerified({
+          xp: habits.totals?.xp ?? 0,
+          streak: habits.streak?.current ?? 0,
+          lessons: habits.totals?.lessons ?? 0,
+          todayXp: habits.today?.xp ?? 0,
+          dailyGoal: habits.dailyGoal ?? DAILY_GOAL,
+        });
+        setSyncFailed(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setVerified(null);
+        setSyncFailed(true);
       });
     return () => {
       active = false;
@@ -92,10 +133,16 @@ export function AccountPanel() {
     );
   }
 
-  const completed = progress ? Object.keys(progress.completed).length : 0;
-  const todayXp = progress?.todayXp ?? 0;
-  const dailyGoal = progress?.dailyGoal ?? DAILY_GOAL;
-  const milestone = milestoneForXp(progress?.xp ?? 0);
+  // Signed-in learners see event-derived numbers. The local snapshot only
+  // stands in when the habits endpoint cannot be reached, and then it is
+  // labelled as this device, never as the cloud account.
+  const lifetime = verified ?? null;
+  const effectiveXp = verified?.xp ?? progress?.xp ?? 0;
+  const effectiveStreak = verified?.streak ?? progress?.streak ?? 0;
+  const completed = verified?.lessons ?? (progress ? Object.keys(progress.completed).length : 0);
+  const todayXp = lifetime?.todayXp ?? progress?.todayXp ?? 0;
+  const dailyGoal = lifetime?.dailyGoal ?? progress?.dailyGoal ?? DAILY_GOAL;
+  const milestone = milestoneForXp(effectiveXp);
 
   return (
     <div className="flex flex-col gap-5">
@@ -109,16 +156,20 @@ export function AccountPanel() {
             <p className="text-sm font-semibold text-bark-400">{session.user.email}</p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-xl bg-speeko-50 px-3 py-1.5 font-display text-xs font-extrabold uppercase tracking-wide text-speeko-700">
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 font-display text-xs font-extrabold uppercase tracking-wide ${
+            syncFailed ? 'bg-amber-50 text-amber-700' : 'bg-speeko-50 text-speeko-700'
+          }`}
+        >
           <CheckIcon className="h-4 w-4" />
-          Cloud sync on
+          {syncFailed ? 'Account sync unreachable' : verified ? 'Verified account' : 'Cloud sync on'}
         </span>
       </div>
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
         {[
-          <StatPill key="streak" icon={<FlameIcon className="h-4 w-4 animate-bob" />} value={<span className="inline-block animate-pop">{progress?.streak ?? 0}</span>} label="Day streak" tone="streak" />,
-          <StatPill key="xp" icon={<BoltIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:120ms]">{`${progress?.xp ?? 0} XP`}</span>} label="Total XP" tone="xp" />,
+          <StatPill key="streak" icon={<FlameIcon className="h-4 w-4 animate-bob" />} value={<span className="inline-block animate-pop">{effectiveStreak}</span>} label="Day streak" tone="streak" />,
+          <StatPill key="xp" icon={<BoltIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:120ms]">{`${effectiveXp} XP`}</span>} label="Total XP" tone="xp" />,
           <StatPill key="lessons" icon={<TrophyIcon className="h-4 w-4" />} value={<span className="inline-block animate-pop [animation-delay:240ms]">{completed}</span>} label="Lessons completed" />,
           <StatPill
             key="goal"
@@ -145,6 +196,13 @@ export function AccountPanel() {
         ))}
       </div>
 
+      {syncFailed ? (
+        <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800">
+          Your account could not be reached, so the numbers above come from this device, not the
+          cloud. Sign in again or retry later for verified totals.
+        </p>
+      ) : null}
+
       <div className="card flex flex-col gap-3 p-6">
         <div className="flex items-center justify-between gap-3">
           <h2 className="font-display text-lg font-extrabold text-bark-800">
@@ -157,11 +215,11 @@ export function AccountPanel() {
         </div>
         <p className="text-sm font-semibold text-bark-500">
           {milestone.next
-            ? `Earn ${milestone.next.xp - (progress?.xp ?? 0)} more XP to reach ${milestone.next.name}.`
+            ? `Earn ${milestone.next.xp - effectiveXp} more XP to reach ${milestone.next.name}.`
             : 'You have reached the summit. Diamond tier — enjoy the view.'}
         </p>
         <ProgressBar
-          value={milestone.next ? (progress?.xp ?? 0) / milestone.next.xp : 1}
+          value={milestone.next ? effectiveXp / milestone.next.xp : 1}
           className="h-3.5"
           barClassName="bg-gradient-to-r from-fox-400 to-fox-600"
           label="Milestone progress"

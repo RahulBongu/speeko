@@ -1,8 +1,19 @@
 import type { FastifyInstance } from 'fastify';
 import { and, eq, gte, ilike, or, sql } from 'drizzle-orm';
-import { dayKeyInTimeZone, weekStart } from '@speeko/core';
+import {
+  computeStreak,
+  dayKeyInTimeZone,
+  historyFromLessonEvents,
+  weekStart,
+} from '@speeko/core';
 import { getDb } from '../db/client.js';
-import { follows, lessonEvents, user, userProfiles, progressSnapshots } from '../db/schema.js';
+import {
+  follows,
+  lessonCompletionRewards,
+  lessonEvents,
+  user,
+  userProfiles,
+} from '../db/schema.js';
 import { readProgress } from '../progress-store.js';
 import { sessionFromHeaders } from './auth.js';
 
@@ -49,14 +60,16 @@ async function ensureProfile(db: ReturnType<typeof getDb>, userId: string) {
   throw new Error('Could not create a unique username.');
 }
 
+/**
+ * Public profile stats. Lifetime XP and lessons completed derive from the
+ * one-time completion-reward ledger, so replaying a lesson adds neither.
+ * Streak derives from append-only `lesson_events`, because practice keeps a
+ * streak alive even when it grants no new completion reward. Never from the
+ * client-editable progress snapshot — a forged snapshot cannot inflate what
+ * other learners see. The snapshot only contributes the learner's day
+ * boundaries.
+ */
 async function profileWithStats(db: ReturnType<typeof getDb>, profile: typeof userProfiles.$inferSelect) {
-  const progress = await readProgress(profile.userId);
-  const [counts] = await db
-    .select({
-      lessons: sql<number>`count(*)::int`,
-    })
-    .from(lessonEvents)
-    .where(eq(lessonEvents.userId, profile.userId));
   const [followers] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(follows)
@@ -65,15 +78,41 @@ async function profileWithStats(db: ReturnType<typeof getDb>, profile: typeof us
     .select({ count: sql<number>`count(*)::int` })
     .from(follows)
     .where(eq(follows.followerId, profile.userId));
+  const progress = await readProgress(profile.userId);
+  const [events, rewards] = await Promise.all([
+    db
+      .select({
+        attemptId: lessonEvents.attemptId,
+        createdAt: lessonEvents.createdAt,
+        xpEarned: lessonEvents.xpEarned,
+      })
+      .from(lessonEvents)
+      .where(eq(lessonEvents.userId, profile.userId)),
+    db
+      .select({ xp: lessonCompletionRewards.xp })
+      .from(lessonCompletionRewards)
+      .where(eq(lessonCompletionRewards.userId, profile.userId)),
+  ]);
+  const history = historyFromLessonEvents(
+    events.map((event) => ({
+      attemptId: event.attemptId,
+      createdAt: event.createdAt,
+      xp: event.xpEarned,
+    })),
+    progress.timeZone,
+  );
+  const today = dayKeyInTimeZone(new Date(), progress.timeZone);
+  const xp = rewards.reduce((total, reward) => total + reward.xp, 0);
+  const lessons = rewards.length;
 
   return {
     userId: profile.userId,
     username: profile.username,
     displayName: profile.displayName,
     bio: profile.bio,
-    xp: progress.xp,
-    streak: progress.streak,
-    lessons: Number(counts?.lessons ?? 0),
+    xp,
+    streak: computeStreak(history, today).current,
+    lessons,
     followers: Number(followers?.count ?? 0),
     following: Number(following?.count ?? 0),
   };
@@ -92,22 +131,23 @@ export async function socialRoutes(app: FastifyInstance) {
     const startDay = weekStart(today);
     const weekStartMs = Date.parse(`${startDay}T00:00:00+05:30`);
 
-    const events = await db
+    // Weekly standings use the same first-completion ledger as profiles.
+    // Practice replays are activity, not league progress, so they cannot pad
+    // the lesson count or re-earn weekly XP.
+    const rewards = await db
       .select({
-        userId: lessonEvents.userId,
-        xpEarned: lessonEvents.xpEarned,
-        createdAt: lessonEvents.createdAt,
+        userId: lessonCompletionRewards.userId,
+        xp: lessonCompletionRewards.xp,
       })
-      .from(lessonEvents)
-      .where(gte(lessonEvents.createdAt, new Date(weekStartMs)));
+      .from(lessonCompletionRewards)
+      .where(gte(lessonCompletionRewards.createdAt, new Date(weekStartMs)));
 
     const totals = new Map<string, { xp: number; lessons: number }>();
-    for (const event of events) {
-      if (event.createdAt.getTime() < weekStartMs) continue;
-      const current = totals.get(event.userId) ?? { xp: 0, lessons: 0 };
-      current.xp += event.xpEarned;
+    for (const reward of rewards) {
+      const current = totals.get(reward.userId) ?? { xp: 0, lessons: 0 };
+      current.xp += reward.xp;
       current.lessons += 1;
-      totals.set(event.userId, current);
+      totals.set(reward.userId, current);
     }
 
     // Ensure every active learner has a profile so usernames are followable.

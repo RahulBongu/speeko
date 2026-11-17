@@ -53,6 +53,10 @@ export function scoreLessonAttempt(
   answers: AttemptAnswer[],
   hearts = INITIAL_HEARTS,
 ): AttemptScoreResult {
+  if (lesson.exercises.length === 0) {
+    return { ok: false, reason: 'Lesson has no exercises' };
+  }
+
   const byExercise = new Map<string, AttemptAnswer>();
   for (const answer of answers) {
     if (byExercise.has(answer.exerciseId)) {

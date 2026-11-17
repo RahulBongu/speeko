@@ -8,6 +8,7 @@ import {
   buildUnitPracticePlan,
   createSession,
   currentExercise,
+  eligibleExercises,
   gradeExercise,
   INITIAL_HEARTS,
   reduceSession,
@@ -53,7 +54,7 @@ type SaveState =
   | { status: 'idle' }
   | { status: 'local' }
   | { status: 'saving' }
-  | { status: 'saved'; xp: number }
+  | { status: 'saved'; xp: number; rewarded: boolean }
   | { status: 'error'; message: string };
 
 function newAttemptId(): string {
@@ -210,7 +211,9 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             setPhase('error');
             return;
           }
-          const exercises = priorLessons.flatMap((lesson) => lesson.exercises).slice(0, 8);
+          const exercises = eligibleExercises(
+            priorLessons.flatMap((lesson) => lesson.exercises),
+          ).slice(0, 8);
           found = syntheticEntry({
             id: lessonId,
             title: `Checkpoint · Unit ${unitNumber}`,
@@ -222,7 +225,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
         } else if (lessonId === 'review') {
           const progress = loadProgress();
           const plan = buildReviewPlan(loaded, progress, Date.now());
-          if (plan.exercises.length === 0) {
+          const reviewExercises = eligibleExercises(plan.exercises);
+          if (reviewExercises.length === 0) {
             setError('Nothing is due for review yet. Come back after a few lessons.');
             setPhase('error');
             return;
@@ -231,7 +235,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             id: 'review',
             title: 'Review',
             description: 'Re-practice the skills you are about to forget.',
-            exercises: plan.exercises,
+            exercises: reviewExercises,
             order: 999,
             difficulty: loaded.difficulty,
           });
@@ -250,14 +254,15 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             id: lessonId,
             title: unit.title,
             description: `A quick mix from the ${unit.title} lessons you have finished.`,
-            exercises: plan.exercises,
+            exercises: eligibleExercises(plan.exercises),
             order: 900 + unitNumber,
             difficulty: loaded.difficulty,
           });
         } else if (lessonId === 'practice-trouble') {
           const progress = loadProgress();
           const plan = buildTroublePracticePlan(loaded, progress);
-          if (plan.exercises.length === 0) {
+          const troubleExercises = eligibleExercises(plan.exercises);
+          if (troubleExercises.length === 0) {
             setError('No trouble words yet. A word lands here after you miss it at least once.');
             setPhase('error');
             return;
@@ -266,7 +271,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             id: 'practice-trouble',
             title: 'Trouble words',
             description: 'The words you have missed before — another pass, no XP.',
-            exercises: plan.exercises,
+            exercises: troubleExercises,
             order: 998,
             difficulty: loaded.difficulty,
           });
@@ -278,7 +283,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           setPhase('error');
           return;
         }
-        const first = found.lesson.exercises[0];
+        const playable = eligibleExercises(found.lesson.exercises);
+        const first = playable[0];
         if (!first) {
           setError('This lesson has no exercises yet.');
           setPhase('error');
@@ -286,7 +292,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
         }
         setCourse(loaded);
         setEntry(found);
-        setSession(createSession(found.lesson.id, found.lesson.exercises, Date.now()));
+        setSession(createSession(found.lesson.id, playable, Date.now()));
         setDraft(initialDraft(first));
         shownAt.current = Date.now();
         setPhase('playing');
@@ -359,9 +365,10 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
 
   const restart = useCallback(() => {
     if (!entry) return;
-    const first = entry.lesson.exercises[0];
+    const restartable = eligibleExercises(entry.lesson.exercises);
+    const first = restartable[0];
     if (!first) return;
-    setSession(createSession(entry.lesson.id, entry.lesson.exercises, Date.now()));
+    setSession(createSession(entry.lesson.id, restartable, Date.now()));
     setDraft(initialDraft(first));
     setGrade(null);
     setAnsweredExercise(null);
@@ -398,7 +405,11 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
         });
         saveProgress(result.progress);
         setPostProgress(result.progress);
-        setSaveState({ status: 'saved', xp: result.event.xp });
+        setSaveState({
+          status: 'saved',
+          xp: result.completion.xp,
+          rewarded: result.completion.rewarded,
+        });
       } catch (cause) {
         const message =
           cause instanceof Error
@@ -795,8 +806,11 @@ function SummaryScreen({
   const accuracy = sessionAccuracy(session);
   const kind = practiceKind(entry.lesson.id);
   const isPractice = kind !== 'lesson';
-  const heading =
-    kind === 'review'
+  const practiceReplay =
+    !isPractice && saveState.status === 'saved' && !saveState.rewarded;
+  const heading = practiceReplay
+    ? 'Practice complete!'
+    : kind === 'review'
       ? 'Review complete!'
       : kind === 'checkpoint'
         ? 'Checkpoint complete!'
@@ -844,8 +858,16 @@ function SummaryScreen({
       <div className="mt-8 grid grid-cols-3 gap-2.5 sm:gap-3">
         <div className="animate-rise [animation-delay:120ms]">
           <StatCard
-            label={isPractice ? 'Exercises replayed' : 'XP earned'}
-            value={isPractice ? `${session.answers.length}` : `+${displayXp}`}
+            label={
+              isPractice ? 'Exercises replayed' : practiceReplay ? 'Practice only' : 'XP earned'
+            }
+            value={
+              isPractice
+                ? `${session.answers.length}`
+                : practiceReplay
+                  ? 'No new XP'
+                  : `+${displayXp}`
+            }
             icon={<TrophyIcon className="h-5 w-5" />}
             tone="xp"
           />
@@ -879,7 +901,9 @@ function SummaryScreen({
           role="status"
           className="mt-4 rounded-2xl border-2 border-speeko-200 bg-speeko-50 px-4 py-3 text-center text-sm font-extrabold text-speeko-700"
         >
-          Reward saved to your account.
+          {saveState.rewarded
+            ? 'Reward saved to your account.'
+            : 'Lesson saved — practice only, no new completion XP.'}
         </p>
       ) : null}
       {!isPractice && saveState.status === 'error' ? (

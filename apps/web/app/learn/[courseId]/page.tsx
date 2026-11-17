@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
-import type { Course } from '@speeko/core';
+import { eligibleExercises, type Course } from '@speeko/core';
 import { ProgressBar } from '@/components/ProgressBar';
 import { Fox } from '@/components/Fox';
 import { StatPill } from '@/components/AppHeader';
@@ -350,7 +350,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                               <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-bark-300">
                                 {status === 'completed'
                                   ? 'Completed'
-                                  : `${lesson.exercises.length} exercises`}
+                                  : `${eligibleExercises(lesson.exercises).length} exercises`}
                               </p>
                             )}
                           </div>

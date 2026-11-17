@@ -66,6 +66,14 @@ function makeCourse(): Course {
                 options: ['धन्यवाद', 'नमस्ते'],
                 answerIndex: 0,
               },
+              {
+                id: 'u1-l2-e3',
+                kind: 'listenChoose',
+                prompt: 'Listen and choose',
+                audioUrl: '',
+                options: ['सुप्रभात', 'धन्यवाद'],
+                answerIndex: 0,
+              },
             ],
           },
         ],
@@ -162,6 +170,23 @@ describe('practice planning', () => {
     ]);
     expect(buildUnitPracticePlan(course, progress, 2).exercises).toEqual([]);
     expect(buildUnitPracticePlan(course, progress, 99).matched).toBe(0);
+  });
+
+  it('excludes exercises that cannot be honestly presented (empty audio listenChoose)', () => {
+    const course = makeCourse();
+    const progress = completed(makeProgress(), 'hi-test', 'u1-l2');
+    const index = buildSkillExerciseIndex(course, progress);
+    expect(index.has('hi:सुप्रभात')).toBe(false);
+    expect([...index.keys()].sort()).toEqual(
+      ['hi:नमस्ते', 'hi:धन्यवाद', 'hi:कृपया'].sort(),
+    );
+
+    const unit = buildUnitPracticePlan(course, progress, 1, 10);
+    expect(unit.exercises.some((exercise) => exercise.kind === 'listenChoose')).toBe(false);
+    expect(unit.matched).toBe(4);
+
+    const overview = practiceOverview(course, progress, NOW);
+    expect(overview.units[0]!.learnedExercises).toBe(4);
   });
 
   it('summarises only skills the learner has actually met', () => {

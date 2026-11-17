@@ -11,3 +11,5 @@ export * from './grading.js';
 export * from './progress.js';
 export * from './practice.js';
 export * from './morphology.js';
+export * from './guidebook.js';
+export * from './eligibility.js';

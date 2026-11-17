@@ -61,6 +61,13 @@ const correctAnswers: AttemptAnswer[] = [
 ];
 
 describe('scoreLessonAttempt', () => {
+  it('rejects a lesson with no exercises instead of awarding a free bonus', () => {
+    expect(scoreLessonAttempt({ ...lesson, exercises: [] }, [])).toEqual({
+      ok: false,
+      reason: 'Lesson has no exercises',
+    });
+  });
+
   it('re-grades a perfect attempt and applies combo + lesson XP', () => {
     const result = scoreLessonAttempt(lesson, correctAnswers);
     expect(result.ok).toBe(true);
