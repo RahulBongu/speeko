@@ -32,7 +32,9 @@ const HOST = '127.0.0.1';
 const API_PORT = 3299;
 const API_BASE_URL = `http://${HOST}:${API_PORT}`;
 const STARTUP_TIMEOUT_MS = 10_000;
-const HEALTHY_STARTUP_TIMEOUT_MS = 30_000;
+// First boot on a fresh PGlite dir runs migrations; under a loaded full-suite
+// run that observed ~22s locally, so allow a wide margin.
+const HEALTHY_STARTUP_TIMEOUT_MS = 60_000;
 const SHUTDOWN_TIMEOUT_MS = 5_000;
 
 function buildEnv(overrides: Record<string, string | undefined> = {}): NodeJS.ProcessEnv {

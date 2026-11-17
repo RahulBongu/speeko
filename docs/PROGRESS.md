@@ -666,3 +666,10 @@ Curated screenshots are kept in `docs/qa/<project>/`; `pnpm e2e` writes fresh,
 gitignored captures to `test-results/screenshots/<project>/` (see `docs/qa/README.md`).
 The e2e config reuses an already-running dev server outside CI, but a fresh `pnpm build` is required
 because Playwright starts the production web server and the compiled API.
+
+The shared e2e API runs with the rate limiter disabled because every spec calls
+it from the same localhost IP; `tests/e2e/rate-limit.spec.ts` instead starts its
+own API process on a free port with the limiter forced on and a throwaway PGlite
+data directory, so the 429 contract is still verified. E2E accounts — including
+the M2 sign-in account — are created through the real sign-up endpoint during the
+run; no QA credentials are stored in the repository or CI configuration.

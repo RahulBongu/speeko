@@ -1,6 +1,5 @@
-﻿import fs from 'node:fs';
-import path from 'node:path';
-import { expect, test, type Page } from '@playwright/test';
+﻿import { randomUUID } from 'node:crypto';
+import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 
 /**
  * M2 — headless web sign-off.
@@ -10,18 +9,18 @@ import { expect, test, type Page } from '@playwright/test';
  * (docs/qa/android-device-qa.md, "Onboarding and accounts" through "Lesson
  * flow") that the web app can stand in for: creating a brand-new account via
  * the real sign-up UI, reaching a signed-in account state, signing out and
- * losing the session, signing in with the standing QA account (right and
- * wrong password), and completing + replaying one short Bengali lesson
- * through the real player (bn-starter-u1-l2 = 2x chooseMeaning + 1x
- * matchPairs, no typing, no audio).
+ * losing the session, signing in with an account provisioned beforehand
+ * through the API (right and wrong password), and completing + replaying one
+ * short Bengali lesson through the real player (bn-starter-u1-l2 = 2x
+ * chooseMeaning + 1x matchPairs, no typing, no audio).
  *
  * What this suite deliberately does NOT do:
  *   - It does not touch adb or any Android/iOS artifact. Device-only M2 items
  *     (release APK, relaunch/session restore, adb logcat, haptics, hearts on
  *     device, …) are verified by a human on the Vivo V2336 — not here.
- *   - It never prints, logs, or commits the QA account password. The password
- *     is read from apps/api/data/qa-account.local.json at runtime inside the
- *     test process and handed straight to the password field.
+ *   - It never reads, prints, logs, or commits a QA credential. The sign-in
+ *     account is created per run through the real sign-up endpoint with a
+ *     random password held only in memory.
  *   - It never builds, starts, or stops the web/API servers; Playwright's
  *     webServer config (playwright.config.ts) owns those.
  */
@@ -43,39 +42,24 @@ function throwawayEmail(): string {
 const THROWAWAY_PASSWORD = 'speeko-m2-throwaway-password';
 
 /**
- * Read the M2 QA account credentials without ever printing them. The file is
- * gitignored (see docs/NEXT.md); its contents must not appear in output.
- * If the file doesn't exist (e.g. in CI before the setup step runs), create it
- * with the canonical QA credentials.
+ * Provision a throwaway account through the real sign-up endpoint so the
+ * sign-in test exercises a pre-existing account rather than one created in
+ * the page under test. The password is random per run and never logged.
+ * The shared API is already running (Playwright webServer).
  */
-function readQaAccount(): { email: string; password: string } {
-  // Playwright runs with the repository root as cwd (see playwright.config.ts).
-  const file = path.resolve(process.cwd(), 'apps/api/data/qa-account.local.json');
-  try {
-    const parsed = JSON.parse(fs.readFileSync(file, 'utf8')) as {
-      email?: string;
-      password?: string;
-    };
-    if (!parsed.email || !parsed.password) {
-      throw new Error(`qa-account.local.json at ${file} is missing email or password.`);
-    }
-    return { email: parsed.email, password: parsed.password };
-  } catch (e) {
-    if (e instanceof Error && 'code' in e && e.code === 'ENOENT') {
-      // File doesn't exist — create it with the canonical QA credentials
-      const canonical = {
-        name: 'M2 QA',
-        email: 'm2-qa2@speeko.test',
-        password: 'AbI5LqGYA49cOe1dbz2DBHgg',
-        userId: 'iUeOMkEaO4qYU1VLDA9TCfILBekxRWr2',
-        note: 'Local PGlite throwaway account in apps/api/data for M2 functional QA. Not production. Local file only; do not commit.',
-      };
-      fs.mkdirSync(path.dirname(file), { recursive: true });
-      fs.writeFileSync(file, JSON.stringify(canonical, null, 2), 'utf8');
-      return { email: canonical.email, password: canonical.password };
-    }
-    throw e;
-  }
+async function provisionAccount(
+  request: APIRequestContext,
+): Promise<{ email: string; password: string }> {
+  const email = `m2-qa-signin-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}@speeko.test`;
+  const password = `speeko-m2-signin-${randomUUID()}`;
+  const response = await request.post(`${API_URL}/api/auth/sign-up/email`, {
+    headers: { origin: ORIGIN },
+    data: { name: 'M2 QA', email, password },
+  });
+  expect(response.status(), await response.text()).toBe(200);
+  return { email, password };
 }
 
 /** Create a brand-new throwaway account through the real sign-up web UI. */
@@ -133,7 +117,8 @@ test.describe('M2 headless sign-off — web app', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
   });
 
-  test.setTimeout(120_000); test('sign-up via the web UI reaches a signed-in account page; sign-out drops the session', async ({
+  test.setTimeout(120_000);
+  test('sign-up via the web UI reaches a signed-in account page; sign-out drops the session', async ({
     page,
   }) => {
     const email = throwawayEmail();
@@ -170,10 +155,12 @@ test.describe('M2 headless sign-off — web app', () => {
     ).toBeVisible();
   });
 
-  test.setTimeout(120_000); test('QA account sign-in works; a wrong password shows an error and stays signed out', async ({
+  test.setTimeout(120_000);
+  test('provisioned account sign-in works; a wrong password shows an error and stays signed out', async ({
     page,
+    request,
   }) => {
-    const qa = readQaAccount();
+    const qa = await provisionAccount(request);
 
     // Wrong password: better-auth answers INVALID_EMAIL_OR_PASSWORD
     // ("Invalid email or password"); AuthForm renders it in role="alert".
@@ -209,9 +196,9 @@ test.describe('M2 headless sign-off — web app', () => {
   });
 
   test('completing bn-starter-u1-l2 awards XP; a replay is practice only', async ({ page }) => {
-    // Use a fresh throwaway account (not the QA account) so the first
-    // completion — and therefore an XP reward greater than zero — is
-    // guaranteed no matter what has already been completed on the QA account.
+    // Use a fresh throwaway account (not the provisioned sign-in account) so
+    // the first completion — and therefore an XP reward greater than zero — is
+    // guaranteed no matter what lessons have already been completed.
     const email = throwawayEmail();
     await signUpViaUi(page, email, 'M2 QA');
 
