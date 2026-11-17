@@ -27,7 +27,7 @@ possible with the constraints below.
 | Product completeness | **Pass for alpha; unfinished for launch** | mixed |
 | Testing & build | **Pass** on CI-grade checks | engineering (this tree) |
 | Curriculum authenticity | **Blocked** — tooling ready, review not started | native speaker × 10 locales |
-| Android device QA | **Partial** — debug render verified on a Vivo V2336 (2026-11-17); release APK built; on-device release render + functional QA blocked (phone disconnected) | owner + device |
+| Android device QA | **Pass (render)** — functional QA pending | release APK verified on a Vivo V2336 (2026-11-17); full M2 checklist open | owner + device |
 | Hosting & operations | **Recommended, awaiting owner** | owner |
 | License & rights | **Blocked** — decision package ready | owner |
 
@@ -88,8 +88,8 @@ lessons/quests/purchases, Hindi audio.
 | Typecheck | **Pass** | 6/6 turbo tasks |
 | Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 16 static routes) |
 | Lint | **Pass** (0 errors) | web: 1 documented `<img>` warning; mobile: clean |
-| Android device QA | **Partial** | M1 (2026-11-17): the debug APK rendered the learn screen on a Vivo V2336 (uiautomator dump `docs/qa/mobile/learn-screen-ui-dump.xml`; `docs/NEXT.md`); no screenshot exists — all captures were corrupt and are rejected (`docs/qa/rejected-captures/`). The release APK was rebuilt (SHA-256 `150DE370…`, `docs/qa/mobile/release-build.md`) but its on-device render and the functional checklist in `docs/qa/android-device-qa.md` remain unverified |
-| Mobile E2E / screenshots | **Missing** | no emulator-attached suite; render evidence is the M1 uiautomator dump (`docs/qa/mobile/learn-screen-ui-dump.xml`); no valid screenshot or logcat exists (all captures corrupt/rejected); web images in `docs/qa/` |
+| Android device QA | **Pass (render)** — full functional QA pending | M1 (2026-11-17): release APK installed on Vivo V2336; cold start renders the Bengali course path; APK hash matches local build (`36A5D41D…`); screenshot/UI dump/logcat in `docs/qa/mobile/`; `docs/NEXT.md`. Functional checklist in `docs/qa/android-device-qa.md` still open (M2) |
+| Mobile E2E / screenshots | **Missing** | no emulator-attached suite; release-render evidence now valid (`docs/qa/mobile/release-first-screen.png`, 1080×2400, PNG signature verified; `release-ui-dump.xml`); web images in `docs/qa/` |
 
 ## 4. Curriculum
 
@@ -130,7 +130,7 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 ## Blockers for a public release
 
 1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
-2. **Android device QA**: the release APK was rebuilt on 2026-11-17 (SHA-256 `150DE370…`) but the install/screen/logcat pass and the functional checklist (`docs/qa/android-device-qa.md`) are blocked until the Vivo V2336 is reconnected.
+2. **Android device QA (render)**: done 2026-11-17 — release APK cold-start verified on the Vivo V2336 (`36A5D41D…`); the **functional** checklist (`docs/qa/android-device-qa.md`) remains open (M2).
 3. **Hosting/database choice** (owner; option A/B/C in the hosting package).
 4. **LICENSE file** with OFL font attribution and `content/README.md` right-reserved note (owner; see license package).
 5. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
