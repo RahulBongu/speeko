@@ -5,7 +5,7 @@ Living status document. One phase per session; a phase is done only when
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-16
+**Updated:** 2026-11-17
 
 ## Phase status
 
@@ -23,6 +23,195 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P9 - Mobile parity | Account + sync, path, lesson, practice, quests, motion layer | **Done** - `phase/9-mobile-parity` |
 | P10 - Stories + conversation | Honest unavailable/coming-soon states, optional AI endpoint | **Done** - `phase/10-stories-conversation` |
 | P11 - Hardening | Accessibility, reduced motion, offline/error states | **Done** - `phase/11-hardening` |
+| P12 - Mobile parity hardening + Stitch design | Jest harness fix, shared mobile exercise layer, server/local save split, shop cosmetics validation, Stitch tactile design pass | **Done (unreleased)** - not committed; HEAD remains `de57065` |
+| P13 - Security boundary + curriculum audit | Public profiles event-derived, verified-vs-device account display, API-boundary E2E, 10 defective exercises removed, validator upgrade, Android QA package, hosting/LICENSE packages, review package export | **Done (unreleased)** - not committed; HEAD remains `de57065` |
+| P14 - Curriculum self-audit (deterministic) | `scripts/audit-content.mjs` deterministic audit → `review/audit-ledger.json`; hi pilot (20 items) documented; validator strengthened; **zero source corrections, zero native approvals** | **Done (unreleased)** - not committed; HEAD remains `de57065` |
+| P15 - AI linguistic review | `scripts/ai-review-content.mjs` — all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done (unreleased)** - not committed; HEAD remains `de57065` |
+| P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done (unreleased)** - not committed; HEAD remains `de57065` |
+| P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done (unreleased)** - not committed; HEAD remains `de57065` |
+
+## What P12 changed
+
+- **Mobile Jest harness fixed.** The RN Jest setup now resolves through a realpath-aware
+  `jest.preset.js` so the official `react-native/jest/setup.js` mocks apply to the same
+  copy pnpm loads; `react` and `react-test-renderer` are pointed at the hoisted copy the
+  renderer actually uses. Mobile previously could not run a lesson-screen test at all.
+- **Shared mobile exercise layer.** `lib/exercise.ts` and `components/ExerciseBody.tsx`
+  own the draft/answer/choice mapping, submission rules, MMD-free grading via
+  `@speeko/core#gradeExercise`, expected-answer reveal, deterministic pair order, and
+  `earnedExerciseXp` (correct answers only, matching the web session reducer). Unsupported
+  kinds render an honest blocking screen and can never submit.
+- **Lesson runner.** All five published kinds run end to end with hearts, combo-free
+  scoring, real accuracy, save/retry/local/guest states. Signed-in attempts post raw
+  answers to `/api/lesson-completions`; 401 falls back to device-local progress with the
+  correct XP formula; any other failure shows Retry and never claims XP; hearts
+  exhaustion awards nothing and never posts.
+- **Practice runner.** Due-only SRS plans via `buildDuePracticePlan`, persisted
+  locally. Practice awards no XP, writes no completion record, and surfaces an honest
+  empty/no-due state with retry on save failure.
+- **Shop + cosmetics.** Guest sign-in state; separate shop/progress loads; purchase
+  errors and replay handling; optimistic equip with rollback on server rejection;
+  explicit un-equip syncs `equippedCosmetic: null`.
+- **Account, habits, people, leagues.** Signed-in vs device-only labels everywhere;
+  habits goal change syncs via `PUT /api/progress`; sign-out clears both the session
+  cookie and `speeko.mobile.progress.v2` for device isolation. Leagues/people fetch real
+  standings and follow/search API.
+- **Sign-in/sign-up.** Server `message`/`error` surfaced; password length kept to 8
+  chars to match the web form; sign-up syncs progress on success; segmented auth
+  switcher.
+- **Guidebook pipeline moved into `@speeko/core`.** `guidebookItems`/`guidebookTargets`
+  are pure, unit-tested (101 core tests now, +6), and shared by web and mobile. The
+  web guidebook route imports them instead of its local copy.
+- **Mobile unit guidebook.** `/guidebook/[courseId]/[unitIndex]` renders the words and
+  phrases straight from the unit's exercises (pair boards split into members, identical
+  targets deduped) plus a lesson plan. Every unit banner on the path gets a "📖 Guidebook"
+  button. Mobile tests cover rendering, dedup/no-cross-unit leakage, invalid index, and
+  load failure.
+- **Stitch design layer.** `components/Tactile.tsx` carries the extruded slab button,
+  ink-bordered card, chunky progress track, streak/XP stat pills, and `SpeekoAppBar`
+  into React Native. Applied to `/learn`, `/path/[courseId]`, `/lesson/...`,
+  sign-in/sign-up, `/account`, plus a 5-item bottom tab bar. See
+  `docs/product/current-state-and-parity.md` for the exact Stitch scope and limits.
+- **Server change.** `PUT /api/progress` validates `equippedCosmetic` changes against
+  owned `SHOP_ITEMS` (400 unknown, 409 unowned), permits an explicit `null`, and lets an
+  already-stored legacy value keep syncing. `progress.ts` owns the snapshot schema.
+- **Coverage.** 54 mobile Jest tests (13 suites), run in `pnpm test` through Turbo.
+
+## Verification snapshot (P12)
+
+Run from the repo root on 2026-11-16:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 101 core + 11 content (Vitest), 54 mobile (Jest, 13 suites) |
+| `pnpm build` | 5/5 Turbo tasks; mobile web export bundles 16 static routes |
+| `pnpm e2e` | 102 Playwright checks pass; zero console/page errors |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+
+Mobile: no device/emulator screenshots taken in this cycle. The release APK was not relaunched.
+
+## What P13 changed
+
+- **Public profile stats are event-derived.** `profileWithStats` now sums
+  `lesson_events` for lifetime XP, counts distinct attemptIds for lessons, and
+  computes the streak from `historyFromLessonEvents` + `computeStreak` — never
+  from the client-editable snapshot. A forged `PUT /api/progress` can no longer
+  inflate what other learners see. This was the largest open integrity gap.
+- **Own accounts show verified events first.** Web `AccountPanel` and mobile
+  `/account` read `/api/habits`; sign-in failure paths show the local snapshot
+  clearly labelled as this device with an explicit warning, never "verified".
+- **Security boundary proven by API-level tests.** New
+  `tests/e2e/progress-integrity.spec.ts` runs against the compiled API + DB:
+  401s, forged XP/streak/completions/unknown keys stripped, event-derived
+  profile stays empty for a forging user, cosmetic 400/409, explicit `null`
+  un-equip, malformed 400s (unknown fields/negative numbers/NaN), cross-account
+  isolation via a second session, retry idempotency. 14 checks, both viewports.
+- **Progress endpoint field ownership documented and enforced**: rewards are
+  append-only (`lesson_events`, `gem_ledger`); snapshot merge keeps max-XP/no
+  double-count rules for business logic; preferences (`dailyGoal`, `timeZone`,
+  `equippedCosmetic`) are accepted with validation; unknown keys are schema-stripped.
+- **10 template-defect exercises removed.** All starters carried identical
+  English fill-in-the-blank ("I have ___ apples."). Starters now have 23
+  exercises each; total 305; `content/dist` and `apps/web/public/courses`
+  rebuilt; source JSON updated. The validator now **warns** on production
+  answers missing from the locale's script, on duplicate option strings (error),
+  on listenChoose `audioUrl` (warning if empty, error if unusable), and the
+  scaffold had the same bug fixed.
+- **Review package exported.** `node scripts/export-review.mjs` writes
+  `review/review-package.json`, per-locale CSVs, and `review/REVIEW.md` —
+  305 items, all fields preserved, decisions/notes/reviewer left empty. No
+  review claim exists.
+- **Android environment honestly recorded.** adb works; no attached devices,
+  no AVDs, no system images, no command line tools, no JDK, WHPX disabled.
+  Complete device-QA checklist at `docs/qa/android-device-qa.md`; no device
+  verification is claimed. Sixteen static mobile routes export cleanly.
+- **Hosting + LICENSE decision packages** at
+  `docs/decisions/2026-11-16-hosting-and-database.md` and
+  `docs/decisions/2026-11-16-license.md` — recommendations, no spend, both
+  blocked on owner authorization.
+- **Mobile endpoints release-configurable.** `lib/api.ts` reads
+  `apiUrl`/`webOrigin` from `app.json extra` (defaults localhost); mobile
+  POST/PUT now carry the same origin header the browser sends.
+- **Content validator extended with script-consistency warnings** and run on the
+  tracked sources; grading tests re-grade all 305 items.
+- **Coverage.** 101 core + 15 content + 55 mobile (13 suites) + 116 Playwright
+  checks + 6/6 typecheck + 5/5 build. Web and mobile account displays verified
+  against real streams; profile forgery eliminated end-to-end.
+
+## Verification snapshot (P13)
+
+Run from the repo root on 2026-11-16:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 101 core + 15 content (Vitest), 55 mobile (Jest, 13 suites) |
+| `pnpm build` | 5/5 Turbo tasks; web + mobile bundles rebuilt (dist 305 exercises; 16 mobile routes) |
+| `pnpm e2e` | 116 Playwright checks pass; zero console/page errors |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `node scripts/export-review.mjs` | 305 items across 10 locales; 0 marked reviewed |
+
+No Android device verification exists; no native-speaker review exists.
+
+
+
+Run from the repo root on 2026-11-16:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 101 core + 11 content (Vitest), 54 mobile (Jest, 13 suites) |
+| `pnpm build` | 5/5 Turbo tasks; mobile web export bundles 16 static routes |
+| `pnpm e2e` | 102 Playwright checks pass; zero console/page errors |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+
+Visual evidence for the web remains in `docs/qa/`; this cycle produced **no** mobile
+device or emulator screenshots. The release APK has not been relaunched.
+
+## What P14 changed
+
+- **Deterministic structural audit** runs across all 305 exercises via
+  `scripts/audit-content.mjs` → `review/audit-ledger.json`. Rules R-001..R-008
+  (bounds, duplicates, normalization, invisible chars, listenChoose `audioUrl`,
+  locale-script consistency) are deterministic; R-010 is an AI-assisted
+  low-confidence consistency heuristic for the same prompt with different
+  target spellings across courses of one locale, and is never treated as a
+  verdict.
+- **Zero defects found** by R-001..R-005; **10 items blocked** pending licensed
+  listenChoose audio (R-006); **2 items need_further_review** (R-010, both the
+  two spellings of "Sorry" in Hindi across starters/pilot); **293 match no rule**.
+- **Zero source corrections applied.** Every finding is a proposal for a human
+  Hindi/Bharat-locale reviewer; the ledger marks every item `humanStatus:
+  unreviewed` — no automated pass implies approval.
+- **Audit pilot (hi)** documented in `review/audit-pilot-hi.md`: 20 items,
+  18 clean / 1 blocked / 1 flagged, calibration notes, false-positive analysis.
+- **Validator strengthened** (`packages/content/src/index.ts`): duplicate
+  option strings hardened, `answerIndex` bounds check added (schema only bounds
+  `≥0`; out-of-bounds now errors), +1 content test. Content suite: 16 tests.
+- **Review package extended honestly.** `REVIEW.md` now carries a dynamic
+  "Automated audit evidence" section computed from the ledger — never presented
+  as approval. `audit-ledger.json` is the machine-readable per-item record with
+  content hashes.
+- **Traceability proved**: 305 dist exercises = 305 ledger items = 305 CSV rows.
+- **No audio URLs generated**; no content claims native-speaker review.
+
+## Verification snapshot (P14)
+
+Run from the repo root on 2026-11-16:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 101 core + 16 content (Vitest), 55 mobile (Jest, 13 suites) |
+| `pnpm build` | 5/5 Turbo tasks |
+| `pnpm e2e` | 116 Playwright checks pass |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `node scripts/audit-content.mjs` | 305 items ledgered; 0 structural defects; 10 blocked (audio); 2 flagged R-010; 293 no_issue_detected; 0 native approvals |
+| `node scripts/export-review.mjs` | 305 items across 10 locales; `REVIEW.md` audit section computed from the ledger |
+| Dist ↔ ledger ↔ CSV cross-check | 305 = 305 = 305, zero missing/extra |
+
+No source corrections were made in P14; the content set is unchanged.
 
 ## Verification snapshot (P5)
 
@@ -248,29 +437,165 @@ screenshots at both viewports.
   retry, attemptId mismatch, incomplete attempt, signed-in save, and failed-save
   Retry.
 
-## Known gaps after P5
+## What P15 changed
+
+- **AI-assisted linguistic review of all 305 items** via `scripts/ai-review-content.mjs` →
+  `review/ai-linguistic-review.json` + `review/ai-linguistic-review.md`. Ten
+  production-relevant checks (meaning, grammar, naturalness, orthography,
+  transliteration, vocabulary, ambiguity, exercise correctness, consistency,
+  pedagogy) applied per item; every entry keeps its stable ID and content hash.
+- **One logical defect corrected in the source in three places**: the Kannada
+  word for five (ಐದು) was written with the Tamil vowel U+0B90 in
+  `kn-starter-u2-l1-e2` (options), `kn-starter-u2-l2-e1` (options), and
+  `kn-starter-u2-l2-e2` (the answer key). All three are now U+0C90; source and
+  bundle rebuilt and re-scanned; web `public/courses` re-synced.
+- **No other words changed.** hi "Sorry" keeps both attested spellings
+  (`माफ़ कीजिये` in starters, `माफ कीजिए` in hi-pilot); recorded for reviewers,
+  deliberately not "unified". Transliteration absence in hi-starter recorded as
+  a proposal only, no content authored.
+- **Audio decision documented** in `review/audio-decision-analysis.md`: local
+  Windows SAPI exposes only en-US voices (no Indic pack); no audio exists or is
+  claimed; recommendation: keep the honest no-audio fallback until a reviewer can
+  record/license audio, or drop listenChoose from starters. R-006 still blocks all
+  10 items.
+- **No artifact marks anything reviewed.** The AI ledger contains zero
+  certifications; every item is still `reviewStatus: draft`.
+- **Verification after edits**: 11/11 course files valid (validator + answerIndex
+  bounds rule), 16 content tests, 305 totals consistent across dist / audit ledger
+  / AI ledger / review CSVs, and a full green `pnpm verify` (101 core + 16 content
+  + 55 mobile tests; 6/6 typecheck; 5/5 build; 116 Playwright checks).
+
+## What P16 changed
+
+- **Missing-audio safeguard.** `eligibleExercises()` in `@speeko/core` filters
+  exercises whose task cannot be performed; the only case today is
+  `listenChoose` with an empty `audioUrl`. Wired into the web lesson player and
+  review/practice queues, the mobile lesson runner, the shared SRS skill index,
+  and `POST /api/lesson-completions` (so graded answers and the client queue
+  match). Content files, IDs, ordering, and `reviewStatus` are untouched.
+- **Why this shape.** A no-audio "Listen and choose" is a guess, not a listening
+  task. Excluding it prevents a dishonest interaction without deleting content
+  or breaking lesson sequencing: the affected lesson still has 2 of 3 items.
+  Adding a licensed `audioUrl` later restores the item with no code change.
+- **Tests.** `packages/core/src/eligibility.test.ts` (4 tests) plus an
+  ineligible-audio fixture in `packages/core/src/practice.test.ts`; mobile
+  lesson-runner tests cover both the skipped case and a playable-audio case.
+- **Mobile coverage matrix.** `docs/product/current-state-and-parity.md` now
+  has a per-capability table (onboarding, accounts, exercise kinds, completion,
+  persistence, practice, shop, habits, navigation, network failure,
+  missing-audio). Verified findings: the curriculum contains only 4 kinds
+  (`chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose`
+  10); mobile supports every curriculum kind that is playable; onboarding is
+  genuinely absent on mobile (welcome → learn), while account creation is
+  reachable from the Account tab; extra unsupported kinds fail closed but do
+  not occur in any shipped lesson.
+- **Android handoff refreshed.** Re-checked the environment: no AVDs, no system
+  images, no command-line tools, no JDK on PATH, no device attached, WHPX
+  unavailable. The existing `dist/speeko-release.apk` predates this tree and
+  was not run. The checklist now covers registration, missing-audio behavior,
+  and the stale-artifact caveat; no device claim is made.
+- **Release operations checklist.** `docs/decisions/2026-11-16-release-and-operations.md`
+  prepares GO/NO-GO gates, env/secrets, migrations, backup+restore, rollback,
+  rate limits, logging, and post-deploy smoke tests. Nothing was provisioned.
+- **Verification after edits:** `pnpm verify` green — typecheck 6/6, **107
+  core + 16 content + 56 mobile (13 suites)** tests, build 5/5, **116/116
+  Playwright checks** at 1280×800 and 390×844. Exact commands: `pnpm typecheck`,
+  `pnpm test`, `pnpm build`, `pnpm e2e` (via `pnpm verify`), all exit 0.
+
+## What P17 changed
+
+- **One-time completion reward ledger.** New table `lesson_completion_rewards`
+  (`id`, `user_id`, `course_id`, `lesson_id`, `attempt_id`, `xp`, `created_at`)
+  with a unique `(user_id, course_id, lesson_id)` index. The first passing
+  attempt for a lesson owns the reward; any later attempt — including one with a
+  fresh `attemptId` — is practice. Migration `0005_lesson_completion_rewards.sql`
+  is registered in the Drizzle journal.
+- **Replay-safe completion endpoint.** `POST /api/lesson-completions` inserts the
+  attempt, claims the unique reward row, sets the event's `xpEarned` to the
+  awarded XP (`0` for a replay), and inserts the lesson gem in the same
+  transaction. The gem's idempotency key is `lesson:<courseId>:<lessonId>`, so
+  attempt ids cannot create extra gems. Same-attempt retries still return the
+  original event; concurrent new attempts serialize on the unique index and only
+  one reports `completion.rewarded = true`. Response now includes
+  `completion: { rewarded, xp, gems }`.
+- **Attempts and practice preserved.** Replay events keep full graded answers,
+  accuracy, combo, and SRS updates, and still count as habit activity. They carry
+  no completion XP. `GET /api/habits` therefore uses two histories: events for
+  activity/streak/calendar/achievements, reward rows for quest progress.
+- **Derived views use the reward ledger.** Lifetime profile XP and lesson count
+  come from reward rows (unique lessons), and weekly leagues count reward rows
+  created that week, so practice cannot pad a profile or standings. Daily quest
+  gems derive from reward history; weekly quests remain progress-only.
+- **Non-destructive backfill.** One row per existing `(user, course, lesson)`
+  gets `xp = SUM(historical event XP)` and `created_at = MIN(event createdAt)`.
+  Lifetime XP is preserved exactly, the migration does not mint gems or claw back
+  balances, and existing events are neither deleted nor rewritten. Guest progress
+  snapshots remain display/import-only and cannot claim or deny a reward.
+  Historical lesson counts intentionally become unique completed lessons.
+- **Replay UI is honest.** Web and mobile summaries show “Practice complete!” and
+  “Lesson saved — practice only, no new completion XP.” for an unrewarded
+  completion. A first completion still shows the saved XP and gem reward.
+- **Tests.** New `tests/e2e/reward-integrity.spec.ts` (7 API/UI checks per
+  viewport) covers first/replay, a second distinct lesson, same-attempt retry,
+  concurrent first/replay attempts, invalid/incomplete attempts, guest snapshot
+  migration, profile/gem/habit consistency, and the replay summary. Shop fixtures
+  now earn gems from six distinct lessons instead of replaying one lesson.
+  Core `buildHabitReport` gained an optional `questHistory` with a
+  practice-vs-quest unit test.
+- **Migration smoke evidence.** Applied cleanly to a fresh PGlite database and to
+  a populated database at migration 0004: two historical events for one lesson
+  backfilled to one 42-XP reward (21 + 21) dated at the first attempt, a second
+  lesson kept 20 XP, a second learner kept 21 XP, and a duplicate reward insert
+  was rejected by the unique index.
+
+## Verification snapshot (P17)
+
+Run from the repo root on 2026-11-17:
+
+| Command | Result |
+| --- | --- |
+| `pnpm typecheck` | 6/6 Turbo tasks |
+| `pnpm test` | 108 core + 16 content (Vitest), 56 mobile (Jest, 13 suites) |
+| `pnpm build` | 5/5 Turbo tasks; web + API + 16-route mobile export |
+| `pnpm e2e` | 130 Playwright checks pass (65 tests × 2 viewports); zero console/page errors |
+| `pnpm verify` | typecheck → test → build → e2e, all green |
+
+Migration 0005: fresh-database apply and populated pre-0005 backfill both
+verified; no historical events or gem balances were modified. No Android device
+verification and no native-speaker review exist.
+
+## Phase I — Reward ledger temporal integrity audit
+
+- **Read-only trace.** Sources: `lesson_events` (attempt history, streak/activity/SRS), `lesson_completion_rewards` (lifetime XP/lessons, weekly league, quest gems), `gem_ledger` (balances), progress snapshots (preferences/guest import). Weekly league filters `lesson_completion_rewards.created_at >= weekStart`; quest gems derive from reward history; habits use events for activity and rewards for quests.
+- **Temporal finding.** For a lesson completed more than once, the migration aggregates all historical event XP into one reward row stamped with the first attempt's timestamp. Consequently the later attempt's week no longer receives that XP under the weekly league query. This is a real change in historical weekly attribution, but it follows the one-time reward policy (D74/D75): a replay earns no reward, so its week cannot keep the XP. Preserving the old weekly distribution would require either counting replay XP (violating D74) or a separate historical attribution source (splitting the source of truth). That conflict is documented here rather than resolved by silently changing the economy.
+- **Defect found and fixed.** The original backfill created a reward row for every distinct lesson event, including zero-XP events, which are not completions. That inflated lesson counts, quest history, and weekly participation. The backfill now filters `xp_earned > 0` (`apps/api/drizzle/0005_lesson_completion_rewards.sql`).
+- **Fixture evidence.** Controlled pre-migration data included: lesson A completed 2026-11-03 and 2026-11-10 (21 XP each), lesson C twice in week 1 (20+20), lesson D on 2026-11-08 23:30 and 2026-11-09 00:30 (21+21), two distinct lessons in different weeks, an existing user with 21 XP and 15 gems, a guest snapshot with 99 XP and no events, and a zero-XP event. Lifetime XP stayed 124/40/21/0; gem balance stayed 15; the zero-XP user got no reward row; duplicate migration was a no-op; weekly XP moved from 82+42 to 124+0 for user A as expected under the policy.
+- **No other files changed.** Temporal anchoring was intentionally not altered.
 
 These are product gaps, not regressions. Details and evidence are in
-[`AUDIT.md`](./AUDIT.md).
+[`AUDIT.md`](./AUDIT.md), [`READINESS.md`](./READINESS.md), and
+[`product/current-state-and-parity.md`](./product/current-state-and-parity.md).
 
-- Practice SRS updates sync through the snapshot layer (`PUT /api/progress`),
-  not `lesson_events`. Practice has no authoritative server-side event log yet;
-  that belongs with the later hardening/social phases.
-- Trouble words are historical: once a card has a lapse it stays available for
-  another pass. There is no "retired" state or automatic clearing.
-- Unit practice can include two exercises for the same word, so one session may
-  advance that card more than one box. Due and trouble plans use one exercise
-  per skill.
-- Chest nodes are honest recap entry points; there is no gem/shop reward yet.
-  The real gem economy is P7, and leagues remain gated by D2.
-- `timeZone` is captured on onboarding and stored, but day boundaries still use
-  the browser/server local day. Timezone-aware days are a later phase.
-- No course has been reviewed by a native speaker. The two Hindi courses
-  (starter + pilot) are `reviewStatus: "draft"`, and the importer remains a
-  utility rather than a full open-data pipeline with provenance checks.
-- Mobile remains a branded welcome screen. The release APK exists at
-  `dist/speeko-release.apk` but has not been launch-verified on hardware.
-- No `LICENSE`; the repo is currently all rights reserved by default.
+- **No Android device or emulator verification.** The app passes Jest, typecheck, and
+  the web export build, but nothing has been installed, launched, or inspected on
+  hardware this cycle. Hermes/Reanimated paths and the release APK are unverified;
+  the SDK exists but has no attached device, AVD, system image, JDK, or WHPX.
+- **No native-speaker review.** All 305 exercises remain `reviewStatus: "draft"`. The
+  review package is exported and ready; playable does not mean correct.
+- **`PUT /api/progress` remains a non-authoritative guest-import layer.** Leagues,
+  quests, gems, and achievements derive from events; SRS updates sync through the
+  snapshot layer and can be forged locally (never affecting rewards).
+- **Unit practice can double-count a card** within one session (round-robin can land
+  two exercises for the same word). Due and trouble plans use one exercise per skill.
+- **Trouble words are historical**; a card with a lapse never automatically retires.
+- **Hosting/database choice is deferred** and no `LICENSE` exists; both are owner
+  decisions with packages prepared this cycle. Nothing is provisioned or signed.
+- **Mobile exercise parity** is partial: `wordBank`, `arrangeSentence`, `speak`,
+  `typeWhatYouHear` are unsupported and fail safely on mobile.
+- **Stories and conversation** ship as honest unavailable/coming-soon states on web;
+  they are not on mobile.
+- **Mobile has no onboarding flow and no E2E/shot evidence**; the welcome screen hands
+  off directly to `/learn`.
 
 ## Re-running the safety net
 

@@ -56,6 +56,15 @@ the individual files (23 images each). The per-route PNGs are the source of trut
 
 ## Inspection log
 
+- **2026-11-17 — P17 — Replay summary inspected at both viewports.** `lesson-complete-practice.png`
+  shows “Practice complete!”, “No new XP”, “Practice only”, and “Lesson saved — practice only,
+  no new completion XP.” The first-completion summary remains “Lesson complete!” with the saved XP;
+  P17 generated these two screenshots through the real signed-in API flow with reduced motion.
+- **2026-11-16 — P13 — AccountPanel changed, not re-shot.** The signed-in account panel now reads
+  verified event-derived stats (`/api/habits`) and shows a device fallback warning when the sync
+  fetch fails. Route screenshots are guest state and do not exercise this path; layout logic is
+  unchanged (same `StatPill`/`ProgressBar`, same grid). The 2026-11-15 baselines remain accurate for
+  guests; note on first sign-in release QA: verify the panel at both viewports with a real account.
 - **2026-11-16 — P6:** habit screenshots generated at both viewports: empty guest
   habits, seeded guest history, signed-in verified history, and goal-picker state.
   Automated ready conditions, HTTP status, and console/page-error checks passed.
