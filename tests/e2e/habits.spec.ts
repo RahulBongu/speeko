@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+﻿import fs from 'node:fs';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 
 const API_URL = 'http://localhost:3001';
@@ -20,7 +20,7 @@ const FIRST_LESSON = {
     },
     {
       exerciseId: 'hi-starter-u1-l1-e3',
-      input: { kind: 'text', value: 'नमस्ते' },
+      input: { kind: 'text', value: 'à¤¨à¤®à¤¸à¥à¤¤à¥‡' },
       ms: 2100,
     },
   ],
@@ -165,7 +165,7 @@ test('goal picker saves to the device and the account', async ({ page }, testInf
   const goal = page.getByRole('button', { name: /80\s*XP/i });
   await expect(goal).toHaveAttribute('aria-pressed', 'false');
   await goal.click();
-  await expect(page.getByText('Goal saved and synced.')).toBeVisible();
+  await expect(page.getByText('Saved to your account.')).toBeVisible();
   await expect(goal).toHaveAttribute('aria-pressed', 'true');
 
   const stored = await page.evaluate(() =>

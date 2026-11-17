@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+﻿import { defineConfig, devices } from '@playwright/test';
 
 const WEB_URL = 'http://localhost:3000';
 const API_URL = 'http://localhost:3001';
@@ -50,6 +50,10 @@ export default defineConfig({
         PORT: '3001',
         HOST: '127.0.0.1',
         CLIENT_ORIGINS: 'http://localhost:3000',
+        // The whole suite shares one localhost IP: disable the limiter for
+        // the shared server. tests/e2e/rate-limit.spec.ts spawns its own
+        // API child with the limiter enabled.
+        RATE_LIMIT_DISABLED: '1',
       },
     },
     {

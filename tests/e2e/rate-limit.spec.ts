@@ -1,22 +1,75 @@
-import { expect, test, type APIRequestContext } from '@playwright/test';
+import { spawn, type ChildProcess } from 'node:child_process';
+import { expect, test } from '@playwright/test';
 
-const API_URL = 'http://localhost:3001';
+/**
+ * Rate limiting is a production defence, not a test resource: the shared e2e
+ * API (port 3001) runs with RATE_LIMIT_DISABLED=1 so the whole suite shares
+ * one localhost IP without cascading 429s. This suite therefore spawns its
+ * OWN API instance on a separate port with the limiter enabled and asserts
+ * the 429 contract against it. It uses plain HTTP (no browser) on purpose.
+ */
+
+const DEDICATED_PORT = 3399;
+const API_URL = `http://localhost:${DEDICATED_PORT}`;
 const ORIGIN = 'http://localhost:3000';
 
-// Mirrors PROGRESS_WRITE_RATE_LIMIT in apps/api/src/rate-limit.ts:
-// 30 PUT /api/progress requests per minute per account+IP.
+// Mirrors PROGRESS_WRITE_RATE_LIMIT in apps/api/src/rate-limit.ts.
 const PROGRESS_LIMIT = 30;
 
-async function signUp(request: APIRequestContext, label: string): Promise<string> {
-  const email = `rate-limit-${label}-${Date.now()}-${Math.random()
-    .toString(36)
-    .slice(2, 8)}@example.com`;
-  const response = await request.post(`${API_URL}/api/auth/sign-up/email`, {
-    headers: { origin: ORIGIN },
-    data: { name: 'Rate Limit Tester', email, password: 'speeko-test-password' },
+let api: ChildProcess | null = null;
+
+async function waitForApi(port: number, timeoutMs: number): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`http://localhost:${port}/health`, {
+        signal: AbortSignal.timeout(1_000),
+      });
+      if (response.ok) return;
+    } catch {
+      // not up yet
+    }
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  throw new Error('dedicated API did not become healthy');
+}
+
+test.beforeAll(async () => {
+  const dataDir = `C:/Users/rahul/AppData/Local/Temp/opencode/pglite-rate-limit-${Date.now()}`;
+  api = spawn(process.execPath, ['apps/api/dist/index.js'], {
+    env: {
+      ...process.env,
+      PORT: String(DEDICATED_PORT),
+      HOST: '127.0.0.1',
+      CLIENT_ORIGINS: ORIGIN,
+      PGLITE_DATA_DIR: dataDir,
+      // RATE_LIMIT_DISABLED deliberately absent: limiter ON.
+      NODE_ENV: 'production',
+      BETTER_AUTH_SECRET: 'rate-limit-spec-secret-0123456789abcdef',
+    },
+    cwd: process.cwd(),
+    stdio: 'ignore',
   });
-  expect(response.status(), await response.text()).toBe(200);
-  return email;
+  await waitForApi(DEDICATED_PORT, 30_000);
+});
+
+test.afterAll(async () => {
+  api?.kill('SIGTERM');
+  await new Promise((r) => setTimeout(r, 500));
+  api?.kill('SIGKILL');
+  api = null;
+});
+
+async function signUp(email: string, name: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/auth/sign-up/email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', origin: ORIGIN },
+    body: JSON.stringify({ name, email, password: 'speeko-test-password' }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`sign-up failed (${res.status}): ${text}`);
+  }
 }
 
 function v2Snapshot(overrides: Record<string, unknown> = {}) {
@@ -39,71 +92,84 @@ function v2Snapshot(overrides: Record<string, unknown> = {}) {
   };
 }
 
+interface ProgressResponse {
+  status: number;
+  retryAfter: number | null;
+  body: { error?: string; retryAfter?: number } | null;
+}
+
 async function putSnapshot(
-  request: APIRequestContext,
+  cookie: string,
   snapshot: unknown,
-): Promise<{ status: number; headers: Record<string, string>; body: any }> {
-  const response = await request.put(`${API_URL}/api/progress`, {
-    headers: { origin: ORIGIN },
-    data: { progress: snapshot },
+): Promise<ProgressResponse> {
+  const res = await fetch(`${API_URL}/api/progress`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', origin: ORIGIN, cookie },
+    body: JSON.stringify({ progress: snapshot }),
   });
-  let body: any = null;
+  let body: ProgressResponse['body'] = null;
   try {
-    body = await response.json();
+    body = (await res.json()) as ProgressResponse['body'];
   } catch {
     body = null;
   }
-  return { status: response.status(), headers: response.headers(), body };
+  const header = res.headers.get('retry-after');
+  return {
+    status: res.status,
+    retryAfter: header === null ? null : Number(header),
+    body,
+  };
 }
 
-test('PUT /api/progress allows up to the limit, then returns 429 with Retry-After', async ({
-  request,
-}) => {
-  await signUp(request, 'hammer');
+/** Sign-up returns a session cookie from better-auth; keep it per account. */
+async function signUpAndGetCookie(
+  label: string,
+): Promise<{ email: string; cookie: string }> {
+  const email = `rate-limit-${label}-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2, 8)}@example.com`;
+  const res = await fetch(`${API_URL}/api/auth/sign-up/email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', origin: ORIGIN },
+    body: JSON.stringify({ name: 'Rate Limit Tester', email, password: 'speeko-test-password' }),
+  });
+  expect(res.status, await res.text()).toBe(200);
+  const setCookie = res.headers.get('set-cookie');
+  expect(setCookie, 'better-auth must issue a session cookie').toBeTruthy();
+  const cookie = (setCookie ?? '').split(';')[0];
+  return { email, cookie };
+}
+
+test('PUT /api/progress allows up to the limit, then returns 429 with Retry-After', async () => {
+  const { cookie } = await signUpAndGetCookie('hammer');
 
   for (let i = 0; i < PROGRESS_LIMIT; i += 1) {
-    const { status } = await putSnapshot(request, v2Snapshot({ xp: i }));
+    const { status } = await putSnapshot(cookie, v2Snapshot({ xp: i }));
     expect(status, `request ${i + 1} should be within the limit`).toBe(200);
   }
 
-  const limited = await putSnapshot(request, v2Snapshot({ xp: PROGRESS_LIMIT }));
+  const limited = await putSnapshot(cookie, v2Snapshot({ xp: PROGRESS_LIMIT }));
   expect(limited.status).toBe(429);
   expect(limited.body?.error).toBe('Too Many Requests');
-  const retryAfter = Number(limited.headers['retry-after']);
-  expect(Number.isFinite(retryAfter)).toBe(true);
-  expect(retryAfter).toBeGreaterThanOrEqual(1);
-  expect(retryAfter).toBeLessThanOrEqual(60);
-  expect(limited.body?.retryAfter).toBe(retryAfter);
+  expect(limited.retryAfter, 'Retry-After header must be a finite number').not.toBeNull();
+  expect(Number.isFinite(limited.retryAfter)).toBe(true);
+  expect(limited.retryAfter).toBeGreaterThanOrEqual(1);
+  expect(limited.retryAfter).toBeLessThanOrEqual(60);
+  expect(limited.body?.retryAfter).toBe(limited.retryAfter);
 });
 
-test('a fresh account keeps its own progress budget', async ({ request, browser }) => {
-  await signUp(request, 'limited-account');
+test('a fresh account keeps its own progress budget', async () => {
+  const { cookie } = await signUpAndGetCookie('limited-account');
 
   for (let i = 0; i < PROGRESS_LIMIT; i += 1) {
-    const { status } = await putSnapshot(request, v2Snapshot({ xp: i }));
+    const { status } = await putSnapshot(cookie, v2Snapshot({ xp: i }));
     expect(status).toBe(200);
   }
-  const limited = await putSnapshot(request, v2Snapshot());
+  const limited = await putSnapshot(cookie, v2Snapshot());
   expect(limited.status).toBe(429);
 
-  // A completely separate session (isolated cookie jar) for a second account:
-  // the per account+IP key means it is not throttled by the first account.
-  const context = await browser.newContext();
-  try {
-    const other = context.request;
-    const email = `rate-limit-other-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
-    const signUpResponse = await other.post(`${API_URL}/api/auth/sign-up/email`, {
-      headers: { origin: ORIGIN },
-      data: { name: 'Rate Limit Other', email, password: 'speeko-test-password' },
-    });
-    expect(signUpResponse.status()).toBe(200);
-
-    const response = await other.put(`${API_URL}/api/progress`, {
-      headers: { origin: ORIGIN },
-      data: { progress: v2Snapshot() },
-    });
-    expect(response.status()).toBe(200);
-  } finally {
-    await context.close();
-  }
+  // A completely separate account on the same IP — not throttled.
+  const other = await signUpAndGetCookie('other-account');
+  const res = await putSnapshot(other.cookie, v2Snapshot());
+  expect(res.status).toBe(200);
 });

@@ -1,4 +1,4 @@
-name: verify
+﻿name: verify
 
 'on':
   push:
@@ -26,22 +26,35 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Setup test environment
-        run: |
-          # Create QA account fixture for CI
-          mkdir -p apps/api/data
-          cat > apps/api/data/qa-account.local.json << 'EOF'
-          {
-            "name": "M2 QA",
-            "email": "m2-qa2@speeko.test",
-            "password": "AbI5LqGYA49cOe1dbz2DBHgg",
-            "userId": "iUeOMkEaO4qYU1VLDA9TCfILBekxRWr2",
-            "note": "Local PGlite throwaway account in apps/api/data for M2 functional QA. Not production. Local file only; do not commit."
-          }
-          EOF
-
       - name: Build
         run: pnpm build
+
+      - name: Provision QA account for e2e
+        run: |
+          mkdir -p apps/api/data
+          QA_PASS=$(openssl rand -hex 12)
+          node apps/api/dist/index.js &
+          API_PID=$!
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3001/health >/dev/null && break; sleep 1; done
+          RESPONSE=$(curl -s -X POST http://127.0.0.1:3001/api/auth/sign-up/email \
+            -H 'Content-Type: application/json' \
+            -H 'Origin: http://localhost:3000' \
+            -d "{\"name\":\"M2 QA\",\"email\":\"m2-qa2@speeko.test\",\"password\":\"$QA_PASS\"}")
+          export RESPONSE QA_PASS
+          node -e '
+            const r = JSON.parse(process.env.RESPONSE);
+            const id = (r && r.user && r.user.id) || (r && r.data && r.data.user && r.data.user.id);
+            if (!id) { console.error("QA sign-up failed:", JSON.stringify(r)); process.exit(1); }
+            require("fs").writeFileSync("apps/api/data/qa-account.local.json", JSON.stringify({
+              name: "M2 QA",
+              email: "m2-qa2@speeko.test",
+              password: process.env.QA_PASS,
+              userId: id,
+              note: "CI-provisioned throwaway account. Not for real use."
+            }, null, 2));
+          '
+          kill $API_PID || true
+          wait $API_PID || true
 
       - name: Typecheck
         run: pnpm typecheck
@@ -56,5 +69,4 @@ jobs:
         run: pnpm e2e
         env:
           CI: '1'
-          NODE_ENV: 'test'
           RATE_LIMIT_DISABLED: '1'
