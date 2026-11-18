@@ -9,9 +9,9 @@
 | Ref | Contents | CI |
 | --- | --- | --- |
 | `main` | `82f0f3c` (merge of PR #5) — everything: M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs refresh (`5e3c999`) | Push run `44167051237` on `82f0f3c` |
-| `next/M2` | `main` + docs bookkeeping (`afbe203`) + the license files (D79) + the hosting configuration (D80); rides the next gate-driven PR | CI runs on each push |
+| `next/M2` | `main` + docs bookkeeping (`afbe203`) + the license files (D79, `58e5152`) + the hosting configuration (D80, `444f4b5`); awaits the owner's PR/merge | Push run `44225195713` success on `444f4b5` |
 
-- `next/M1`, and both `next/M2` commits (league batching + docs refresh), are merged into `main` via PRs #4 and #5. No engineering work is pending a merge.
+- `next/M1` and the earlier `next/M2` commits (league batching + docs refresh) are merged into `main` via PRs #4 and #5. The license (D79) and hosting (D80) work on `next/M2` (`444f4b5`) is green and awaits the owner's PR/merge.
 - Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, no open pull requests, nothing published.
 - Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, secrets **0 hits / 151 files**, e2e **148/148 in 5.9m with 0 flakes**.
 - **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. Distribution still requires bundling the license texts into the artifact.
@@ -26,6 +26,7 @@
 
 ### What the owner must do next
 
+0. Open and merge the `next/M2` pull request into `main` (`444f4b5`: license files, hosting config, docs; CI run `44225195713` green). Render deploys from `main`, so the merge comes before provisioning.
 1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Remaining: bundle the license texts into the distributed artifact at packaging time.
 2. Hosting: Option A (Neon + Render + Vercel) is decided and configured in `render.yaml` + `docs/deploy-runbook.md`. Create the three projects, set the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, plus `API_PROXY_TARGET` on Vercel), deploy, then arrange backups and secret rotation.
 3. Native-speaker review of the 305 draft exercises (10 locales).

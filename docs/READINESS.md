@@ -15,7 +15,8 @@ scripted replay farming of completion XP/gems — are closed and verified at the
 database level.
 
 Speeko is **not** release-ready for the public. No automated engineering work
-remains for the internal alpha, and `main` (`82f0f3c`) is the state to reference.
+remains for the internal alpha. `main` (`82f0f3c`) is the last merged state;
+`next/M2` (`444f4b5`: license + hosting) is green and awaits the owner's merge.
 Blocking external requirements: a
 native-speaker review for every course, hosting provisioning and backups, license
 texts bundled into distributed artifacts, and store accounts. On-device functional QA is waived for the internal alpha by
@@ -134,12 +135,12 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 
 ## Merge state
 
-Nothing awaits an engineering merge. PR #5 merged `next/M2` (`d5d6a74` league
-fix + `5e3c999` handoff docs) into `main` on 2026-11-18 (`82f0f3c`). Version
-remains `0.0.1`; nothing is published. The branch now also carries the
-follow-up docs bookkeeping, the license files (D79), and the hosting
-configuration (D80: proxy rewrite, Render blueprint, runbook); they ride the
-next gate-driven PR.
+`next/M2` awaits the owner's PR/merge into `main`. PR #5 merged the prior
+`next/M2` work (`d5d6a74` league fix + `5e3c999` handoff docs) into `main` on
+2026-11-18 (`82f0f3c`). Version remains `0.0.1`; nothing is published. The
+branch now also carries the follow-up docs bookkeeping, the license files
+(D79), and the hosting configuration (D80: proxy rewrite, Render blueprint,
+runbook).
 
 ## Blockers for a public release
 
