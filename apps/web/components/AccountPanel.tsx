@@ -275,6 +275,34 @@ export function AccountPanel() {
           >
             Sign out
           </button>
+          <button
+            type="button"
+            className="btn-secondary border-red-200 text-red-600 hover:bg-red-50"
+            onClick={async () => {
+              const confirmed = window.confirm(
+                'Delete your account permanently? This removes your progress, rewards, and shop purchases. This cannot be undone.',
+              );
+              if (!confirmed) return;
+              const response = await fetch('/api/account', {
+                method: 'DELETE',
+                credentials: 'include',
+              });
+              if (!response.ok) {
+                alert('Could not delete the account. Please try again.');
+                return;
+              }
+              try {
+                window.localStorage.removeItem('speeko.progress.v2');
+              } catch {
+                // ignore storage failures
+              }
+              await authClient.signOut();
+              router.push('/');
+              router.refresh();
+            }}
+          >
+            Delete account
+          </button>
         </div>
       </div>
     </div>

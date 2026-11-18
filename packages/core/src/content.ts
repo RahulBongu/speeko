@@ -105,7 +105,7 @@ export const LessonSchema = z.object({
   xpReward: z.number().int().min(0).default(10),
   exercises: z.array(ExerciseSchema).min(1),
   guidebook: z.string().optional(),
-  reviewStatus: z.enum(['draft', 'reviewed']).default('draft'),
+  reviewStatus: z.enum(['draft', 'reviewed', 'automated_reviewed']).default('draft'),
   reviewer: z.string().min(1).optional(),
 });
 
@@ -119,7 +119,7 @@ export const UnitSchema = z.object({
   lessons: z.array(LessonSchema).min(1),
   crownLevel: z.number().int().min(0).max(5).default(0),
   guidebook: z.string().optional(),
-  reviewStatus: z.enum(['draft', 'reviewed']).default('draft'),
+  reviewStatus: z.enum(['draft', 'reviewed', 'automated_reviewed']).default('draft'),
   reviewer: z.string().min(1).optional(),
 });
 
@@ -134,7 +134,7 @@ export const CourseSchema = z.object({
   difficulty: DifficultySchema,
   units: z.array(UnitSchema).min(1),
   version: z.string().default('1.0.0'),
-  reviewStatus: z.enum(['draft', 'reviewed']).default('draft'),
+  reviewStatus: z.enum(['draft', 'reviewed', 'automated_reviewed']).default('draft'),
   reviewer: z.string().min(1).optional(),
 });
 

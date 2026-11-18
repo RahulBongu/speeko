@@ -5,6 +5,7 @@ import type { Course } from '@speeko/core';
 import { practiceOverview } from '@speeko/core';
 import { apiFetch } from '../lib/api';
 import { loadProgress } from '../lib/progress';
+import { syncProgressIfSignedIn } from '../lib/sync';
 import { AppNav } from '../components/AppNav';
 import { Screen } from '../components/Screen';
 import {
@@ -29,7 +30,8 @@ export default function Practice() {
     setLoading(true);
     setError(null);
     try {
-      const progress = await loadProgress();
+      const synced = await syncProgressIfSignedIn();
+      const progress = synced.progress;
       const manifestResponse = await apiFetch('/api/courses');
       if (!manifestResponse.ok) {
         throw new Error(`Courses could not load (${manifestResponse.status}).`);

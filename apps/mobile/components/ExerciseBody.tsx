@@ -11,6 +11,7 @@ import {
 } from '../lib/exercise';
 import { TactileCard } from './Tactile';
 import { COLORS } from '../lib/theme';
+import { hasMobileAudio, playMobileAudio } from '../lib/audio';
 
 interface ExerciseBodyProps {
   exercise: Exercise;
@@ -45,6 +46,7 @@ export function ExerciseBody({
   );
   const [leftSelected, setLeftSelected] = useState<number | null>(null);
   const [matchedLeft, setMatchedLeft] = useState<number[]>([]);
+  const [playingAudio, setPlayingAudio] = useState(false);
 
   if (!isSupportedExercise(exercise)) {
     return (
@@ -74,6 +76,33 @@ export function ExerciseBody({
             Audio isn&apos;t available for this exercise yet. Choose the option that matches the
             prompt.
           </Text>
+        ) : null}
+        {exercise.kind === 'listenChoose' && hasMobileAudio(exercise.id) ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Play the phrase"
+            onPress={async () => {
+              setPlayingAudio(true);
+              const ok = await playMobileAudio(exercise.id);
+              if (!ok) setPlayingAudio(false);
+              setTimeout(() => setPlayingAudio(false), 3000);
+            }}
+            style={{
+              alignSelf: 'center',
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              borderWidth: 2,
+              borderColor: COLORS.dark,
+              backgroundColor: COLORS.green,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 24, color: COLORS.white, fontWeight: '900' }}>
+              {playingAudio ? '...' : '>'}
+            </Text>
+          </Pressable>
         ) : null}
         {options.map((option, index) => {
           const isSelected = selected === index;

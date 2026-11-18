@@ -1,6 +1,6 @@
 {
   "packageVersion": 1,
-  "generatedAt": "2026-11-16T17:46:57.986Z",
+  "generatedAt": "2026-11-18T05:40:16.568Z",
   "source": "content/dist/*.json",
   "manifestFile": "content/dist/manifest.json",
   "localeCount": 10,

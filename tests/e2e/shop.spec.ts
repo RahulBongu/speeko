@@ -60,8 +60,8 @@ const LESSONS = [
     lessonId: 'hi-starter-u3-l2',
     answers: [
       { exerciseId: 'hi-starter-u3-l2-e1', input: { kind: 'choice', index: 0 }, ms: 1200 },
-      // e3 listenChoose is excluded: its audio file is empty in the draft.
       { exerciseId: 'hi-starter-u3-l2-e2', input: { kind: 'text', value: 'सुप्रभात' }, ms: 2100 },
+      { exerciseId: 'hi-starter-u3-l2-e3', input: { kind: 'choice', index: 0 }, ms: 1800 },
     ],
   },
 ];

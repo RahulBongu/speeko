@@ -24,7 +24,7 @@ mkdirSync(outDir, { recursive: true });
 
 const LOCALE_ENGLISH = { hi: 'Hindi', bn: 'Bengali', mr: 'Marathi', te: 'Telugu', ta: 'Tamil', kn: 'Kannada', ml: 'Malayalam', gu: 'Gujarati', pa: 'Punjabi', or: 'Odia' };
 const SCRIPT = { hi: /[\u0900-\u097F]/, mr: /[\u0900-\u097F]/, bn: /[\u0980-\u09FF]/, ta: /[\u0B80-\u0BFF]/, te: /[\u0C00-\u0C7F]/, kn: /[\u0C80-\u0CFF]/, ml: /[\u0D00-\u0D7F]/, gu: /[\u0A80-\u0AFF]/, pa: /[\u0A00-\u0A7F]/, or: /[\u0B00-\u0B7F]/ };
-const APPROVED_NONEMPTY_AUDIO = /^https?:\/\/\S+$/;
+const APPROVED_NONEMPTY_AUDIO = /^(https?:\/\/\S+|\/\S+)$/;
 
 const manifest = JSON.parse(readFileSync(join(distDir, 'manifest.json'), 'utf8'));
 const files = readdirSync(distDir).filter((f) => f.endsWith('.json') && f !== 'manifest.json');

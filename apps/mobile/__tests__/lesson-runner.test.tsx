@@ -29,6 +29,12 @@ jest.mock('../lib/api', () => ({
   ORIGIN: 'http://localhost:3000',
 }));
 
+jest.mock('../lib/audio', () => ({
+  hasMobileAudio: jest.fn(() => false),
+  playMobileAudio: jest.fn(async () => false),
+  stopMobileAudio: jest.fn(async () => {}),
+}));
+
 import { apiFetch } from '../lib/api';
 import Lesson from '../app/lesson/[courseId]/[lessonId]';
 

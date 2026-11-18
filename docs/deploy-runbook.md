@@ -118,6 +118,24 @@ front. Keep the hop count aligned with the actual deployment topology; never
 raise it to trust arbitrary client-supplied chains. The in-memory limiter is
 per-process, so horizontal scaling needs a shared store before launch.
 
+### Scalability note (not required for the alpha)
+
+The current limiter is in-memory and per process. On a single Render instance
+(the alpha plan) this is correct and simple. If the service is ever scaled
+horizontally, each instance would keep its own counters and the effective limit
+would multiply by the instance count. Options, in order of preference:
+
+1. Keep single-instance for the alpha and small scale (recommended).
+2. Database-backed counters using the existing Postgres/Neon connection with an
+   atomic `INSERT ... ON CONFLICT ... DO UPDATE` window row and TTL. Adds DB
+   load but no new service. Requires a migration and cleanup of expired rows.
+3. External Redis — not provisioned in this project; adds a dependency and cost.
+   Only justified at meaningful scale.
+
+The proxy-aware IP resolution (`x-speeko-client-ip` + `API_PROXY_SECRET`) is
+independent of the store choice and remains correct in all cases. No store is
+provisioned or required for the alpha.
+
 ## Build order
 
 1. `pnpm install --frozen-lockfile`

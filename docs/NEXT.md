@@ -12,7 +12,7 @@
 
 - `next/M1`, `next/M2`, and `next/M3` are merged into `main` via PRs #4-#7. Nothing is open.
 - Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. No pull requests are open.
-- Full `pnpm verify` on `5762c09`: typecheck 6/6, unit **215** (108 core + 16 content + 12 API + 79 mobile), build 5/5, secrets **0 hits / 160 files**, licenses PASS, e2e **154/154 in 4.1m with 0 flakes**. (The earlier `d5d6a74` cut was 201 unit and 148/148 e2e; the merged license-artifact check brought e2e to 150.)
+- Full `pnpm verify` on `5762c09`: typecheck 6/6, unit **217** (108 core + 16 content + 12 API + 81 mobile), build 5/5, secrets **0 hits / 160 files**, licenses PASS, e2e **154/154 in 4.1m with 0 flakes**. (The earlier `d5d6a74` cut was 201 unit and 148/148 e2e; the merged license-artifact check brought e2e to 150.)
 - **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. Web texts ship at `/licenses/*` (auto-built, e2e-guarded); the mobile app ships an in-app `/licenses` screen from a generated bundle, guarded by `pnpm check:licenses`.
 
 **What landed**

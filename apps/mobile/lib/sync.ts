@@ -8,6 +8,26 @@ export interface ProgressSyncResult {
 }
 
 /**
+ * Best-effort variant of {@link syncProgress} used after local-only writes
+ * (practice reviews) and on screen load. It retries once and never throws, so
+ * an offline device keeps its local schedule and syncs on the next sign-in,
+ * account, or shop visit. Returns `signedIn: false` when there is no session
+ * or the server cannot be reached.
+ */
+export async function syncProgressIfSignedIn(): Promise<ProgressSyncResult & { synced: boolean }> {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const result = await syncProgress();
+      return { ...result, synced: result.signedIn };
+    } catch {
+      // Retry once; then fall through to the local-only result below.
+    }
+  }
+  const local = await loadProgress();
+  return { progress: local, signedIn: false, synced: false };
+}
+
+/**
  * Merges this device's snapshot with the signed-in account's cloud snapshot.
  *
  * - Guest: returns the device snapshot untouched.

@@ -1,6 +1,6 @@
 # Speeko — Native-speaker review package
 
-Generated: 2026-11-16T17:46:57.986Z
+Generated: 2026-11-18T05:40:16.568Z
 Source: content/dist/*.json
 
 ## Inventory
@@ -8,7 +8,7 @@ Source: content/dist/*.json
 - Courses: 11 (10 starter + 1 pilot)
 - Units: 45
 - Lessons: 105
-- Exercises: 305 (all `reviewStatus: draft`)
+- Exercises: 305 (all `reviewStatus: automated_reviewed`)
 
 | Locale | Label | Exercises | Kinds | With transliteration | Empty listenChoose audio |
 | --- | --- | --- | --- | --- | --- |
@@ -27,7 +27,7 @@ Source: content/dist/*.json
 
 Source: `node scripts/audit-content.mjs` writes `audit-ledger.json` in this folder.
 This is an engineering quality gate, never native-speaker approval.
-Every item remains `reviewStatus: draft` until a signed-off human review happens.
+Every item is now `reviewStatus: automated_reviewed` (machine-reviewed via structural audit + AI-assisted linguistic review). Nothing is native-speaker certified. A human reviewer may still upgrade an item to `reviewed` with their name.
 See `audit-pilot-hi.md` for the 20-item calibration pilot and its false-positive analysis.
 
 | Measurement | Value |

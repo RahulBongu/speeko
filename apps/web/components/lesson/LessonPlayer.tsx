@@ -33,6 +33,7 @@ import { checkUnitPractice, isPracticeLessonId, practiceKind } from '@/lib/pract
 import { authClient } from '@/lib/auth-client';
 import { readKnownSignedInUserId } from '@/lib/auth-marker';
 import { submitLessonCompletion } from '@/lib/sync';
+import { isSoundEnabled, playSound, setSoundEnabled } from '@/lib/sound';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
 import { ProgressBar } from '@/components/ProgressBar';
@@ -146,6 +147,12 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [entry, setEntry] = useState<FlatLesson | null>(null);
   const [session, setSession] = useState<SessionState | null>(null);
   const [draft, setDraft] = useState<DraftAnswer | null>(null);
+  const [soundOn, setSoundOn] = useState<boolean>(() => isSoundEnabled());
+  const toggleSound = useCallback(() => {
+    const next = !soundOn;
+    setSoundOn(next);
+    setSoundEnabled(next);
+  }, [soundOn]);
   const [phase, setPhase] = useState<Phase>('loading');
   const [error, setError] = useState<string | null>(null);
   const [grade, setGrade] = useState<GradeResult | null>(null);
@@ -345,11 +352,13 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setXpGained(next.xp - session.xp);
     setSession(next);
     setPhase('feedback');
+    playSound(result.correct ? 'correct' : 'incorrect');
   }, [session, draft, exerciseNow, phase]);
 
   const handleContinue = useCallback(() => {
     if (!session || !entry) return;
     if (session.finished) {
+      playSound('complete');
       setPhase(session.hearts <= 0 ? 'hearts' : 'summary');
       return;
     }
@@ -621,6 +630,14 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
                 <BoltIcon className="h-3.5 w-3.5" />×{session.combo}
               </span>
             ) : null}
+            <button
+              type="button"
+              onClick={toggleSound}
+              aria-label={soundOn ? 'Mute sound effects' : 'Unmute sound effects'}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cream-100 text-bark-500 transition hover:bg-cream-200"
+            >
+              {soundOn ? '🔊' : '🔇'}
+            </button>
           </div>
         </header>
       ) : null}

@@ -24,7 +24,7 @@ interface CourseEntry {
   units: number;
   lessons: number;
   exercises: number;
-  reviewStatus?: 'draft' | 'reviewed';
+  reviewStatus?: 'draft' | 'reviewed' | 'automated_reviewed';
 }
 
 const ENGLISH: Record<Locale, string> = {
@@ -223,7 +223,9 @@ export default function Learn() {
                       ? 'COMPLETE'
                       : entry.reviewStatus === 'reviewed'
                         ? 'REVIEWED'
-                        : 'DRAFT'}
+                        : entry.reviewStatus === 'automated_reviewed'
+                          ? 'AUTO-REVIEWED'
+                          : 'DRAFT'}
                   </Text>
                 </View>
               </View>

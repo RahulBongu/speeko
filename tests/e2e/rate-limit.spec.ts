@@ -342,6 +342,20 @@ function uniqueIp(prefix: string, seed: number): string {
   return `${prefix}.${10 + ((seed * 37) % 200)}`;
 }
 
+/**
+ * The limiter uses a fixed 60 s window. A 61-request burst that straddles a
+ * window boundary would reset the counter and never trip a 429. Wait until we
+ * are at least 3 s into a window before bursting, so the whole burst (about
+ * 0.5 s) is guaranteed to land in one window. Caps the wait at 3 s.
+ */
+async function waitForRateLimitWindow(): Promise<void> {
+  const windowMs = 60_000;
+  const safeOffset = 3_000;
+  const now = Date.now() % windowMs;
+  if (now <= windowMs - safeOffset) return;
+  await new Promise((resolve) => setTimeout(resolve, windowMs - now + 50));
+}
+
 async function authGet(
   context: APIRequestContext,
   options: { ip?: string; secret?: string; forwardedFor?: string } = {},
@@ -358,6 +372,7 @@ test('a signed proxy header separates clients; a wrong secret cannot mint new ke
     baseURL: apiUrl,
     extraHTTPHeaders: { origin: ORIGIN },
   });
+  await waitForRateLimitWindow();
   const seed = Date.now() % 10_000;
   const trustedIp = uniqueIp('203.0.113', seed + 1);
   const otherTrustedIp = uniqueIp('203.0.113', seed + 2);
@@ -407,6 +422,7 @@ test('one trusted X-Forwarded-For hop separates direct clients', async () => {
     baseURL: apiUrl,
     extraHTTPHeaders: { origin: ORIGIN },
   });
+  await waitForRateLimitWindow();
   const seed = (Date.now() + 500) % 10_000;
   const firstIp = uniqueIp('192.0.2', seed + 1);
   const secondIp = uniqueIp('192.0.2', seed + 2);
