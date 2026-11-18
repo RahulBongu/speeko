@@ -15,9 +15,8 @@ scripted replay farming of completion XP/gems — are closed and verified at the
 database level.
 
 Speeko is **not** release-ready for the public. No automated engineering work
-remains for the internal alpha. `main` (`ac62217`) is the last merged state;
-`next/M3` (in-app mobile licenses and proxy-aware rate limiting) is green and
-awaits the owner's merge.
+remains for the internal alpha. `main` (`5762c09`) includes the in-app mobile
+licenses and proxy-aware rate limiting; PR #7 is merged.
 Blocking external requirements: a
 native-speaker review for every course, hosting provisioning and backups,
 a clean signed rebuild that includes the in-app licenses screen, and store
@@ -138,10 +137,10 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 
 ## Merge state
 
-`next/M3` is open as PR #7 with green CI and awaits the owner's merge. PR #6 merged the license,
-hosting, and web license-bundling work into `main` on 2026-11-18 (`ac62217`).
-Version remains `0.0.1`; nothing is published. `next/M3` adds the in-app
-mobile license screen and its drift guard, plus proxy-aware rate limiting.
+PR #7 merged the in-app mobile license screen and its drift guard, plus
+proxy-aware rate limiting, into `main` on 2026-11-18 (`5762c09`). PR #6 merged
+the license, hosting, and web license-bundling work (`ac62217`). Version remains
+`0.0.1`; nothing is published.
 
 ## Blockers for a public release
 
