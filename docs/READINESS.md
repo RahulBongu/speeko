@@ -138,7 +138,7 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 
 ## Merge state
 
-`next/M3` is open and awaits the owner's merge. PR #6 merged the license,
+`next/M3` is open as PR #7 with green CI and awaits the owner's merge. PR #6 merged the license,
 hosting, and web license-bundling work into `main` on 2026-11-18 (`ac62217`).
 Version remains `0.0.1`; nothing is published. `next/M3` adds the in-app
 mobile license screen and its drift guard, plus proxy-aware rate limiting.

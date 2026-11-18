@@ -9,10 +9,10 @@
 | Ref | Contents | CI |
 | --- | --- | --- |
 | `main` | `ac62217` (merge of PR #6) — M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs + license files (D79) + hosting configuration (D80) + web license bundling | Push run on `ac62217` |
-| `next/M3` | `main` + in-app mobile license screen and drift guard + proxy-aware rate limiting; **CI pending** | Push and PR CI |
+| `next/M3` | `main` + in-app mobile license screen and drift guard + proxy-aware rate limiting; **PR #7 is open and CI is green** | Push and PR CI green |
 
 - `next/M1` and the earlier `next/M2` commits (league batching + docs refresh + license/hosting/web texts) are merged into `main` via PRs #4, #5, and #6. The mobile license and proxy-aware rate-limiting work on `next/M3` awaits review.
-- Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. `next/M3` is the only open pull request.
+- Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. PR #7 (`next/M3`) is the only open pull request.
 - Full `pnpm verify` on `next/M3`: typecheck 6/6, unit **215** (108 core + 16 content + 12 API + 79 mobile), build 5/5, secrets **0 hits / 160 files**, licenses PASS, e2e **154/154 in 4.1m with 0 flakes**. (The earlier `d5d6a74` cut was 201 unit and 148/148 e2e; the merged license-artifact check brought e2e to 150.)
 - **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. Web texts ship at `/licenses/*` (auto-built, e2e-guarded); the mobile app ships an in-app `/licenses` screen from a generated bundle, guarded by `pnpm check:licenses`.
 
