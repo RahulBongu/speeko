@@ -19,8 +19,8 @@ remains for the internal alpha. `main` (`82f0f3c`) is the last merged state;
 `next/M2` (license, hosting, and web license bundling) is green and awaits the
 owner's merge.
 Blocking external requirements: a
-native-speaker review for every course, hosting provisioning and backups, license
-texts bundled into distributed artifacts, and store accounts. On-device functional QA is waived for the internal alpha by
+native-speaker review for every course, hosting provisioning and backups, mobile
+license texts bundled at packaging, and store accounts. On-device functional QA is waived for the internal alpha by
 owner instruction (D78); headless web/API verification is the accepted
 evidence. A controlled internal trial is possible with the constraints below.
 
@@ -34,7 +34,7 @@ evidence. A controlled internal trial is possible with the constraints below.
 | Curriculum authenticity | **Blocked** — tooling ready, review not started | native speaker × 10 locales |
 | Android device QA | **Pass (render)**; functional QA waived — release APK verified on a Vivo V2336 (2026-11-17), functional device QA waived by owner (D78) | engineering + owner |
 | Hosting & operations | **Decided 2026-11-18** — free stack ready in repo; owner provisioning pending | owner |
-| License & rights | **Decided 2026-11-18** — Apache-2.0 code, All Rights Reserved content/brand, OFL fonts; artifact bundling pending | owner (packaging) |
+| License & rights | **Decided 2026-11-18** — Apache-2.0 code, All Rights Reserved content/brand, OFL fonts; web texts shipped at `/licenses/*`; mobile bundling at packaging | owner (mobile packaging) |
 
 ## 1. Security and data integrity
 
@@ -148,7 +148,7 @@ runbook), and the web license bundling.
 1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
 2. **Android device QA**: the release-APK render pass is done (2026-11-17, Vivo V2336, `36A5D41D…`). Functional device QA is **waived for the internal alpha** by owner instruction (D78); headless Playwright covers the functional flows. A public launch still needs a real-device pass by the owner.
 3. **Hosting provisioning and backups** (owner; Option A — Neon + Render + Vercel — is decided, and `render.yaml` + the runbook are ready). Includes a tested restore and secret rotation.
-4. **License artifact bundling**: `LICENSE`, `NOTICE`, and the font OFL text must ship inside a distributed APK or site (or an in-app licenses screen). The license decision and repo files are done (2026-11-18).
+4. **Mobile license artifact bundling**: the web site now ships `LICENSE`, `LICENSE-CONTENT`, `NOTICE`, and the font OFL text at `/licenses/*` (auto-built, e2e-guarded). The Android artifact still needs the same texts (or an in-app licenses screen) before it is distributed. The license decision and repo files are done (2026-11-18).
 5. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
 
 ## What can ship now (bounded trial)

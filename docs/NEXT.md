@@ -14,7 +14,7 @@
 - `next/M1` and the earlier `next/M2` commits (league batching + docs refresh) are merged into `main` via PRs #4 and #5. The license (D79), hosting (D80), and web license-bundling work on `next/M2` is green and awaits the owner's PR/merge.
 - Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, no open pull requests, nothing published.
 - Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, secrets **0 hits / 151 files**, e2e **148/148 in 5.9m with 0 flakes**. The current suite adds a license-artifact check (**150 tests**).
-- **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. Distribution still requires bundling the license texts into the artifact.
+- **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. The web artifact ships the texts at `/licenses/*` (auto-built, e2e-guarded); the mobile artifact still needs them bundled at packaging time.
 
 **What landed**
 

@@ -20,8 +20,9 @@ Read together with:
 **GATE L — LICENSE.** Decided 2026-11-18: Apache-2.0 for code, All Rights
 Reserved for content and brand, OFL-1.1 text for the bundled fonts. Files:
 `LICENSE`, `LICENSE-CONTENT`, `NOTICE`,
-`apps/web/public/fonts/OFL.txt`. Outstanding: bundle the license texts into a
-distributed artifact (APK or site).
+`apps/web/public/fonts/OFL.txt`. Web distribution is covered: the build copies
+the texts to `/licenses/*` (auto-built, e2e-guarded). Mobile still needs the
+texts bundled at packaging time (APK or an in-app licenses screen).
 *Until then: release = internal trial only. No store listing, no public repo.*
 
 **GATE H — Hosting.** The owner picks Neon+Render+Vercel (alpha), the VPS
