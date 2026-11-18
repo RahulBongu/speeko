@@ -16,7 +16,8 @@ database level.
 
 Speeko is **not** release-ready for the public. No automated engineering work
 remains for the internal alpha. `main` (`82f0f3c`) is the last merged state;
-`next/M2` (`444f4b5`: license + hosting) is green and awaits the owner's merge.
+`next/M2` (license, hosting, and web license bundling) is green and awaits the
+owner's merge.
 Blocking external requirements: a
 native-speaker review for every course, hosting provisioning and backups, license
 texts bundled into distributed artifacts, and store accounts. On-device functional QA is waived for the internal alpha by
@@ -67,7 +68,7 @@ owner's launch gates remain.
 
 | Requirement | Status | Evidence |
 | --- | --- | --- |
-| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 148 checks total incl. integrity suites); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
+| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 150 checks total incl. integrity suites and license artifact); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
 | Advertised exercise types behave correctly | **Pass; unsupported kinds fail closed** | The curriculum uses 4 kinds: `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10. Web supports all ten published kinds. Mobile supports 9 (`chooseMeaning`, `listenChoose` with audio, `fillBlank`, `typeTranslation`, `matchPairs`, `wordBank`, `arrangeSentence`, `typeWhatYouHear`, `speak`); `chooseImage` blocks honestly and cannot complete a lesson. No curriculum item is an unimplemented-kind. |
 | Missing-audio safeguard | **Pass** | `eligibleExercises()` in `@speeko/core` excludes empty-audio `listenChoose` from lesson queues, review/practice plans, the SRS index, and the API grading path. The 10 items keep their IDs/content and are blocked in the audit ledger. Core + mobile tests cover skip and playable-audio branches. |
 | Progress restores and synchronizes | **Pass** | Web guest→account merge (D12), mobile local/cloud merge (`lib/sync.ts`), migration from v1 snapshot, corrupt-JSON tolerance. |
@@ -88,7 +89,7 @@ gem sources beyond lessons/quests/purchases, and any licensed audio.
 | Unit (content) | **Pass** | `pnpm --filter @speeko/content test` — **16 passed** (all 305 exercises graded, validation/test suites incl. answerIndex bounds) |
 | Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` — **77 passed across 15 suites** (includes missing-audio skip, playable-audio branch, and the added exercise kinds) |
 | API integration | **Pass** | `progress-integrity.spec.ts` — 7 scenarios and `reward-integrity.spec.ts` — 7 scenarios against the real API+DB (14 checks each across both viewports); plus reward, habits, shop, social, and the isolated rate-limit contract (`rate-limit.spec.ts`) |
-| Browser E2E | **Pass** | `pnpm e2e` — **148 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run |
+| Browser E2E | **Pass** | `pnpm e2e` — **150 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run |
 | Typecheck | **Pass** | 6/6 turbo tasks |
 | Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 22 static routes) |
 | Lint | **Pass** (0 errors) | web: 1 documented `<img>` warning; mobile: clean |
@@ -139,8 +140,8 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 `next/M2` work (`d5d6a74` league fix + `5e3c999` handoff docs) into `main` on
 2026-11-18 (`82f0f3c`). Version remains `0.0.1`; nothing is published. The
 branch now also carries the follow-up docs bookkeeping, the license files
-(D79), and the hosting configuration (D80: proxy rewrite, Render blueprint,
-runbook).
+(D79), the hosting configuration (D80: proxy rewrite, Render blueprint,
+runbook), and the web license bundling.
 
 ## Blockers for a public release
 

@@ -15,7 +15,7 @@ reviewed, published, launched, or hardware-tested unless it says so.
 | `pnpm typecheck` | **6/6 Turbo tasks** successful (5 package typechecks + `^build`) |
 | `pnpm test` | **201 unit tests** — 108 core + 16 content (Vitest) and 77 mobile (Jest, 15 suites). All pass. |
 | `pnpm build` | **5/5 Turbo tasks** (core, content, web, API, mobile web export) |
-| `pnpm e2e` | **148 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
+| `pnpm e2e` | **150 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
 | `pnpm verify` | typecheck → test → build → secrets → e2e, all green |
 | Mobile export | 22 static routes exported (`dist/`) |
 

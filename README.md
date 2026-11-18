@@ -154,7 +154,7 @@ content/      Per-locale course JSON
 - `pnpm test` — 108 core + 16 content (Vitest) and 77 mobile (Jest, 15 suites), all passing
 - `pnpm build` — web, API, mobile-web export (22 static routes), and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
-- `pnpm e2e` — 148 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
+- `pnpm e2e` — 150 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
 - `pnpm verify` — runs typecheck → test → build → secrets scan → e2e in order
 - Migrations are applied on API startup. `lesson_events` (0002) and `lesson_completion_rewards` (0005) were smoke-tested; 0005 was applied to a fresh pglite directory and to a populated pre-0005 database with historical events, verifying the non-destructive backfill.
 

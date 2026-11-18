@@ -9,9 +9,9 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
 ## Current state (post-M4, 2026-11-18)
 
-- **Engineering is complete and green.** Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (151 files, 0 hits), e2e **148/148** in 5.9m with zero flakes.
+- **Engineering is complete and green.** Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (151 files, 0 hits), e2e **148/148** in 5.9m with zero flakes. The current suite adds a license-artifact check (**150 tests**).
 - **`main` is `82f0f3c`** — the merge of PR #5 (`82f0f3c`), which followed PR #4 (`e5a06c2`). `main` now contains the league profile-lookup fix (`d5d6a74`) and the 2026-11-18 docs refresh (`5e3c999`). `next/M1` was merged earlier.
-- **`next/M2` carries the license (D79) and hosting (D80) work**; CI is green on `444f4b5` and it awaits the owner's merge into `main`. The internal alpha is feature-complete and green.
+- **`next/M2` carries the license (D79), hosting (D80), and web license-bundling work**; CI is green on the branch head and it awaits the owner's merge into `main`. The internal alpha is feature-complete and green.
 - **License gate decided (D79).** Apache-2.0 for source code (`LICENSE`, verbatim from apache.org), All Rights Reserved for course content, brand, design, and docs (`LICENSE-CONTENT`), and the full OFL-1.1 text for Baloo 2 and Nunito (`apps/web/public/fonts/OFL.txt`). `NOTICE`, `ATTRIBUTIONS.md`, and `content/README.md` are updated. Distribution still requires bundling the texts into the artifact.
 - **Hardening shipped:** `/api/auth/*` 60 requests/min per IP; `PUT /api/progress` 30/min per account+IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`.
 - **Phase 1–4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
