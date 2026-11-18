@@ -8,7 +8,7 @@ anything or spends money today.
 
 Read together with:
 - `docs/decisions/2026-11-16-hosting-and-database.md` (option A/B/C; hosting undecided)
-- `docs/decisions/2026-11-16-license.md` (license undecided)
+- `docs/decisions/2026-11-16-license.md` (decided 2026-11-18: Apache-2.0 code, All Rights Reserved content/brand)
 - `review/audio-decision-analysis.md` (audio unsolved; 10 blocked `listenChoose`)
 - `docs/qa/android-device-qa.md` (Android tooling missing; checklist ready)
 - `docs/READINESS.md` (current honest status)
@@ -17,8 +17,11 @@ Read together with:
 
 ## GO / NO-GO gates (all mandatory before public release)
 
-**GATE L — LICENSE.** No LICENSE file exists. The owner picks the code license
-and content rights (options in `docs/decisions/2026-11-16-license.md`).
+**GATE L — LICENSE.** Decided 2026-11-18: Apache-2.0 for code, All Rights
+Reserved for content and brand, OFL-1.1 text for the bundled fonts. Files:
+`LICENSE`, `LICENSE-CONTENT`, `NOTICE`,
+`apps/web/public/fonts/OFL.txt`. Outstanding: bundle the license texts into a
+distributed artifact (APK or site).
 *Until then: release = internal trial only. No store listing, no public repo.*
 
 **GATE H — Hosting.** The owner picks Neon+Render+Vercel (alpha), the VPS

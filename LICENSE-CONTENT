@@ -1,0 +1,39 @@
+Speeko — Content and Brand License
+==================================
+
+Copyright 2026 Speeko project. All Rights Reserved.
+
+This file covers the parts of the Speeko repository that are NOT licensed
+under the Apache License, Version 2.0 (see `LICENSE`):
+
+- Course data under `content/<locale>/` (all locales) and the phrase tables
+  and manifests under `content/_config/`, including lesson text, exercise
+  answer keys, translations, transliterations, and guidebook material.
+- The fox mascot, app icon, wordmark, brand board, and other artwork under
+  `design/` and `apps/web/public/brand/`.
+- The Speeko name, wordmark, and app icon as project identifiers.
+- Product copy, screenshots, and documentation under `docs/`, except
+  third-party material quoted in them.
+
+No part of this material may be copied, modified, redistributed, published,
+sublicensed, or sold in any form without prior written permission from the
+copyright holder, except as permitted by applicable law.
+
+Third-party carve-outs
+----------------------
+
+- Fonts bundled in `apps/web/public/fonts/` (Baloo 2 and Nunito) are licensed
+  under the SIL Open Font License, Version 1.1. The full license text and
+  copyright lines are in `apps/web/public/fonts/OFL.txt`.
+- Imported third-party text, if any is added later, keeps the license stated
+  at its source and is listed in `ATTRIBUTIONS.md`. No imported third-party
+  text is present in the current curriculum.
+- Runtime dependencies installed from npm remain under their own licenses;
+  see `ATTRIBUTIONS.md` and `NOTICE`.
+
+The source code (applications, packages, scripts, and build tooling) is
+licensed separately under the Apache License, Version 2.0 — see `LICENSE`.
+
+"Speeko" and the fox mascot are project identifiers. They are not granted for
+use in any way that suggests endorsement of, or affiliation with, a fork or
+derivative work.

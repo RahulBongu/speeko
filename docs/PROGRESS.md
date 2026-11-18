@@ -5,13 +5,14 @@ Living status document. One phase per session; a phase is done only when
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-18 (engineering complete; one follow-up fix awaiting owner merge)
+**Updated:** 2026-11-18 (engineering complete; PR #5 merged; license decided; owner gates open)
 
 ## Current state (post-M4, 2026-11-18)
 
 - **Engineering is complete and green.** Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (151 files, 0 hits), e2e **148/148** in 5.9m with zero flakes.
 - **`main` is `82f0f3c`** — the merge of PR #5 (`82f0f3c`), which followed PR #4 (`e5a06c2`). `main` now contains the league profile-lookup fix (`d5d6a74`) and the 2026-11-18 docs refresh (`5e3c999`). `next/M1` was merged earlier.
-- **`next/M2` tracks the PR #5 merge** (`5e3c999`); nothing awaits an engineering merge. The internal alpha is feature-complete and green.
+- **`next/M2` carries the follow-up docs and license work**; nothing awaits an engineering merge. The internal alpha is feature-complete and green.
+- **License gate decided (D79).** Apache-2.0 for source code (`LICENSE`, verbatim from apache.org), All Rights Reserved for course content, brand, design, and docs (`LICENSE-CONTENT`), and the full OFL-1.1 text for Baloo 2 and Nunito (`apps/web/public/fonts/OFL.txt`). `NOTICE`, `ATTRIBUTIONS.md`, and `content/README.md` are updated. Distribution still requires bundling the texts into the artifact.
 - **Hardening shipped:** `/api/auth/*` 60 requests/min per IP; `PUT /api/progress` 30/min per account+IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`.
 - **Phase 1–4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
 - **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
@@ -598,8 +599,10 @@ These are product gaps, not regressions. Details and evidence are in
 - **Unit practice can double-count a card** within one session (round-robin can land
   two exercises for the same word). Due and trouble plans use one exercise per skill.
 - **Trouble words are historical**; a card with a lapse never automatically retires.
-- **Hosting/database choice is deferred** and no `LICENSE` exists; both are owner
-  decisions with packages prepared this cycle. Nothing is provisioned or signed.
+- **Hosting/database choice is deferred** (owner decision; package prepared this
+  cycle). The license is decided and implemented: Apache-2.0 code, All Rights
+  Reserved content and brand, OFL-1.1 text for the bundled fonts (2026-11-18).
+  Nothing is provisioned or signed.
 - **Mobile exercise parity is effectively complete** for the shipped curriculum:
   `wordBank`, `arrangeSentence`, `typeWhatYouHear`, and `speak` are all supported on
   mobile. Only `chooseImage` is unsupported and fails safely; it is not used by any

@@ -253,8 +253,9 @@ Not imported, and why:
    item and fails closed.
 4. **Offline/sync edge cases** for a second device are only partially covered
    by unit-level sync tests; no two-device live run exists.
-5. **No license.** The repo remains all rights reserved by default; the
-   decision package is in `docs/decisions/2026-11-16-license.md`.
+5. **License:** decided 2026-11-18 — Apache-2.0 for code, All Rights Reserved
+   for content/brand, OFL-1.1 text for the bundled fonts (D79). What remains is
+   packaging: the license texts must be bundled into a distributed artifact.
 6. **Hosting/database decision** is still deferred by the owner; the
    recommendation package is in `docs/decisions/2026-11-16-hosting-and-database.md`.
 
@@ -264,7 +265,7 @@ The mobile app in this tree is a working alpha suitable for a controlled
 internal trial: playable draft lessons, onboarding, honest fail-closed states,
 and account-synced rewards. It is **not** a production release candidate until
 at least (1) a native-speaker review pass, (2) an owner-run functional device
-pass on the release build, (3) a hosting/database choice, and (4) a license
-decision are complete. The progress endpoint's reward integrity is verified at
+pass on the release build, (3) a hosting/database choice, and (4) license-text
+bundling in the distributed artifact are complete. The progress endpoint's reward integrity is verified at
 the database boundary (P13 + P17); visual and linguistic authenticity are not
 yet verified anywhere.

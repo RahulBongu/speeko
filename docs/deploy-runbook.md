@@ -33,6 +33,8 @@ Release signing (Android): `SPE_RELEASE_*` variables must point at a copy of `re
 
 Store-bound packages must be built from a fresh tree: `npx expo prebuild --platform android --clean` with `SPEEKO_QA_LOOPBACK_CLEARTEXT` unset, then `./gradlew bundleRelease`, and verify the AAB does NOT carry the loopback network security config. The alpha AAB in the local build cache was produced from the QA-enabled tree.
 
+Every distributed artifact must also carry the license texts: include `LICENSE`, `LICENSE-CONTENT`, `NOTICE`, and `apps/web/public/fonts/OFL.txt` in the package (or expose them in an in-app licenses screen) before giving it to anyone outside the project. Apache-2.0 section 4 requires recipients to receive a copy of the License.
+
 ## Build order
 
 1. `pnpm install --frozen-lockfile`

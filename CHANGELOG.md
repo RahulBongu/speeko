@@ -2,6 +2,10 @@
 
 ## Unreleased (alpha cut)
 
+### Licensing
+- Source code is Apache-2.0 (`LICENSE`, verbatim from apache.org); course content, brand, design, and docs are All Rights Reserved (`LICENSE-CONTENT`)
+- Baloo 2 and Nunito now ship with their full OFL-1.1 text (`apps/web/public/fonts/OFL.txt`); third-party attribution collected in `NOTICE` and `ATTRIBUTIONS.md`
+
 ### Trust & integrity
 - One-time completion rewards per lesson (XP + gems), replay-safe; practice never mints XP
 - Append-only gem and quest ledgers; shop purchases transactional; concurrent double-spend rejected

@@ -1,38 +1,51 @@
 # Attribution
 
-Speeko content may include material imported from open-licensed sources. Imported
-content is always stored with `reviewStatus: "draft"` until a native speaker
-reviews it.
+Speeko's own code and content are licensed as follows (2026-11-18):
 
-## Imported phrases
+| Part | License | File |
+| --- | --- | --- |
+| Source code | Apache License 2.0 | `LICENSE` |
+| Course content, brand, design, docs | All Rights Reserved | `LICENSE-CONTENT` |
+| Bundled fonts | SIL Open Font License 1.1 | `apps/web/public/fonts/OFL.txt` |
 
-- **Tatoeba** (https://tatoeba.org/) — sentence pairs and translations. Licensed
-  under Creative Commons Attribution 2.0 France (CC BY 2.0 FR) unless a sentence
-  carries another stated license. Attribution: "Tatoeba contributors".
-- Any imported phrase keeps its source sentence ID in the importer input so the
-  original attribution can be traced.
+Third-party attributions are also collected in `NOTICE`.
 
 ## Fonts
 
-Bundled in `apps/web/public/fonts/` under their own licences:
+Bundled in `apps/web/public/fonts/` under the SIL Open Font License 1.1:
 
-- **Baloo 2** (Baloo2-Devanagari / Baloo2-Latin) — SIL Open Font License 1.1.
-  (https://fonts.google.com/noto/specimen/Baloo+2)
-- **Nunito** (Nunito-Latin) — SIL Open Font License 1.1.
-  (https://fonts.google.com/specimen/Nunito)
+- **Baloo 2** — Copyright 2019 The Baloo 2 Project Authors
+  (https://github.com/EkType/Baloo2)
+- **Nunito** — Copyright 2014 The Nunito Project Authors
+  (https://github.com/googlefonts/nunito)
+
+The full license text is in `apps/web/public/fonts/OFL.txt`.
+
+## Imported phrases
+
+**No imported third-party phrases are present in the current curriculum.**
+If phrases are imported later:
+
+- Every imported item keeps its source sentence ID so attribution can be
+  traced, and is stored with `reviewStatus: "draft"` until a native speaker
+  reviews it.
+- **Tatoeba** (https://tatoeba.org/) content is CC BY 2.0 FR unless a
+  sentence states otherwise; attribution: "Tatoeba contributors". It must be
+  listed here with the imported IDs before it ships.
 
 ## Brand assets
 
 Speeko wordmark, app icon, fox mascot, and the brand board in `design/` and
-`apps/web/public/brand/` are original Speeko artwork. They are part of the
-project's identity and are not licensed for reuse by third parties without
-permission from the owner.
+`apps/web/public/brand/` are original Speeko artwork. They are All Rights
+Reserved (`LICENSE-CONTENT`) and are not licensed for reuse by third parties
+without permission from the owner.
 
 ## Deliberately unused
 
 No Tatoeba, unDraw, Rive, or Duolingo assets have been imported. The
 `listenChoose` exercises ship with an empty `audioUrl`; audio licensing must
-be settled before audio can be added (see `docs/decisions/2026-11-16-license.md`).
+be settled before audio can be added (see
+`docs/decisions/2026-11-16-license.md`).
 
 ## Course authoring
 

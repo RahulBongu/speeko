@@ -9,11 +9,12 @@
 | Ref | Contents | CI |
 | --- | --- | --- |
 | `main` | `82f0f3c` (merge of PR #5) — everything: M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs refresh (`5e3c999`) | Push run `44167051237` on `82f0f3c` |
-| `next/M2` | identical to `main` at the PR #5 merge (`5e3c999`) | Push run `44164188885` |
+| `next/M2` | `main` + docs bookkeeping (`afbe203`) + the license files (D79); rides the next gate-driven PR | CI runs on each push |
 
 - `next/M1`, and both `next/M2` commits (league batching + docs refresh), are merged into `main` via PRs #4 and #5. No engineering work is pending a merge.
 - Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, no open pull requests, nothing published.
 - Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, secrets **0 hits / 151 files**, e2e **148/148 in 5.9m with 0 flakes**.
+- **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. Distribution still requires bundling the license texts into the artifact.
 
 **What landed**
 
@@ -25,7 +26,7 @@
 
 ### What the owner must do next
 
-1. License decision + OFL attribution + `LICENSE` file.
+1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Remaining: bundle the license texts into the distributed artifact at packaging time.
 2. Hosting/database authorization + backups + secret rotation.
 3. Native-speaker review of the 305 draft exercises (10 locales).
 4. Audio decision for `listenChoose` (10 items), or formally keep them excluded.

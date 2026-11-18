@@ -17,8 +17,8 @@ database level.
 Speeko is **not** release-ready for the public. No automated engineering work
 remains for the internal alpha, and `main` (`82f0f3c`) is the state to reference.
 Blocking external requirements: a
-native-speaker review for every course, a hosting/database decision, a license,
-and store accounts. On-device functional QA is waived for the internal alpha by
+native-speaker review for every course, a hosting/database decision, license
+texts bundled into distributed artifacts, and store accounts. On-device functional QA is waived for the internal alpha by
 owner instruction (D78); headless web/API verification is the accepted
 evidence. A controlled internal trial is possible with the constraints below.
 
@@ -32,7 +32,7 @@ evidence. A controlled internal trial is possible with the constraints below.
 | Curriculum authenticity | **Blocked** — tooling ready, review not started | native speaker × 10 locales |
 | Android device QA | **Pass (render)**; functional QA waived — release APK verified on a Vivo V2336 (2026-11-17), functional device QA waived by owner (D78) | engineering + owner |
 | Hosting & operations | **Recommended, awaiting owner** | owner |
-| License & rights | **Blocked** — decision package ready | owner |
+| License & rights | **Decided 2026-11-18** — Apache-2.0 code, All Rights Reserved content/brand, OFL fonts; artifact bundling pending | owner (packaging) |
 
 ## 1. Security and data integrity
 
@@ -129,21 +129,22 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 | Backup and recovery | **Requirement on file** | nightly `pg_dump` or provider PITR; a tested restore is a pre-launch gate in the operations checklist and hosting package |
 | Migrations | **Pass** | applied on API start; append-only table strategy keeps forwards-only restores possible; migration target is Postgres |
 | Secrets handling | **Pass** | none in repo (`.gitignore` enforced; `apps/api/.env.example` documents placeholders only) |
-| License & content rights | **Blocked** — decision package ready | `docs/decisions/2026-11-16-license.md` — options (Apache-2.0 code / CC-BY-NC content recommended), font OFL attribution noted, brand reserved; **nothing published** |
+| License & content rights | **Decided 2026-11-18** — artifact bundling pending | Apache-2.0 code + All Rights Reserved content/brand in `LICENSE` and `LICENSE-CONTENT`; font OFL-1.1 text in `apps/web/public/fonts/OFL.txt`; `NOTICE` and `ATTRIBUTIONS.md` updated; **nothing published** |
 
 ## Merge state
 
 Nothing awaits an engineering merge. PR #5 merged `next/M2` (`d5d6a74` league
 fix + `5e3c999` handoff docs) into `main` on 2026-11-18 (`82f0f3c`). Version
-remains `0.0.1`; nothing is published. The follow-up docs touch-ups that landed
-on `next/M2` after the merge ride the next follow-up PR; they change no code.
+remains `0.0.1`; nothing is published. The branch now also carries the
+follow-up docs bookkeeping and the license files (D79); they change no code
+and ride the next gate-driven PR.
 
 ## Blockers for a public release
 
 1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
 2. **Android device QA**: the release-APK render pass is done (2026-11-17, Vivo V2336, `36A5D41D…`). Functional device QA is **waived for the internal alpha** by owner instruction (D78); headless Playwright covers the functional flows. A public launch still needs a real-device pass by the owner.
 3. **Hosting/database choice** (owner; option A/B/C in the hosting package).
-4. **LICENSE file** with OFL font attribution and `content/README.md` right-reserved note (owner; see license package).
+4. **License artifact bundling**: `LICENSE`, `NOTICE`, and the font OFL text must ship inside a distributed APK or site (or an in-app licenses screen). The license decision and repo files are done (2026-11-18).
 5. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
 
 ## What can ship now (bounded trial)
