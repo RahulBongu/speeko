@@ -11,10 +11,28 @@ import { socialRoutes } from './routes/social.js';
 import { courseRoutes } from './routes/courses.js';
 import { aiRoutes } from './routes/ai.js';
 import { closeDb, runMigrations } from './db/client.js';
+import { parseTrustProxyHops } from './client-ip.js';
 import { rateLimitPlugin } from './rate-limit.js';
 import cacheHeadersPlugin from './cache-headers.js';
 
-const app = Fastify({ logger: true });
+const trustProxyHops = parseTrustProxyHops(process.env.TRUST_PROXY_HOPS);
+
+const app = Fastify({
+  logger: true,
+  // Trust exactly the configured number of platform proxy hops. Fastify's
+  // types omit proxy-addr's numeric form, so express it as the equivalent
+  // predicate (hop 0 is the socket peer). Invalid values fail closed to 0
+  // inside parseTrustProxyHops.
+  trustProxy:
+    trustProxyHops > 0 ? (_address, hop) => hop < trustProxyHops : false,
+});
+
+if (trustProxyHops === 0 && process.env.TRUST_PROXY_HOPS) {
+  app.log.warn(
+    `Ignoring invalid TRUST_PROXY_HOPS=${process.env.TRUST_PROXY_HOPS}; ` +
+      'expected an integer between 0 and 8.',
+  );
+}
 
 const clientOrigins = (process.env.CLIENT_ORIGINS ?? 'http://localhost:3000')
   .split(',')

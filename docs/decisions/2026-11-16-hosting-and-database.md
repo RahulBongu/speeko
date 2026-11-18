@@ -102,7 +102,7 @@ different sites, and Better Auth's session cookie is `SameSite=Lax`. A browser
 request from the Vercel origin straight to the Render API would not carry the
 session, and `SameSite=None` is blocked or partitioned by Safari/Firefox. The
 web app therefore calls `/api/*` on its own origin and Next.js proxies it to
-Render (`apps/web/next.config.mjs`), so the cookie is first-party. No custom
+Render (`apps/web/middleware.ts`), so the cookie is first-party. No custom
 domain is required.
 
 **This decision authorizes no spend and provisions nothing.** Creating the

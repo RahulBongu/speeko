@@ -8,13 +8,13 @@
 
 | Ref | Contents | CI |
 | --- | --- | --- |
-| `main` | `82f0f3c` (merge of PR #5) — everything: M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs refresh (`5e3c999`) | Push run `44167051237` on `82f0f3c` |
-| `next/M2` | `main` + docs bookkeeping + the license files (D79) + the hosting configuration (D80) + web license bundling; **PR #6 is open and clean** | Push and PR CI green |
+| `main` | `ac62217` (merge of PR #6) — M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs + license files (D79) + hosting configuration (D80) + web license bundling | Push run on `ac62217` |
+| `next/M3` | `main` + in-app mobile license screen and drift guard + proxy-aware rate limiting; **CI pending** | Push and PR CI |
 
-- `next/M1` and the earlier `next/M2` commits (league batching + docs refresh) are merged into `main` via PRs #4 and #5. The license (D79), hosting (D80), and web license-bundling work on `next/M2` is green and open as PR #6; it awaits the owner's merge.
-- Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. PR #6 is the only open pull request.
-- Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, secrets **0 hits / 151 files**, e2e **148/148 in 5.9m with 0 flakes**. The current suite adds a license-artifact check (**150 tests**).
-- **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. The web artifact ships the texts at `/licenses/*` (auto-built, e2e-guarded); the mobile artifact still needs them bundled at packaging time.
+- `next/M1` and the earlier `next/M2` commits (league batching + docs refresh + license/hosting/web texts) are merged into `main` via PRs #4, #5, and #6. The mobile license and proxy-aware rate-limiting work on `next/M3` awaits review.
+- Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. `next/M3` is the only open pull request.
+- Full `pnpm verify` on `next/M3`: typecheck 6/6, unit **215** (108 core + 16 content + 12 API + 79 mobile), build 5/5, secrets **0 hits / 160 files**, licenses PASS, e2e **154/154 in 4.1m with 0 flakes**. (The earlier `d5d6a74` cut was 201 unit and 148/148 e2e; the merged license-artifact check brought e2e to 150.)
+- **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. Web texts ship at `/licenses/*` (auto-built, e2e-guarded); the mobile app ships an in-app `/licenses` screen from a generated bundle, guarded by `pnpm check:licenses`.
 
 **What landed**
 
@@ -26,9 +26,9 @@
 
 ### What the owner must do next
 
-0. Merge **PR #6** (`next/M2` → `main`: license files, hosting config, web license texts; CI green, mergeable clean). Render deploys from `main`, so the merge comes before provisioning.
-1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Web texts now ship at `/licenses/*` (auto-built); mobile bundling remains a packaging step.
-2. Hosting: Option A (Neon + Render + Vercel) is decided and configured in `render.yaml` + `docs/deploy-runbook.md`. Create the three projects, set the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, plus `API_PROXY_TARGET` on Vercel), deploy, then arrange backups and secret rotation.
+0. Merge the `next/M3` pull request (mobile licenses + proxy-aware rate limiting; CI green, mergeable clean). Render deploys from `main`, so the merge comes before provisioning.
+1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Web texts ship at `/licenses/*` (auto-built); the mobile app ships an in-app `/licenses` screen. Rebuild the signed Android artifact so it includes the new screen.
+2. Hosting: Option A (Neon + Render + Vercel) is decided and configured in `render.yaml` + `docs/deploy-runbook.md`. Create the three projects, set the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, `TRUST_PROXY_HOPS=1`, plus `API_PROXY_TARGET` and the shared `API_PROXY_SECRET` on both Vercel and Render), deploy, then arrange backups and secret rotation.
 3. Native-speaker review of the 305 draft exercises (10 locales).
 4. Audio decision for `listenChoose` (10 items), or formally keep them excluded.
 5. Store accounts (Play Console) + a clean release prebuild (no cleartext exception).

@@ -6,12 +6,14 @@
 - Source code is Apache-2.0 (`LICENSE`, verbatim from apache.org); course content, brand, design, and docs are All Rights Reserved (`LICENSE-CONTENT`)
 - Baloo 2 and Nunito now ship with their full OFL-1.1 text (`apps/web/public/fonts/OFL.txt`); third-party attribution collected in `NOTICE` and `ATTRIBUTIONS.md`
 - The web artifact now ships the license texts at `/licenses/*` (auto-built by `sync-licenses.mjs`); `/licenses` exposes them and an e2e check guards the page and all four files
+- The mobile app ships the same texts in an in-app `/licenses` screen, generated into `apps/mobile/assets/licenses/licenses.json` and guarded against drift by `pnpm check:licenses`
 
 ### Trust & integrity
 - One-time completion rewards per lesson (XP + gems), replay-safe; practice never mints XP
 - Append-only gem and quest ledgers; shop purchases transactional; concurrent double-spend rejected
 - Zero-XP reward backfill filtered; reward migration smoke-tested on fresh and populated databases
-- API rate limiting (`/api/auth/*` per IP, `PUT /api/progress` per account) with 429 + Retry-After
+- API rate limiting (`/api/auth/*` per client IP, `PUT /api/progress` per account+client IP) with 429 + Retry-After
+- Proxy-aware client IPs: the web proxy forwards a secret-signed address, direct deployments trust a configured number of hops, and spoofed/missing secrets fall back to the request address instead of bypassing the limit
 - `Cache-Control: no-store` on all `/api/*`; boot refuses to start in production without a 32+ character `BETTER_AUTH_SECRET`
 - Build-output secrets scan (`scripts/check-secrets.mjs`) wired into `pnpm verify`
 
@@ -27,8 +29,8 @@
 
 ### Deployment
 - Free alpha stack chosen (D80): Neon Postgres + Render API + Vercel web; `render.yaml` defines the Render service with a `/health` check and uncommitted secrets
-- Same-origin `/api` proxy on the web app keeps the Better Auth session cookie first-party across `*.vercel.app` and `*.onrender.com`; the rewrite is inert when `API_PROXY_TARGET` is unset, so local dev and e2e are unchanged
-- Proxy smoke-tested locally: sign-up through the web origin sets a host-only `SameSite=Lax` session cookie and `get-session` returns the account; the auth limiter's per-IP budget is service-wide behind the proxy (documented alpha limitation)
+- Same-origin `/api` middleware keeps the Better Auth session cookie first-party across `*.vercel.app` and `*.onrender.com`; it also forwards the browser IP plus a shared secret so rate limits stay per client. The middleware is inert when `API_PROXY_TARGET` is unset, so local dev and e2e are unchanged
+- Proxy smoke-tested locally with a mock upstream: a browser-supplied trust header is replaced, the secret and POST body reach the upstream, and both `Set-Cookie` headers survive; the auth limiter now separates signed client IPs and ignores wrong-secret headers
 
 ### Performance
 - League standings resolve active learners' profiles in one batch per request instead of one query per learner (with ~1.4k weekly learners in a test database, the endpoint dropped from 16-30s to under 1s locally)

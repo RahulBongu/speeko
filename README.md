@@ -34,7 +34,7 @@ Open http://localhost:3000. `pnpm dev` starts the web app on port 3000 and the A
 | `pnpm --filter @speeko/api dev` | API on port 3001 (`/health`, `/api/auth/*`, `/api/progress`, `/api/lesson-completions`) |
 | `pnpm --filter @speeko/mobile start` | Expo Go / emulator |
 | `pnpm typecheck` | TypeScript across every package |
-| `pnpm test` | Vitest suites for grading, progress merging, guidebook extraction, eligibility filtering, and all course content (108 core + 16 content), plus the mobile Jest suite (77 tests, 15 suites) through Turbo |
+| `pnpm test` | Vitest suites for grading, progress merging, guidebook extraction, eligibility filtering, all course content (108 core + 16 content), and client-IP trust rules (12 API), plus the mobile Jest suite (79 tests, 16 suites) through Turbo |
 | `pnpm build` | Production builds for web, API, mobile-web, content |
 | `pnpm lint` | ESLint for web and mobile (non-interactive) |
 | `pnpm e2e` | Playwright route smoke tests + screenshots (requires `pnpm build`) |
@@ -151,11 +151,11 @@ content/      Per-locale course JSON
 ## Verification
 
 - `pnpm typecheck` — 5 packages clean (6 Turbo tasks including dependency builds)
-- `pnpm test` — 108 core + 16 content (Vitest) and 77 mobile (Jest, 15 suites), all passing
-- `pnpm build` — web, API, mobile-web export (22 static routes), and content bundle all succeed
+- `pnpm test` - 108 core + 16 content + 12 API (Vitest) and 79 mobile (Jest, 16 suites), all passing
+- `pnpm build` — web, API, mobile-web export (23 static routes), and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
-- `pnpm e2e` — 150 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
-- `pnpm verify` — runs typecheck → test → build → secrets scan → e2e in order
+- `pnpm e2e` — 154 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
+- `pnpm verify` — runs typecheck → test → build → secrets scan → license check → e2e in order
 - Migrations are applied on API startup. `lesson_events` (0002) and `lesson_completion_rewards` (0005) were smoke-tested; 0005 was applied to a fresh pglite directory and to a populated pre-0005 database with historical events, verifying the non-destructive backfill.
 
 Playwright uses the installed Google Chrome, so `pnpm e2e` does not download a browser. It serves the production web build and the compiled API, so run `pnpm build` first (or use `pnpm verify`).

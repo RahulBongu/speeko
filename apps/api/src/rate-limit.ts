@@ -1,4 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { resolveClientIp } from './client-ip.js';
 import { sessionFromHeaders } from './routes/auth.js';
 
 /**
@@ -15,13 +16,17 @@ import { sessionFromHeaders } from './routes/auth.js';
  *     prevention (the goal is blunting credential stuffing and sync loops,
  *     not precise shaping).
  *   - Keys:
- *       /api/auth/*       → `auth:<ip>`  (per caller IP; auth endpoints are
- *                           pre-session, so per-account keys are impossible)
- *       PUT /api/progress → `progress:<userId>:<ip>` when a better-auth
- *                           session resolves, else `progress:anon:<ip>`.
+ *       /api/auth/*       → `auth:<clientIp>`  (per caller IP; auth endpoints
+ *                           are pre-session, so per-account keys are impossible)
+ *       PUT /api/progress → `progress:<userId>:<clientIp>` when a better-auth
+ *                           session resolves, else `progress:anon:<clientIp>`.
  *                           Per account+IP so one NATted IP does not share a
  *                           budget across accounts, and one account cannot
  *                           spray writes from many IPs under one key.
+ *   - `<clientIp>` comes from {@link resolveClientIp}: the web proxy's
+ *     secret-signed header wins, otherwise Fastify's `request.ip` (which
+ *     honours `TRUST_PROXY_HOPS` for direct deployments). Untrusted headers
+ *     never change the key.
  *   - Exceeding callers receive HTTP 429 with a JSON body
  *     `{ error, message, retryAfter }` and a `Retry-After` header (seconds
  *     until the current window resets).
@@ -34,6 +39,12 @@ import { sessionFromHeaders } from './routes/auth.js';
  */
 export const AUTH_RATE_LIMIT = { windowMs: 60_000, max: 60 } as const;
 export const PROGRESS_WRITE_RATE_LIMIT = { windowMs: 60_000, max: 30 } as const;
+
+/**
+ * Shared secret configured on both the web proxy and the API. When unset,
+ * `x-speeko-client-ip` is ignored and the limiter keys on `request.ip`.
+ */
+const proxySecret = process.env.API_PROXY_SECRET?.trim() || undefined;
 
 /** How often the sweeper purges expired buckets. */
 const SWEEP_INTERVAL_MS = 60_000;
@@ -72,16 +83,19 @@ function consume(
   };
 }
 
-async function progressWriteKey(request: FastifyRequest): Promise<string> {
+async function progressWriteKey(
+  request: FastifyRequest,
+  clientIp: string,
+): Promise<string> {
   try {
     const session = await sessionFromHeaders(request.headers);
     const userId = session?.user.id;
-    if (userId) return `progress:${userId}:${request.ip}`;
+    if (userId) return `progress:${userId}:${clientIp}`;
   } catch {
     // Session lookup failed (e.g. DB unavailable); fall back to IP-only so
     // abuse is still throttled. The handler will surface the real error.
   }
-  return `progress:anon:${request.ip}`;
+  return `progress:anon:${clientIp}`;
 }
 
 function isRateLimitingDisabled(): boolean {
@@ -96,15 +110,20 @@ async function rateLimitOnRequest(request: FastifyRequest, reply: FastifyReply) 
 
   let key: string | null = null;
   let limit: { windowMs: number; max: number } | null = null;
+  const clientIp = resolveClientIp({
+    fallbackIp: request.ip,
+    headers: request.headers,
+    ...(proxySecret ? { proxySecret } : {}),
+  });
 
   if (
     (method === 'GET' || method === 'POST') &&
     (path === '/api/auth' || path.startsWith('/api/auth/'))
   ) {
-    key = `auth:${request.ip}`;
+    key = `auth:${clientIp}`;
     limit = AUTH_RATE_LIMIT;
   } else if (method === 'PUT' && path === '/api/progress') {
-    key = await progressWriteKey(request);
+    key = await progressWriteKey(request, clientIp);
     limit = PROGRESS_WRITE_RATE_LIMIT;
   }
 
