@@ -6,14 +6,15 @@
 
 **Repository state**
 
-| Ref | SHA | Contents | CI |
-| --- | --- | --- | --- |
-| `main` | `e5a06c2` (merge of PR #4) | Everything through `d83bf46`: M1 render work, M2 headless sign-off, M4 hardening, self-provisioned e2e accounts, isolated rate-limit contract | Green on `d83bf46` — push run `44150758432`, PR run `44150769644` |
-| `next/M2` | `d5d6a74` | `main` + league profile batching (one commit) | Green — push run `44153146831`, job `134286617487` |
+| Ref | Contents | CI |
+| --- | --- | --- |
+| `main` | `82f0f3c` (merge of PR #5) — everything: M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs refresh (`5e3c999`) | Push run `44167051237` on `82f0f3c` |
+| `next/M2` | `main` + docs bookkeeping + the license files (D79) + the hosting configuration (D80) + web license bundling; **PR #6 is open and clean** | Push and PR CI green |
 
-- `next/M1` is already merged into `main`; `next/M2` is exactly one commit ahead of `main` (the league N+1 fix). The only remaining engineering merge is a follow-up PR `next/M2 → main`.
-- Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, no open pull requests, nothing published.
-- Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, secrets **0 hits / 151 files**, e2e **148/148 in 5.9m with 0 flakes**.
+- `next/M1` and the earlier `next/M2` commits (league batching + docs refresh) are merged into `main` via PRs #4 and #5. The license (D79), hosting (D80), and web license-bundling work on `next/M2` is green and open as PR #6; it awaits the owner's merge.
+- Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. PR #6 is the only open pull request.
+- Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, secrets **0 hits / 151 files**, e2e **148/148 in 5.9m with 0 flakes**. The current suite adds a license-artifact check (**150 tests**).
+- **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. The web artifact ships the texts at `/licenses/*` (auto-built, e2e-guarded); the mobile artifact still needs them bundled at packaging time.
 
 **What landed**
 
@@ -25,13 +26,13 @@
 
 ### What the owner must do next
 
-1. Open and merge the follow-up PR `next/M2 → main` for `d5d6a74` (CI already green on that exact SHA).
-2. License decision + OFL attribution + `LICENSE` file.
-3. Hosting/database authorization + backups + secret rotation.
-4. Native-speaker review of the 305 draft exercises (10 locales).
-5. Audio decision for `listenChoose` (10 items), or formally keep them excluded.
-6. Store accounts (Play Console) + a clean release keystore/prebuild (no cleartext exception).
-7. Optional, owner-only: an on-device functional pass. The assistant must not reconnect the phone; headless web/API verification is the accepted evidence for this alpha.
+0. Merge **PR #6** (`next/M2` → `main`: license files, hosting config, web license texts; CI green, mergeable clean). Render deploys from `main`, so the merge comes before provisioning.
+1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Web texts now ship at `/licenses/*` (auto-built); mobile bundling remains a packaging step.
+2. Hosting: Option A (Neon + Render + Vercel) is decided and configured in `render.yaml` + `docs/deploy-runbook.md`. Create the three projects, set the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, plus `API_PROXY_TARGET` on Vercel), deploy, then arrange backups and secret rotation.
+3. Native-speaker review of the 305 draft exercises (10 locales).
+4. Audio decision for `listenChoose` (10 items), or formally keep them excluded.
+5. Store accounts (Play Console) + a clean release prebuild (no cleartext exception).
+6. Optional, owner-only: an on-device functional pass. The assistant must not reconnect the phone; headless web/API verification is the accepted evidence for this alpha.
 
 ---
 

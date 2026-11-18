@@ -6,8 +6,7 @@ working tree. It distinguishes what is **implemented and verified**, what is
 reviewed, published, launched, or hardware-tested unless it says so.
 
 **Snapshot date:** 2026-11-16, updated 2026-11-18
-**Branch state:** `main` is `e5a06c2` (PR #4 merged) plus the one-commit
-follow-up `d5d6a74` on `next/M2` (league profile batching). Nothing is published to a store.
+**Branch state:** `main` is `82f0f3c` — PR #4 (M2/M4, CI, e2e isolation) and PR #5 (league profile batching, handoff docs) are merged. Nothing is published to a store.
 
 ## Verification baseline (this cycle, from the repo root)
 
@@ -16,7 +15,7 @@ follow-up `d5d6a74` on `next/M2` (league profile batching). Nothing is published
 | `pnpm typecheck` | **6/6 Turbo tasks** successful (5 package typechecks + `^build`) |
 | `pnpm test` | **201 unit tests** — 108 core + 16 content (Vitest) and 77 mobile (Jest, 15 suites). All pass. |
 | `pnpm build` | **5/5 Turbo tasks** (core, content, web, API, mobile web export) |
-| `pnpm e2e` | **148 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
+| `pnpm e2e` | **150 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
 | `pnpm verify` | typecheck → test → build → secrets → e2e, all green |
 | Mobile export | 22 static routes exported (`dist/`) |
 
@@ -254,8 +253,10 @@ Not imported, and why:
    item and fails closed.
 4. **Offline/sync edge cases** for a second device are only partially covered
    by unit-level sync tests; no two-device live run exists.
-5. **No license.** The repo remains all rights reserved by default; the
-   decision package is in `docs/decisions/2026-11-16-license.md`.
+5. **License:** decided 2026-11-18 — Apache-2.0 for code, All Rights Reserved
+   for content/brand, OFL-1.1 text for the bundled fonts (D79). The web artifact
+   ships the texts at `/licenses/*` (auto-built, e2e-guarded); mobile packaging
+   still needs to bundle them before distribution.
 6. **Hosting/database decision** is still deferred by the owner; the
    recommendation package is in `docs/decisions/2026-11-16-hosting-and-database.md`.
 
@@ -265,7 +266,7 @@ The mobile app in this tree is a working alpha suitable for a controlled
 internal trial: playable draft lessons, onboarding, honest fail-closed states,
 and account-synced rewards. It is **not** a production release candidate until
 at least (1) a native-speaker review pass, (2) an owner-run functional device
-pass on the release build, (3) a hosting/database choice, and (4) a license
-decision are complete. The progress endpoint's reward integrity is verified at
+pass on the release build, (3) a hosting/database choice, and (4) mobile
+license-text bundling at packaging are complete. The progress endpoint's reward integrity is verified at
 the database boundary (P13 + P17); visual and linguistic authenticity are not
 yet verified anywhere.

@@ -1,0 +1,26 @@
+Speeko
+Copyright 2026 Speeko project
+
+This product includes software developed as part of the Speeko project
+(https://github.com/RahulBongu/speeko).
+
+The source code is licensed under the Apache License, Version 2.0. A copy of
+that license is in `LICENSE`.
+
+Course content, the fox mascot, the Speeko name and wordmark, the visual
+design, and the documentation are All Rights Reserved. See `LICENSE-CONTENT`.
+
+Third-party components
+----------------------
+
+Bundled fonts in `apps/web/public/fonts/` are licensed under the SIL Open
+Font License, Version 1.1. The full license text is in
+`apps/web/public/fonts/OFL.txt`.
+
+  - Baloo 2 — Copyright 2019 The Baloo 2 Project Authors
+    (https://github.com/EkType/Baloo2)
+  - Nunito — Copyright 2014 The Nunito Project Authors
+    (https://github.com/googlefonts/nunito)
+
+No imported third-party curriculum text is present. Runtime dependencies are
+installed from npm and remain under their own licenses; see `ATTRIBUTIONS.md`.

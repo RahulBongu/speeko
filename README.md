@@ -131,7 +131,7 @@ apps/web/public/courses/ (synced automatically on dev/build)
 
 The seeded starter bundle contains **10 courses × 4 units × 2 lessons × 3 exercises = 230 exercises** (one mislabeled English filler exercise per starter was removed 2026-11-16). P4 adds one draft pilot, `content/hi/hi-pilot.json`: **5 units × 5 lessons × 3 exercises = 75 exercises**, with `reviewStatus: "draft"` on every lesson. The content tests grade every exercise to confirm each answer key is reachable (305 total).
 
-Optional course fields now include `reviewStatus` (`draft`/`reviewed`, default `draft`), `reviewer`, unit/lesson `guidebook`, and exercise `vocabId` / `transliteration`. Reviewed content requires a reviewer. `ATTRIBUTIONS.md` records the intended open-license sources for imported phrases.
+Optional course fields now include `reviewStatus` (`draft`/`reviewed`, default `draft`), `reviewer`, unit/lesson `guidebook`, and exercise `vocabId` / `transliteration`. Reviewed content requires a reviewer. `ATTRIBUTIONS.md` records font/third-party attribution and the policy for any imported phrases (none are present in the current curriculum).
 
 Authoring workflow: open `/studio`, paste or edit course JSON, validate live, download the file, and place it under `content/<locale>/`. Then run `pnpm sync:content`.
 
@@ -154,7 +154,7 @@ content/      Per-locale course JSON
 - `pnpm test` — 108 core + 16 content (Vitest) and 77 mobile (Jest, 15 suites), all passing
 - `pnpm build` — web, API, mobile-web export (22 static routes), and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
-- `pnpm e2e` — 148 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
+- `pnpm e2e` — 150 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
 - `pnpm verify` — runs typecheck → test → build → secrets scan → e2e in order
 - Migrations are applied on API startup. `lesson_events` (0002) and `lesson_completion_rewards` (0005) were smoke-tested; 0005 was applied to a fresh pglite directory and to a populated pre-0005 database with historical events, verifying the non-destructive backfill.
 
@@ -162,10 +162,17 @@ Playwright uses the installed Google Chrome, so `pnpm e2e` does not download a b
 
 Project status is tracked in [`docs/PROGRESS.md`](docs/PROGRESS.md), durable choices in [`docs/DECISIONS.md`](docs/DECISIONS.md), current web/mobile parity in [`docs/product/current-state-and-parity.md`](docs/product/current-state-and-parity.md), the release-readiness verdict in [`docs/READINESS.md`](docs/READINESS.md), and the original ground-truth audit in [`docs/AUDIT.md`](docs/AUDIT.md).
 
+## License
+
+- **Source code:** Apache License 2.0 — [`LICENSE`](LICENSE).
+- **Course content, fox mascot, name/wordmark, design, and docs:** All Rights Reserved — [`LICENSE-CONTENT`](LICENSE-CONTENT).
+- **Bundled fonts (Baloo 2, Nunito):** SIL Open Font License 1.1 — [`apps/web/public/fonts/OFL.txt`](apps/web/public/fonts/OFL.txt).
+- **Third-party attributions:** [`NOTICE`](NOTICE) and [`ATTRIBUTIONS.md`](ATTRIBUTIONS.md).
+
 ## Roadmap
 
 1. Rive fox asset authored in Rive (runtime integration already in place)
 2. Native-speaker review of the 305 draft exercises (review package and protocol ready)
 3. Functional on-device QA pass on the release build (owner-run; the render pass is done)
-4. Hosting/database choice, backups, secret rotation, LICENSE file
+4. Hosting/database choice, backups, secret rotation
 5. Play Store accounts and listing (draft metadata ready; not published)

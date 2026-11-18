@@ -2,6 +2,11 @@
 
 ## Unreleased (alpha cut)
 
+### Licensing
+- Source code is Apache-2.0 (`LICENSE`, verbatim from apache.org); course content, brand, design, and docs are All Rights Reserved (`LICENSE-CONTENT`)
+- Baloo 2 and Nunito now ship with their full OFL-1.1 text (`apps/web/public/fonts/OFL.txt`); third-party attribution collected in `NOTICE` and `ATTRIBUTIONS.md`
+- The web artifact now ships the license texts at `/licenses/*` (auto-built by `sync-licenses.mjs`); `/licenses` exposes them and an e2e check guards the page and all four files
+
 ### Trust & integrity
 - One-time completion rewards per lesson (XP + gems), replay-safe; practice never mints XP
 - Append-only gem and quest ledgers; shop purchases transactional; concurrent double-spend rejected
@@ -19,6 +24,11 @@
 ### Web
 - Focus rings on all interactive elements; contrast-corrected palette; gold/ice tokens; on-brand locale ramps
 - Studio re-skinned to the house style; global `not-found`/`error` routes; per-route metadata
+
+### Deployment
+- Free alpha stack chosen (D80): Neon Postgres + Render API + Vercel web; `render.yaml` defines the Render service with a `/health` check and uncommitted secrets
+- Same-origin `/api` proxy on the web app keeps the Better Auth session cookie first-party across `*.vercel.app` and `*.onrender.com`; the rewrite is inert when `API_PROXY_TARGET` is unset, so local dev and e2e are unchanged
+- Proxy smoke-tested locally: sign-up through the web origin sets a host-only `SameSite=Lax` session cookie and `get-session` returns the account; the auth limiter's per-IP budget is service-wide behind the proxy (documented alpha limitation)
 
 ### Performance
 - League standings resolve active learners' profiles in one batch per request instead of one query per learner (with ~1.4k weekly learners in a test database, the endpoint dropped from 16-30s to under 1s locally)

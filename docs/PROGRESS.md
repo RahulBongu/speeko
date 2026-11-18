@@ -5,17 +5,19 @@ Living status document. One phase per session; a phase is done only when
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-18 (engineering complete; one follow-up fix awaiting owner merge)
+**Updated:** 2026-11-18 (engineering complete; PR #5 merged; license decided; owner gates open)
 
 ## Current state (post-M4, 2026-11-18)
 
-- **Engineering is complete and green.** Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (151 files, 0 hits), e2e **148/148** in 5.9m with zero flakes.
-- **`main` is `e5a06c2`** — the merge of PR #4, which brought `d83bf46` (M2 headless sign-off, M4 hardening, self-provisioned e2e accounts, isolated rate-limit contract) into `main`. `next/M1` was merged earlier.
-- **`next/M2` is `d5d6a74`** — exactly one commit ahead of `main`: the league profile-lookup fix. CI is green on that SHA (run `44153146831`, job `134286617487`). A follow-up PR `next/M2 → main` is the only remaining merge.
+- **Engineering is complete and green.** Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (151 files, 0 hits), e2e **148/148** in 5.9m with zero flakes. The current suite adds a license-artifact check (**150 tests**).
+- **`main` is `82f0f3c`** — the merge of PR #5 (`82f0f3c`), which followed PR #4 (`e5a06c2`). `main` now contains the league profile-lookup fix (`d5d6a74`) and the 2026-11-18 docs refresh (`5e3c999`). `next/M1` was merged earlier.
+- **`next/M2` carries the license (D79), hosting (D80), and web license-bundling work**; CI is green and PR #6 is open and clean, awaiting the owner's merge into `main`. The internal alpha is feature-complete and green.
+- **License gate decided (D79).** Apache-2.0 for source code (`LICENSE`, verbatim from apache.org), All Rights Reserved for course content, brand, design, and docs (`LICENSE-CONTENT`), and the full OFL-1.1 text for Baloo 2 and Nunito (`apps/web/public/fonts/OFL.txt`). `NOTICE`, `ATTRIBUTIONS.md`, and `content/README.md` are updated. The web artifact ships the texts at `/licenses/*` (auto-built, e2e-guarded); the mobile artifact still needs them bundled at packaging time.
 - **Hardening shipped:** `/api/auth/*` 60 requests/min per IP; `PUT /api/progress` 30/min per account+IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`.
 - **Phase 1–4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
 - **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
-- **Still open (owner):** license (draft rights), native-speaker review, hosting + backups + secret rotation, audio decision, store accounts.
+- **Hosting decided (D80).** The internal alpha uses the free Option A stack: Neon Postgres + Render API + Vercel web, with a same-origin `/api` proxy so Better Auth's `SameSite=Lax` session cookie stays first-party. `render.yaml`, the proxy rewrite, and the runbook are in the tree; creating the projects, spend, and secrets remain owner actions.
+- **Still open (owner):** native-speaker review, hosting provisioning + backups + secret rotation, audio decision, store accounts, mobile license-text bundling at packaging.
 - **Not claimed:** on-device functional QA. The owner waived it; see D78 and `docs/READINESS.md`.
 
 
@@ -41,8 +43,9 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P15 - AI linguistic review | `scripts/ai-review-content.mjs` — all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done — merged via PR #4** — `05d2adb`, branch `next/M1` |
 | P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done — merged via PR #4** — `07b01cd` (core/API/web) + `2d22c69` (mobile) + `53ab85e` (parity matrix, release-ops doc), branch `next/M1` |
 | P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done — merged via PR #4** — `07b01cd`, branch `next/M1` |
+| P18 - Closure: league performance + handoff docs | League profile batching (`social.ts`), CHANGELOG performance entry, full docs refresh (merge state, verification counts, D76–D78) | **Done — merged via PR #5** — `d5d6a74` + `5e3c999`, branch `next/M2` |
 
-P12–P17 and the M2/M4 work are merged into `main` via PR #4 (`e5a06c2`); the branch names in the table record where each phase was originally committed.
+P12–P18 work is merged into `main` via PR #4 (`e5a06c2`) and PR #5 (`82f0f3c`); the branch names in the table record where each phase was originally committed.
 
 
 ## What P12 changed
@@ -597,8 +600,11 @@ These are product gaps, not regressions. Details and evidence are in
 - **Unit practice can double-count a card** within one session (round-robin can land
   two exercises for the same word). Due and trouble plans use one exercise per skill.
 - **Trouble words are historical**; a card with a lapse never automatically retires.
-- **Hosting/database choice is deferred** and no `LICENSE` exists; both are owner
-  decisions with packages prepared this cycle. Nothing is provisioned or signed.
+- **Hosting/database choice is decided** (D80: Neon + Render + Vercel, free
+  tier, with a same-origin proxy); provisioning is the owner's action. The
+  license is decided and implemented: Apache-2.0 code, All Rights Reserved
+  content and brand, OFL-1.1 text for the bundled fonts (2026-11-18).
+  Nothing is provisioned or signed.
 - **Mobile exercise parity is effectively complete** for the shipped curriculum:
   `wordBank`, `arrangeSentence`, `typeWhatYouHear`, and `speak` are all supported on
   mobile. Only `chooseImage` is unsupported and fails safely; it is not used by any

@@ -8,7 +8,7 @@ anything or spends money today.
 
 Read together with:
 - `docs/decisions/2026-11-16-hosting-and-database.md` (option A/B/C; hosting undecided)
-- `docs/decisions/2026-11-16-license.md` (license undecided)
+- `docs/decisions/2026-11-16-license.md` (decided 2026-11-18: Apache-2.0 code, All Rights Reserved content/brand)
 - `review/audio-decision-analysis.md` (audio unsolved; 10 blocked `listenChoose`)
 - `docs/qa/android-device-qa.md` (Android tooling missing; checklist ready)
 - `docs/READINESS.md` (current honest status)
@@ -17,8 +17,12 @@ Read together with:
 
 ## GO / NO-GO gates (all mandatory before public release)
 
-**GATE L — LICENSE.** No LICENSE file exists. The owner picks the code license
-and content rights (options in `docs/decisions/2026-11-16-license.md`).
+**GATE L — LICENSE.** Decided 2026-11-18: Apache-2.0 for code, All Rights
+Reserved for content and brand, OFL-1.1 text for the bundled fonts. Files:
+`LICENSE`, `LICENSE-CONTENT`, `NOTICE`,
+`apps/web/public/fonts/OFL.txt`. Web distribution is covered: the build copies
+the texts to `/licenses/*` (auto-built, e2e-guarded). Mobile still needs the
+texts bundled at packaging time (APK or an in-app licenses screen).
 *Until then: release = internal trial only. No store listing, no public repo.*
 
 **GATE H — Hosting.** The owner picks Neon+Render+Vercel (alpha), the VPS
@@ -49,7 +53,7 @@ only PII. Ensure rate limiting on auth and any logging that reveals them.
 ## Release checklist (owner or owner-designated operator walks through it)
 
 ### 1. Source and build verification
-- [ ] `pnpm verify` green (typecheck 6/6, 201 unit tests — 108 core + 16 content + 77 mobile, build 5/5, secrets 0 hits, e2e 148/148).
+- [ ] `pnpm verify` green (typecheck 6/6, 201 unit tests — 108 core + 16 content + 77 mobile, build 5/5, secrets 0 hits, e2e 148/148 at the recorded cut; the current suite has 150 checks).
 - [ ] `pnpm lint` clean (0 errors; one documented web `<img>` warning).
 - [ ] `pnpm --filter @speeko/mobile build` exports 22 static routes.
 - [ ] dist bundle and `apps/web/public/courses` regenerated from tracked sources

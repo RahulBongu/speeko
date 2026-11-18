@@ -1,8 +1,9 @@
 # Decision package — hosting and production database
 
-**Status:** recommendation only — the owner must authorize any provider
-before accounts, resources, spend, or deployments are created.
-**Date:** 2026-11-16. **Scope:** whole product (web, API, Postgres, assets).
+**Status:** **DECIDED 2026-11-18 - Option A** (Neon + Render + Vercel, free
+tier) for the internal alpha, with a same-origin proxy on Vercel. Nothing is
+provisioned yet; accounts, spend, and secrets remain owner actions.
+**Date:** 2026-11-16, decided 2026-11-18. **Scope:** whole product.
 
 ## Context and constraints
 
@@ -81,10 +82,11 @@ before accounts, resources, spend, or deployments are created.
 - **Operations:** low; one bill; easy rollback (redeploy prior image).
 - **Region:** US/EU/Singapore options.
 
-## Recommendation
+## Decision (2026-11-18)
 
-**Option A for an internal/author-controlled beta; Option B for the public
-release decision.** Concretely:
+**The owner chose Option A for the internal alpha**: Neon free Postgres +
+Render free API + Vercel hobby web. Option B remains the recommended shape for
+the public release decision. Concretely:
 
 - Now (alpha, free budget): **Neon (free Postgres) + Render (free API, accepts
   cold starts) + Vercel (hobby web)** — zero spend, unblessed for commercial
@@ -95,8 +97,17 @@ release decision.** Concretely:
 - Option C is acceptable instead of A/B if the owner prefers one dashboard;
   it trades $60/yr for meaningfully simpler operations.
 
-**This is a recommendation, not authorization.** Nothing here is provisioned.
-The `.env` contract below is already supported by the app:
+**Why the web proxies the API:** `*.vercel.app` and `*.onrender.com` are
+different sites, and Better Auth's session cookie is `SameSite=Lax`. A browser
+request from the Vercel origin straight to the Render API would not carry the
+session, and `SameSite=None` is blocked or partitioned by Safari/Firefox. The
+web app therefore calls `/api/*` on its own origin and Next.js proxies it to
+Render (`apps/web/next.config.mjs`), so the cookie is first-party. No custom
+domain is required.
+
+**This decision authorizes no spend and provisions nothing.** Creating the
+accounts, setting the secrets, and any upgrade are owner actions. The `.env`
+contract below is already supported by the app:
 
 ```
 # API (apps/api)
@@ -111,7 +122,12 @@ DATABASE_URL=postgres://<user>:<pass>@<host>/<db>?sslmode=require
 
 ```
 # Web (apps/web)
+# Direct mode (local dev, or a custom domain with same-site subdomains)
 NEXT_PUBLIC_API_URL=https://api.<domain>
+
+# Proxy mode (the free Vercel + Render stack; no custom domain required)
+NEXT_PUBLIC_API_URL=same-origin
+API_PROXY_TARGET=https://<api-host>
 ```
 
 ## Deployment and migration contract
@@ -151,12 +167,15 @@ NEXT_PUBLIC_API_URL=https://api.<domain>
 | B: VPS + domain | $5 | $5–8/mo + $10/yr domain | ops burden; single-host failure |
 | C: Railway | $0 trial | $8–15/mo | usage creep |
 
-## Blocked until the owner authorizes
+## Owner actions still required
 
-- Selecting a provider; creating accounts; spending in any form.
-- Choosing the domain and DNS; enabling secure cookies in production.
+- Creating the Neon, Render, and Vercel projects; spending in any form.
+- Supplying the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`,
+  `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, plus `API_PROXY_TARGET` on Vercel).
+- Choosing a domain and DNS; enabling secure cookies in production.
 - Any production `BETTER_AUTH_SECRET` rotation.
 - Launching the APK against production.
 
-**Next decision for the owner:** which option (A/B/C), which provider, which
-budget cell ($0 vs ≈$8/mo vs $60/yr), and the production domain.
+**Next steps for the owner:** follow `docs/deploy-runbook.md` (Option A step by
+step), deploy from `main` after the hosting PR merges, run the smoke tests, then
+arrange backups and rotation.

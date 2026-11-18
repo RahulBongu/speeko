@@ -1,9 +1,8 @@
 # Speeko — Release Readiness
 
 **Date:** 2026-11-16, updated 2026-11-18
-**Basis:** `main` `e5a06c2` (merge of PR #4) plus the one-commit follow-up `d5d6a74` on
-`next/M2` (league profile-lookup fix). Every command below was run in this cycle and its
-real output captured. The Android device was
+**Basis:** `main` `82f0f3c` (PR #4, then PR #5 — the league profile-lookup fix and the 2026-11-18 handoff docs).
+Every command below was run in this cycle and its real output captured. The Android device was
 accessed during M1 (2026-11-17, debug and release render); no native reviewer, hosting provider, or
 license grant has been accessed — those dependencies are marked as such.
 
@@ -16,10 +15,12 @@ scripted replay farming of completion XP/gems — are closed and verified at the
 database level.
 
 Speeko is **not** release-ready for the public. No automated engineering work
-remains for the internal alpha, and `next/M2` is one green commit ahead of
-`main` awaiting an owner merge. Blocking external requirements: a
-native-speaker review for every course, a hosting/database decision, a license,
-and store accounts. On-device functional QA is waived for the internal alpha by
+remains for the internal alpha. `main` (`82f0f3c`) is the last merged state;
+`next/M2` (license, hosting, and web license bundling) is green and awaits the
+owner's merge.
+Blocking external requirements: a
+native-speaker review for every course, hosting provisioning and backups, mobile
+license texts bundled at packaging, and store accounts. On-device functional QA is waived for the internal alpha by
 owner instruction (D78); headless web/API verification is the accepted
 evidence. A controlled internal trial is possible with the constraints below.
 
@@ -32,8 +33,8 @@ evidence. A controlled internal trial is possible with the constraints below.
 | Testing & build | **Pass** on CI-grade checks | engineering (this tree) |
 | Curriculum authenticity | **Blocked** — tooling ready, review not started | native speaker × 10 locales |
 | Android device QA | **Pass (render)**; functional QA waived — release APK verified on a Vivo V2336 (2026-11-17), functional device QA waived by owner (D78) | engineering + owner |
-| Hosting & operations | **Recommended, awaiting owner** | owner |
-| License & rights | **Blocked** — decision package ready | owner |
+| Hosting & operations | **Decided 2026-11-18** — free stack ready in repo; owner provisioning pending | owner |
+| License & rights | **Decided 2026-11-18** — Apache-2.0 code, All Rights Reserved content/brand, OFL fonts; web texts shipped at `/licenses/*`; mobile bundling at packaging | owner (mobile packaging) |
 
 ## 1. Security and data integrity
 
@@ -67,7 +68,7 @@ owner's launch gates remain.
 
 | Requirement | Status | Evidence |
 | --- | --- | --- |
-| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 148 checks total incl. integrity suites); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
+| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 150 checks total incl. integrity suites and license artifact); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
 | Advertised exercise types behave correctly | **Pass; unsupported kinds fail closed** | The curriculum uses 4 kinds: `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10. Web supports all ten published kinds. Mobile supports 9 (`chooseMeaning`, `listenChoose` with audio, `fillBlank`, `typeTranslation`, `matchPairs`, `wordBank`, `arrangeSentence`, `typeWhatYouHear`, `speak`); `chooseImage` blocks honestly and cannot complete a lesson. No curriculum item is an unimplemented-kind. |
 | Missing-audio safeguard | **Pass** | `eligibleExercises()` in `@speeko/core` excludes empty-audio `listenChoose` from lesson queues, review/practice plans, the SRS index, and the API grading path. The 10 items keep their IDs/content and are blocked in the audit ledger. Core + mobile tests cover skip and playable-audio branches. |
 | Progress restores and synchronizes | **Pass** | Web guest→account merge (D12), mobile local/cloud merge (`lib/sync.ts`), migration from v1 snapshot, corrupt-JSON tolerance. |
@@ -88,7 +89,7 @@ gem sources beyond lessons/quests/purchases, and any licensed audio.
 | Unit (content) | **Pass** | `pnpm --filter @speeko/content test` — **16 passed** (all 305 exercises graded, validation/test suites incl. answerIndex bounds) |
 | Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` — **77 passed across 15 suites** (includes missing-audio skip, playable-audio branch, and the added exercise kinds) |
 | API integration | **Pass** | `progress-integrity.spec.ts` — 7 scenarios and `reward-integrity.spec.ts` — 7 scenarios against the real API+DB (14 checks each across both viewports); plus reward, habits, shop, social, and the isolated rate-limit contract (`rate-limit.spec.ts`) |
-| Browser E2E | **Pass** | `pnpm e2e` — **148 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run |
+| Browser E2E | **Pass** | `pnpm e2e` — **150 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run |
 | Typecheck | **Pass** | 6/6 turbo tasks |
 | Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 22 static routes) |
 | Lint | **Pass** (0 errors) | web: 1 documented `<img>` warning; mobile: clean |
@@ -123,27 +124,31 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 
 | Requirement | Status | Evidence |
 | --- | --- | --- |
-| Hosting/database decision documented | **Pass** — awaiting owner authorization | `docs/decisions/2026-11-16-hosting-and-database.md` — 3 options, costs, regions, backups, rollback; recommended: Neon + Render/Fly + Vercel for alpha, single Singapore VPS for public |
+| Hosting/database decision documented | **Decided 2026-11-18** — Option A; provisioning is an owner action | `docs/decisions/2026-11-16-hosting-and-database.md` — Neon free Postgres + Render free API + Vercel hobby web, with a same-origin `/api` proxy so the session cookie stays first-party; `render.yaml` and `docs/deploy-runbook.md` carry the exact env contract. VPS remains the public-release option. |
 | Release operations checklist | **Pass** — prepared, nothing executed | `docs/decisions/2026-11-16-release-and-operations.md` — GO/NO-GO gates, env/secret handling, migrations, backup+restore drill, rollback, rate limits, logging, post-deploy smoke tests |
 | Environment configuration | **Pass** | `.env.example` for API+web documents all vars; production requires `BETTER_AUTH_SECRET`; mobile endpoints via `app.json extra` (D63); pglite is dev-only |
 | Rate limiting, cache, secrets gate | **Pass** | In-memory fixed-window limiter (`apps/api/src/rate-limit.ts`): 60/min per IP for `/api/auth/*`, 30/min per account+IP for `PUT /api/progress`, `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; `scripts/check-secrets.mjs` wired into `pnpm verify`; production boot requires a ≥32-char `BETTER_AUTH_SECRET`. Contract tested against an isolated API with the limiter on (`tests/e2e/rate-limit.spec.ts`). |
 | Backup and recovery | **Requirement on file** | nightly `pg_dump` or provider PITR; a tested restore is a pre-launch gate in the operations checklist and hosting package |
 | Migrations | **Pass** | applied on API start; append-only table strategy keeps forwards-only restores possible; migration target is Postgres |
 | Secrets handling | **Pass** | none in repo (`.gitignore` enforced; `apps/api/.env.example` documents placeholders only) |
-| License & content rights | **Blocked** — decision package ready | `docs/decisions/2026-11-16-license.md` — options (Apache-2.0 code / CC-BY-NC content recommended), font OFL attribution noted, brand reserved; **nothing published** |
+| License & content rights | **Decided 2026-11-18** — web texts served at `/licenses/*` (auto-built); mobile bundling at packaging time | Apache-2.0 code + All Rights Reserved content/brand in `LICENSE` and `LICENSE-CONTENT`; font OFL-1.1 text in `apps/web/public/fonts/OFL.txt` and `/licenses/OFL.txt`; `NOTICE` and `ATTRIBUTIONS.md` updated; `apps/web/app/licenses/page.tsx` exposes them; **nothing published** |
+| Proxy-aware rate limiting | **Known alpha limitation** | The API keys `/api/auth/*` on `request.ip` and does not trust proxy headers. On Render the socket peer is the platform proxy, so the 60/min auth budget is shared by the service (this already applies to direct mobile traffic). Acceptable for a small controlled alpha. Before widening access, configure trusted proxy hops and verify `X-Forwarded-For` against the platform's documented chain; never trust arbitrary client-supplied headers on a publicly reachable API. |
 
 ## Merge state
 
-`next/M2` (`d5d6a74`) is one green commit ahead of `main`; the league
-performance fix awaits an owner PR/merge. This is not a release blocker, but
-`main` does not contain it yet. Version remains `0.0.1`; nothing is published.
+`next/M2` is open as PR #6 and awaits the owner's merge. PR #5 merged the prior
+`next/M2` work (`d5d6a74` league fix + `5e3c999` handoff docs) into `main` on
+2026-11-18 (`82f0f3c`). Version remains `0.0.1`; nothing is published. The
+branch now also carries the follow-up docs bookkeeping, the license files
+(D79), the hosting configuration (D80: proxy rewrite, Render blueprint,
+runbook), and the web license bundling.
 
 ## Blockers for a public release
 
 1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
 2. **Android device QA**: the release-APK render pass is done (2026-11-17, Vivo V2336, `36A5D41D…`). Functional device QA is **waived for the internal alpha** by owner instruction (D78); headless Playwright covers the functional flows. A public launch still needs a real-device pass by the owner.
-3. **Hosting/database choice** (owner; option A/B/C in the hosting package).
-4. **LICENSE file** with OFL font attribution and `content/README.md` right-reserved note (owner; see license package).
+3. **Hosting provisioning and backups** (owner; Option A — Neon + Render + Vercel — is decided, and `render.yaml` + the runbook are ready). Includes a tested restore and secret rotation.
+4. **Mobile license artifact bundling**: the web site now ships `LICENSE`, `LICENSE-CONTENT`, `NOTICE`, and the font OFL text at `/licenses/*` (auto-built, e2e-guarded). The Android artifact still needs the same texts (or an in-app licenses screen) before it is distributed. The license decision and repo files are done (2026-11-18).
 5. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
 
 ## What can ship now (bounded trial)

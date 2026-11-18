@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "predev": "node scripts/sync-courses.mjs",
-    "prebuild": "node scripts/sync-courses.mjs",
+    "predev": "node scripts/sync-courses.mjs && node scripts/sync-licenses.mjs",
+    "prebuild": "node scripts/sync-courses.mjs && node scripts/sync-licenses.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
