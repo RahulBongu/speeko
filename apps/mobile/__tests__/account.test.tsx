@@ -129,6 +129,7 @@ describe('mobile account', () => {
     expect(screen.getByText('Device progress')).toBeTruthy();
     expect(screen.getByText('XP: 120')).toBeTruthy();
     expect(screen.getByText('Sign in')).toBeTruthy();
+    expect(screen.getByText('Licenses and attributions')).toBeTruthy();
     expect(mockedSync).not.toHaveBeenCalled();
   });
 

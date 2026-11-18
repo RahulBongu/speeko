@@ -15,12 +15,13 @@ scripted replay farming of completion XP/gems — are closed and verified at the
 database level.
 
 Speeko is **not** release-ready for the public. No automated engineering work
-remains for the internal alpha. `main` (`82f0f3c`) is the last merged state;
-`next/M2` (license, hosting, and web license bundling) is green and awaits the
-owner's merge.
+remains for the internal alpha. `main` (`ac62217`) is the last merged state;
+`next/M3` (in-app mobile licenses and proxy-aware rate limiting) is green and
+awaits the owner's merge.
 Blocking external requirements: a
-native-speaker review for every course, hosting provisioning and backups, mobile
-license texts bundled at packaging, and store accounts. On-device functional QA is waived for the internal alpha by
+native-speaker review for every course, hosting provisioning and backups,
+a clean signed rebuild that includes the in-app licenses screen, and store
+accounts. On-device functional QA is waived for the internal alpha by
 owner instruction (D78); headless web/API verification is the accepted
 evidence. A controlled internal trial is possible with the constraints below.
 
@@ -34,7 +35,7 @@ evidence. A controlled internal trial is possible with the constraints below.
 | Curriculum authenticity | **Blocked** — tooling ready, review not started | native speaker × 10 locales |
 | Android device QA | **Pass (render)**; functional QA waived — release APK verified on a Vivo V2336 (2026-11-17), functional device QA waived by owner (D78) | engineering + owner |
 | Hosting & operations | **Decided 2026-11-18** — free stack ready in repo; owner provisioning pending | owner |
-| License & rights | **Decided 2026-11-18** — Apache-2.0 code, All Rights Reserved content/brand, OFL fonts; web texts shipped at `/licenses/*`; mobile bundling at packaging | owner (mobile packaging) |
+| License & rights | **Pass (in-tree)** - Apache-2.0 code, All Rights Reserved content/brand, OFL fonts; web texts shipped at `/licenses/*`; mobile in-app screen at `/licenses` | owner (rebuild + legal sign-off) |
 
 ## 1. Security and data integrity
 
@@ -68,7 +69,7 @@ owner's launch gates remain.
 
 | Requirement | Status | Evidence |
 | --- | --- | --- |
-| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 150 checks total incl. integrity suites and license artifact); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
+| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 154 checks total incl. integrity suites, proxy rate-limit contract, and license artifacts); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
 | Advertised exercise types behave correctly | **Pass; unsupported kinds fail closed** | The curriculum uses 4 kinds: `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10. Web supports all ten published kinds. Mobile supports 9 (`chooseMeaning`, `listenChoose` with audio, `fillBlank`, `typeTranslation`, `matchPairs`, `wordBank`, `arrangeSentence`, `typeWhatYouHear`, `speak`); `chooseImage` blocks honestly and cannot complete a lesson. No curriculum item is an unimplemented-kind. |
 | Missing-audio safeguard | **Pass** | `eligibleExercises()` in `@speeko/core` excludes empty-audio `listenChoose` from lesson queues, review/practice plans, the SRS index, and the API grading path. The 10 items keep their IDs/content and are blocked in the audit ledger. Core + mobile tests cover skip and playable-audio branches. |
 | Progress restores and synchronizes | **Pass** | Web guest→account merge (D12), mobile local/cloud merge (`lib/sync.ts`), migration from v1 snapshot, corrupt-JSON tolerance. |
@@ -87,11 +88,12 @@ gem sources beyond lessons/quests/purchases, and any licensed audio.
 | --- | --- | --- |
 | Unit (core) | **Pass** | `pnpm --filter @speeko/core test` — **108 passed** (includes 4 eligibility tests, the empty-lesson guard, practice-plan coverage, and the practice-vs-quest habit split) |
 | Unit (content) | **Pass** | `pnpm --filter @speeko/content test` — **16 passed** (all 305 exercises graded, validation/test suites incl. answerIndex bounds) |
-| Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` — **77 passed across 15 suites** (includes missing-audio skip, playable-audio branch, and the added exercise kinds) |
+| Unit (API) | **Pass** | `pnpm --filter @speeko/api test` — **12 passed** (client-IP normalisation, trusted/untrusted proxy headers, hop parsing) |
+| Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` - **79 passed across 16 suites** (includes missing-audio skip, playable-audio branch, the added exercise kinds, and the in-app license screen) |
 | API integration | **Pass** | `progress-integrity.spec.ts` — 7 scenarios and `reward-integrity.spec.ts` — 7 scenarios against the real API+DB (14 checks each across both viewports); plus reward, habits, shop, social, and the isolated rate-limit contract (`rate-limit.spec.ts`) |
-| Browser E2E | **Pass** | `pnpm e2e` — **150 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run |
+| Browser E2E | **Pass** | `pnpm e2e` - **154 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run (4.1m) |
 | Typecheck | **Pass** | 6/6 turbo tasks |
-| Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 22 static routes) |
+| Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 23 static routes) |
 | Lint | **Pass** (0 errors) | web: 1 documented `<img>` warning; mobile: clean |
 | Android device QA | **Pass (render)**; functional QA waived | M1 (2026-11-17): release APK installed on Vivo V2336; cold start renders the Bengali course path; APK hash matches local build (`36A5D41D…`); screenshot/UI dump/logcat in `docs/qa/mobile/`. Functional device QA is waived by owner instruction (D78) |
 | Mobile E2E / screenshots | **Headless only** | No emulator-attached suite. Playwright runs the web export + compiled API at both viewports; the native app is not instrumented. Release-render evidence (`docs/qa/mobile/release-first-screen.png`, 1080×2400, PNG signature verified; `release-ui-dump.xml`) is the device record |
@@ -131,25 +133,22 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 | Backup and recovery | **Requirement on file** | nightly `pg_dump` or provider PITR; a tested restore is a pre-launch gate in the operations checklist and hosting package |
 | Migrations | **Pass** | applied on API start; append-only table strategy keeps forwards-only restores possible; migration target is Postgres |
 | Secrets handling | **Pass** | none in repo (`.gitignore` enforced; `apps/api/.env.example` documents placeholders only) |
-| License & content rights | **Decided 2026-11-18** — web texts served at `/licenses/*` (auto-built); mobile bundling at packaging time | Apache-2.0 code + All Rights Reserved content/brand in `LICENSE` and `LICENSE-CONTENT`; font OFL-1.1 text in `apps/web/public/fonts/OFL.txt` and `/licenses/OFL.txt`; `NOTICE` and `ATTRIBUTIONS.md` updated; `apps/web/app/licenses/page.tsx` exposes them; **nothing published** |
-| Proxy-aware rate limiting | **Known alpha limitation** | The API keys `/api/auth/*` on `request.ip` and does not trust proxy headers. On Render the socket peer is the platform proxy, so the 60/min auth budget is shared by the service (this already applies to direct mobile traffic). Acceptable for a small controlled alpha. Before widening access, configure trusted proxy hops and verify `X-Forwarded-For` against the platform's documented chain; never trust arbitrary client-supplied headers on a publicly reachable API. |
+| License & content rights | **Pass (in-tree)** — web texts served at `/licenses/*` (auto-built); mobile ships an in-app `/licenses` screen from a generated bundle | Apache-2.0 code + All Rights Reserved content/brand in `LICENSE` and `LICENSE-CONTENT`; font OFL-1.1 text in `apps/web/public/fonts/OFL.txt` and `/licenses/OFL.txt`; `NOTICE` and `ATTRIBUTIONS.md` updated; `apps/web/app/licenses/page.tsx` and `apps/mobile/app/licenses.tsx` expose them; `pnpm check:licenses` guards mobile bundle drift; **nothing published** |
+| Proxy-aware rate limiting | **Pass (contract-tested)** | The web proxy forwards `x-speeko-client-ip` only with a matching `x-speeko-proxy-secret` (`API_PROXY_SECRET`); missing/wrong secrets fall back to the request address and cannot bypass the limit. Direct deployments derive the client from exactly `TRUST_PROXY_HOPS` trusted hops (Render: 1; default 0 ignores `X-Forwarded-For`). `tests/e2e/rate-limit.spec.ts` verifies per-client separation, spoof resistance, and the one-hop path; `apps/api/src/client-ip.test.ts` covers normalisation and failure modes. The in-memory store is still per-process. |
 
 ## Merge state
 
-`next/M2` is open as PR #6 and awaits the owner's merge. PR #5 merged the prior
-`next/M2` work (`d5d6a74` league fix + `5e3c999` handoff docs) into `main` on
-2026-11-18 (`82f0f3c`). Version remains `0.0.1`; nothing is published. The
-branch now also carries the follow-up docs bookkeeping, the license files
-(D79), the hosting configuration (D80: proxy rewrite, Render blueprint,
-runbook), and the web license bundling.
+`next/M3` is open as PR #7 with green CI and awaits the owner's merge. PR #6 merged the license,
+hosting, and web license-bundling work into `main` on 2026-11-18 (`ac62217`).
+Version remains `0.0.1`; nothing is published. `next/M3` adds the in-app
+mobile license screen and its drift guard, plus proxy-aware rate limiting.
 
 ## Blockers for a public release
 
 1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
-2. **Android device QA**: the release-APK render pass is done (2026-11-17, Vivo V2336, `36A5D41D…`). Functional device QA is **waived for the internal alpha** by owner instruction (D78); headless Playwright covers the functional flows. A public launch still needs a real-device pass by the owner.
+2. **Android device QA and a clean signed rebuild**: the release-APK render pass is done (2026-11-17, Vivo V2336, `36A5D41D…`), but that binary predates the in-app licenses screen. Functional device QA is **waived for the internal alpha** by owner instruction (D78); headless Playwright covers the functional flows. A public launch still needs a real-device pass and a rebuilt, signed artifact by the owner.
 3. **Hosting provisioning and backups** (owner; Option A — Neon + Render + Vercel — is decided, and `render.yaml` + the runbook are ready). Includes a tested restore and secret rotation.
-4. **Mobile license artifact bundling**: the web site now ships `LICENSE`, `LICENSE-CONTENT`, `NOTICE`, and the font OFL text at `/licenses/*` (auto-built, e2e-guarded). The Android artifact still needs the same texts (or an in-app licenses screen) before it is distributed. The license decision and repo files are done (2026-11-18).
-5. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
+4. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
 
 ## What can ship now (bounded trial)
 
@@ -164,11 +163,11 @@ readiness.
 
 ## How the evidence was produced
 
-Re-run everything: `pnpm verify` (typecheck + test + build + secrets + e2e),
+Re-run everything: `pnpm verify` (typecheck + test + build + secrets + licenses + e2e),
 `pnpm --filter @speeko/content build:courses` for the dist bundle,
 `pnpm sync:content` for the web bundle, `pnpm --filter @speeko/content test`
 for the content validator, `pnpm --filter @speeko/mobile build` for the
-22 static routes, `node scripts/export-review.mjs` for the review package, and
+23 static routes, `node scripts/export-review.mjs` for the review package, and
 `npx playwright test tests/e2e/progress-integrity.spec.ts` for the boundary
 suite against the production-built API and database.
 

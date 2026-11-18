@@ -292,6 +292,16 @@ export default function Account() {
         </TactilePressable>
       </View>
 
+      <TactilePressable
+        onPress={() => router.push('/licenses')}
+        tone="white"
+        accessibilityHint="Opens the bundled license and attribution texts"
+      >
+        <Text style={{ fontWeight: '800', color: COLORS.dark }}>
+          Licenses and attributions
+        </Text>
+      </TactilePressable>
+
       {signedIn ? (
         <TactilePressable
           onPress={() => void signOut()}

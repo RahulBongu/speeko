@@ -43,6 +43,10 @@ import {
 
 const ORIGIN = 'http://localhost:3000';
 
+// Generated per run: only the child and this test need to agree, and no
+// production secret ever lives in the repository.
+const PROXY_SECRET = randomUUID();
+
 // Mirrors PROGRESS_WRITE_RATE_LIMIT in apps/api/src/rate-limit.ts:
 // 30 PUT /api/progress requests per minute per account+IP.
 const PROGRESS_LIMIT = 30;
@@ -120,6 +124,10 @@ test.beforeAll(async () => {
     NODE_ENV: 'development',
     // Must win over the CI step's RATE_LIMIT_DISABLED=1.
     RATE_LIMIT_DISABLED: '0',
+    // Exercise both proxy paths: the web middleware's signed header and the
+    // single Render hop used by direct clients.
+    API_PROXY_SECRET: PROXY_SECRET,
+    TRUST_PROXY_HOPS: '1',
   };
   delete childEnv.DATABASE_URL;
 
@@ -322,5 +330,102 @@ test('a fresh account keeps its own progress budget', async () => {
     expect(response.status).toBe(200);
   } finally {
     await closeAccount(other);
+  }
+});
+
+/*
+ * Proxy-path auth tests run last: they consume the fallback `auth:127.0.0.1`
+ * budget, and earlier tests create accounts through the real sign-up endpoint.
+ * Unique addresses keep retries from inheriting a saturated bucket.
+ */
+function uniqueIp(prefix: string, seed: number): string {
+  return `${prefix}.${10 + ((seed * 37) % 200)}`;
+}
+
+async function authGet(
+  context: APIRequestContext,
+  options: { ip?: string; secret?: string; forwardedFor?: string } = {},
+): Promise<APIResponse> {
+  const headers: Record<string, string> = {};
+  if (options.ip) headers['x-speeko-client-ip'] = options.ip;
+  if (options.secret) headers['x-speeko-proxy-secret'] = options.secret;
+  if (options.forwardedFor) headers['x-forwarded-for'] = options.forwardedFor;
+  return context.get('/api/auth/get-session', { headers });
+}
+
+test('a signed proxy header separates clients; a wrong secret cannot mint new keys', async () => {
+  const context = await playwrightRequest.newContext({
+    baseURL: apiUrl,
+    extraHTTPHeaders: { origin: ORIGIN },
+  });
+  const seed = Date.now() % 10_000;
+  const trustedIp = uniqueIp('203.0.113', seed + 1);
+  const otherTrustedIp = uniqueIp('203.0.113', seed + 2);
+
+  try {
+    for (let i = 0; i < 60; i += 1) {
+      const response = await authGet(context, { ip: trustedIp, secret: PROXY_SECRET });
+      expect(response.status(), `trusted request ${i + 1} should be within budget`).toBe(200);
+    }
+
+    const limited = await authGet(context, { ip: trustedIp, secret: PROXY_SECRET });
+    expect(limited.status(), 'the 61st trusted request must be limited').toBe(429);
+    expect(Number(limited.headers()['retry-after'])).toBeGreaterThanOrEqual(1);
+
+    const separate = await authGet(context, {
+      ip: otherTrustedIp,
+      secret: PROXY_SECRET,
+    });
+    expect(
+      separate.status(),
+      'a different signed client IP must have its own auth budget',
+    ).toBe(200);
+
+    // Wrong secret with a different spoofed IP on every request: if the API
+    // trusted the header without the secret, every request would get a fresh
+    // budget and none would ever be limited.
+    let sawLimit = false;
+    for (let i = 0; i < 61; i += 1) {
+      const response = await authGet(context, {
+        ip: uniqueIp('198.51.100', seed + 100 + i),
+        secret: 'wrong-secret',
+      });
+      if (response.status() === 429) {
+        sawLimit = true;
+        break;
+      }
+      expect(response.status(), `spoofed request ${i + 1} must not bypass`).toBe(200);
+    }
+    expect(sawLimit, 'untrusted x-speeko-client-ip must not bypass the limiter').toBe(true);
+  } finally {
+    await context.dispose();
+  }
+});
+
+test('one trusted X-Forwarded-For hop separates direct clients', async () => {
+  const context = await playwrightRequest.newContext({
+    baseURL: apiUrl,
+    extraHTTPHeaders: { origin: ORIGIN },
+  });
+  const seed = (Date.now() + 500) % 10_000;
+  const firstIp = uniqueIp('192.0.2', seed + 1);
+  const secondIp = uniqueIp('192.0.2', seed + 2);
+
+  try {
+    for (let i = 0; i < 60; i += 1) {
+      const response = await authGet(context, { forwardedFor: firstIp });
+      expect(response.status(), `direct request ${i + 1} should be within budget`).toBe(200);
+    }
+
+    const limited = await authGet(context, { forwardedFor: firstIp });
+    expect(limited.status(), 'the 61st direct request must be limited').toBe(429);
+
+    const separate = await authGet(context, { forwardedFor: secondIp });
+    expect(
+      separate.status(),
+      'a different trusted X-Forwarded-For hop must have its own budget',
+    ).toBe(200);
+  } finally {
+    await context.dispose();
   }
 });

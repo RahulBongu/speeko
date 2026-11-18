@@ -5,19 +5,19 @@ Living status document. One phase per session; a phase is done only when
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-18 (engineering complete; PR #5 merged; license decided; owner gates open)
+**Updated:** 2026-11-18 (engineering complete; PR #6 merged; mobile licenses and proxy-aware limiting on `next/M3`; owner gates open)
 
 ## Current state (post-M4, 2026-11-18)
 
-- **Engineering is complete and green.** Full `pnpm verify` on `d5d6a74`: typecheck 6/6, unit **201** (108 core + 16 content + 77 mobile), build 5/5, `check:secrets` PASS (151 files, 0 hits), e2e **148/148** in 5.9m with zero flakes. The current suite adds a license-artifact check (**150 tests**).
-- **`main` is `82f0f3c`** — the merge of PR #5 (`82f0f3c`), which followed PR #4 (`e5a06c2`). `main` now contains the league profile-lookup fix (`d5d6a74`) and the 2026-11-18 docs refresh (`5e3c999`). `next/M1` was merged earlier.
-- **`next/M2` carries the license (D79), hosting (D80), and web license-bundling work**; CI is green and PR #6 is open and clean, awaiting the owner's merge into `main`. The internal alpha is feature-complete and green.
-- **License gate decided (D79).** Apache-2.0 for source code (`LICENSE`, verbatim from apache.org), All Rights Reserved for course content, brand, design, and docs (`LICENSE-CONTENT`), and the full OFL-1.1 text for Baloo 2 and Nunito (`apps/web/public/fonts/OFL.txt`). `NOTICE`, `ATTRIBUTIONS.md`, and `content/README.md` are updated. The web artifact ships the texts at `/licenses/*` (auto-built, e2e-guarded); the mobile artifact still needs them bundled at packaging time.
-- **Hardening shipped:** `/api/auth/*` 60 requests/min per IP; `PUT /api/progress` 30/min per account+IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`.
+- **Engineering is complete and green.** Full `pnpm verify` on `next/M3`: typecheck 6/6, unit **215** (108 core + 16 content + 12 API + 79 mobile), build 5/5, `check:secrets` PASS (160 files, 0 hits), `check:licenses` PASS, e2e **154/154** in 4.1m with zero flakes.
+- **`main` is `ac62217`** — the merge of PR #6, which followed PR #5 (`82f0f3c`) and PR #4 (`e5a06c2`). `main` now contains the league profile-lookup fix (`d5d6a74`), the 2026-11-18 docs refresh (`5e3c999`), the license files (D79), the hosting configuration (D80), and the web license bundling.
+- **`next/M3` carries the in-app mobile license screen and proxy-aware rate limiting**; PR #7 is open, CI is green, and it awaits the owner's merge into `main`. The internal alpha is feature-complete and green.
+- **License gate decided (D79) and implemented.** Apache-2.0 for source code (`LICENSE`, verbatim from apache.org), All Rights Reserved for course content, brand, design, and docs (`LICENSE-CONTENT`), and the full OFL-1.1 text for Baloo 2 and Nunito (`apps/web/public/fonts/OFL.txt`). `NOTICE`, `ATTRIBUTIONS.md`, and `content/README.md` are updated. The web artifact ships the texts at `/licenses/*` (auto-built, e2e-guarded); the mobile app ships a `/licenses` screen from a generated bundle, guarded by `pnpm check:licenses`.
+- **Hardening shipped:** `/api/auth/*` 60 requests/min per client IP; `PUT /api/progress` 30/min per account+client IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`. `next/M3` makes the client IP proxy-aware: the web proxy forwards a secret-signed header, direct deployments can trust one Render hop via `TRUST_PROXY_HOPS`, and untrusted headers are ignored.
 - **Phase 1–4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
 - **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
-- **Hosting decided (D80).** The internal alpha uses the free Option A stack: Neon Postgres + Render API + Vercel web, with a same-origin `/api` proxy so Better Auth's `SameSite=Lax` session cookie stays first-party. `render.yaml`, the proxy rewrite, and the runbook are in the tree; creating the projects, spend, and secrets remain owner actions.
-- **Still open (owner):** native-speaker review, hosting provisioning + backups + secret rotation, audio decision, store accounts, mobile license-text bundling at packaging.
+- **Hosting decided (D80).** The internal alpha uses the free Option A stack: Neon Postgres + Render API + Vercel web, with a same-origin `/api` proxy so Better Auth's `SameSite=Lax` session cookie stays first-party. `render.yaml`, the proxy middleware, and the runbook are in the tree; creating the projects, spend, and secrets remain owner actions.
+- **Still open (owner):** native-speaker review, hosting provisioning + backups + secret rotation, audio decision, store accounts, and a clean signed rebuild that includes the in-app licenses screen.
 - **Not claimed:** on-device functional QA. The owner waived it; see D78 and `docs/READINESS.md`.
 
 

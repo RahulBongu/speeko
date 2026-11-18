@@ -53,9 +53,9 @@ only PII. Ensure rate limiting on auth and any logging that reveals them.
 ## Release checklist (owner or owner-designated operator walks through it)
 
 ### 1. Source and build verification
-- [ ] `pnpm verify` green (typecheck 6/6, 201 unit tests — 108 core + 16 content + 77 mobile, build 5/5, secrets 0 hits, e2e 148/148 at the recorded cut; the current suite has 150 checks).
+- [ ] `pnpm verify` green (typecheck 6/6, 215 unit tests - 108 core + 16 content + 12 API + 79 mobile, build 5/5, secrets 0 hits, e2e 154/154 at the recorded cut).
 - [ ] `pnpm lint` clean (0 errors; one documented web `<img>` warning).
-- [ ] `pnpm --filter @speeko/mobile build` exports 22 static routes.
+- [ ] `pnpm --filter @speeko/mobile build` exports 23 static routes.
 - [ ] dist bundle and `apps/web/public/courses` regenerated from tracked sources
       (`pnpm sync:content`) so no stale content artifacts ship.
 - [ ] `docs/qa/*.png` refreshed and inspected.

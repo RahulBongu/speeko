@@ -31,3 +31,7 @@ services:
         sync: false
       - key: CLIENT_ORIGINS
         sync: false
+      - key: TRUST_PROXY_HOPS
+        value: 1
+      - key: API_PROXY_SECRET
+        sync: false

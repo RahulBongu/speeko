@@ -13,11 +13,11 @@ reviewed, published, launched, or hardware-tested unless it says so.
 | Command | Result |
 | --- | --- |
 | `pnpm typecheck` | **6/6 Turbo tasks** successful (5 package typechecks + `^build`) |
-| `pnpm test` | **201 unit tests** — 108 core + 16 content (Vitest) and 77 mobile (Jest, 15 suites). All pass. |
+| `pnpm test` | **215 unit tests** — 108 core + 16 content (Vitest), 12 API (Vitest), and 79 mobile (Jest, 16 suites). All pass. |
 | `pnpm build` | **5/5 Turbo tasks** (core, content, web, API, mobile web export) |
-| `pnpm e2e` | **150 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
-| `pnpm verify` | typecheck → test → build → secrets → e2e, all green |
-| Mobile export | 22 static routes exported (`dist/`) |
+| `pnpm e2e` | **154 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
+| `pnpm verify` | typecheck → test → build → secrets → licenses → e2e, all green |
+| Mobile export | 23 static routes exported (`dist/`) |
 
 Visual evidence for the web surfaces is in `docs/qa/`; the release APK render is
 recorded in `docs/qa/mobile/` (screenshot, UI dumps, logcat). Functional device
@@ -98,7 +98,7 @@ Implemented:
   and segmented switcher, profile header) applied across the app. See
   **Stitch integration** below for exact scope and limits.
 
-Mobile test evidence (Jest, 15 suites / 77 tests, `npx jest` in `apps/mobile`):
+Mobile test evidence (Jest, 16 suites / 79 tests, `npx jest` in `apps/mobile`):
 
 - Unit: shared exercise layer (XP-only-on-correct rule), sync merge/push rules,
   progress snapshot migration/corruption handling, API cookie persistence.
@@ -255,8 +255,9 @@ Not imported, and why:
    by unit-level sync tests; no two-device live run exists.
 5. **License:** decided 2026-11-18 — Apache-2.0 for code, All Rights Reserved
    for content/brand, OFL-1.1 text for the bundled fonts (D79). The web artifact
-   ships the texts at `/licenses/*` (auto-built, e2e-guarded); mobile packaging
-   still needs to bundle them before distribution.
+   ships the texts at `/licenses/*` (auto-built, e2e-guarded); the mobile app
+   ships an in-app `/licenses` screen from a generated bundle guarded by
+   `pnpm check:licenses`. A rebuilt signed artifact is still required.
 6. **Hosting/database decision** is still deferred by the owner; the
    recommendation package is in `docs/decisions/2026-11-16-hosting-and-database.md`.
 
@@ -266,7 +267,8 @@ The mobile app in this tree is a working alpha suitable for a controlled
 internal trial: playable draft lessons, onboarding, honest fail-closed states,
 and account-synced rewards. It is **not** a production release candidate until
 at least (1) a native-speaker review pass, (2) an owner-run functional device
-pass on the release build, (3) a hosting/database choice, and (4) mobile
-license-text bundling at packaging are complete. The progress endpoint's reward integrity is verified at
+pass on the release build, (3) a hosting/database choice, and (4) a clean signed
+rebuild that includes the in-app licenses screen are complete. The progress
+endpoint's reward integrity is verified at
 the database boundary (P13 + P17); visual and linguistic authenticity are not
 yet verified anywhere.

@@ -38,6 +38,9 @@ jobs:
       - name: Secrets scan
         run: pnpm check:secrets
 
+      - name: License texts
+        run: pnpm check:licenses
+
       - name: E2E
         run: pnpm e2e
         env:
