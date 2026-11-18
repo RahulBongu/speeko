@@ -1,6 +1,6 @@
 {
   "ledgerVersion": 1,
-  "generatedAt": "2026-11-16T17:46:57.801Z",
+  "generatedAt": "2026-11-18T06:01:20.885Z",
   "source": "content/dist/*.json",
   "disclaimer": "Automated and AI-assisted internal audit only. No item in this ledger is native-speaker reviewed, approved, verified, or certified. Absent humanStatus changes made by a qualified reviewer, every item remains reviewStatus: draft.",
   "rules": [
@@ -124,17 +124,17 @@
   },
   "summary": {
     "byDisposition": {
-      "no_issue_detected": 293,
-      "blocked": 10,
-      "needs_further_review": 2
+      "no_issue_detected": 301,
+      "needs_further_review": 2,
+      "blocked": 2
     },
     "byRule": {
-      "R-006": 10,
-      "R-010": 2
+      "R-010": 2,
+      "R-006": 2
     },
-    "deterministicClean": 293,
-    "blocked": 10,
-    "findingsTotal": 12
+    "deterministicClean": 301,
+    "blocked": 2,
+    "findingsTotal": 4
   },
   "items": [
     {
@@ -953,23 +953,11 @@
       "originalTarget": [
         "সুপ্রভাত"
       ],
-      "contentHash": "179e8ad19aadcbb5",
+      "contentHash": "2b1608e9db1d8de5",
       "unitId": "bn-starter-u3",
       "lessonId": "bn-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -2096,23 +2084,11 @@
       "originalTarget": [
         "સુપ્રભાત"
       ],
-      "contentHash": "4ab9294bca6bf462",
+      "contentHash": "4257561f1aceb827",
       "unitId": "gu-starter-u3",
       "lessonId": "gu-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -7134,23 +7110,11 @@
       "originalTarget": [
         "सुप्रभात"
       ],
-      "contentHash": "2ec052d3d30546c6",
+      "contentHash": "cacfb30f1291a7fa",
       "unitId": "hi-starter-u3",
       "lessonId": "hi-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -8277,23 +8241,11 @@
       "originalTarget": [
         "ಶುಭೋದಯ"
       ],
-      "contentHash": "9a8ce0acdb346882",
+      "contentHash": "2c2849ba12477061",
       "unitId": "kn-starter-u3",
       "lessonId": "kn-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -9420,23 +9372,11 @@
       "originalTarget": [
         "സുപ്രഭാതം"
       ],
-      "contentHash": "992f2cb548b2b8a0",
+      "contentHash": "30799b608d2a6f09",
       "unitId": "ml-starter-u3",
       "lessonId": "ml-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -10563,23 +10503,11 @@
       "originalTarget": [
         "शुभ सकाळ"
       ],
-      "contentHash": "5cc82b9e85f38ed6",
+      "contentHash": "610288e44cb5c1c2",
       "unitId": "mr-starter-u3",
       "lessonId": "mr-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -13992,23 +13920,11 @@
       "originalTarget": [
         "காலை வணக்கம்"
       ],
-      "contentHash": "40a0615010914ec3",
+      "contentHash": "ca768ea403b574ea",
       "unitId": "ta-starter-u3",
       "lessonId": "ta-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -15135,23 +15051,11 @@
       "originalTarget": [
         "శుభోదయం"
       ],
-      "contentHash": "109431b89896c4d0",
+      "contentHash": "c3b17f3cf9d68d36",
       "unitId": "te-starter-u3",
       "lessonId": "te-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",

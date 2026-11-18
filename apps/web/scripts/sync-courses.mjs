@@ -33,4 +33,15 @@ const files = readdirSync(distDir).filter((f) => f.endsWith('.json'));
 for (const f of files) {
   copyFileSync(resolve(distDir, f), resolve(outDir, f));
 }
+// Copy bundled audio assets (listenChoose) if present.
+const audioSrcDir = resolve(contentDir, 'audio');
+const audioOutDir = resolve(outDir, 'audio');
+if (existsSync(audioSrcDir)) {
+  rmSync(audioOutDir, { recursive: true, force: true });
+  mkdirSync(audioOutDir, { recursive: true });
+  for (const f of readdirSync(audioSrcDir)) {
+    copyFileSync(resolve(audioSrcDir, f), resolve(audioOutDir, f));
+  }
+  console.log(`[sync-courses] copied audio -> ${audioOutDir}`);
+}
 console.log(`[sync-courses] copied ${files.length} course files -> ${outDir}`);

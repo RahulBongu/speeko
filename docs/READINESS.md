@@ -88,7 +88,7 @@ gem sources beyond lessons/quests/purchases, and any licensed audio.
 | Unit (core) | **Pass** | `pnpm --filter @speeko/core test` — **108 passed** (includes 4 eligibility tests, the empty-lesson guard, practice-plan coverage, and the practice-vs-quest habit split) |
 | Unit (content) | **Pass** | `pnpm --filter @speeko/content test` — **16 passed** (all 305 exercises graded, validation/test suites incl. answerIndex bounds) |
 | Unit (API) | **Pass** | `pnpm --filter @speeko/api test` — **12 passed** (client-IP normalisation, trusted/untrusted proxy headers, hop parsing) |
-| Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` - **79 passed across 16 suites** (includes missing-audio skip, playable-audio branch, the added exercise kinds, and the in-app license screen) |
+| Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` - **81 passed across 16 suites** (includes missing-audio skip, playable-audio branch, the added exercise kinds, and the in-app license screen) |
 | API integration | **Pass** | `progress-integrity.spec.ts` — 7 scenarios and `reward-integrity.spec.ts` — 7 scenarios against the real API+DB (14 checks each across both viewports); plus reward, habits, shop, social, and the isolated rate-limit contract (`rate-limit.spec.ts`) |
 | Browser E2E | **Pass** | `pnpm e2e` - **154 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run (4.1m) |
 | Typecheck | **Pass** | 6/6 turbo tasks |
@@ -147,7 +147,7 @@ the license, hosting, and web license-bundling work (`ac62217`). Version remains
 1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
 2. **Android device QA and a clean signed rebuild**: the release-APK render pass is done (2026-11-17, Vivo V2336, `36A5D41D…`), but that binary predates the in-app licenses screen. Functional device QA is **waived for the internal alpha** by owner instruction (D78); headless Playwright covers the functional flows. A public launch still needs a real-device pass and a rebuilt, signed artifact by the owner.
 3. **Hosting provisioning and backups** (owner; Option A — Neon + Render + Vercel — is decided, and `render.yaml` + the runbook are ready). Includes a tested restore and secret rotation.
-4. **Audio decision** for listenChoose: publish with the exclusion (already implemented) or record/license audio for the 10 items. No audio exists today.
+4. **Audio decision** for listenChoose: 9 of 10 items now carry synthetic audio (edge-tts for 8, gTTS for pa); 1 (or) remains excluded because no Odia voice is available. The product does not claim complete listening coverage. No audio was fabricated beyond the verified synthetic files.
 
 ## What can ship now (bounded trial)
 

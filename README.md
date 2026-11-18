@@ -34,7 +34,7 @@ Open http://localhost:3000. `pnpm dev` starts the web app on port 3000 and the A
 | `pnpm --filter @speeko/api dev` | API on port 3001 (`/health`, `/api/auth/*`, `/api/progress`, `/api/lesson-completions`) |
 | `pnpm --filter @speeko/mobile start` | Expo Go / emulator |
 | `pnpm typecheck` | TypeScript across every package |
-| `pnpm test` | Vitest suites for grading, progress merging, guidebook extraction, eligibility filtering, all course content (108 core + 16 content), and client-IP trust rules (12 API), plus the mobile Jest suite (79 tests, 16 suites) through Turbo |
+| `pnpm test` | Vitest suites for grading, progress merging, guidebook extraction, eligibility filtering, all course content (108 core + 16 content), and client-IP trust rules (12 API), plus the mobile Jest suite (81 tests, 16 suites) through Turbo |
 | `pnpm build` | Production builds for web, API, mobile-web, content |
 | `pnpm lint` | ESLint for web and mobile (non-interactive) |
 | `pnpm e2e` | Playwright route smoke tests + screenshots (requires `pnpm build`) |
@@ -151,7 +151,7 @@ content/      Per-locale course JSON
 ## Verification
 
 - `pnpm typecheck` — 5 packages clean (6 Turbo tasks including dependency builds)
-- `pnpm test` - 108 core + 16 content + 12 API (Vitest) and 79 mobile (Jest, 16 suites), all passing
+- `pnpm test` - 108 core + 16 content + 12 API (Vitest) and 81 mobile (Jest, 16 suites), all passing
 - `pnpm build` — web, API, mobile-web export (23 static routes), and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
 - `pnpm e2e` — 154 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase

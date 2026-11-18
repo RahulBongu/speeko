@@ -11,6 +11,7 @@ import {
 } from '@speeko/core';
 import { apiFetch } from '../../lib/api';
 import { loadProgress, saveProgress } from '../../lib/progress';
+import { syncProgressIfSignedIn } from '../../lib/sync';
 import { ExerciseBody } from '../../components/ExerciseBody';
 import { Screen } from '../../components/Screen';
 import { TactileButton, TactileCard } from '../../components/Tactile';
@@ -61,10 +62,11 @@ export default function PracticeRunner() {
     setPhase('loading');
     setLoadError(null);
     try {
-      const [saved, courseResponse] = await Promise.all([
-        loadProgress(),
+      const [synced, courseResponse] = await Promise.all([
+        syncProgressIfSignedIn().catch(() => null),
         apiFetch(`/api/courses/${courseId}`),
       ]);
+      const saved = synced?.progress ?? (await loadProgress());
       if (!courseResponse.ok) {
         throw new Error(`Practice could not load (${courseResponse.status}).`);
       }
@@ -137,6 +139,9 @@ export default function PracticeRunner() {
       const updated = applyReviews(current, reviews, Date.now());
       await saveProgress(updated);
       setProgress(updated);
+      // Push the updated review schedule to the signed-in account. Best-effort:
+      // an offline device keeps the local schedule and syncs on the next visit.
+      void syncProgressIfSignedIn().catch(() => {});
       setSaveState('saved');
     } catch {
       setSaveError('Your answers were graded, but the review schedule could not be saved.');

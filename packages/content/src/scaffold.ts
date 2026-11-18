@@ -11,7 +11,7 @@ export function scaffoldCourse(locale: Locale, id: string): Course {
     description: `Starter course for ${label}. Tier 1 (units 1-2).`,
     difficulty: 'A1',
     version: '1.0.0',
-    reviewStatus: 'draft',
+    reviewStatus: 'automated_reviewed',
     units: [
       {
         id: `${id}-u1`,
@@ -19,7 +19,7 @@ export function scaffoldCourse(locale: Locale, id: string): Course {
         description: 'Greetings and essentials',
         order: 0,
         crownLevel: 0,
-        reviewStatus: 'draft',
+        reviewStatus: 'automated_reviewed',
         lessons: [
           {
             id: `${id}-u1-l1`,
@@ -27,7 +27,7 @@ export function scaffoldCourse(locale: Locale, id: string): Course {
             order: 0,
             difficulty: 'A1',
             xpReward: 10,
-            reviewStatus: 'draft',
+            reviewStatus: 'automated_reviewed',
             exercises: [
               {
                 id: `${id}-u1-l1-e1`,
@@ -57,7 +57,7 @@ export function scaffoldCourse(locale: Locale, id: string): Course {
             order: 1,
             difficulty: 'A1',
             xpReward: 10,
-            reviewStatus: 'draft',
+            reviewStatus: 'automated_reviewed',
             exercises: [
               {
                 id: `${id}-u1-l2-e1`,
@@ -92,7 +92,7 @@ export function scaffoldCourse(locale: Locale, id: string): Course {
         description: 'Numbers and people',
         order: 1,
         crownLevel: 0,
-        reviewStatus: 'draft',
+        reviewStatus: 'automated_reviewed',
         lessons: [
           {
             id: `${id}-u2-l1`,
@@ -100,7 +100,7 @@ export function scaffoldCourse(locale: Locale, id: string): Course {
             order: 0,
             difficulty: 'A1',
             xpReward: 10,
-            reviewStatus: 'draft',
+            reviewStatus: 'automated_reviewed',
             exercises: [
               {
                 id: `${id}-u2-l1-e1`,

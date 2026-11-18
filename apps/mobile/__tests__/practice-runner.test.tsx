@@ -29,11 +29,24 @@ jest.mock('../lib/api', () => ({
   ORIGIN: 'http://localhost:3000',
 }));
 
+jest.mock('../lib/audio', () => ({
+  hasMobileAudio: jest.fn(() => false),
+  playMobileAudio: jest.fn(async () => false),
+  stopMobileAudio: jest.fn(async () => {}),
+}));
+
+jest.mock('../lib/sync', () => ({
+  syncProgress: jest.fn(async () => ({ progress: null, signedIn: false })),
+  syncProgressIfSignedIn: jest.fn(async () => ({ progress: null, signedIn: false, synced: false })),
+}));
+
 import { apiFetch } from '../lib/api';
 import PracticeRunner from '../app/practice/[courseId]';
-import { saveProgress } from '../lib/progress';
+import { loadProgress, saveProgress } from '../lib/progress';
+import { syncProgressIfSignedIn } from '../lib/sync';
 
 const mockedFetch = apiFetch as jest.MockedFunction<typeof apiFetch>;
+const mockedSync = syncProgressIfSignedIn as jest.MockedFunction<typeof syncProgressIfSignedIn>;
 
 function reply(status: number, body: unknown) {
   return {
@@ -180,4 +193,37 @@ describe('mobile practice runner', () => {
     await fireEvent.press(screen.getByText('Try saving again'));
     expect(await screen.findByText('Review schedule saved on this device')).toBeTruthy();
   });
+
+  it('pushes the review schedule to the signed-in account after saving', async () => {
+    mockedFetch.mockResolvedValue(reply(200, course));
+    mockedSync.mockImplementation(async () => ({ progress: await loadProgress(), signedIn: true, synced: true }));
+    await saveProgress(progressWithCard(Date.now() - 60_000));
+
+    await render(<PracticeRunner />);
+    expect(await screen.findByText('Card 1 of 1')).toBeTruthy();
+    await fireEvent.press(screen.getByText("नमस्ते"));
+    await fireEvent.press(screen.getByText('Check'));
+    expect(await screen.findByText('Correct!')).toBeTruthy();
+    await fireEvent.press(screen.getByText('See results'));
+
+    expect(await screen.findByText('Review complete!')).toBeTruthy();
+    expect(await screen.findByText('Review schedule saved on this device')).toBeTruthy();
+    expect(mockedSync).toHaveBeenCalled();
+  });
+
+  it('keeps the local schedule when account sync fails', async () => {
+    mockedFetch.mockResolvedValue(reply(200, course));
+    mockedSync.mockRejectedValue(new Error('offline'));
+    await saveProgress(progressWithCard(Date.now() - 60_000));
+
+    await render(<PracticeRunner />);
+    expect(await screen.findByText('Card 1 of 1')).toBeTruthy();
+    await fireEvent.press(screen.getByText("नमस्ते"));
+    await fireEvent.press(screen.getByText('Check'));
+    await fireEvent.press(await screen.findByText('See results'));
+
+    expect(await screen.findByText('Review complete!')).toBeTruthy();
+    expect(await screen.findByText('Review schedule saved on this device')).toBeTruthy();
+  });
+
 });

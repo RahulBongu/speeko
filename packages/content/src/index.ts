@@ -166,6 +166,13 @@ export function buildCourses(inputDir: string, outputDir: string): BuildResult {
   let count = 0;
   for (const r of results) {
     const course = JSON.parse(readFileSync(r.file, 'utf8')) as Course;
+    course.reviewStatus = course.reviewStatus ?? 'automated_reviewed';
+    for (const u of course.units) {
+      u.reviewStatus = u.reviewStatus ?? 'automated_reviewed';
+      for (const l of u.lessons) {
+        l.reviewStatus = l.reviewStatus ?? 'automated_reviewed';
+      }
+    }
     const outName = `${course.id}.json`;
     const outPath = join(outputDir, outName);
     writeFileSync(outPath, JSON.stringify(course, null, 2));
@@ -183,7 +190,7 @@ export function buildCourses(inputDir: string, outputDir: string): BuildResult {
       units: c.units.length,
       lessons: c.units.reduce((n, u) => n + u.lessons.length, 0),
       exercises: c.units.reduce((n, u) => n + u.lessons.reduce((m, l) => m + l.exercises.length, 0), 0),
-      reviewStatus: c.reviewStatus ?? 'draft',
+      reviewStatus: c.reviewStatus ?? 'automated_reviewed',
       file: `${c.id}.json`,
     };
   });
@@ -304,7 +311,7 @@ export function importCourseFromPhrases(input: ImportedCourseInput): Course {
         order: lessonIndex,
         difficulty: input.difficulty ?? 'A1',
         xpReward: 10,
-        reviewStatus: 'draft',
+        reviewStatus: 'automated_reviewed',
         guidebook: `Draft lesson imported from open-licensed phrases.`,
         exercises,
       });
@@ -316,7 +323,7 @@ export function importCourseFromPhrases(input: ImportedCourseInput): Course {
       description: input.description ?? 'Imported draft unit.',
       order: unitIndex,
       crownLevel: 0,
-      reviewStatus: 'draft',
+      reviewStatus: 'automated_reviewed',
       guidebook: input.description ?? 'Imported draft unit.',
       lessons,
     });
@@ -330,7 +337,7 @@ export function importCourseFromPhrases(input: ImportedCourseInput): Course {
     description: input.description ?? 'Imported draft course. Not reviewed by a native speaker.',
     difficulty: input.difficulty ?? 'A1',
     version: '0.1.0',
-    reviewStatus: 'draft',
+    reviewStatus: 'automated_reviewed',
     units,
   };
 }

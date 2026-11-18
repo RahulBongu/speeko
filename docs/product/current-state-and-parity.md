@@ -13,7 +13,7 @@ reviewed, published, launched, or hardware-tested unless it says so.
 | Command | Result |
 | --- | --- |
 | `pnpm typecheck` | **6/6 Turbo tasks** successful (5 package typechecks + `^build`) |
-| `pnpm test` | **215 unit tests** — 108 core + 16 content (Vitest), 12 API (Vitest), and 79 mobile (Jest, 16 suites). All pass. |
+| `pnpm test` | **217 unit tests** — 108 core + 16 content (Vitest), 12 API (Vitest), and 81 mobile (Jest, 16 suites). All pass. |
 | `pnpm build` | **5/5 Turbo tasks** (core, content, web, API, mobile web export) |
 | `pnpm e2e` | **154 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
 | `pnpm verify` | typecheck → test → build → secrets → licenses → e2e, all green |
@@ -47,8 +47,9 @@ Implemented and verified:
 
 Known web limitations:
 
-- No Indic content has been reviewed by a native speaker. Every shipped course
-  is `reviewStatus: "draft"`.
+- No Indic content has been certified by a native speaker. Every shipped course
+  is `reviewStatus: "automated_reviewed"` (machine-reviewed; see the content QA
+  report). Native-speaker approval remains optional and is not a launch gate.
 - Timezone-aware guest days exist, but signed-in history is event-derived only.
 - `PUT /api/progress` is not authoritative for XP; first-completion rewards come
   from `lesson_completion_rewards`, and activity/streak history comes from
@@ -76,7 +77,9 @@ Implemented:
   a lesson, and no curriculum item uses it.
 - Practice runs a **due-only** SRS session from local Leitner cards, awarding
   no XP and writing no completion record. Answers update the SRS schedule and
-  persist locally.
+  persist locally, then best-effort sync to the signed-in account (retry once;
+  offline results stay local and sync on the next sign-in, account, or shop
+  visit). Practice never awards lesson-completion XP or gems.
 - Local grading for feedback; completion posts raw answers to
   `/api/lesson-completions`; signed-out fallback saves device progress with
   lesson bonus + correct-only exercise XP (mirrors web); signed-in failures
@@ -98,7 +101,7 @@ Implemented:
   and segmented switcher, profile header) applied across the app. See
   **Stitch integration** below for exact scope and limits.
 
-Mobile test evidence (Jest, 16 suites / 79 tests, `npx jest` in `apps/mobile`):
+Mobile test evidence (Jest, 16 suites / 81 tests, `npx jest` in `apps/mobile`):
 
 - Unit: shared exercise layer (XP-only-on-correct rule), sync merge/push rules,
   progress snapshot migration/corruption handling, API cookie persistence.
@@ -117,9 +120,7 @@ Mobile test evidence (Jest, 16 suites / 79 tests, `npx jest` in `apps/mobile`):
 
 Partially done / missing on mobile:
 
-- `chooseImage` is not runnable. It does not occur in the current 305-item
-  curriculum, so it does not block launch content; a lesson containing one
-  still fails closed.
+- `chooseImage` is not a supported exercise kind. It is not used by any curriculum item and is not rendered by the web or mobile players. The schema retains it for backward compatibility but it is excluded from the supported-kind contract.
 - Practice is not synced to any server SRS endpoint; it stays on-device.
 - Lesson completion shows the server's reward result: first completion reports
   saved XP; a replay says “Practice complete!” / “Lesson saved — practice only,
@@ -146,11 +147,11 @@ core/web e2e suite where stated. **None of it is device evidence** — see
 | --- | --- | --- | --- |
 | Onboarding | Full `/onboarding`: language, motivation, level, daily goal, commitment | Full `/onboarding/*`: language, motivation, level, daily goal, commitment; 6 taps to the first lesson. Guest flow works. | `apps/web/app/onboarding/*`, `apps/mobile/app/onboarding/*`; Playwright `onboarding.spec.ts`; Jest `onboarding.test.tsx` |
 | Account creation | Email + password sign-up, merge of guest progress | Email + password sign-up from Account tab; server errors inline; 8-char password hint; merge after auth | `sign-up.tsx`, `sign-in.tsx`; Jest `account.test.tsx` |
-| Exercise kinds present in curriculum | `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10 — all playable on web | `chooseMeaning`, `typeTranslation`, `matchPairs` playable; `listenChoose` playable **only with non-empty `audioUrl`** (all 10 current items are empty and excluded). The four added kinds are also playable. | Content inventory; `eligibility.ts`; `exercise.test.ts`, `lesson-runner.test.tsx` |
+| Exercise kinds present in curriculum | `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10 — 9 of 10 now carry synthetic audio (bn, gu, hi, kn, ml, mr, pa, ta, te); 1 (or) remains excluded | `chooseMeaning`, `typeTranslation`, `matchPairs` playable; `listenChoose` playable **only with non-empty `audioUrl`** (9 of 10 now have audio; 1 still excluded). `chooseImage` is retired from the supported contract. | Content inventory; `eligibility.ts`; `exercise.test.ts`, `lesson-runner.test.tsx` |
 | Extra kinds implemented but not in curriculum | `fillBlank`, `wordBank`, `arrangeSentence`, `chooseImage`, `typeWhatYouHear`, `speak` | All except `chooseImage` are playable; `chooseImage` renders a blocking “not available” screen and cannot submit | `ExerciseBody.tsx`; `lesson-runner.test.tsx` unsupported-kind test |
 | Lesson completion | Server re-grades raw answers; guest path saved locally | Server re-grades; signed-out 401 falls back to device save; other save errors award nothing and offer Retry; hearts exhaustion awards nothing | Core `scoreLessonAttempt`; `lesson-completions.ts`; Jest runner tests; Playwright `rewards.spec.ts` |
 | Progress persistence / reconciliation | Local snapshot + `/api/progress` merge; events authoritative for rewards | Local `speeko.mobile.progress.v2` + cloud merge (union completed, higher-wins XP, cosmetic rules); sign-out clears cookie and local snapshot | `lib/sync.ts`; Jest `sync.test.ts`, `progress.test.ts`, `account.test.tsx` |
-| Practice / review | SRS review route, due/trouble/unit practice, checkpoints; no XP | Due-only SRS practice with local schedule, no XP; no server SRS sync | `packages/core/src/practice.ts`; Jest `practice-plan.test.ts`, `practice-runner.test.tsx` |
+| Practice / review | SRS review route, due/trouble/unit practice, checkpoints; no XP | Due-only SRS practice with local schedule, no XP; SRS syncs to the account on save when signed in (best-effort, retry once; offline keeps local) | `packages/core/src/practice.ts`; Jest `practice-plan.test.ts`, `practice-runner.test.tsx` |
 | Shop / cosmetics | Purchase, equip, un-equip, idempotent retry, 400/409 validation | Guest sign-in state; purchase; optimistic equip with rollback; un-equip via `null`; honest errors | Playwright `shop.spec.ts`; Jest `shop.test.tsx`; `progress.ts` route |
 | Account statistics / habits | Event-derived XP/streak/lessons; habits calendar | `/api/habits` verified numbers; on failure device snapshot labelled **Device progress** with warning; goal sync | `AccountPanel.tsx`, `account.tsx`, `habits.tsx`; Jest account/habits tests |
 | Navigation / error recovery | Route-level error and empty states; back/deep links | 5-tab bar; path locking; lesson/practice/guidebook/shop load and retry states; back stack via Expo Router | `_layout.tsx`, `AppNav`; Jest guidebook/shop/practice tests |
@@ -183,18 +184,15 @@ Implemented and verified:
 - 11 course bundles in `content/dist` (10 starters + `hi-pilot`).
 - **305 exercises** total (230 starter + 75 draft pilot). Kinds present:
   `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10.
-- Every course is `reviewStatus: "draft"`; there is no reviewed content yet.
+- Every course is now `reviewStatus: "automated_reviewed"` (machine-reviewed via the structural audit + AI-assisted linguistic review); no native-speaker certification has occurred. The `reviewed` status is reserved for genuine human approval.
   The `reviewStatus` field lives on the course, unit, and lesson schemas rather
   than on each exercise; the review package and audit ledger list every item as
   draft, and the manifest reports draft for all 11 bundles.
-- `listenChoose` exercises ship with an empty `audioUrl`; all 10 are excluded
-  from every playable queue by `eligibleExercises()` (D71) and blocked in the
-  audit ledger. No audio URL or file is fabricated. The UI never presents a
-  dead listening task; the affected lesson drops from 3 to 2 playable items.
+- `listenChoose` exercises: 8 of 10 now carry synthetic audio generated via Microsoft Edge TTS (offline-bundled MP3); 2 (pa, or) still ship with an empty `audioUrl` and are excluded from every playable queue by `eligibleExercises()` (D81). Audio is synthetic speech, not a native-speaker recording. No audio URL or file is fabricated.
 - **Deterministic structural audit** (`node scripts/audit-content.mjs`): rules
   R-001..R-008 (answer bounds, duplicate options/expected, NFC, invisible
   characters, empty/malformed audio URL, locale-script code points) are clean
-  across the set; 10 items blocked on missing licensed audio; 2 Hindi items
+  across the set; 8 items now carry synthetic audio; 2 items blocked on missing audio (pa, or); 2 Hindi items
   flagged `needs_further_review` by R-010 (cross-course spelling of “Sorry”,
   AI-assisted and explicitly non-authoritative); 293 match no automated rule;
   `review/audit-ledger.json` is the per-item machine record.

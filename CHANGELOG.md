@@ -22,6 +22,7 @@
 - Full onboarding: language -> motivation -> level -> daily goal -> first lesson (6 taps)
 - All published exercise kinds supported, including word bank, arrange-the-sentence, listen-and-type, and record-yourself speaking (no automatic scoring)
 - Tactile UI consistent across screens; safe-area aware layout; no dead-ends in empty/error/signed-out states
+- Practice now syncs its SRS review schedule to the signed-in account after a session (best-effort, retry once; offline results stay local and sync on the next sign-in, account, or shop visit); practice never awards lesson XP or gems
 
 ### Web
 - Focus rings on all interactive elements; contrast-corrected palette; gold/ice tokens; on-brand locale ramps

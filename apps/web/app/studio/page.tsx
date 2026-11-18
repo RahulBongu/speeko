@@ -121,6 +121,10 @@ export default function StudioIndex() {
                       <span className="rounded-full border border-fox-200 bg-fox-100 px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-wide text-fox-700">
                         Draft
                       </span>
+                    ) : entry.reviewStatus === 'automated_reviewed' ? (
+                      <span className="rounded-full border border-speeko-200 bg-speeko-50 px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-wide text-speeko-700">
+                        Auto-reviewed
+                      </span>
                     ) : (
                       <span className="rounded-full border border-speeko-200 bg-speeko-50 px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-wide text-speeko-700">
                         Reviewed
