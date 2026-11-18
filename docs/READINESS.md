@@ -15,9 +15,8 @@ scripted replay farming of completion XP/gems — are closed and verified at the
 database level.
 
 Speeko is **not** release-ready for the public. No automated engineering work
-remains for the internal alpha. `main` (`ac62217`) is the last merged state;
-`next/M3` (in-app mobile licenses and proxy-aware rate limiting) is green and
-awaits the owner's merge.
+remains for the internal alpha. `main` (`5762c09`) includes the in-app mobile
+licenses and proxy-aware rate limiting; PR #7 is merged.
 Blocking external requirements: a
 native-speaker review for every course, hosting provisioning and backups,
 a clean signed rebuild that includes the in-app licenses screen, and store
@@ -134,14 +133,14 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 | Migrations | **Pass** | applied on API start; append-only table strategy keeps forwards-only restores possible; migration target is Postgres |
 | Secrets handling | **Pass** | none in repo (`.gitignore` enforced; `apps/api/.env.example` documents placeholders only) |
 | License & content rights | **Pass (in-tree)** — web texts served at `/licenses/*` (auto-built); mobile ships an in-app `/licenses` screen from a generated bundle | Apache-2.0 code + All Rights Reserved content/brand in `LICENSE` and `LICENSE-CONTENT`; font OFL-1.1 text in `apps/web/public/fonts/OFL.txt` and `/licenses/OFL.txt`; `NOTICE` and `ATTRIBUTIONS.md` updated; `apps/web/app/licenses/page.tsx` and `apps/mobile/app/licenses.tsx` expose them; `pnpm check:licenses` guards mobile bundle drift; **nothing published** |
-| Proxy-aware rate limiting | **Pass (contract-tested)** | The web proxy forwards `x-speeko-client-ip` only with a matching `x-speeko-proxy-secret` (`API_PROXY_SECRET`); missing/wrong secrets fall back to the request address and cannot bypass the limit. Direct deployments derive the client from exactly `TRUST_PROXY_HOPS` trusted hops (Render: 1; default 0 ignores `X-Forwarded-For`). `tests/e2e/rate-limit.spec.ts` verifies per-client separation, spoof resistance, and the one-hop path; `apps/api/src/client-ip.test.ts` covers normalisation and failure modes. The in-memory store is still per-process. |
+| Proxy-aware rate limiting | **Pass (contract + full-stack)** | The web proxy forwards `x-speeko-client-ip` only with a matching `x-speeko-proxy-secret` (`API_PROXY_SECRET`); missing/wrong secrets fall back to the request address and cannot bypass the limit. Direct deployments derive the client from exactly `TRUST_PROXY_HOPS` trusted hops (Render: 1; default 0 ignores `X-Forwarded-For`). `tests/e2e/rate-limit.spec.ts` verifies per-client separation, spoof resistance, and the one-hop path; `apps/api/src/client-ip.test.ts` covers normalisation and failure modes. A local Chrome → middleware → API run confirmed the host-only `SameSite=Lax` session cookie, sign-up/sign-out invalidation, the signed-in account page, and 60/min per-client separation with forged headers stripped. The in-memory store is still per-process. |
 
 ## Merge state
 
-`next/M3` is open as PR #7 with green CI and awaits the owner's merge. PR #6 merged the license,
-hosting, and web license-bundling work into `main` on 2026-11-18 (`ac62217`).
-Version remains `0.0.1`; nothing is published. `next/M3` adds the in-app
-mobile license screen and its drift guard, plus proxy-aware rate limiting.
+PR #7 merged the in-app mobile license screen and its drift guard, plus
+proxy-aware rate limiting, into `main` on 2026-11-18 (`5762c09`). PR #6 merged
+the license, hosting, and web license-bundling work (`ac62217`). Version remains
+`0.0.1`; nothing is published.
 
 ## Blockers for a public release
 

@@ -8,12 +8,11 @@
 
 | Ref | Contents | CI |
 | --- | --- | --- |
-| `main` | `ac62217` (merge of PR #6) — M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs + license files (D79) + hosting configuration (D80) + web license bundling | Push run on `ac62217` |
-| `next/M3` | `main` + in-app mobile license screen and drift guard + proxy-aware rate limiting; **PR #7 is open and CI is green** | Push and PR CI green |
+| `main` | `5762c09` (merge of PR #7) — M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs + license files (D79) + hosting configuration (D80) + web license bundling + in-app mobile licenses + proxy-aware rate limiting | Push run on `5762c09` |
 
-- `next/M1` and the earlier `next/M2` commits (league batching + docs refresh + license/hosting/web texts) are merged into `main` via PRs #4, #5, and #6. The mobile license and proxy-aware rate-limiting work on `next/M3` awaits review.
-- Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. PR #7 (`next/M3`) is the only open pull request.
-- Full `pnpm verify` on `next/M3`: typecheck 6/6, unit **215** (108 core + 16 content + 12 API + 79 mobile), build 5/5, secrets **0 hits / 160 files**, licenses PASS, e2e **154/154 in 4.1m with 0 flakes**. (The earlier `d5d6a74` cut was 201 unit and 148/148 e2e; the merged license-artifact check brought e2e to 150.)
+- `next/M1`, `next/M2`, and `next/M3` are merged into `main` via PRs #4-#7. Nothing is open.
+- Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. No pull requests are open.
+- Full `pnpm verify` on `5762c09`: typecheck 6/6, unit **215** (108 core + 16 content + 12 API + 79 mobile), build 5/5, secrets **0 hits / 160 files**, licenses PASS, e2e **154/154 in 4.1m with 0 flakes**. (The earlier `d5d6a74` cut was 201 unit and 148/148 e2e; the merged license-artifact check brought e2e to 150.)
 - **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. Web texts ship at `/licenses/*` (auto-built, e2e-guarded); the mobile app ships an in-app `/licenses` screen from a generated bundle, guarded by `pnpm check:licenses`.
 
 **What landed**
@@ -26,7 +25,7 @@
 
 ### What the owner must do next
 
-0. Merge the `next/M3` pull request (mobile licenses + proxy-aware rate limiting; CI green, mergeable clean). Render deploys from `main`, so the merge comes before provisioning.
+0. **Done** — PR #7 merged the mobile licenses and proxy-aware rate limiting as `5762c09`. Render deploys from `main`.
 1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Web texts ship at `/licenses/*` (auto-built); the mobile app ships an in-app `/licenses` screen. Rebuild the signed Android artifact so it includes the new screen.
 2. Hosting: Option A (Neon + Render + Vercel) is decided and configured in `render.yaml` + `docs/deploy-runbook.md`. Create the three projects, set the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, `TRUST_PROXY_HOPS=1`, plus `API_PROXY_TARGET` and the shared `API_PROXY_SECRET` on both Vercel and Render), deploy, then arrange backups and secret rotation.
 3. Native-speaker review of the 305 draft exercises (10 locales).
