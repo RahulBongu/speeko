@@ -9,7 +9,7 @@
 | Ref | Contents | CI |
 | --- | --- | --- |
 | `main` | `82f0f3c` (merge of PR #5) — everything: M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs refresh (`5e3c999`) | Push run `44167051237` on `82f0f3c` |
-| `next/M2` | `main` + docs bookkeeping (`afbe203`) + the license files (D79); rides the next gate-driven PR | CI runs on each push |
+| `next/M2` | `main` + docs bookkeeping (`afbe203`) + the license files (D79) + the hosting configuration (D80); rides the next gate-driven PR | CI runs on each push |
 
 - `next/M1`, and both `next/M2` commits (league batching + docs refresh), are merged into `main` via PRs #4 and #5. No engineering work is pending a merge.
 - Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, no open pull requests, nothing published.
@@ -27,7 +27,7 @@
 ### What the owner must do next
 
 1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Remaining: bundle the license texts into the distributed artifact at packaging time.
-2. Hosting/database authorization + backups + secret rotation.
+2. Hosting: Option A (Neon + Render + Vercel) is decided and configured in `render.yaml` + `docs/deploy-runbook.md`. Create the three projects, set the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, plus `API_PROXY_TARGET` on Vercel), deploy, then arrange backups and secret rotation.
 3. Native-speaker review of the 305 draft exercises (10 locales).
 4. Audio decision for `listenChoose` (10 items), or formally keep them excluded.
 5. Store accounts (Play Console) + a clean release prebuild (no cleartext exception).

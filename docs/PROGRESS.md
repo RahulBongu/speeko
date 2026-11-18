@@ -16,7 +16,8 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 - **Hardening shipped:** `/api/auth/*` 60 requests/min per IP; `PUT /api/progress` 30/min per account+IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`.
 - **Phase 1–4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
 - **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
-- **Still open (owner):** license (draft rights), native-speaker review, hosting + backups + secret rotation, audio decision, store accounts.
+- **Hosting decided (D80).** The internal alpha uses the free Option A stack: Neon Postgres + Render API + Vercel web, with a same-origin `/api` proxy so Better Auth's `SameSite=Lax` session cookie stays first-party. `render.yaml`, the proxy rewrite, and the runbook are in the tree; creating the projects, spend, and secrets remain owner actions.
+- **Still open (owner):** native-speaker review, hosting provisioning + backups + secret rotation, audio decision, store accounts, license-text bundling into the artifact.
 - **Not claimed:** on-device functional QA. The owner waived it; see D78 and `docs/READINESS.md`.
 
 
@@ -599,9 +600,10 @@ These are product gaps, not regressions. Details and evidence are in
 - **Unit practice can double-count a card** within one session (round-robin can land
   two exercises for the same word). Due and trouble plans use one exercise per skill.
 - **Trouble words are historical**; a card with a lapse never automatically retires.
-- **Hosting/database choice is deferred** (owner decision; package prepared this
-  cycle). The license is decided and implemented: Apache-2.0 code, All Rights
-  Reserved content and brand, OFL-1.1 text for the bundled fonts (2026-11-18).
+- **Hosting/database choice is decided** (D80: Neon + Render + Vercel, free
+  tier, with a same-origin proxy); provisioning is the owner's action. The
+  license is decided and implemented: Apache-2.0 code, All Rights Reserved
+  content and brand, OFL-1.1 text for the bundled fonts (2026-11-18).
   Nothing is provisioned or signed.
 - **Mobile exercise parity is effectively complete** for the shipped curriculum:
   `wordBank`, `arrangeSentence`, `typeWhatYouHear`, and `speak` are all supported on

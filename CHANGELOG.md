@@ -24,6 +24,11 @@
 - Focus rings on all interactive elements; contrast-corrected palette; gold/ice tokens; on-brand locale ramps
 - Studio re-skinned to the house style; global `not-found`/`error` routes; per-route metadata
 
+### Deployment
+- Free alpha stack chosen (D80): Neon Postgres + Render API + Vercel web; `render.yaml` defines the Render service with a `/health` check and uncommitted secrets
+- Same-origin `/api` proxy on the web app keeps the Better Auth session cookie first-party across `*.vercel.app` and `*.onrender.com`; the rewrite is inert when `API_PROXY_TARGET` is unset, so local dev and e2e are unchanged
+- Proxy smoke-tested locally: sign-up through the web origin sets a host-only `SameSite=Lax` session cookie and `get-session` returns the account; the auth limiter's per-IP budget is service-wide behind the proxy (documented alpha limitation)
+
 ### Performance
 - League standings resolve active learners' profiles in one batch per request instead of one query per learner (with ~1.4k weekly learners in a test database, the endpoint dropped from 16-30s to under 1s locally)
 

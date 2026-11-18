@@ -1,0 +1,33 @@
+# Render blueprint for the Speeko API (free alpha stack).
+#
+# The web app is hosted on Vercel and proxies /api/* to this service, so the
+# browser never makes a cross-site request. See docs/deploy-runbook.md.
+#
+# Secrets are marked sync:false: Render prompts for them on first deploy and
+# they are never committed. Deploy from main after the hosting PR is merged.
+
+services:
+  - type: web
+    name: speeko-api
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    healthCheckPath: /health
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm turbo run build --filter=@speeko/api
+    startCommand: node apps/api/dist/index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 22.13.0
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATABASE_URL
+        sync: false
+      - key: BETTER_AUTH_SECRET
+        sync: false
+      - key: BETTER_AUTH_URL
+        sync: false
+      - key: CLIENT_ORIGINS
+        sync: false
