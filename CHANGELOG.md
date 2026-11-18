@@ -30,7 +30,7 @@
 ### Deployment
 - Free alpha stack chosen (D80): Neon Postgres + Render API + Vercel web; `render.yaml` defines the Render service with a `/health` check and uncommitted secrets
 - Same-origin `/api` middleware keeps the Better Auth session cookie first-party across `*.vercel.app` and `*.onrender.com`; it also forwards the browser IP plus a shared secret so rate limits stay per client. The middleware is inert when `API_PROXY_TARGET` is unset, so local dev and e2e are unchanged
-- Proxy smoke-tested locally with a mock upstream: a browser-supplied trust header is replaced, the secret and POST body reach the upstream, and both `Set-Cookie` headers survive; the auth limiter now separates signed client IPs and ignores wrong-secret headers
+- Proxy verified locally at two levels: a mock upstream confirms a browser-supplied trust header is replaced, the secret and POST body reach the upstream, and both `Set-Cookie` headers survive; a real Chrome → Next middleware → API run confirms the host-only `SameSite=Lax` session cookie, the sign-up/sign-out lifecycle, and per-client 429 separation with forged trust headers stripped
 
 ### Performance
 - League standings resolve active learners' profiles in one batch per request instead of one query per learner (with ~1.4k weekly learners in a test database, the endpoint dropped from 16-30s to under 1s locally)
