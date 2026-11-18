@@ -130,7 +130,7 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 | Backup and recovery | **Requirement on file** | nightly `pg_dump` or provider PITR; a tested restore is a pre-launch gate in the operations checklist and hosting package |
 | Migrations | **Pass** | applied on API start; append-only table strategy keeps forwards-only restores possible; migration target is Postgres |
 | Secrets handling | **Pass** | none in repo (`.gitignore` enforced; `apps/api/.env.example` documents placeholders only) |
-| License & content rights | **Decided 2026-11-18** — artifact bundling pending | Apache-2.0 code + All Rights Reserved content/brand in `LICENSE` and `LICENSE-CONTENT`; font OFL-1.1 text in `apps/web/public/fonts/OFL.txt`; `NOTICE` and `ATTRIBUTIONS.md` updated; **nothing published** |
+| License & content rights | **Decided 2026-11-18** — web texts served at `/licenses/*` (auto-built); mobile bundling at packaging time | Apache-2.0 code + All Rights Reserved content/brand in `LICENSE` and `LICENSE-CONTENT`; font OFL-1.1 text in `apps/web/public/fonts/OFL.txt` and `/licenses/OFL.txt`; `NOTICE` and `ATTRIBUTIONS.md` updated; `apps/web/app/licenses/page.tsx` exposes them; **nothing published** |
 | Proxy-aware rate limiting | **Known alpha limitation** | The API keys `/api/auth/*` on `request.ip` and does not trust proxy headers. On Render the socket peer is the platform proxy, so the 60/min auth budget is shared by the service (this already applies to direct mobile traffic). Acceptable for a small controlled alpha. Before widening access, configure trusted proxy hops and verify `X-Forwarded-For` against the platform's documented chain; never trust arbitrary client-supplied headers on a publicly reachable API. |
 
 ## Merge state

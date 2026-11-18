@@ -4,6 +4,7 @@ data
 dist
 content/dist
 apps/web/public/courses
+apps/web/public/licenses
 .next
 .turbo
 .env

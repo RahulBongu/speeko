@@ -27,7 +27,7 @@
 ### What the owner must do next
 
 0. Open and merge the `next/M2` pull request into `main` (`444f4b5`: license files, hosting config, docs; CI run `44225195713` green). Render deploys from `main`, so the merge comes before provisioning.
-1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Remaining: bundle the license texts into the distributed artifact at packaging time.
+1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Web texts now ship at `/licenses/*` (auto-built); mobile bundling remains a packaging step.
 2. Hosting: Option A (Neon + Render + Vercel) is decided and configured in `render.yaml` + `docs/deploy-runbook.md`. Create the three projects, set the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, plus `API_PROXY_TARGET` on Vercel), deploy, then arrange backups and secret rotation.
 3. Native-speaker review of the 305 draft exercises (10 locales).
 4. Audio decision for `listenChoose` (10 items), or formally keep them excluded.

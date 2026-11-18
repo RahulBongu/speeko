@@ -5,7 +5,7 @@ References: `docs/decisions/2026-11-16-hosting-and-database.md`, `docs/decisions
 
 ## Preconditions
 
-- License decided and committed (Gate L: Apache-2.0 code, All Rights Reserved content/brand, OFL-1.1 font text)
+- License decided and committed (Gate L: Apache-2.0 code, All Rights Reserved content/brand, OFL-1.1 font text); the web artifact now ships the texts at `/licenses/*` (auto-built). Mobile bundling remains a packaging step.
 - Hosting authorized; a Postgres database exists and the operator has its connection string (Gate H)
 - Final app origin(s) known (web URL + API URL)
 
