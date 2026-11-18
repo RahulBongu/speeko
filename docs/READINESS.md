@@ -136,7 +136,7 @@ exercises `revise` (see `review/audio-decision-analysis.md`).
 
 ## Merge state
 
-`next/M2` awaits the owner's PR/merge into `main`. PR #5 merged the prior
+`next/M2` is open as PR #6 and awaits the owner's merge. PR #5 merged the prior
 `next/M2` work (`d5d6a74` league fix + `5e3c999` handoff docs) into `main` on
 2026-11-18 (`82f0f3c`). Version remains `0.0.1`; nothing is published. The
 branch now also carries the follow-up docs bookkeeping, the license files
