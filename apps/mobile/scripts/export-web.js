@@ -7,9 +7,8 @@ const { execFileSync } = require('node:child_process');
 const path = require('node:path');
 
 const projectRoot = path.join(__dirname, '..');
-const expoCli = require.resolve('@expo/cli/build/bin/cli', {
-  paths: [require.resolve('expo/package.json', { paths: [projectRoot] })],
-});
+const expoPackageJson = require.resolve('expo/package.json', { paths: [projectRoot] });
+const expoCli = path.join(path.dirname(expoPackageJson), '..', '@expo', 'cli', 'build', 'bin', 'cli');
 
 try {
   execFileSync(
