@@ -147,7 +147,7 @@ export default function Path() {
   // The path climbs upward, so the first lesson renders at the bottom. These
   // refs remember where the current lesson landed and scroll it into view once
   // after the first layout.
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<React.ElementRef<typeof ScrollView>>(null);
   const unitOffsets = useRef<Record<string, number>>({});
   const scrollTarget = useRef<{ unitId: string; nodeY: number } | null>(null);
   const didScroll = useRef(false);
