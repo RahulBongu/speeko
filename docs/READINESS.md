@@ -68,9 +68,9 @@ owner's launch gates remain.
 
 | Requirement | Status | Evidence |
 | --- | --- | --- |
-| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 154 checks total incl. integrity suites, proxy rate-limit contract, and license artifacts); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
-| Advertised exercise types behave correctly | **Pass; unsupported kinds fail closed** | The curriculum uses 4 kinds: `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10. Web supports all ten published kinds. Mobile supports 9 (`chooseMeaning`, `listenChoose` with audio, `fillBlank`, `typeTranslation`, `matchPairs`, `wordBank`, `arrangeSentence`, `typeWhatYouHear`, `speak`); `chooseImage` blocks honestly and cannot complete a lesson. No curriculum item is an unimplemented-kind. |
-| Missing-audio safeguard | **Pass** | `eligibleExercises()` in `@speeko/core` excludes empty-audio `listenChoose` from lesson queues, review/practice plans, the SRS index, and the API grading path. The 10 items keep their IDs/content and are blocked in the audit ledger. Core + mobile tests cover skip and playable-audio branches. |
+| Core learning journey functional | **Pass** | Web e2e (onboarding → lesson → completion; 156 checks total incl. integrity suites, proxy rate-limit contract, marketing-page guard, and license artifacts); mobile lesson runner exercised across all playable kinds with hearts exhaustion. |
+| Advertised exercise types behave correctly | **Pass; unsupported kinds fail closed** | The curriculum uses 4 kinds: `chooseMeaning` 221, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 9. Web supports all ten published kinds. Mobile supports 9 (`chooseMeaning`, `listenChoose` with audio, `fillBlank`, `typeTranslation`, `matchPairs`, `wordBank`, `arrangeSentence`, `typeWhatYouHear`, `speak`); `chooseImage` blocks honestly and cannot complete a lesson. No curriculum item is an unimplemented-kind. |
+| Missing-audio safeguard | **Pass** | `eligibleExercises()` in `@speeko/core` excludes empty-audio `listenChoose` from lesson queues, review/practice plans, the SRS index, and the API grading path. The 9 items keep their IDs/content and are blocked in the audit ledger. Core + mobile tests cover skip and playable-audio branches. |
 | Progress restores and synchronizes | **Pass** | Web guest→account merge (D12), mobile local/cloud merge (`lib/sync.ts`), migration from v1 snapshot, corrupt-JSON tolerance. |
 | Shop, practice, habits work | **Pass** | Purchase/equip/rollback/un-equip e2e; practice-only SRS due review; habits track verified events; goals persist. |
 | Unsupported functionality fails honestly | **Pass** | Stories/conversation ship as explicit unavailable states; mobile blocks unsupported kinds; empty-audio listening tasks are excluded rather than faked; shop needs sign-in. |
@@ -85,12 +85,12 @@ gem sources beyond lessons/quests/purchases, and any licensed audio.
 
 | Layer | Status | Evidence |
 | --- | --- | --- |
-| Unit (core) | **Pass** | `pnpm --filter @speeko/core test` — **108 passed** (includes 4 eligibility tests, the empty-lesson guard, practice-plan coverage, and the practice-vs-quest habit split) |
-| Unit (content) | **Pass** | `pnpm --filter @speeko/content test` — **16 passed** (all 305 exercises graded, validation/test suites incl. answerIndex bounds) |
+| Unit (core) | **Pass** | `pnpm --filter @speeko/core test` — **149 passed** (includes eligibility, habit/split, mascot catalog, and romanization suites) |
+| Unit (content) | **Pass** | `pnpm --filter @speeko/content test` — **18 passed** (all 315 exercises graded, validation/test suites incl. answerIndex bounds) |
 | Unit (API) | **Pass** | `pnpm --filter @speeko/api test` — **12 passed** (client-IP normalisation, trusted/untrusted proxy headers, hop parsing) |
 | Unit/component/integration (mobile) | **Pass** | `npx jest` in `apps/mobile` - **81 passed across 16 suites** (includes missing-audio skip, playable-audio branch, the added exercise kinds, and the in-app license screen) |
 | API integration | **Pass** | `progress-integrity.spec.ts` — 7 scenarios and `reward-integrity.spec.ts` — 7 scenarios against the real API+DB (14 checks each across both viewports); plus reward, habits, shop, social, and the isolated rate-limit contract (`rate-limit.spec.ts`) |
-| Browser E2E | **Pass** | `pnpm e2e` - **154 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run (4.1m) |
+| Browser E2E | **Pass** | `pnpm e2e` - **156 checks** at 1280×800 and 390×844, zero console/page errors, zero flakes on the recorded run (6.2m) |
 | Typecheck | **Pass** | 6/6 turbo tasks |
 | Build | **Pass** | 5/5 turbo tasks (web, API, mobile export — 23 static routes) |
 | Lint | **Pass** (0 errors) | web: 1 documented `<img>` warning; mobile: clean |
@@ -101,19 +101,20 @@ gem sources beyond lessons/quests/purchases, and any licensed audio.
 
 | Requirement | Status | Evidence |
 | --- | --- | --- |
-| Accurate inventory, grouped by locale/lesson/type | **Pass** | `review/review-package.json` + `review-<locale>.csv` — 305 items across 10 locales; includes prompt/target/options/answers/transliteration/audioUrl/vocabId/draft status and empty reviewer fields |
+| Accurate inventory, grouped by locale/lesson/type | **Pass** | `review/review-package.json` + `review-<locale>.csv` — 315 items across 10 locales; includes prompt/target/options/answers/transliteration/audioUrl/vocabId/automated-review status and empty reviewer fields |
 | Human review path | **Blocked** — no native speaker has been engaged | Review package + `review/REVIEW.md` is ready to hand to a reviewer; nothing is marked reviewed |
 | Automated validation beyond schema | **Pass** | Validator: duplicate option strings (error), answerIndex bounds (error), production-answer script check (warning), listenChoose empty `audioUrl` (warning), bad audioUrl (error); all 11 course files parse and grade |
 | AI-linguistic review (2026-11-16) | **Done, honest limits** | `scripts/ai-review-content.mjs` reviewed all 305 items (meaning, grammar, naturalness, orthography, transliteration, vocabulary, ambiguity, exercise correctness, consistency, pedagogy); 3 Kannada items corrected for a defective vowel sign (U+0B90 → U+0C90), applied and regression-checked; 2 Hindi "Sorry" spellings preserved as legitimate variants; 0 native approvals; both passes ran on one model and are NOT independent. Reports at `review/ai-linguistic-review.{json,md}` |
-| Deterministic structural audit | **Done** | `scripts/audit-content.mjs` → `review/audit-ledger.json`: 305 items ledgered; R-001..R-008 clean; 10 items blocked on missing licensed audio; 2 items flagged by the AI-assisted cross-course rule R-010 for human review; 293 match no rule |
+| Deterministic structural audit | **Done** | `scripts/audit-content.mjs` → `review/audit-ledger.json`: 315 items ledgered; R-001..R-008 clean; 0 items blocked on missing audio; 2 items flagged by the AI-assisted cross-course rule R-010 for human review; 313 match no rule |
 | Missing-audio safeguard | **Done and tested** | Empty-audio `listenChoose` is excluded from every playable queue by `eligibleExercises()` (D71); source records and IDs unchanged; web/mobile/API share the rule; 4 core eligibility tests + updated practice tests + 2 mobile branch tests |
 | No draft content falsely labelled | **Pass** | `reviewStatus: "draft"` on every bundle/item in the review package and ledger; validator forbids `reviewed` without a reviewer; the AI ledger never asserts approval |
-| Removed known template defect | **Done** | 10 English filler exercises removed from starters ("I have ___ apples."); count is now 305; no target-language regression introduced |
+| Removed known template defect | **Done** | 10 English filler exercises removed from starters ("I have ___ apples."); count is now 315; no target-language regression introduced |
 
 **Content corrections this cycle** (source JSON): the 10 filler exercises;
 3 Kannada Unicode corrections (P15); all courses re-validate and re-grade green;
 web `public/courses` and `content/dist` were rebuilt; the review CSV count now
-reads **305**. The missing-audio safeguard changes **no content bytes** — it is
+reads **315** after the ten starter “Eight” items were added. The missing-audio
+safeguard changes **no content bytes** — it is
 a play-time filter, not an edit.
 
 **listenChoose audio remains empty** by design, not oversight. The app does not
@@ -144,10 +145,10 @@ the license, hosting, and web license-bundling work (`ac62217`). Version remains
 
 ## Blockers for a public release
 
-1. **Native-speaker review** of 305 draft exercises (≥1 reviewer × 10 locales).
+1. **Native-speaker review** of 315 draft exercises (≥1 reviewer × 10 locales).
 2. **Android device QA and a clean signed rebuild**: the release-APK render pass is done (2026-11-17, Vivo V2336, `36A5D41D…`), but that binary predates the in-app licenses screen. Functional device QA is **waived for the internal alpha** by owner instruction (D78); headless Playwright covers the functional flows. A public launch still needs a real-device pass and a rebuilt, signed artifact by the owner.
 3. **Hosting provisioning and backups** (owner; Option A — Neon + Render + Vercel — is decided, and `render.yaml` + the runbook are ready). Includes a tested restore and secret rotation.
-4. **Audio decision** for listenChoose: 9 of 10 items now carry synthetic audio (edge-tts for 8, gTTS for pa); 1 (or) remains excluded because no Odia voice is available. The product does not claim complete listening coverage. No audio was fabricated beyond the verified synthetic files.
+4. **Audio decision** for listenChoose: 9 of 9 items carry synthetic audio (edge-tts for 8, gTTS for pa); no licensed/native-speaker recording exists. The product does not claim "real recordings" or complete native-audio quality. No audio was fabricated beyond the verified synthetic files.
 
 ## What can ship now (bounded trial)
 

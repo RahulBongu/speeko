@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { DAILY_GOAL } from '@/lib/progress';
+import { isSoundEnabled, setSoundEnabled } from '@/lib/sound';
+import { isMascotVoiceEnabled, setMascotVoiceEnabled } from '@/lib/mascotVoice';
 import { useProgress } from '@/lib/use-progress';
 import { fetchGems } from '@/lib/shop';
 import { Fox } from './Fox';
@@ -53,6 +55,8 @@ export function AccountPanel() {
   const { data: session, isPending } = authClient.useSession();
   const progress = useProgress();
   const [gemBalance, setGemBalance] = useState<number | null>(null);
+  const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
+  const [mascotOn, setMascotOn] = useState(() => isMascotVoiceEnabled());
   const [verified, setVerified] = useState<VerifiedStats | null>(null);
   const [syncFailed, setSyncFailed] = useState(false);
 
@@ -245,6 +249,36 @@ export function AccountPanel() {
           <GemIcon className="h-3.5 w-3.5" />
           Your next milestone awaits in the shop — every gem earned
         </div>
+      </div>
+
+      <div className="card flex flex-col gap-3 p-6">
+        <h2 className="font-display text-lg font-extrabold text-bark-800">Sound preferences</h2>
+        <label className="flex items-center gap-3 text-sm font-semibold text-bark-600">
+          <input
+            type="checkbox"
+            className="h-5 w-5 accent-speeko-500"
+            checked={soundOn}
+            onChange={() => {
+              const next = !soundOn;
+              setSoundOn(next);
+              setSoundEnabled(next);
+            }}
+          />
+          Sound effects (correct/incorrect tones)
+        </label>
+        <label className="flex items-center gap-3 text-sm font-semibold text-bark-600">
+          <input
+            type="checkbox"
+            className="h-5 w-5 accent-speeko-500"
+            checked={mascotOn}
+            onChange={() => {
+              const next = !mascotOn;
+              setMascotOn(next);
+              setMascotVoiceEnabled(next);
+            }}
+          />
+          Mascot voice (Speeko reactions)
+        </label>
       </div>
 
       <div className="card flex flex-col gap-3 p-6">

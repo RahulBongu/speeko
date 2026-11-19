@@ -27,6 +27,7 @@ import {
   type DraftAnswer,
 } from '../../../lib/exercise';
 import { COLORS } from '../../../lib/theme';
+import { playMascotVoice } from '../../../lib/mascot';
 
 type Phase = 'loading' | 'error' | 'playing' | 'feedback' | 'summary' | 'hearts';
 type SaveState = 'idle' | 'saving' | 'saved' | 'practice' | 'local' | 'error';
@@ -149,6 +150,7 @@ export default function LessonPlayer() {
     setAnswers((previous) => [...previous, { exerciseId: exercise.id, input, ms: elapsed }]);
     setOutcomes((previous) => [...previous, { exerciseId: exercise.id, correct: result.correct }]);
     setGrade(result);
+    playMascotVoice(result.correct ? 'correct_answer' : 'incorrect_answer');
     if (!result.correct) {
       setHearts((current) => Math.max(0, current - 1));
     }
@@ -191,6 +193,7 @@ export default function LessonPlayer() {
         await saveProgress(applyReviews(completed, reviews, Date.now()));
         setAwardedXp(localXp);
         setSaveState('local');
+        playMascotVoice('lesson_complete');
         return;
       }
 
@@ -223,6 +226,7 @@ export default function LessonPlayer() {
             : lesson.xpReward,
       );
       setSaveState(rewarded ? 'saved' : 'practice');
+      playMascotVoice('lesson_complete');
     } catch {
       setSaveError('Could not reach Speeko. The lesson is finished, but your reward was not saved yet.');
       setSaveState('error');

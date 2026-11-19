@@ -1,7 +1,7 @@
-# Speeko — release operations and decision gates (2026-11-16)
+﻿# Speeko â€” release operations and decision gates (2026-11-16)
 
 **Scope:** the checklist the owner walks through before any public or internal
-release is called real. Nothing here has been executed — items marked `GATE`
+release is called real. Nothing here has been executed â€” items marked `GATE`
 need owner sign-off. Every operational rule below can be implemented inside
 the existing stack without merging new infrastructure; none of it provisions
 anything or spends money today.
@@ -17,7 +17,7 @@ Read together with:
 
 ## GO / NO-GO gates (all mandatory before public release)
 
-**GATE L — LICENSE.** Decided 2026-11-18: Apache-2.0 for code, All Rights
+**GATE L â€” LICENSE.** Decided 2026-11-18: Apache-2.0 for code, All Rights
 Reserved for content and brand, OFL-1.1 text for the bundled fonts. Files:
 `LICENSE`, `LICENSE-CONTENT`, `NOTICE`,
 `apps/web/public/fonts/OFL.txt`. Web distribution is covered: the build copies
@@ -25,27 +25,27 @@ the texts to `/licenses/*` (auto-built, e2e-guarded). Mobile still needs the
 texts bundled at packaging time (APK or an in-app licenses screen).
 *Until then: release = internal trial only. No store listing, no public repo.*
 
-**GATE H — Hosting.** The owner picks Neon+Render+Vercel (alpha), the VPS
+**GATE H â€” Hosting.** The owner picks Neon+Render+Vercel (alpha), the VPS
 (public), or Railway. All provisioning, DNS, and spend are outside this phase.
 *Until then: local-only or owner-hosted proof of concept.*
 
-**GATE A — Audio.** Either (a) record/license audio for the 10 blocked
+**GATE A â€” Audio.** Either (a) record/license audio for the 10 blocked
 listenChoose items, or (b) confirm the play-time exclusion is acceptable for
 launch (already implemented in `eligibleExercises()`). The owner picks.
 
-**GATE R — Native review.** At least one native reviewer per locale to clear
+**GATE R â€” Native review.** At least one native reviewer per locale to clear
 the 305 draft items for publication (internal AI review is not sign-off).
 *Until then: content is draft everywhere; no "reviewed" badge claims.*
 
-**GATE D — Device.** The release APK render pass is done (2026-11-17, Vivo
+**GATE D â€” Device.** The release APK render pass is done (2026-11-17, Vivo
 V2336). Functional device QA is waived for the internal alpha by owner
 instruction (D78); a public launch still needs an owner-run functional pass on
 an APK freshly rebuilt from the release tree.
 
-**GATE B — Backups.** A tested restore of a `pg_dump`/PITR into a fresh
+**GATE B â€” Backups.** A tested restore of a `pg_dump`/PITR into a fresh
 Postgres must complete before any real user writes data.
 
-**GATE P — Privacy.** PII flow review: account email + name + progress are the
+**GATE P â€” Privacy.** PII flow review: account email + name + progress are the
 only PII. Ensure rate limiting on auth and any logging that reveals them.
 
 ---
@@ -53,7 +53,7 @@ only PII. Ensure rate limiting on auth and any logging that reveals them.
 ## Release checklist (owner or owner-designated operator walks through it)
 
 ### 1. Source and build verification
-- [ ] `pnpm verify` green (typecheck 6/6, 217 unit tests - 108 core + 16 content + 12 API + 81 mobile, build 5/5, secrets 0 hits, e2e 154/154 at the recorded cut).
+- [ ] `pnpm verify` green (recorded `5762c09` cut: 222 unit; 2026-11-19 working-tree snapshot: typecheck 6/6, 260 unit, e2e 156/156, secrets 0 hits / 164 files).
 - [ ] `pnpm lint` clean (0 errors; one documented web `<img>` warning).
 - [ ] `pnpm --filter @speeko/mobile build` exports 23 static routes.
 - [ ] dist bundle and `apps/web/public/courses` regenerated from tracked sources
@@ -101,7 +101,7 @@ only PII. Ensure rate limiting on auth and any logging that reveals them.
 
 ### 5. Backup and restore
 - [ ] Nightly `pg_dump $DATABASE_URL > backups/$(date +%F).sql` into a remote
-      store (S3/B2/Neon PITR), retained ≥ 30 days.
+      store (S3/B2/Neon PITR), retained â‰¥ 30 days.
 - [ ] One-time restore drill: load yesterday's dump into a fresh `pglite` or
       `postgres` instance; query rows for `lesson_events`; verify row count.
 - [ ] Record date/duration; keep run in `docs/` after the drill.
@@ -113,14 +113,14 @@ only PII. Ensure rate limiting on auth and any logging that reveals them.
       schema is rolled forward by fixes, never backward by accident.
 
 ### 7. Post-deployment smoke tests (30 min, host-level)
-- [ ] Open `https://<domain>/` — hero renders, no console errors.
+- [ ] Open `https://<domain>/` â€” hero renders, no console errors.
 - [ ] Sign up `smoke-${ts}@example.com`; complete one lesson signed-in; server
       returns 201 with a real `attemptId` (do not reuse).
-- [ ] `GET /api/gems` — balance ≥ 5 (lesson gems); `POST /api/shop/purchase`
+- [ ] `GET /api/gems` â€” balance â‰¥ 5 (lesson gems); `POST /api/shop/purchase`
       rejects unaffordable item honestly.
-- [ ] Sign out; cookie cleared; `GET /api/progress` → 401.
-- [ ] `GET /api/habits` — event-derived; calendar not empty; streak ≥ 1.
-- [ ] `GET /api/leagues` — honest early-community state (< 10 learners).
+- [ ] Sign out; cookie cleared; `GET /api/progress` â†’ 401.
+- [ ] `GET /api/habits` â€” event-derived; calendar not empty; streak â‰¥ 1.
+- [ ] `GET /api/leagues` â€” honest early-community state (< 10 learners).
 
 ### 8. Logging
 - [ ] Confirm `GET /health` has no user data in logs.
@@ -142,5 +142,5 @@ only PII. Ensure rate limiting on auth and any logging that reveals them.
   the reward ledger and streaks from `lesson_events`; shop ledger with per-user
   serialization.
 - Playable-queue exclusion of listenChoose-with-no-audio (`eligibleExercises`).
-- AI-assisted structural + linguistic audit — record kept in `review/`.
-- Mobile Jest + Playwright CI equivalents — runs locally via turbo.
+- AI-assisted structural + linguistic audit â€” record kept in `review/`.
+- Mobile Jest + Playwright CI equivalents â€” runs locally via turbo.

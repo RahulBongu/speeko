@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import type { Course, Lesson, ProgressState } from '@speeko/core';
 import { LOCALE_LABEL, eligibleExercises, lessonKey } from '@speeko/core';
@@ -27,11 +27,13 @@ function PathNode({
   index,
   state,
   onPress,
+  onCurrentLayout,
 }: {
   lesson: Lesson;
   index: number;
   state: LessonState;
   onPress: () => void;
+  onCurrentLayout?: ((y: number) => void) | undefined;
 }) {
   const locked = state === 'locked';
   const current = state === 'current';
@@ -41,6 +43,11 @@ function PathNode({
 
   return (
     <View
+      onLayout={
+        current && onCurrentLayout
+          ? (event) => onCurrentLayout(event.nativeEvent.layout.y)
+          : undefined
+      }
       style={{
         alignItems: 'center',
         alignSelf: 'center',
@@ -137,6 +144,25 @@ export default function Path() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // The path climbs upward, so the first lesson renders at the bottom. These
+  // refs remember where the current lesson landed and scroll it into view once
+  // after the first layout.
+  const scrollRef = useRef<ScrollView>(null);
+  const unitOffsets = useRef<Record<string, number>>({});
+  const scrollTarget = useRef<{ unitId: string; nodeY: number } | null>(null);
+  const didScroll = useRef(false);
+
+  function tryScrollToCurrent() {
+    if (didScroll.current || !scrollTarget.current) return;
+    const unitY = unitOffsets.current[scrollTarget.current.unitId];
+    if (unitY === undefined) return;
+    didScroll.current = true;
+    scrollRef.current?.scrollTo({
+      y: Math.max(0, unitY + scrollTarget.current.nodeY - 160),
+      animated: false,
+    });
+  }
+
   const load = useCallback(async () => {
     if (!courseId) {
       setError('This course link is incomplete.');
@@ -216,6 +242,7 @@ export default function Path() {
   return (
     <Screen>
       <ScrollView
+        ref={scrollRef}
         contentContainerStyle={{ padding: 16, gap: 12, backgroundColor: COLORS.cream, flexGrow: 1 }}
       >
         <SpeekoAppBar
@@ -251,12 +278,36 @@ export default function Path() {
         </View>
       ) : null}
 
-      {course.units.map((unit, unitIndex) => {
+      {course.units
+        .map((unit, unitIndex) => ({ unit, unitIndex }))
+        .reverse()
+        .map(({ unit, unitIndex }) => {
         const unitDone = unit.lessons.filter((lesson) =>
           Boolean(progress?.completed[lessonKey(course.id, lesson.id)]),
         ).length;
         return (
-          <View key={unit.id} style={{ gap: 4, marginTop: 10 }}>
+          <View
+            key={unit.id}
+            onLayout={(event) => {
+              unitOffsets.current[unit.id] = event.nativeEvent.layout.y;
+              tryScrollToCurrent();
+            }}
+            style={{ gap: 4, marginTop: 10 }}
+          >
+            {unitIndex > 0 ? (
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 10,
+                  fontWeight: '900',
+                  color: COLORS.muted,
+                  letterSpacing: 1.6,
+                  marginBottom: 2,
+                }}
+              >
+                ↑ CLIMB TO THE NEXT UNIT
+              </Text>
+            ) : null}
             <TactileCard tone="green" style={{ marginBottom: 8 }}>
               <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                 <View
@@ -312,7 +363,9 @@ export default function Path() {
               </View>
             </TactileCard>
 
-            {unit.lessons.map((lesson) => {
+            {[...unit.lessons]
+              .reverse()
+              .map((lesson) => {
               // Global index keeps the winding trail continuous across units.
               const globalIndex = flat.findIndex((entry) => entry.id === lesson.id);
               return (
@@ -322,6 +375,14 @@ export default function Path() {
                   index={globalIndex < 0 ? 0 : globalIndex}
                   state={statusOf(lesson.id)}
                   onPress={() => router.push(`/lesson/${course.id}/${lesson.id}`)}
+                  onCurrentLayout={
+                    lesson.id === currentId
+                      ? (nodeY) => {
+                          scrollTarget.current = { unitId: unit.id, nodeY };
+                          tryScrollToCurrent();
+                        }
+                      : undefined
+                  }
                 />
               );
             })}

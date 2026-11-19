@@ -34,6 +34,7 @@ import { authClient } from '@/lib/auth-client';
 import { readKnownSignedInUserId } from '@/lib/auth-marker';
 import { submitLessonCompletion } from '@/lib/sync';
 import { isSoundEnabled, playSound, setSoundEnabled } from '@/lib/sound';
+import { playMascotVoice, useMascotSpeaking } from '@/lib/mascotVoice';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
 import { ProgressBar } from '@/components/ProgressBar';
@@ -158,6 +159,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [grade, setGrade] = useState<GradeResult | null>(null);
   const [answeredExercise, setAnsweredExercise] = useState<Exercise | null>(null);
   const [xpGained, setXpGained] = useState(0);
+  const mascotSpeaking = useMascotSpeaking();
   const [showExit, setShowExit] = useState(false);
   const exitDialogRef = useRef<HTMLDivElement | null>(null);
   const keepPracticingRef = useRef<HTMLButtonElement | null>(null);
@@ -353,12 +355,14 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setSession(next);
     setPhase('feedback');
     playSound(result.correct ? 'correct' : 'incorrect');
+    playMascotVoice(result.correct ? 'correct_answer' : 'incorrect_answer');
   }, [session, draft, exerciseNow, phase]);
 
   const handleContinue = useCallback(() => {
     if (!session || !entry) return;
     if (session.finished) {
       playSound('complete');
+      playMascotVoice('lesson_complete');
       setPhase(session.hearts <= 0 ? 'hearts' : 'summary');
       return;
     }
@@ -689,7 +693,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           </div>
 
           <div className="mt-5 flex items-center gap-3">
-            <Fox mood={mood} className="hidden h-16 w-16 shrink-0 sm:block" />
+            <Fox mood={mood} speaking={mascotSpeaking} className="hidden h-16 w-16 shrink-0 sm:block" />
             <div className="relative hidden flex-1 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-sm font-semibold text-bark-500 shadow-card-sm sm:block">
               <span
                 aria-hidden="true"
@@ -861,6 +865,7 @@ function SummaryScreen({
   const accuracy = sessionAccuracy(session);
   const kind = practiceKind(entry.lesson.id);
   const isPractice = kind !== 'lesson';
+  const mascotSpeaking = useMascotSpeaking();
   const practiceReplay =
     !isPractice && saveState.status === 'saved' && !saveState.rewarded;
   const heading = practiceReplay
@@ -900,7 +905,7 @@ function SummaryScreen({
       <div className="text-center">
         <div className="relative mx-auto h-44 w-44">
           <div className="absolute inset-0 animate-pop rounded-full bg-gradient-to-br from-fox-300/70 to-speeko-200/70 blur-xl" />
-          <Fox mood="celebrate" className="relative h-44 w-44 animate-pop" />
+          <Fox mood="celebrate" speaking={mascotSpeaking} className="relative h-44 w-44 animate-pop" />
         </div>
         <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-bark-800">
           {heading}

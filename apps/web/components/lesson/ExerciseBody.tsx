@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { Exercise, GradeResult, Locale } from '@speeko/core';
+import { romanHint, type Exercise, type GradeResult, type Locale } from '@speeko/core';
 import { LOCALE_META } from '@/lib/courses';
 import { createRecognizer, recognitionAvailable, speak, type Recognizer } from '@/lib/speech';
 import { CheckIcon, MicIcon, SpeakerIcon, XIcon } from '@/components/icons';
@@ -192,6 +192,8 @@ function TypeBoard({
   const meta = LOCALE_META[locale];
   const typed = draft.kind === 'text' ? draft.value : '';
   const expected = exercise.expected[0] ?? '';
+  const reading = exercise.transliteration ?? romanHint(expected);
+  const [showReading, setShowReading] = useState(false);
 
   return (
     <div className="space-y-7">
@@ -221,13 +223,33 @@ function TypeBoard({
           autoCapitalize="off"
           autoCorrect="off"
           spellCheck={false}
-          placeholder={`Type in ${meta.native}…`}
-          aria-label={`Answer in ${meta.native}`}
+          placeholder={`Type in ${meta.native} or English letters…`}
+          aria-label={`Answer in ${meta.native} or English letters`}
           className="focus-ring w-full rounded-2xl border-2 border-cream-200 bg-white px-5 py-4 font-display text-2xl font-bold text-bark-800 shadow-card-sm outline-none transition placeholder:font-semibold placeholder:text-bark-300 focus:border-speeko-400 disabled:cursor-default disabled:bg-cream-50"
         />
-        <p className="mt-2 text-xs font-semibold text-bark-400">
-          Switch your device keyboard to {meta.native} to type in script.
-        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p className="text-xs font-semibold text-bark-400">
+            Use your normal keyboard — {meta.native} script or English letters both count.
+          </p>
+          {reading ? (
+            <button
+              type="button"
+              onClick={() => setShowReading((open) => !open)}
+              aria-expanded={showReading}
+              className="focus-ring rounded-md font-display text-xs font-extrabold text-speeko-700 underline decoration-speeko-300 decoration-2 underline-offset-2 hover:text-speeko-800"
+            >
+              {showReading ? 'Hide letters' : 'Show letters'}
+            </button>
+          ) : null}
+        </div>
+        {showReading && reading ? (
+          <p className="mt-2 rounded-xl border-2 border-cream-200 bg-cream-100 px-3 py-2 text-sm font-bold text-bark-600">
+            <span className="mr-2 text-[10px] font-extrabold uppercase tracking-[0.16em] text-bark-400">
+              English spelling
+            </span>
+            {reading}
+          </p>
+        ) : null}
       </div>
     </div>
   );

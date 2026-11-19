@@ -269,15 +269,15 @@
             },
             {
               "id": "or-starter-u3-l2-e3",
-              "kind": "listenChoose",
-              "prompt": "Listen and choose",
+              "kind": "chooseMeaning",
+              "prompt": "ଶୁଭ ସକାଳ",
               "options": [
-                "ଶୁଭ ସକାଳ",
-                "ନମସ୍କାର",
-                "କ୍ଷମା କରନ୍ତୁ"
+                "Good morning",
+                "Hello",
+                "Sorry"
               ],
               "answerIndex": 0,
-              "audioUrl": ""
+              "transliteration": "shubh sakaal"
             }
           ]
         }
@@ -320,6 +320,19 @@
                 "ଦଶ"
               ],
               "answerIndex": 0
+            },
+            {
+              "id": "or-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "ଆଠ",
+                "ଛଅ",
+                "ସାତ",
+                "ନଅ"
+              ],
+              "answerIndex": 0,
+              "transliteration": "aath"
             },
             {
               "id": "or-starter-u4-l1-e3",

@@ -70,7 +70,7 @@ test('course switcher routes to another path and remembers it', async ({ page })
 
 test('unit chest opens the guidebook with real target items', async ({ page }, testInfo) => {
   await page.goto('/learn/hi-starter');
-  await page.getByRole('link', { name: /Unit chest/ }).first().click();
+  await page.locator('a[href="/learn/hi-starter/guidebook/1"]').click();
   await expect(page).toHaveURL(/\/learn\/hi-starter\/guidebook\/1$/);
   await expect(page.getByRole('heading', { name: 'Greetings' })).toBeVisible();
   await expect(page.getByText('Words and phrases in this unit')).toBeVisible();

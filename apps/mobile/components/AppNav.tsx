@@ -1,8 +1,8 @@
 import { Pressable, Text, View } from 'react-native';
 import { useRouter, type Href } from 'expo-router';
 import {
+  SafeAreaProvider,
   useSafeAreaInsets,
-  type EdgeInsets,
 } from 'react-native-safe-area-context';
 import { COLORS } from '../lib/theme';
 
@@ -16,8 +16,6 @@ const ITEMS: { key: NavKey; label: string; href: Href; icon: string }[] = [
   { key: 'account', label: 'Account', href: '/account', icon: '🦊' },
 ];
 
-const ZERO_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
-
 /**
  * Shared bottom navigation for the app's main screens.
  *
@@ -27,18 +25,18 @@ const ZERO_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
  * was `disabled`, which hid it from some assistive-tech focus orders.)
  */
 export function AppNav({ active }: { active: NavKey }) {
+  return (
+    <SafeAreaProvider>
+      <AppNavBar active={active} />
+    </SafeAreaProvider>
+  );
+}
+
+function AppNavBar({ active }: { active: NavKey }) {
   const router = useRouter();
-  // useSafeAreaInsets() throws when no <SafeAreaProvider> is in the tree,
-  // which is the case for unit tests that render screens without one (and
-  // expo-router is mocked there). The hook is still called unconditionally;
-  // the catch only swaps in zero insets for that provider-less case so the
-  // tab bar renders with the 8px floor padding instead of crashing.
-  let insets: EdgeInsets;
-  try {
-    insets = useSafeAreaInsets();
-  } catch {
-    insets = ZERO_INSETS;
-  }
+  // AppNavBar runs inside its own SafeAreaProvider, so the hook is always
+  // unconditional and never misses a provider in unit tests.
+  const insets = useSafeAreaInsets();
   return (
     <View
       style={{

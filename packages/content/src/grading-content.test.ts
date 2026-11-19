@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gradeExercise, validateCourse, type AnswerInput, type Course, type Exercise } from '@speeko/core';
+import { gradeExercise, hasIndicScript, romanHint, validateCourse, type AnswerInput, type Course, type Exercise } from '@speeko/core';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const contentDir = resolve(here, '../../../content');
@@ -65,6 +65,46 @@ describe('content grading integration', () => {
       }
     }
     expect(checked).toBeGreaterThan(150);
+  });
+
+  it('accepts a romanized answer for every typed target', () => {
+    let checked = 0;
+    for (const course of courses) {
+      for (const unit of course.units) {
+        for (const lesson of unit.lessons) {
+          for (const exercise of lesson.exercises) {
+            if (exercise.kind !== 'typeTranslation' && exercise.kind !== 'typeWhatYouHear') continue;
+            const target = exercise.expected[0] ?? '';
+            if (!hasIndicScript(target)) continue;
+            const reading = romanHint(target);
+            expect(reading, `${course.id}/${exercise.id} has no reading`).toBeTruthy();
+            const result = gradeExercise(exercise, { kind: 'text', value: reading! });
+            expect(result.correct, `${course.id}/${exercise.id} rejects "${reading}"`).toBe(true);
+            checked++;
+          }
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(25);
+  });
+
+  it('teaches the numbers one through ten in every starter course', () => {
+    const starters = courses.filter((course) => course.id.endsWith('-starter'));
+    expect(starters).toHaveLength(10);
+    const numbers = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+    for (const course of starters) {
+      const prompts = new Set<string>();
+      for (const unit of course.units) {
+        for (const lesson of unit.lessons) {
+          for (const exercise of lesson.exercises) {
+            if (exercise.kind === 'chooseMeaning') prompts.add(exercise.prompt);
+          }
+        }
+      }
+      for (const number of numbers) {
+        expect(prompts.has(number), `${course.id} is missing "${number}"`).toBe(true);
+      }
+    }
   });
 
   it('rejects a wrong option for every choice exercise', () => {

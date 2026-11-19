@@ -322,6 +322,19 @@
               "answerIndex": 0
             },
             {
+              "id": "bn-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "আট",
+                "ছয়",
+                "সাত",
+                "নয়"
+              ],
+              "answerIndex": 0,
+              "transliteration": "aat"
+            },
+            {
               "id": "bn-starter-u4-l1-e3",
               "kind": "typeTranslation",
               "prompt": "Type \"six\"",

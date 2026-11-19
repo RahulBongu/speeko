@@ -322,6 +322,19 @@
               "answerIndex": 0
             },
             {
+              "id": "ta-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "எட்டு",
+                "ஆறு",
+                "ஏழு",
+                "ஒன்பது"
+              ],
+              "answerIndex": 0,
+              "transliteration": "ettu"
+            },
+            {
               "id": "ta-starter-u4-l1-e3",
               "kind": "typeTranslation",
               "prompt": "Type \"six\"",

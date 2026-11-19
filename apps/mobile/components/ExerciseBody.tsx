@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
-import type { Exercise, GradeResult } from '@speeko/core';
+import { romanHint, type Exercise, type GradeResult } from '@speeko/core';
 import {
   choiceOptions,
   deterministicShuffle,
@@ -47,6 +47,7 @@ export function ExerciseBody({
   const [leftSelected, setLeftSelected] = useState<number | null>(null);
   const [matchedLeft, setMatchedLeft] = useState<number[]>([]);
   const [playingAudio, setPlayingAudio] = useState(false);
+  const [showReading, setShowReading] = useState(false);
 
   if (!isSupportedExercise(exercise)) {
     return (
@@ -343,6 +344,7 @@ export function ExerciseBody({
 
   if (exercise.kind === 'typeTranslation' || exercise.kind === 'typeWhatYouHear') {
     const whatYouHear = exercise.kind === 'typeWhatYouHear';
+    const reading = exercise.transliteration ?? romanHint(exercise.expected[0] ?? '');
     return (
       <View style={{ gap: 10 }}>
         {whatYouHear ? (
@@ -398,12 +400,46 @@ export function ExerciseBody({
             backgroundColor: COLORS.white,
           }}
         />
+        <Text style={{ fontSize: 12, fontWeight: '600', color: COLORS.muted }}>
+          English letters work too — native script and romanized answers both count.
+        </Text>
+        {reading ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ expanded: showReading }}
+            onPress={() => setShowReading((open) => !open)}
+            style={{ alignSelf: 'flex-start' }}
+          >
+            <Text style={{ fontSize: 13, fontWeight: '800', color: COLORS.greenDark }}>
+              {showReading ? 'Hide letters' : 'Show letters'}
+            </Text>
+          </Pressable>
+        ) : null}
+        {showReading && reading ? (
+          <View
+            style={{
+              borderRadius: 10,
+              borderWidth: 2,
+              borderColor: COLORS.line,
+              backgroundColor: COLORS.creamDeep,
+              padding: 10,
+            }}
+          >
+            <Text style={{ fontSize: 10, fontWeight: '800', color: COLORS.muted, letterSpacing: 1 }}>
+              ENGLISH SPELLING
+            </Text>
+            <Text style={{ fontSize: 16, fontWeight: '800', color: COLORS.dark, marginTop: 2 }}>
+              {reading}
+            </Text>
+          </View>
+        ) : null}
       </View>
     );
   }
 
   if (exercise.kind === 'speak') {
     const expected = exercise.expected[0] ?? '';
+    const reading = exercise.transliteration ?? romanHint(expected);
     const transcript = draft.kind === 'speak' ? draft.transcript : '';
     const selfReported = draft.kind === 'speak' ? draft.selfReported : false;
     return (
@@ -442,6 +478,19 @@ export function ExerciseBody({
           >
             {expected}
           </Text>
+          {reading ? (
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '700',
+                color: COLORS.muted,
+                textAlign: 'center',
+                marginTop: 2,
+              }}
+            >
+              {reading}
+            </Text>
+          ) : null}
         </TactileCard>
         <Text style={{ fontSize: 12, fontWeight: '700', color: COLORS.muted }}>
           Type what you said

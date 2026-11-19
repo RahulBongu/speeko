@@ -35,6 +35,13 @@ jest.mock('../lib/audio', () => ({
   stopMobileAudio: jest.fn(async () => {}),
 }));
 
+jest.mock('../lib/mascot', () => ({
+  isMascotVoiceEnabled: jest.fn(() => true),
+  setMascotVoiceEnabled: jest.fn(),
+  playMascotVoice: jest.fn(async () => true),
+  stopMascotVoice: jest.fn(async () => {}),
+}));
+
 jest.mock('../lib/sync', () => ({
   syncProgress: jest.fn(async () => ({ progress: null, signedIn: false })),
   syncProgressIfSignedIn: jest.fn(async () => ({ progress: null, signedIn: false, synced: false })),

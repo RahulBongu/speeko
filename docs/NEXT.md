@@ -2,6 +2,27 @@
 
 > This file now summarizes the current state. M1 historical record lives at the bottom.
 
+## Current state (2026-11-19, uncommitted) — hardened working-tree polish, owner gates open
+
+**Repository state**
+
+| Ref | Contents | CI |
+| --- | --- | --- |
+| `main` | `5762c09` (merge of PR #7) — M1 render work + M2 headless sign-off + M4 hardening + self-provisioned e2e + league profile batching (`d5d6a74`) + handoff docs + license files (D79) + hosting configuration (D80) + web license bundling + in-app mobile licenses + proxy-aware rate limiting | Push run on `5762c09` |
+
+- **2026-11-19 working tree is not committed.** It adds the polish/hardening described below; version is still `0.0.1`, nothing is published, no PRs are open.
+- Full `pnpm verify` on the working tree: typecheck 6/6, unit **260** (149 core + 18 content + 12 API + 81 mobile), build 5/5, secrets **0 hits / 164 files**, licenses PASS, e2e **156/156 in ~6.2m with 0 flakes**. `pnpm lint` passes with 0 errors (2 pre-existing mobile warnings and 1 intentional web `<img>` warning).
+- Native-speaker review covers 315 automated-reviewed items; the ten "Eight" items were added after the AI-linguistic-review snapshot and are not human-certified.
+
+### What landed in the 2026-11-19 working tree
+
+- Learning paths climb **bottom-to-top**; the current lesson auto-scrolls into view; units and lessons are rendered bottom-up on web and mobile.
+- Web landing page expanded into a long, useful marketing page (at-a-glance stats, language cards with real entry links, interactive sample question, mascot voice demo, FAQ, direct links to practice/habits/leagues); `tests/e2e/marketing.spec.ts` guards the new sections.
+- English-keyboard typing is supported through the shared romanization engine; typing exercises show a "Show letters" reading; romanization grew practical Dravidian/Odia support and common English aliases (`school`, `station`, `behen`, `atth`).
+- Starter content now teaches the number Eight (+10 exercises = 315 total); Odia's former audio fallback is a reverse-direction choice; review package, tracker and audit ledger regenerated.
+- Web mascot rebuilt as an animated SVG with arms/feet/speaking mouth; mascot reactions, sound effects, and independent mute toggles remain.
+- Mural voice conversation was evaluated and deferred; `/conversation` remains honest and unavailable until an AI provider is configured (see `docs/product/mural-voice-assessment.md`). No hosted voice service was added and no new data-sharing surface exists.
+
 ## Current state (2026-11-18) — engineering complete, owner gates open
 
 **Repository state**
@@ -12,7 +33,7 @@
 
 - `next/M1`, `next/M2`, and `next/M3` are merged into `main` via PRs #4-#7. Nothing is open.
 - Working tree clean, version `0.0.1` (`versionCode 1`). No store submission, nothing published. No pull requests are open.
-- Full `pnpm verify` on `5762c09`: typecheck 6/6, unit **217** (108 core + 16 content + 12 API + 81 mobile), build 5/5, secrets **0 hits / 160 files**, licenses PASS, e2e **154/154 in 4.1m with 0 flakes**. (The earlier `d5d6a74` cut was 201 unit and 148/148 e2e; the merged license-artifact check brought e2e to 150.)
+- Full `pnpm verify` on `5762c09`: typecheck 6/6, unit **222** (108 core + 16 content + 12 API + 81 mobile), build 5/5, secrets **0 hits / 160 files**, licenses PASS, e2e **154/154 in 4.1m with 0 flakes**. (The earlier `d5d6a74` cut was 201 unit and 148/148 e2e; the merged license-artifact check brought e2e to 150.)
 - **License decided (D79):** Apache-2.0 for source code, All Rights Reserved for course content/brand/design/docs, OFL-1.1 text for the bundled fonts. Web texts ship at `/licenses/*` (auto-built, e2e-guarded); the mobile app ships an in-app `/licenses` screen from a generated bundle, guarded by `pnpm check:licenses`.
 
 **What landed**
@@ -28,8 +49,8 @@
 0. **Done** — PR #7 merged the mobile licenses and proxy-aware rate limiting as `5762c09`. Render deploys from `main`.
 1. License: decided 2026-11-18 (Apache-2.0 code, All Rights Reserved content/brand, OFL fonts). Web texts ship at `/licenses/*` (auto-built); the mobile app ships an in-app `/licenses` screen. Rebuild the signed Android artifact so it includes the new screen.
 2. Hosting: Option A (Neon + Render + Vercel) is decided and configured in `render.yaml` + `docs/deploy-runbook.md`. Create the three projects, set the secrets (`DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, `TRUST_PROXY_HOPS=1`, plus `API_PROXY_TARGET` and the shared `API_PROXY_SECRET` on both Vercel and Render), deploy, then arrange backups and secret rotation.
-3. Native-speaker review of the 305 draft exercises (10 locales).
-4. Audio decision for `listenChoose` (10 items), or formally keep them excluded.
+3. Native-speaker review of the 315 draft exercises (10 locales).
+4. Audio decision for `listenChoose` (9 items), or formally keep them excluded.
 5. Store accounts (Play Console) + a clean release prebuild (no cleartext exception).
 6. Optional, owner-only: an on-device functional pass. The assistant must not reconnect the phone; headless web/API verification is the accepted evidence for this alpha.
 

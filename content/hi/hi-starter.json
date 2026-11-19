@@ -322,6 +322,19 @@
               "answerIndex": 0
             },
             {
+              "id": "hi-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "आठ",
+                "छह",
+                "सात",
+                "नौ"
+              ],
+              "answerIndex": 0,
+              "transliteration": "aath"
+            },
+            {
               "id": "hi-starter-u4-l1-e3",
               "kind": "typeTranslation",
               "prompt": "Type \"six\"",

@@ -1,6 +1,6 @@
 # Speeko — Native-speaker review package
 
-Generated: 2026-11-18T05:40:16.568Z
+Generated: 2026-11-19T13:13:22.941Z
 Source: content/dist/*.json
 
 ## Inventory
@@ -8,35 +8,35 @@ Source: content/dist/*.json
 - Courses: 11 (10 starter + 1 pilot)
 - Units: 45
 - Lessons: 105
-- Exercises: 305 (all `reviewStatus: automated_reviewed`)
+- Exercises: 315 (all `reviewStatus: automated_reviewed`; no native-speaker approval)
 
 | Locale | Label | Exercises | Kinds | With transliteration | Empty listenChoose audio |
 | --- | --- | --- | --- | --- | --- |
-| `bn` | Bengali (বাংলা) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
-| `gu` | Gujarati (ગુજરાતી) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
-| `hi` | Hindi (हिन्दी) | 98 | chooseMeaning 66, typeTranslation 29, matchPairs 2, listenChoose 1 | 75 | 1 |
-| `kn` | Kannada (ಕನ್ನಡ) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
-| `ml` | Malayalam (മലയാളം) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
-| `mr` | Marathi (मराठी) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
-| `or` | Odia (ଓଡ଼ିଆ) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
-| `pa` | Punjabi (ਪੰਜਾਬੀ) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
-| `ta` | Tamil (தமிழ்) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
-| `te` | Telugu (తెలుగు) | 23 | chooseMeaning 16, typeTranslation 4, matchPairs 2, listenChoose 1 | 0 | 1 |
+| `bn` | Bengali (বাংলা) | 24 | chooseMeaning 17, typeTranslation 4, matchPairs 2, listenChoose 1 | 1 | 0 |
+| `gu` | Gujarati (ગુજરાતી) | 24 | chooseMeaning 17, typeTranslation 4, matchPairs 2, listenChoose 1 | 1 | 0 |
+| `hi` | Hindi (हिन्दी) | 99 | chooseMeaning 67, typeTranslation 29, matchPairs 2, listenChoose 1 | 76 | 0 |
+| `kn` | Kannada (ಕನ್ನಡ) | 24 | chooseMeaning 17, typeTranslation 4, matchPairs 2, listenChoose 1 | 1 | 0 |
+| `ml` | Malayalam (മലയാളം) | 24 | chooseMeaning 17, typeTranslation 4, matchPairs 2, listenChoose 1 | 1 | 0 |
+| `mr` | Marathi (मराठी) | 24 | chooseMeaning 17, typeTranslation 4, matchPairs 2, listenChoose 1 | 1 | 0 |
+| `or` | Odia (ଓଡ଼ିଆ) | 24 | chooseMeaning 18, typeTranslation 4, matchPairs 2 | 2 | 0 |
+| `pa` | Punjabi (ਪੰਜਾਬੀ) | 24 | chooseMeaning 17, typeTranslation 4, matchPairs 2, listenChoose 1 | 1 | 0 |
+| `ta` | Tamil (தமிழ்) | 24 | chooseMeaning 17, typeTranslation 4, matchPairs 2, listenChoose 1 | 1 | 0 |
+| `te` | Telugu (తెలుగు) | 24 | chooseMeaning 17, typeTranslation 4, matchPairs 2, listenChoose 1 | 1 | 0 |
 
 ## Automated audit evidence (AI-assisted)
 
 Source: `node scripts/audit-content.mjs` writes `audit-ledger.json` in this folder.
 This is an engineering quality gate, never native-speaker approval.
-Every item is now `reviewStatus: automated_reviewed` (machine-reviewed via structural audit + AI-assisted linguistic review). Nothing is native-speaker certified. A human reviewer may still upgrade an item to `reviewed` with their name.
+Every item remains `reviewStatus: automated_reviewed` until a signed-off human review happens.
 See `audit-pilot-hi.md` for the 20-item calibration pilot and its false-positive analysis.
 
 | Measurement | Value |
 | --- | --- |
-| Ledger items accounted for | 305 / 305 |
+| Ledger items accounted for | 315 / 315 |
 | Structural defects found (R-001..R-005) | 0 |
-| Items blocked on empty audioUrl (R-006) | 10 |
+| Items blocked on empty audioUrl (R-006) | 0 |
 | Items flagged by low-confidence surface scan (R-010) | 2 |
-| Items clean against deterministic rules | 293 |
+| Items clean against deterministic rules | 313 |
 | Items native-speaker approved | **0** |
 
 Dispositions: `no_issue_detected` means only "no automated rule triggered".
@@ -52,7 +52,7 @@ A native reviewer must still judge grammar, register, and meaning.
 
 ## Status and limitations (unchanged)
 
-- **No content is reviewed.** Every row exists and must be treated as draft; nothing here certifies linguistic correctness.
-- **listenChoose has no audio assets.** All listening exercises ship an empty `audioUrl`; they currently render an honest "audio not available" fallback. Deciding on audio sources is a reviewer + owner question.
+- **No content is native-speaker reviewed.** Every row exists and must be treated as automated-reviewed only; nothing here certifies linguistic correctness.
+- **listenChoose audio is synthetic.** Nine items carry Edge TTS/gTTS audio, not native-speaker recordings; the Odia audio item was converted to a reverse-direction choice because no Odia voice is available. Reviewers still need to decide whether synthetic audio is acceptable product quality.
 - **Starter vocabulary direction is inconsistent.** Some courses show English prompts with target-language answers; hi-pilot shows target-language prompts with English gloss answers. Both are playable but a reviewer should pick one convention per locale and flag the other for revision.
 - **No item may be presented as reviewed** until a native speaker of that locale signs off. Automated validation (`pnpm sync:content`, content tests) grades answer-key reachability only; it does not judge language.

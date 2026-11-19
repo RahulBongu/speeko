@@ -322,6 +322,19 @@
               "answerIndex": 0
             },
             {
+              "id": "pa-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "ਅੱਠ",
+                "ਛੇ",
+                "ਸੱਤ",
+                "ਨੌਂ"
+              ],
+              "answerIndex": 0,
+              "transliteration": "atth"
+            },
+            {
               "id": "pa-starter-u4-l1-e3",
               "kind": "typeTranslation",
               "prompt": "Type \"six\"",

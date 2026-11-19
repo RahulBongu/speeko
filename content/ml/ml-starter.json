@@ -322,6 +322,19 @@
               "answerIndex": 0
             },
             {
+              "id": "ml-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "എട്ട്",
+                "ആറ്",
+                "ഏഴ്",
+                "ഒമ്പത്"
+              ],
+              "answerIndex": 0,
+              "transliteration": "ettu"
+            },
+            {
               "id": "ml-starter-u4-l1-e3",
               "kind": "typeTranslation",
               "prompt": "Type \"six\"",

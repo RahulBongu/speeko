@@ -1,5 +1,7 @@
 # Speeko — listenChoose audio decision analysis (2026-11-16)
 
+> **Superseded.** This 2026-11-16 analysis recorded the missing-audio decision before the 2026-11-18 synthetic-audio fix. As of 2026-11-19, 9 of 9 `listenChoose` items carry synthetic Edge TTS/gTTS audio; Odia's former item was converted to a reverse-direction `chooseMeaning` because no Odia voice is available. No native-speaker recording exists.
+
 **Status:** recommendation only. **No audio exists; nothing is verified or
 claimed to be working.** Every `listenChoose` item still ships `audioUrl: ""`.
 

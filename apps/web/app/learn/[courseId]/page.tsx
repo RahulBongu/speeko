@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { eligibleExercises, type Course } from '@speeko/core';
 import { ProgressBar } from '@/components/ProgressBar';
@@ -101,11 +101,13 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
   const progress = useProgress();
   const [course, setCourse] = useState<Course | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const scrolledToCurrent = useRef(false);
 
   useEffect(() => {
     let active = true;
     setCourse(null);
     setError(null);
+    scrolledToCurrent.current = false;
     fetchCourse(courseId)
       .then((loaded) => {
         if (active) setCourse(loaded);
@@ -117,6 +119,28 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
       active = false;
     };
   }, [courseId]);
+
+  // The path climbs upward: unit 1 and its first lesson live at the bottom.
+  // Bring the learner's current lesson into view once the path renders.
+  useEffect(() => {
+    if (!course || !progress || scrolledToCurrent.current) return;
+    const nextLessonId = courseStats(course, progress).nextLessonId;
+    if (!nextLessonId) return;
+    const frame = requestAnimationFrame(() => {
+      const node = document.querySelector<HTMLElement>(
+        `[data-path-lesson="${nextLessonId}"]`,
+      );
+      if (!node) return;
+      node.scrollIntoView({
+        block: 'center',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth',
+      });
+      scrolledToCurrent.current = true;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [course, progress]);
 
   if (error) {
     return (
@@ -240,8 +264,11 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
           </div>
         </section>
 
-        <div className="mt-10 space-y-12">
-          {course.units.map((unit, unitIndex) => {
+        <div className="mt-10 flex flex-col gap-12">
+          {course.units
+            .map((unit, unitIndex) => ({ unit, unitIndex }))
+            .reverse()
+            .map(({ unit, unitIndex }) => {
             const unitDone = unit.lessons.filter((lesson) =>
               isLessonCompleted(progress, course.id, lesson.id),
             ).length;
@@ -258,7 +285,17 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
               );
             const checkpointId = `checkpoint-unit-${checkpointUpTo}`;
             return (
-              <section key={unit.id}>
+              <section key={unit.id} className="relative">
+                {unitIndex > 0 ? (
+                  <div className="mb-6 flex items-center justify-center gap-2 text-bark-300">
+                    <span aria-hidden="true" className="text-lg font-black leading-none">
+                      ↑
+                    </span>
+                    <span className="font-display text-[10px] font-extrabold uppercase tracking-[0.22em]">
+                      Climb to the next unit
+                    </span>
+                  </div>
+                ) : null}
                 <div
                   className={`relative overflow-hidden rounded-3xl bg-gradient-to-r px-5 py-4 text-white shadow-card-sm ${meta.gradient}`}
                 >
@@ -283,7 +320,10 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                 </div>
 
                 <ol className="mt-7 space-y-5">
-                  {unit.lessons.map((lesson, lessonIndex) => {
+                  {unit.lessons
+                    .map((lesson, lessonIndex) => ({ lesson, lessonIndex }))
+                    .reverse()
+                    .map(({ lesson, lessonIndex }) => {
                     const status = lessonStatus(course, lesson.id, progress, stats);
                     const offset = OFFSETS[(unitIndex * 2 + lessonIndex) % OFFSETS.length] ?? '';
                     const node = (
@@ -309,6 +349,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                     return (
                       <li
                         key={lesson.id}
+                        data-path-lesson={lesson.id}
                         style={{ animationDelay: `${Math.min(unitIndex * 3 + lessonIndex, 8) * 70}ms` }}
                         className={`flex scroll-mt-24 animate-rise ${offset}`}
                       >

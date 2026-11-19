@@ -322,6 +322,19 @@
               "answerIndex": 0
             },
             {
+              "id": "kn-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "ಎಂಟು",
+                "ಆರು",
+                "ಏಳು",
+                "ಒಂಬತ್ತು"
+              ],
+              "answerIndex": 0,
+              "transliteration": "entu"
+            },
+            {
               "id": "kn-starter-u4-l1-e3",
               "kind": "typeTranslation",
               "prompt": "Type \"six\"",

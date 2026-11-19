@@ -1,4 +1,5 @@
 import type { Exercise } from './content.js';
+import { romanizedEqual } from './romanize.js';
 
 // Answer input as captured by any client (web, mobile).
 export type AnswerInput =
@@ -58,6 +59,10 @@ function matchesExpected(value: string, expected: string[], allowTypos: boolean)
     const e = normalizeAnswer(candidate);
     if (!e) continue;
     if (v === e) return true;
+    // English-keyboard learners may type a romanized reading instead of the
+    // target script. Both readings must match; this does not accept unrelated
+    // words, only the same word written in Latin letters.
+    if (romanizedEqual(value, candidate)) return true;
     // One-character typo tolerance only for reasonably long answers.
     if (allowTypos && Math.max(v.length, e.length) >= 4 && levenshtein(v, e) <= 1) return true;
   }

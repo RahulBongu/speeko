@@ -2,6 +2,17 @@
 
 ## Unreleased (alpha cut)
 
+### 2026-11-19 — polish, romanization and content hardening
+
+- Learning paths now climb bottom-to-top (unit 1 at the base, next unlocked unit above) with a current-lesson auto-scroll; mobile mirrors the same order
+- Web landing page expanded into a long, functional marketing page: at-a-glance stats, how-it-works, mascot-voice demo buttons, ten-script greeting grid, FAQ, and direct links to practice/habits/leagues
+- Romanization engine for the ten starter scripts: practical learner-facing readings, common English spellings and doubled consonants folded into grading, Dravidian vowel handling and Malayalam word-final virama support
+- Starter curriculum now teaches the number Eight (all 10 starter courses; 305 → 315 exercises); Odia's fallback `Good morning` item redesigned to a reverse-direction choice; an odd filler removed earlier remains removed
+- Web typing exercises accept English-keyboard spellings; "Show letters" exposes romanized readings; mobile typing and speaking surfaces show romanized helpers
+- Romanization/grading regression coverage expanded (149 core tests)
+- Content review documented at `docs/product/language-content-review.md`; Mural voice-conversation option rejected as a post-M1/owner-gated provider integration (`docs/product/mural-voice-assessment.md`)
+- Web mascot rebuilt as an animated SVG rig with limbs, breathing, hopping and talking-state mouth; mobile remains raster-based pending a new SVG asset (assets/mixing is out of scope)
+
 ### Licensing
 - Source code is Apache-2.0 (`LICENSE`, verbatim from apache.org); course content, brand, design, and docs are All Rights Reserved (`LICENSE-CONTENT`)
 - Baloo 2 and Nunito now ship with their full OFL-1.1 text (`apps/web/public/fonts/OFL.txt`); third-party attribution collected in `NOTICE` and `ATTRIBUTIONS.md`
@@ -23,10 +34,12 @@
 - All published exercise kinds supported, including word bank, arrange-the-sentence, listen-and-type, and record-yourself speaking (no automatic scoring)
 - Tactile UI consistent across screens; safe-area aware layout; no dead-ends in empty/error/signed-out states
 - Practice now syncs its SRS review schedule to the signed-in account after a session (best-effort, retry once; offline results stay local and sync on the next sign-in, account, or shop visit); practice never awards lesson XP or gems
+- Mascot reactions: the fox now speaks original English reaction lines (Edge TTS `en-US-AvaNeural`) on correct, incorrect, lesson-complete, discovery, streak, and encouragement events, with an independent mascot-voice mute preference and an animated celebration on completion
 
 ### Web
 - Focus rings on all interactive elements; contrast-corrected palette; gold/ice tokens; on-brand locale ramps
 - Studio re-skinned to the house style; global `not-found`/`error` routes; per-route metadata
+- Mascot reactions integrated on correct/incorrect answers and lesson completion; `apps/web/lib/mascotVoice.ts` bundles six original TTS reaction lines (`public/mascot/*.mp3`), `/mascot/*` sound-effect assets, and a separate mascot-voice preference toggle in the Sound preferences section of the Account page
 
 ### Deployment
 - Free alpha stack chosen (D80): Neon Postgres + Render API + Vercel web; `render.yaml` defines the Render service with a `/health` check and uncommitted secrets
@@ -37,8 +50,8 @@
 - League standings resolve active learners' profiles in one batch per request instead of one query per learner (with ~1.4k weekly learners in a test database, the endpoint dropped from 16-30s to under 1s locally)
 
 ### Honest limits
-- All curriculum content remains `reviewStatus: "draft"`; no native-speaker review has been completed
-- Listening exercises are unavailable until licensed audio exists
+- All curriculum content ships `reviewStatus: "automated_reviewed"`; no native-speaker review has been completed
+- Listening exercises use synthetic speech, not licensed/native-speaker audio
 - No store listing, no public release
 - Android functional QA was verified headlessly against web/API; no on-device functional pass has been completed
 

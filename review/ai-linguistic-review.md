@@ -1,8 +1,10 @@
-# Speeko — AI-assisted linguistic review (305 items) — 2026-11-16
+# Speeko - AI-assisted linguistic review (305 items) - 2026-11-16
+
+> Historical 2026-11-16 pass; it covered 305 items and does not include the ten "Eight" items added on 2026-11-19. It is not native-speaker review; every item remains `reviewStatus: automated_reviewed`.
 
 **This is not native-speaker review.** Nothing here is certified or approved.
 Both passes ran on the same model; they are not statistically independent.
-Every item remains `reviewStatus: draft`.
+Every item remains `reviewStatus: automated_reviewed` (not human-certified) in the built package.
 
 ## What was checked
 

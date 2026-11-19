@@ -4,8 +4,9 @@
  *
  * Reads `content/dist/*.json` (the exact artifacts the app and tests verify),
  * emits a machine-readable JSON package and one CSV per locale under `review/`.
- * Nothing in the output is marked reviewed; every item is pre-filled with
- * `reviewStatus: "draft"` and empty decision fields that a reviewer fills in.
+ * Nothing in the output is presented as native-speaker reviewed; every item is
+ * pre-filled with `reviewStatus: "automated_reviewed"` by the content build and
+ * empty decision fields that a reviewer fills in.
  *
  * Usage:
  *   node scripts/export-review.mjs [--out review]
@@ -83,7 +84,7 @@ for (const file of files.sort()) {
         localeStats.reviewStatusCounts[exercise.reviewStatus] =
           (localeStats.reviewStatusCounts[exercise.reviewStatus] ?? 0) + 1;
         if (exercise.audioUrl) localeStats.withAudio += 1;
-        else if ('audioUrl' in exercise) localeStats.emptyAudio += 1;
+        else if (exercise.kind === 'listenChoose') localeStats.emptyAudio += 1;
         if (exercise.transliteration) localeStats.withTransliteration += 1;
         items.push({
           exerciseId: exercise.id,
@@ -127,14 +128,14 @@ for (const file of files.sort()) {
 }
 
 const policy = {
-  reviewStatus: 'draft',
+  reviewStatus: 'automated_reviewed',
   instruction:
-    'Every item is draft. Do NOT assert review; fill reviewDecision (keep|revise|remove), reviewNotes, and reviewer per item. Then re-run export-review to build the reviewed manifest.',
+    'Every item is automated-reviewed only, never native-speaker reviewed. Do NOT assert review; fill reviewDecision (keep|revise|remove), reviewNotes, and reviewer per item. Then re-run export-review to build the reviewed manifest.',
   decisionValues: ['keep', 'revise', 'remove'],
   blockers: [
     'No course ships as reviewed until a native-speaker reviewer of that locale signs off.',
-    'listenChoose exercises ship with an empty audioUrl; see the emptyAudio count per locale. A reviewer must either provide audio assets or mark those exercises for revision.',
-    'hi-starter/pilot and all starters contain only draft content.',
+    'listenChoose exercises carry synthetic Edge TTS/gTTS audio where present, not native recordings; the Odia listenChoose item was converted to a reverse-direction chooseMeaning because no Odia voice is available.',
+    'hi-starter/pilot and all starters contain automated-reviewed content, not certified native-speaker review.',
   ],
 };
 
@@ -237,7 +238,7 @@ const report = [
   `- Courses: ${stats.totals.courses} (10 starter + 1 pilot)`,
   `- Units: ${stats.totals.units}`,
   `- Lessons: ${stats.totals.lessons}`,
-  `- Exercises: ${stats.totals.exercises} (all \`reviewStatus: draft\`)`,
+  `- Exercises: ${stats.totals.exercises} (all \`reviewStatus: automated_reviewed\`; no native-speaker approval)`,
   '',
   '| Locale | Label | Exercises | Kinds | With transliteration | Empty listenChoose audio |',
   '| --- | --- | --- | --- | --- | --- |',
@@ -252,7 +253,7 @@ const report = [
   '',
   'Source: `node scripts/audit-content.mjs` writes `audit-ledger.json` in this folder.',
   'This is an engineering quality gate, never native-speaker approval.',
-  'Every item remains `reviewStatus: draft` until a signed-off human review happens.',
+  'Every item remains `reviewStatus: automated_reviewed` until a signed-off human review happens.',
   'See `audit-pilot-hi.md` for the 20-item calibration pilot and its false-positive analysis.',
   '',
   auditSummary
@@ -281,8 +282,8 @@ const report = [
   '',
   '## Status and limitations (unchanged)',
   '',
-  '- **No content is reviewed.** Every row exists and must be treated as draft; nothing here certifies linguistic correctness.',
-  '- **listenChoose has no audio assets.** All listening exercises ship an empty `audioUrl`; they currently render an honest "audio not available" fallback. Deciding on audio sources is a reviewer + owner question.',
+  '- **No content is native-speaker reviewed.** Every row exists and must be treated as automated-reviewed only; nothing here certifies linguistic correctness.',
+  '- **listenChoose audio is synthetic.** Nine items carry Edge TTS/gTTS audio, not native-speaker recordings; the Odia audio item was converted to a reverse-direction choice because no Odia voice is available. Reviewers still need to decide whether synthetic audio is acceptable product quality.',
   '- **Starter vocabulary direction is inconsistent.** Some courses show English prompts with target-language answers; hi-pilot shows target-language prompts with English gloss answers. Both are playable but a reviewer should pick one convention per locale and flag the other for revision.',
   '- **No item may be presented as reviewed** until a native speaker of that locale signs off. Automated validation (`pnpm sync:content`, content tests) grades answer-key reachability only; it does not judge language.',
 ];

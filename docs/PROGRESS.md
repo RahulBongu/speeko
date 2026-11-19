@@ -1,22 +1,29 @@
-# Speeko — Progress
+﻿# Speeko â€” Progress
 
 Living status document. One phase per session; a phase is done only when
 `pnpm verify` is green **and** the generated screenshots have been inspected.
 The audit that establishes ground truth lives in [`AUDIT.md`](./AUDIT.md);
 durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
-**Updated:** 2026-11-18 (engineering complete; PR #7 merged; owner gates open)
+**Updated:** 2026-11-19 (2026-11-19 working-tree polish/hardening; not committed; PR/base state unchanged at `5762c09`)
+
+## Current state (2026-11-19, uncommitted)
+
+- **Main remains `5762c09`; these changes are not committed.** Base PRs #4–#7 are merged; nothing is published.
+- **2026-11-19 working-tree hardening:** learning paths now render bottom-to-top with an auto-scrolled current lesson; mobile follows the same order; web landing page is expanded with working demo sections and an interactive sample question; web typing accepts romanized English-keyboard input; the ten starter courses now teach Eight (315 exercises total); the romanization engine now supports Dravidian vowels/final virama and common English-spelling aliases; web mascot is an animated rig with limbs and a speaking state; Odia `Good morning` fallback is a reverse-direction choice.
+- **Full working-tree verify:** typecheck 6/6, unit **260** (149 core + 18 content + 12 API + 81 mobile), build 5/5, `check:secrets` PASS (0 hits / 164 files), `check:licenses` PASS, `pnpm lint` 0 errors (2 pre-existing mobile warnings + 1 intentional web `<img>` warning), e2e **156/156** in ~6.2m with zero flakes.
+- **Owner gates remain open:** 315 draft/automated-reviewed items, no native certification; audio decision for the 9 synthetic `listenChoose` clips; hosting provisioning/backups/monitoring; store accounts/keystore; optional on-device functional pass.
 
 ## Current state (post-M4, 2026-11-18)
 
-- **Engineering is complete and green.** Full `pnpm verify` on `5762c09`: typecheck 6/6, unit **217** (108 core + 16 content + 12 API + 81 mobile), build 5/5, `check:secrets` PASS (160 files, 0 hits), `check:licenses` PASS, e2e **154/154** in 4.1m with zero flakes.
-- **`main` is `5762c09`** — the merge of PR #7, which followed PR #6 (`ac62217`), PR #5 (`82f0f3c`), and PR #4 (`e5a06c2`). `main` now contains the league profile-lookup fix (`d5d6a74`), the 2026-11-18 docs refresh (`5e3c999`), the license files (D79), the hosting configuration (D80), the web license bundling, the in-app mobile license screen, and proxy-aware rate limiting.
+- **Engineering is complete and green.** Full `pnpm verify` on `5762c09`: typecheck 6/6, unit **222** (108 core + 16 content + 12 API + 81 mobile), build 5/5, `check:secrets` PASS (160 files, 0 hits), `check:licenses` PASS, e2e **154/154** in 4.1m with zero flakes.
+- **`main` is `5762c09`** â€” the merge of PR #7, which followed PR #6 (`ac62222`), PR #5 (`82f0f3c`), and PR #4 (`e5a06c2`). `main` now contains the league profile-lookup fix (`d5d6a74`), the 2026-11-18 docs refresh (`5e3c999`), the license files (D79), the hosting configuration (D80), the web license bundling, the in-app mobile license screen, and proxy-aware rate limiting.
 - **PR #7 merged** the in-app mobile license screen and proxy-aware rate limiting into `main`. The internal alpha is feature-complete and green.
 - **License gate decided (D79) and implemented.** Apache-2.0 for source code (`LICENSE`, verbatim from apache.org), All Rights Reserved for course content, brand, design, and docs (`LICENSE-CONTENT`), and the full OFL-1.1 text for Baloo 2 and Nunito (`apps/web/public/fonts/OFL.txt`). `NOTICE`, `ATTRIBUTIONS.md`, and `content/README.md` are updated. The web artifact ships the texts at `/licenses/*` (auto-built, e2e-guarded); the mobile app ships a `/licenses` screen from a generated bundle, guarded by `pnpm check:licenses`.
 - **Hardening shipped:** `/api/auth/*` 60 requests/min per client IP; `PUT /api/progress` 30/min per account+client IP; `429` + `Retry-After`; `Cache-Control: no-store` on `/api/*`; production boot refuses a missing/short (<32-char) `BETTER_AUTH_SECRET`; the build-output secrets scan is part of `pnpm verify`. PR #7 made the client IP proxy-aware: the web proxy forwards a secret-signed header, direct deployments can trust one Render hop via `TRUST_PROXY_HOPS`, and untrusted headers are ignored.
 - **Practice sync shipped:** mobile practice now best-effort syncs the updated SRS schedule to the signed-in account after saving (retry once; offline keeps the local schedule and syncs on the next sign-in, account, or shop visit). Practice never awards lesson XP or gems. Mobile suite is now 81 tests.
-- **Phase 1–4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
-- **Android AAB builds.** `./gradlew bundleRelease` → `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Produced from the QA-enabled tree — store builds need a clean prebuild (see `docs/deploy-runbook.md`).
+- **Phase 1â€“4 work** (M2/M4, mobile onboarding and exercise kinds, design/a11y, release package) is all on `main` via PR #4.
+- **Android AAB builds.** `./gradlew bundleRelease` â†’ `app-release.aab`, 17,062,698 bytes, SHA-256 `BFB0A0F94BDB7067BF1A4A9588DD419A909A4D125EB267B7409E05D7F8D3ABE0` (2026-11-17). Produced from the QA-enabled tree â€” store builds need a clean prebuild (see `docs/deploy-runbook.md`).
 - **Hosting decided (D80).** The internal alpha uses the free Option A stack: Neon Postgres + Render API + Vercel web, with a same-origin `/api` proxy so Better Auth's `SameSite=Lax` session cookie stays first-party. `render.yaml`, the proxy middleware, and the runbook are in the tree; creating the projects, spend, and secrets remain owner actions.
 - **Still open (owner):** native-speaker review, hosting provisioning + backups + secret rotation, audio decision, store accounts, and a clean signed rebuild that includes the in-app licenses screen.
 - **Not claimed:** on-device functional QA. The owner waived it; see D78 and `docs/READINESS.md`.
@@ -26,9 +33,9 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 
 | Phase | Scope | Status |
 | --- | --- | --- |
-| P0 — Audit | Ground truth, feature map, risks, README corrections | **Done** — `9e7ae9b`, branch `phase/0-audit` |
-| P1 — Safety net | `pnpm verify`, Playwright smoke + screenshots, ESLint, snapshot v2 + v1 migration | **Done** — `68b6e18`, branch `phase/1-safety-net` |
-| P2 — Server-verified rewards | Lesson-completion endpoint, server re-grade, append-only events, `attemptId` idempotency, signed-in save UI | **Done** — `4f514ad`, branch `phase/2-server-rewards` |
+| P0 â€” Audit | Ground truth, feature map, risks, README corrections | **Done** â€” `9e7ae9b`, branch `phase/0-audit` |
+| P1 â€” Safety net | `pnpm verify`, Playwright smoke + screenshots, ESLint, snapshot v2 + v1 migration | **Done** â€” `68b6e18`, branch `phase/1-safety-net` |
+| P2 â€” Server-verified rewards | Lesson-completion endpoint, server re-grade, append-only events, `attemptId` idempotency, signed-in save UI | **Done** â€” `4f514ad`, branch `phase/2-server-rewards` |
 | P3 - Onboarding + path | Onboarding flow, course switcher, unit guidebook, review/chest/checkpoint path nodes, continue button | **Done** - branch `phase/3-onboarding-path` |
 | P4 - Content pipeline | Schema additions, validator rules, importer, one 5x5 draft pilot course, Studio draft badges | **Done** - branch `phase/4-content-pipeline` |
 | P5 - Practice hub | Leitner SRS 1/2/4/8/16 with read-time SM-2 migration, `/practice` hub, due/trouble/unit practice modes, practice-only sessions | **Done** - branch `phase/5-practice-hub` |
@@ -38,15 +45,15 @@ durable choices live in [`DECISIONS.md`](./DECISIONS.md).
 | P9 - Mobile parity | Account + sync, path, lesson, practice, quests, motion layer | **Done** - `phase/9-mobile-parity` |
 | P10 - Stories + conversation | Honest unavailable/coming-soon states, optional AI endpoint | **Done** - `phase/10-stories-conversation` |
 | P11 - Hardening | Accessibility, reduced motion, offline/error states | **Done** - `phase/11-hardening` |
-| P12 - Mobile parity hardening + Stitch design | Jest harness fix, shared mobile exercise layer, server/local save split, shop cosmetics validation, Stitch tactile design pass | **Done — merged via PR #4** — `2d22c69`, branch `next/M1` |
-| P13 - Security boundary + curriculum audit | Public profiles event-derived, verified-vs-device account display, API-boundary E2E, 10 defective exercises removed, validator upgrade, Android QA package, hosting/LICENSE packages, review package export | **Done — merged via PR #4** — `07b01cd` (API/web boundary) + `05d2adb` (review package) + `53ab85e` (Android QA + decision docs), branch `next/M1` |
-| P14 - Curriculum self-audit (deterministic) | `scripts/audit-content.mjs` deterministic audit → `review/audit-ledger.json`; hi pilot (20 items) documented; validator strengthened; **zero source corrections, zero native approvals** | **Done — merged via PR #4** — `05d2adb`, branch `next/M1` |
-| P15 - AI linguistic review | `scripts/ai-review-content.mjs` — all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done — merged via PR #4** — `05d2adb`, branch `next/M1` |
-| P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done — merged via PR #4** — `07b01cd` (core/API/web) + `2d22c69` (mobile) + `53ab85e` (parity matrix, release-ops doc), branch `next/M1` |
-| P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done — merged via PR #4** — `07b01cd`, branch `next/M1` |
-| P18 - Closure: league performance + handoff docs | League profile batching (`social.ts`), CHANGELOG performance entry, full docs refresh (merge state, verification counts, D76–D78) | **Done — merged via PR #5** — `d5d6a74` + `5e3c999`, branch `next/M2` |
+| P12 - Mobile parity hardening + Stitch design | Jest harness fix, shared mobile exercise layer, server/local save split, shop cosmetics validation, Stitch tactile design pass | **Done â€” merged via PR #4** â€” `2d22c69`, branch `next/M1` |
+| P13 - Security boundary + curriculum audit | Public profiles event-derived, verified-vs-device account display, API-boundary E2E, 10 defective exercises removed, validator upgrade, Android QA package, hosting/LICENSE packages, review package export | **Done â€” merged via PR #4** â€” `07b01cd` (API/web boundary) + `05d2adb` (review package) + `53ab85e` (Android QA + decision docs), branch `next/M1` |
+| P14 - Curriculum self-audit (deterministic) | `scripts/audit-content.mjs` deterministic audit â†’ `review/audit-ledger.json`; hi pilot (20 items) documented; validator strengthened; **zero source corrections, zero native approvals** | **Done â€” merged via PR #4** â€” `05d2adb`, branch `next/M1` |
+| P15 - AI linguistic review | `scripts/ai-review-content.mjs` â€” all 305 items reviewed by AI across 10 locales; 3 kn items corrected (Tamil vowel in Kannada word); no other changes; audio decision analysis; still draft | **Done â€” merged via PR #4** â€” `05d2adb`, branch `next/M1` |
+| P16 - Release hardening | Missing-audio exclusion (`eligibleExercises`), mobile coverage matrix, Android QA handoff refreshed, release-operations checklist, docs/tests reconciled | **Done â€” merged via PR #4** â€” `07b01cd` (core/API/web) + `2d22c69` (mobile) + `53ab85e` (parity matrix, release-ops doc), branch `next/M1` |
+| P17 - First-completion reward integrity | Durable per-learner/lesson completion reward, replay-safe XP and lesson gem, transactional claim, reward-derived profiles/leagues/quests, non-destructive backfill, API-boundary + UI replay tests | **Done â€” merged via PR #4** â€” `07b01cd`, branch `next/M1` |
+| P18 - Closure: league performance + handoff docs | League profile batching (`social.ts`), CHANGELOG performance entry, full docs refresh (merge state, verification counts, D76â€“D78) | **Done â€” merged via PR #5** â€” `d5d6a74` + `5e3c999`, branch `next/M2` |
 
-P12–P18 work is merged into `main` via PR #4 (`e5a06c2`) and PR #5 (`82f0f3c`); the branch names in the table record where each phase was originally committed.
+P12â€“P18 work is merged into `main` via PR #4 (`e5a06c2`) and PR #5 (`82f0f3c`); the branch names in the table record where each phase was originally committed.
 
 
 ## What P12 changed
@@ -83,7 +90,7 @@ P12–P18 work is merged into `main` via PR #4 (`e5a06c2`) and PR #5 (`82f0f3c`)
   web guidebook route imports them instead of its local copy.
 - **Mobile unit guidebook.** `/guidebook/[courseId]/[unitIndex]` renders the words and
   phrases straight from the unit's exercises (pair boards split into members, identical
-  targets deduped) plus a lesson plan. Every unit banner on the path gets a "📖 Guidebook"
+  targets deduped) plus a lesson plan. Every unit banner on the path gets a "ðŸ“– Guidebook"
   button. Mobile tests cover rendering, dedup/no-cross-unit leakage, invalid index, and
   load failure.
 - **Stitch design layer.** `components/Tactile.tsx` carries the extruded slab button,
@@ -106,7 +113,7 @@ Run from the repo root on 2026-11-16:
 | `pnpm test` | 101 core + 11 content (Vitest), 54 mobile (Jest, 13 suites) |
 | `pnpm build` | 5/5 Turbo tasks; mobile web export bundles 16 static routes |
 | `pnpm e2e` | 102 Playwright checks pass; zero console/page errors |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 
 Mobile: no device/emulator screenshots taken in this cycle. The release APK was not relaunched.
 
@@ -114,7 +121,7 @@ Mobile: no device/emulator screenshots taken in this cycle. The release APK was 
 
 - **Public profile stats are event-derived.** `profileWithStats` now sums
   `lesson_events` for lifetime XP, counts distinct attemptIds for lessons, and
-  computes the streak from `historyFromLessonEvents` + `computeStreak` — never
+  computes the streak from `historyFromLessonEvents` + `computeStreak` â€” never
   from the client-editable snapshot. A forged `PUT /api/progress` can no longer
   inflate what other learners see. This was the largest open integrity gap.
 - **Own accounts show verified events first.** Web `AccountPanel` and mobile
@@ -138,7 +145,7 @@ Mobile: no device/emulator screenshots taken in this cycle. The release APK was 
   on listenChoose `audioUrl` (warning if empty, error if unusable), and the
   scaffold had the same bug fixed.
 - **Review package exported.** `node scripts/export-review.mjs` writes
-  `review/review-package.json`, per-locale CSVs, and `review/REVIEW.md` —
+  `review/review-package.json`, per-locale CSVs, and `review/REVIEW.md` â€”
   305 items, all fields preserved, decisions/notes/reviewer left empty. No
   review claim exists.
 - **Android environment honestly recorded.** adb works; no attached devices,
@@ -147,7 +154,7 @@ Mobile: no device/emulator screenshots taken in this cycle. The release APK was 
   verification is claimed. Sixteen static mobile routes export cleanly.
 - **Hosting + LICENSE decision packages** at
   `docs/decisions/2026-11-16-hosting-and-database.md` and
-  `docs/decisions/2026-11-16-license.md` — recommendations, no spend, both
+  `docs/decisions/2026-11-16-license.md` â€” recommendations, no spend, both
   blocked on owner authorization.
 - **Mobile endpoints release-configurable.** `lib/api.ts` reads
   `apiUrl`/`webOrigin` from `app.json extra` (defaults localhost); mobile
@@ -168,15 +175,15 @@ Run from the repo root on 2026-11-16:
 | `pnpm test` | 101 core + 15 content (Vitest), 55 mobile (Jest, 13 suites) |
 | `pnpm build` | 5/5 Turbo tasks; web + mobile bundles rebuilt (dist 305 exercises; 16 mobile routes) |
 | `pnpm e2e` | 116 Playwright checks pass; zero console/page errors |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 | `node scripts/export-review.mjs` | 305 items across 10 locales; 0 marked reviewed |
 
-No native-speaker review exists. (No Android device verification existed at the time of this 2026-11-16 snapshot; superseded 2026-11-17 by M1 — see "M1 — Android render verification" below.)
+No native-speaker review exists. (No Android device verification existed at the time of this 2026-11-16 snapshot; superseded 2026-11-17 by M1 â€” see "M1 â€” Android render verification" below.)
 
 ## What P14 changed
 
 - **Deterministic structural audit** runs across all 305 exercises via
-  `scripts/audit-content.mjs` → `review/audit-ledger.json`. Rules R-001..R-008
+  `scripts/audit-content.mjs` â†’ `review/audit-ledger.json`. Rules R-001..R-008
   (bounds, duplicates, normalization, invisible chars, listenChoose `audioUrl`,
   locale-script consistency) are deterministic; R-010 is an AI-assisted
   low-confidence consistency heuristic for the same prompt with different
@@ -187,14 +194,14 @@ No native-speaker review exists. (No Android device verification existed at the 
   two spellings of "Sorry" in Hindi across starters/pilot); **293 match no rule**.
 - **Zero source corrections applied.** Every finding is a proposal for a human
   Hindi/Bharat-locale reviewer; the ledger marks every item `humanStatus:
-  unreviewed` — no automated pass implies approval.
+  unreviewed` â€” no automated pass implies approval.
 - **Audit pilot (hi)** documented in `review/audit-pilot-hi.md`: 20 items,
   18 clean / 1 blocked / 1 flagged, calibration notes, false-positive analysis.
 - **Validator strengthened** (`packages/content/src/index.ts`): duplicate
   option strings hardened, `answerIndex` bounds check added (schema only bounds
-  `≥0`; out-of-bounds now errors), +1 content test. Content suite: 16 tests.
+  `â‰¥0`; out-of-bounds now errors), +1 content test. Content suite: 16 tests.
 - **Review package extended honestly.** `REVIEW.md` now carries a dynamic
-  "Automated audit evidence" section computed from the ledger — never presented
+  "Automated audit evidence" section computed from the ledger â€” never presented
   as approval. `audit-ledger.json` is the machine-readable per-item record with
   content hashes.
 - **Traceability proved**: 305 dist exercises = 305 ledger items = 305 CSV rows.
@@ -210,10 +217,10 @@ Run from the repo root on 2026-11-16:
 | `pnpm test` | 101 core + 16 content (Vitest), 55 mobile (Jest, 13 suites) |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm e2e` | 116 Playwright checks pass |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 | `node scripts/audit-content.mjs` | 305 items ledgered; 0 structural defects; 10 blocked (audio); 2 flagged R-010; 293 no_issue_detected; 0 native approvals |
 | `node scripts/export-review.mjs` | 305 items across 10 locales; `REVIEW.md` audit section computed from the ledger |
-| Dist ↔ ledger ↔ CSV cross-check | 305 = 305 = 305, zero missing/extra |
+| Dist â†” ledger â†” CSV cross-check | 305 = 305 = 305, zero missing/extra |
 
 No source corrections were made in P14; the content set is unchanged.
 
@@ -224,11 +231,11 @@ Run from the repo root:
 | Command | Result |
 | --- | --- |
 | `pnpm typecheck` | 6/6 Turbo tasks (5 package typechecks + dependency builds) |
-| `pnpm test` | 84 tests — 73 core + 11 content (255 exercises graded) |
+| `pnpm test` | 84 tests â€” 73 core + 11 content (255 exercises graded) |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm lint` | Passes; one intentional `<img>` warning in the lesson player |
 | `pnpm e2e` | 62 Playwright checks across routes, onboarding, rewards, and practice |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 
 Visual evidence: 38 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P5 added the practice hub and the three practice summaries at
@@ -305,7 +312,7 @@ Run from the repo root:
 | `pnpm test` | 95 core + 11 content tests |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm e2e` | 96 Playwright checks (web) |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 
 Mobile: `pnpm --filter @speeko/mobile typecheck` and `build` pass. Mobile e2e is not yet automated.
 
@@ -319,7 +326,7 @@ Run from the repo root:
 | `pnpm test` | 95 core + 11 content tests |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm e2e` | 92 Playwright checks across routes, onboarding, rewards, practice, habits, shop, and social |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 
 Visual evidence: 48 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P8 added `/leagues` and `/people` route screenshots at both viewports.
@@ -334,7 +341,7 @@ Run from the repo root:
 | `pnpm test` | 95 core + 11 content tests |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm e2e` | 86 Playwright checks across routes, onboarding, rewards, practice, habits, and shop |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 
 Visual evidence: 44 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P7 added the `/shop` route screenshot at both viewports.
@@ -349,7 +356,7 @@ Run from the repo root:
 | `pnpm test` | 95 core + 11 content tests; 17 habits tests added |
 | `pnpm build` | 5/5 Turbo tasks |
 | `pnpm e2e` | 74 Playwright checks across routes, onboarding, rewards, practice, and habits |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 
 Visual evidence: 42 screenshots in [`docs/qa/`](./qa/), plus desktop and mobile
 contact sheets. P6 added the `/habits` route plus guest, signed-in, and goal-picker
@@ -373,7 +380,7 @@ screenshots at both viewports.
   XP amount. Answers still update the SRS schedule; finished sessions sync
   through the existing snapshot layer.
 - **Coverage.** Six core practice-planning tests, Leitner/migration tests, and
-  twelve Playwright checks (six flows × two viewports): empty hub, populated
+  twelve Playwright checks (six flows Ã— two viewports): empty hub, populated
   counts and locks, due review, trouble words, unit practice, and locked-unit
   explanation. Each completion test asserts XP and completion records did not
   change.
@@ -443,18 +450,18 @@ screenshots at both viewports.
 
 ## What P15 changed
 
-- **AI-assisted linguistic review of all 305 items** via `scripts/ai-review-content.mjs` →
+- **AI-assisted linguistic review of all 305 items** via `scripts/ai-review-content.mjs` â†’
   `review/ai-linguistic-review.json` + `review/ai-linguistic-review.md`. Ten
   production-relevant checks (meaning, grammar, naturalness, orthography,
   transliteration, vocabulary, ambiguity, exercise correctness, consistency,
   pedagogy) applied per item; every entry keeps its stable ID and content hash.
 - **One logical defect corrected in the source in three places**: the Kannada
-  word for five (ಐದು) was written with the Tamil vowel U+0B90 in
+  word for five (à²à²¦à³) was written with the Tamil vowel U+0B90 in
   `kn-starter-u2-l1-e2` (options), `kn-starter-u2-l2-e1` (options), and
   `kn-starter-u2-l2-e2` (the answer key). All three are now U+0C90; source and
   bundle rebuilt and re-scanned; web `public/courses` re-synced.
 - **No other words changed.** hi "Sorry" keeps both attested spellings
-  (`माफ़ कीजिये` in starters, `माफ कीजिए` in hi-pilot); recorded for reviewers,
+  (`à¤®à¤¾à¤«à¤¼ à¤•à¥€à¤œà¤¿à¤¯à¥‡` in starters, `à¤®à¤¾à¤« à¤•à¥€à¤œà¤¿à¤` in hi-pilot); recorded for reviewers,
   deliberately not "unified". Transliteration absence in hi-starter recorded as
   a proposal only, no content authored.
 - **Audio decision documented** in `review/audio-decision-analysis.md`: local
@@ -490,7 +497,7 @@ screenshots at both viewports.
   missing-audio). Verified findings: the curriculum contains only 4 kinds
   (`chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose`
   10); mobile supports every curriculum kind that is playable; onboarding is
-  genuinely absent on mobile (welcome → learn), while account creation is
+  genuinely absent on mobile (welcome â†’ learn), while account creation is
   reachable from the Account tab; extra unsupported kinds fail closed but do
   not occur in any shipped lesson.
 - **Android handoff refreshed.** Re-checked the environment: no AVDs, no system
@@ -501,9 +508,9 @@ screenshots at both viewports.
 - **Release operations checklist.** `docs/decisions/2026-11-16-release-and-operations.md`
   prepares GO/NO-GO gates, env/secrets, migrations, backup+restore, rollback,
   rate limits, logging, and post-deploy smoke tests. Nothing was provisioned.
-- **Verification after edits:** `pnpm verify` green — typecheck 6/6, **107
+- **Verification after edits:** `pnpm verify` green â€” typecheck 6/6, **107
   core + 16 content + 56 mobile (13 suites)** tests, build 5/5, **116/116
-  Playwright checks** at 1280×800 and 390×844. Exact commands: `pnpm typecheck`,
+  Playwright checks** at 1280Ã—800 and 390Ã—844. Exact commands: `pnpm typecheck`,
   `pnpm test`, `pnpm build`, `pnpm e2e` (via `pnpm verify`), all exit 0.
 
 ## What P17 changed
@@ -511,8 +518,8 @@ screenshots at both viewports.
 - **One-time completion reward ledger.** New table `lesson_completion_rewards`
   (`id`, `user_id`, `course_id`, `lesson_id`, `attempt_id`, `xp`, `created_at`)
   with a unique `(user_id, course_id, lesson_id)` index. The first passing
-  attempt for a lesson owns the reward; any later attempt — including one with a
-  fresh `attemptId` — is practice. Migration `0005_lesson_completion_rewards.sql`
+  attempt for a lesson owns the reward; any later attempt â€” including one with a
+  fresh `attemptId` â€” is practice. Migration `0005_lesson_completion_rewards.sql`
   is registered in the Drizzle journal.
 - **Replay-safe completion endpoint.** `POST /api/lesson-completions` inserts the
   attempt, claims the unique reward row, sets the event's `xpEarned` to the
@@ -536,8 +543,8 @@ screenshots at both viewports.
   balances, and existing events are neither deleted nor rewritten. Guest progress
   snapshots remain display/import-only and cannot claim or deny a reward.
   Historical lesson counts intentionally become unique completed lessons.
-- **Replay UI is honest.** Web and mobile summaries show “Practice complete!” and
-  “Lesson saved — practice only, no new completion XP.” for an unrewarded
+- **Replay UI is honest.** Web and mobile summaries show â€œPractice complete!â€ and
+  â€œLesson saved â€” practice only, no new completion XP.â€ for an unrewarded
   completion. A first completion still shows the saved XP and gem reward.
 - **Tests.** New `tests/e2e/reward-integrity.spec.ts` (7 API/UI checks per
   viewport) covers first/replay, a second distinct lesson, same-attempt retry,
@@ -561,16 +568,16 @@ Run from the repo root on 2026-11-17:
 | `pnpm typecheck` | 6/6 Turbo tasks |
 | `pnpm test` | 108 core + 16 content (Vitest), 56 mobile (Jest, 13 suites) |
 | `pnpm build` | 5/5 Turbo tasks; web + API + 16-route mobile export |
-| `pnpm e2e` | 130 Playwright checks pass (65 tests × 2 viewports); zero console/page errors |
-| `pnpm verify` | typecheck → test → build → e2e, all green |
+| `pnpm e2e` | 130 Playwright checks pass (65 tests Ã— 2 viewports); zero console/page errors |
+| `pnpm verify` | typecheck â†’ test â†’ build â†’ e2e, all green |
 
 Migration 0005: fresh-database apply and populated pre-0005 backfill both
 verified; no historical events or gem balances were modified. No native-speaker review
 exists. (No Android device verification existed at the time of this 2026-11-17 P17
-snapshot; superseded later the same day by M1 — see "M1 — Android render verification"
+snapshot; superseded later the same day by M1 â€” see "M1 â€” Android render verification"
 below.)
 
-## Phase I — Reward ledger temporal integrity audit
+## Phase I â€” Reward ledger temporal integrity audit
 
 - **Read-only trace.** Sources: `lesson_events` (attempt history, streak/activity/SRS), `lesson_completion_rewards` (lifetime XP/lessons, weekly league, quest gems), `gem_ledger` (balances), progress snapshots (preferences/guest import). Weekly league filters `lesson_completion_rewards.created_at >= weekStart`; quest gems derive from reward history; habits use events for activity and rewards for quests.
 - **Temporal finding.** For a lesson completed more than once, the migration aggregates all historical event XP into one reward row stamped with the first attempt's timestamp. Consequently the later attempt's week no longer receives that XP under the weekly league query. This is a real change in historical weekly attribution, but it follows the one-time reward policy (D74/D75): a replay earns no reward, so its week cannot keep the XP. Preserving the old weekly distribution would require either counting replay XP (violating D74) or a separate historical attribution source (splitting the source of truth). That conflict is documented here rather than resolved by silently changing the economy.
@@ -612,30 +619,30 @@ These are product gaps, not regressions. Details and evidence are in
   curriculum item.
 - **Stories and conversation** ship as honest unavailable/coming-soon states on web;
   they are not on mobile.
-- **Mobile has onboarding** (`/onboarding/language` → motivation → level → daily goal → commitment; 6 taps to the first lesson); render evidence from M1 is the uiautomator
+- **Mobile has onboarding** (`/onboarding/language` â†’ motivation â†’ level â†’ daily goal â†’ commitment; 6 taps to the first lesson); render evidence from M1 is the uiautomator
   dump (`docs/qa/mobile/learn-screen-ui-dump.xml`). Full
   on-device functional QA has not been performed; it is waived for the internal alpha (D78).
 
-## M1 — Android render verification (2026-11-17)
+## M1 â€” Android render verification (2026-11-17)
 
-- **Branch:** `next/M1`, based on `de57065`. P12–P17 are committed on this branch
+- **Branch:** `next/M1`, based on `de57065`. P12â€“P17 are committed on this branch
   (`07b01cd`, `2d22c69`, `05d2adb`, `53ab85e`).
 - **Device:** Vivo V2336 (`10BE2A1B5Q00054`), Android 16.
 - **Debug render: PASS.** `./gradlew assembleDebug` built; `adb install -r`; the app
   launched against Metro (port 8081; the dev server was started with
-  `EXPO_NO_METRO_WORKSPACE_ROOT=1` exported) and rendered the learn screen —
-  `speeko`, `Ten Indian languages · draft review`, `Learn`, `Bengali`,
-  `8 lessons · 23 exercises · A1`, `0 of 8 lessons complete`, `All courses`.
+  `EXPO_NO_METRO_WORKSPACE_ROOT=1` exported) and rendered the learn screen â€”
+  `speeko`, `Ten Indian languages Â· draft review`, `Learn`, `Bengali`,
+  `8 lessons Â· 23 exercises Â· A1`, `0 of 8 lessons complete`, `All courses`.
   Evidence: `docs/qa/mobile/learn-screen-ui-dump.xml` (intact `adb pull` dump from the
   passing session). All four screencap PNGs from 2026-11-17 were transcoded to UTF-16LE
   by PowerShell redirection and are corrupt; they are rejected and live in
-  `docs/qa/rejected-captures/` — no screenshot evidence exists (see its README).
+  `docs/qa/rejected-captures/` â€” no screenshot evidence exists (see its README).
 - **Release render: verified on device (2026-11-17).** Release APK cold-starts to the
   **learn screen** (~2 s after launch; `release-cold-start-learn-dump.xml` +
   `release-cold-start-learn.png`) with the same key text as the debug fresh-guest dump.
   Loads the bundle, fetches server-fed content (course list, lesson nodes, guidebook),
-  navigates (path → lesson → guidebook), and logs no fatal/hermes errors for the app.
-  On-device APK hash matches the build (`36A5D41D…`). The phone was in active use during
+  navigates (path â†’ lesson â†’ guidebook), and logs no fatal/hermes errors for the app.
+  On-device APK hash matches the build (`36A5D41Dâ€¦`). The phone was in active use during
   capture; see `release-build.md` for the attribution notes. Loopback-only cleartext for
   QA builds now ships as a committed, QA-gated config plugin
   (`apps/mobile/plugins/withQaLoopbackCleartext.js`; no-op unless
@@ -651,22 +658,22 @@ These are product gaps, not regressions. Details and evidence are in
   `content/dist` (`/api/courses` was 500).
 - **Regression coverage:** root-layout Jest render test in
   `apps/mobile/__tests__/root-layout.test.tsx` (passing). It only proves the layout
-  module executes under Jest — it does not demonstrate a device render; the device
+  module executes under Jest â€” it does not demonstrate a device render; the device
   evidence is `docs/qa/mobile/learn-screen-ui-dump.xml`.
 - **Not verified on device:** sign-up/sign-in, completing a lesson,
   cross-device progress sync, shop, habits, sign-out. The owner waived the
   functional pass for the internal alpha (D78); headless coverage exists instead.
   See `docs/NEXT.md` for commands and raw output.
-- **Commit map (fix → commit):**
-  - Metro `unstable_conditionNames = ['require']` → `2d22c69`
-  - `expo-linking` dependency added → `2d22c69`
-  - API `CONTENT_DIR` repointed to repo-root `content/dist` → `2d22c69`
+- **Commit map (fix â†’ commit):**
+  - Metro `unstable_conditionNames = ['require']` â†’ `2d22c69`
+  - `expo-linking` dependency added â†’ `2d22c69`
+  - API `CONTENT_DIR` repointed to repo-root `content/dist` â†’ `2d22c69`
   - Metro workspace-root pinning (`process.env.EXPO_NO_METRO_WORKSPACE_ROOT` before
-    `require('@expo/metro-config')`) → `12c8044` (message under-describes the commit;
+    `require('@expo/metro-config')`) â†’ `12c8044` (message under-describes the commit;
     do not rewrite pushed history)
-  - e2e screenshot output moved to gitignored `test-results/screenshots/<project>/` →
+  - e2e screenshot output moved to gitignored `test-results/screenshots/<project>/` â†’
     `12c8044`
-  - Release-build evidence, rejected captures, APK reproducibility check, doc fixes →
+  - Release-build evidence, rejected captures, APK reproducibility check, doc fixes â†’
     `ea95aee`, `12c8044`, `47f8bfd`, `73ebfff`
 
 ## Re-running the safety net
@@ -685,6 +692,6 @@ because Playwright starts the production web server and the compiled API.
 The shared e2e API runs with the rate limiter disabled because every spec calls
 it from the same localhost IP; `tests/e2e/rate-limit.spec.ts` instead starts its
 own API process on a free port with the limiter forced on and a throwaway PGlite
-data directory, so the 429 contract is still verified. E2E accounts — including
-the M2 sign-in account — are created through the real sign-up endpoint during the
+data directory, so the 429 contract is still verified. E2E accounts â€” including
+the M2 sign-in account â€” are created through the real sign-up endpoint during the
 run; no QA credentials are stored in the repository or CI configuration.

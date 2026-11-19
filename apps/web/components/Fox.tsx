@@ -30,6 +30,8 @@ export interface FoxProps {
   title?: string;
   riveSrc?: string;
   accessory?: 'scarf' | 'hat' | 'glasses' | null;
+  /** Animate the mouth while a mascot voice line plays. */
+  speaking?: boolean;
 }
 
 const MOOD_LABEL: Record<FoxMood, string> = {
@@ -43,8 +45,21 @@ const MOOD_LABEL: Record<FoxMood, string> = {
  * Speeko, the original mascot. Drawn as inline SVG so expressions and motion
  * stay lightweight; a Rive rig can replace this later without touching the
  * surrounding UI.
+ *
+ * Motion is intentionally layered: the whole fox breathes, the head bobs a
+ * beat behind, the tail wags on its own, and the arms answer the mood. Happy
+ * gets a single hop, celebrate gets a dance loop, and sad folds the ears and
+ * drops the arms. Every animation is disabled by the global reduced-motion
+ * rule in globals.css.
  */
-export function Fox({ mood = 'idle', className, title, riveSrc, accessory = null }: FoxProps) {
+export function Fox({
+  mood = 'idle',
+  className,
+  title,
+  riveSrc,
+  accessory = null,
+  speaking = false,
+}: FoxProps) {
   const resolvedRiveSrc = riveSrc ?? process.env.NEXT_PUBLIC_RIVE_FOX_URL;
   const [riveAvailable, setRiveAvailable] = useState(false);
 
@@ -77,15 +92,42 @@ export function Fox({ mood = 'idle', className, title, riveSrc, accessory = null
 
   const leftEarStyle: CSSProperties = {
     transformOrigin: '76px 74px',
-    transform: sad ? 'rotate(13deg)' : happy ? 'rotate(-4deg)' : undefined,
+    transform: sad ? 'rotate(13deg)' : happy ? 'rotate(-5deg)' : undefined,
     transition: 'transform .3s ease',
   };
   const rightEarStyle: CSSProperties = {
     transformOrigin: '164px 74px',
-    transform: sad ? 'rotate(-13deg)' : happy ? 'rotate(4deg)' : undefined,
+    transform: sad ? 'rotate(-13deg)' : happy ? 'rotate(5deg)' : undefined,
     transition: 'transform .3s ease',
   };
   const tailStyle: CSSProperties = { transformOrigin: '156px 194px' };
+  const headStyle: CSSProperties = {
+    transformOrigin: '120px 150px',
+  };
+
+  const armBase: CSSProperties = { transition: 'transform .35s ease' };
+  const leftArmStyle: CSSProperties = {
+    ...armBase,
+    transformBox: 'view-box',
+    transformOrigin: '84px 164px',
+    transform: sad ? 'rotate(10deg)' : happy ? 'rotate(104deg)' : undefined,
+  };
+  const rightArmStyle: CSSProperties = {
+    ...armBase,
+    transformBox: 'view-box',
+    transformOrigin: '156px 164px',
+    transform: sad ? 'rotate(-10deg)' : happy ? 'rotate(-104deg)' : undefined,
+  };
+  const leftArmClass = sad
+    ? undefined
+    : happy
+      ? 'animate-arm-wave'
+      : 'animate-arm-sway';
+  const rightArmClass = sad
+    ? undefined
+    : happy
+      ? 'animate-arm-wave-right'
+      : 'animate-arm-sway-right';
 
   return (
     <svg
@@ -107,176 +149,349 @@ export function Fox({ mood = 'idle', className, title, riveSrc, accessory = null
           <stop offset="0" stopColor="#ffd9bd" />
           <stop offset="1" stopColor="#fff6ea" />
         </linearGradient>
+        <radialGradient id="speeko-cheek" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#ff9d8a" stopOpacity="0.62" />
+          <stop offset="1" stopColor="#ff9d8a" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
-      <ellipse cx="120" cy="225" rx="68" ry="9" fill="#3b2a1f" opacity="0.09" />
+      <ellipse cx="120" cy="225" rx="66" ry="8.5" fill="#3b2a1f" opacity="0.09" />
 
-      <g style={tailStyle} className={sad ? undefined : 'animate-wag'}>
-        <path
-          d="M150 198c36 8 62-13 68-50 2-14 0-27-6-38-7 19-17 31-33 39-15 8-24 20-27 35Z"
-          fill="url(#speeko-fur)"
-          stroke="#a8420f"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M211 110c6 11 8 24 6 38-2 14-7 26-16 34 9-5 16-17 19-32 3-15 0-29-9-40Z"
-          fill="url(#speeko-tail-tip)"
-        />
-      </g>
-
-      <ellipse
-        cx="120"
-        cy="181"
-        rx="52"
-        ry="43"
-        fill="url(#speeko-fur)"
-        stroke="#a8420f"
-        strokeWidth="3"
-      />
-      <ellipse cx="120" cy="190" rx="34" ry="28" fill="url(#speeko-belly)" />
-
-      <g style={leftEarStyle}>
-        <path
-          d="M54 83 66 23q2-7 9-2l25 35Z"
-          fill="url(#speeko-fur)"
-          stroke="#a8420f"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-        <path d="M69 69 76 39l16 20Z" fill="#ffc3a1" />
-      </g>
-      <g style={rightEarStyle}>
-        <path
-          d="M186 83 174 23q-2-7-9-2l-25 35Z"
-          fill="url(#speeko-fur)"
-          stroke="#a8420f"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-        <path d="M171 69 164 39l-16 20Z" fill="#ffc3a1" />
-      </g>
-
-      <ellipse
-        cx="120"
-        cy="108"
-        rx="66"
-        ry="58"
-        fill="url(#speeko-fur)"
-        stroke="#a8420f"
-        strokeWidth="3"
-      />
-
-      <path d="M78 150c13 10 27 15 42 15s29-5 42-15l7 21c-15 10-31 15-49 15s-34-5-49-15Z" fill="#37b02c" />
-      <path d="M78 150c13 10 27 15 42 15s29-5 42-15l2 6c-14 10-28 15-44 15s-30-5-44-15Z" fill="#58c94d" />
-      <circle cx="120" cy="171" r="8.5" fill="#269020" />
-      <circle cx="117.5" cy="168.5" r="2.4" fill="#8add7f" />
-
-      <ellipse cx="120" cy="134" rx="39" ry="30" fill="url(#speeko-belly)" />
-
-      {celebrate ? (
-        <>
-          <circle cx="76" cy="124" r="9" fill="#ff9d8a" opacity="0.55" />
-          <circle cx="164" cy="124" r="9" fill="#ff9d8a" opacity="0.55" />
-        </>
-      ) : null}
-
-      {happy ? (
-        <>
-          <path
-            d="M85 103q11-14 22 0"
-            fill="none"
-            stroke="#2d1f18"
-            strokeWidth="5"
-            strokeLinecap="round"
+      <g
+        className={
+          celebrate
+            ? 'animate-fox-dance'
+            : happy
+              ? 'animate-fox-hop'
+              : sad
+                ? undefined
+                : 'animate-fox-breathe'
+        }
+        style={{ transformBox: 'view-box', transformOrigin: '120px 224px' }}
+      >
+        {/* Feet sit behind the body so only the toes peek out. */}
+        <g className={celebrate ? 'animate-toe-tap' : undefined}>
+          <ellipse
+            cx="98"
+            cy="218"
+            rx="18"
+            ry="11"
+            fill="url(#speeko-fur)"
+            stroke="#a8420f"
+            strokeWidth="3"
           />
           <path
-            d="M133 103q11-14 22 0"
-            fill="none"
-            stroke="#2d1f18"
-            strokeWidth="5"
+            d="M87 219h7M96 221h7M105 219h6"
+            stroke="#a8420f"
+            strokeWidth="2.2"
             strokeLinecap="round"
+            opacity="0.55"
           />
-        </>
-      ) : (
-        <>
-          <ellipse cx="96" cy="101" rx="8.5" ry="10.5" fill="#2d1f18" />
-          <ellipse cx="144" cy="101" rx="8.5" ry="10.5" fill="#2d1f18" />
-          <circle cx="99" cy="97.5" r="2.7" fill="#fff8ee" />
-          <circle cx="147" cy="97.5" r="2.7" fill="#fff8ee" />
-          {sad ? (
-            <>
-              <path
-                d="M84 86l21 7"
-                fill="none"
-                stroke="#8a3a12"
-                strokeWidth="3.4"
-                strokeLinecap="round"
-              />
-              <path
-                d="M156 86l-21 7"
-                fill="none"
-                stroke="#8a3a12"
-                strokeWidth="3.4"
-                strokeLinecap="round"
-              />
-            </>
-          ) : null}
-        </>
-      )}
-
-      <path d="M112 122h16l-8 10Z" fill="#3b2418" stroke="#3b2418" strokeWidth="2" strokeLinejoin="round" />
-      <circle cx="116" cy="124.5" r="1.8" fill="#fff8ee" opacity="0.7" />
-
-      {sad ? (
-        <path
-          d="M106 145q14-10 28 0"
-          fill="none"
-          stroke="#5c2a12"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
-      ) : happy ? (
-        <>
-          <path d="M101 133q19 26 38 0Z" fill="#6d2b16" stroke="#5c2a12" strokeWidth="2" strokeLinejoin="round" />
-          <path d="M110 148q10 9 20 0q-10 12-20 0Z" fill="#ff8f8f" />
-        </>
-      ) : (
-        <path
-          d="M106 137q14 10 28 0"
-          fill="none"
-          stroke="#5c2a12"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
-      )}
-      {accessory === 'scarf' ? (
-        <path
-          d="M78 150c13 10 27 15 42 15s29-5 42-15l3 9c-15 11-29 16-45 16s-30-5-45-16Z"
-          fill="#37b02c"
-          stroke="#269020"
-          strokeWidth="2.5"
-          strokeLinejoin="round"
-        />
-      ) : null}
-      {accessory === 'hat' ? (
-        <g>
+        </g>
+        <g className={celebrate ? 'animate-toe-tap-right' : undefined}>
+          <ellipse
+            cx="142"
+            cy="218"
+            rx="18"
+            ry="11"
+            fill="url(#speeko-fur)"
+            stroke="#a8420f"
+            strokeWidth="3"
+          />
           <path
-            d="M62 92h116l-18-34H80Z"
-            className="fill-gold-200 stroke-gold-700"
+            d="M129 219h6M138 221h7M147 219h7"
+            stroke="#a8420f"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            opacity="0.55"
+          />
+        </g>
+
+        <g style={tailStyle} className={sad ? undefined : 'animate-wag'}>
+          <path
+            d="M150 198c36 8 62-13 68-50 2-14 0-27-6-38-7 19-17 31-33 39-15 8-24 20-27 35Z"
+            fill="url(#speeko-fur)"
+            stroke="#a8420f"
             strokeWidth="3"
             strokeLinejoin="round"
           />
-          <circle cx="120" cy="58" r="8" className="fill-gold-700" />
+          <path
+            d="M211 110c6 11 8 24 6 38-2 14-7 26-16 34 9-5 16-17 19-32 3-15 0-29-9-40Z"
+            fill="url(#speeko-tail-tip)"
+          />
         </g>
-      ) : null}
-      {accessory === 'glasses' ? (
-        <g className="stroke-bark-800" strokeWidth="3" fill="none">
-          <circle cx="96" cy="101" r="16" />
-          <circle cx="144" cy="101" r="16" />
-          <path d="M112 101h16" />
+
+        <ellipse
+          cx="120"
+          cy="181"
+          rx="52"
+          ry="43"
+          fill="url(#speeko-fur)"
+          stroke="#a8420f"
+          strokeWidth="3"
+        />
+        <ellipse cx="120" cy="190" rx="34" ry="28" fill="url(#speeko-belly)" />
+
+        {/* Arms: a soft stroke for the limb and a round paw with toe lines. */}
+        <g style={leftArmStyle} className={leftArmClass}>
+          <path
+            d="M84 164c-9 9-16 19-19 30"
+            fill="none"
+            stroke="#a8420f"
+            strokeWidth="18"
+            strokeLinecap="round"
+            opacity="0.18"
+          />
+          <circle
+            cx="64"
+            cy="194"
+            r="10.5"
+            fill="url(#speeko-fur)"
+            stroke="#a8420f"
+            strokeWidth="3"
+          />
+          <path
+            d="M59 199h11"
+            stroke="#a8420f"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
         </g>
-      ) : null}
+        <g style={rightArmStyle} className={rightArmClass}>
+          <path
+            d="M156 164c9 9 16 19 19 30"
+            fill="none"
+            stroke="#a8420f"
+            strokeWidth="18"
+            strokeLinecap="round"
+            opacity="0.18"
+          />
+          <circle
+            cx="176"
+            cy="194"
+            r="10.5"
+            fill="url(#speeko-fur)"
+            stroke="#a8420f"
+            strokeWidth="3"
+          />
+          <path
+            d="M171 199h11"
+            stroke="#a8420f"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.5"
+          />
+        </g>
+
+        <g style={leftEarStyle}>
+          <path
+            d="M54 83 66 23q2-7 9-2l25 35Z"
+            fill="url(#speeko-fur)"
+            stroke="#a8420f"
+            strokeWidth="3"
+            strokeLinejoin="round"
+          />
+          <path d="M69 69 76 39l16 20Z" fill="#ffc3a1" />
+        </g>
+        <g style={rightEarStyle}>
+          <path
+            d="M186 83 174 23q-2-7-9-2l-25 35Z"
+            fill="url(#speeko-fur)"
+            stroke="#a8420f"
+            strokeWidth="3"
+            strokeLinejoin="round"
+          />
+          <path d="M171 69 164 39l-16 20Z" fill="#ffc3a1" />
+        </g>
+
+        <g
+          style={headStyle}
+          className={
+            celebrate ? 'animate-fox-head-dance' : happy ? 'animate-fox-head-bob' : undefined
+          }
+        >
+          <ellipse
+            cx="120"
+            cy="108"
+            rx="66"
+            ry="58"
+            fill="url(#speeko-fur)"
+            stroke="#a8420f"
+            strokeWidth="3"
+          />
+
+          <path
+            d="M78 150c13 10 27 15 42 15s29-5 42-15l7 21c-15 10-31 15-49 15s-34-5-49-15Z"
+            fill="#37b02c"
+          />
+          <path
+            d="M78 150c13 10 27 15 42 15s29-5 42-15l2 6c-14 10-28 15-44 15s-30-5-44-15Z"
+            fill="#58c94d"
+          />
+          <circle cx="120" cy="171" r="8.5" fill="#269020" />
+          <circle cx="117.5" cy="168.5" r="2.4" fill="#8add7f" />
+
+          <ellipse cx="120" cy="134" rx="39" ry="30" fill="url(#speeko-belly)" />
+
+          {happy ? (
+            <>
+              <circle cx="76" cy="124" r="15" fill="url(#speeko-cheek)" />
+              <circle cx="164" cy="124" r="15" fill="url(#speeko-cheek)" />
+            </>
+          ) : null}
+
+          {happy ? (
+            <>
+              <path
+                d="M85 103q11-14 22 0"
+                fill="none"
+                stroke="#2d1f18"
+                strokeWidth="5"
+                strokeLinecap="round"
+              />
+              <path
+                d="M133 103q11-14 22 0"
+                fill="none"
+                stroke="#2d1f18"
+                strokeWidth="5"
+                strokeLinecap="round"
+              />
+            </>
+          ) : (
+            <>
+              <ellipse cx="96" cy="101" rx="8.5" ry="10.5" fill="#2d1f18" />
+              <ellipse cx="144" cy="101" rx="8.5" ry="10.5" fill="#2d1f18" />
+              <circle cx="99" cy="97.5" r="2.7" fill="#fff8ee" />
+              <circle cx="147" cy="97.5" r="2.7" fill="#fff8ee" />
+              {!sad ? (
+                <>
+                  <g
+                    className="animate-blink"
+                    style={{ transformBox: 'view-box', transformOrigin: '96px 91px' }}
+                  >
+                    <ellipse cx="96" cy="101" rx="9" ry="10.8" fill="url(#speeko-fur)" />
+                  </g>
+                  <g
+                    className="animate-blink"
+                    style={{ transformBox: 'view-box', transformOrigin: '144px 91px' }}
+                  >
+                    <ellipse cx="144" cy="101" rx="9" ry="10.8" fill="url(#speeko-fur)" />
+                  </g>
+                </>
+              ) : null}
+              {sad ? (
+                <>
+                  <path
+                    d="M84 86l21 7"
+                    fill="none"
+                    stroke="#8a3a12"
+                    strokeWidth="3.4"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M156 86l-21 7"
+                    fill="none"
+                    stroke="#8a3a12"
+                    strokeWidth="3.4"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M87 118q9 6 18 2"
+                    fill="none"
+                    stroke="#3b82b8"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                </>
+              ) : null}
+            </>
+          )}
+
+          <path
+            d="M112 122h16l-8 10Z"
+            fill="#3b2418"
+            stroke="#3b2418"
+            strokeWidth="2"
+            strokeLinejoin="round"
+          />
+          <circle cx="116" cy="124.5" r="1.8" fill="#fff8ee" opacity="0.7" />
+
+          <g
+            className={speaking ? 'animate-talk' : undefined}
+            style={{ transformBox: 'view-box', transformOrigin: '120px 138px' }}
+          >
+            {sad ? (
+              <path
+                d="M106 145q14-10 28 0"
+                fill="none"
+                stroke="#5c2a12"
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
+            ) : happy ? (
+              <>
+                <path
+                  d="M101 133q19 26 38 0Z"
+                  fill="#6d2b16"
+                  stroke="#5c2a12"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+                <path d="M110 148q10 9 20 0q-10 12-20 0Z" fill="#ff8f8f" />
+              </>
+            ) : (
+              <>
+                <path
+                  d="M106 137q14 10 28 0"
+                  fill="#6d2b16"
+                  stroke="#5c2a12"
+                  strokeWidth="3.5"
+                  strokeLinejoin="round"
+                />
+                <path d="M111 146q9 6 18 0q-9 9-18 0Z" fill="#ff8f8f" opacity="0.85" />
+              </>
+            )}
+          </g>
+
+          {accessory === 'scarf' ? (
+            <path
+              d="M78 150c13 10 27 15 42 15s29-5 42-15l3 9c-15 11-29 16-45 16s-30-5-45-16Z"
+              fill="#37b02c"
+              stroke="#269020"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+          ) : null}
+          {accessory === 'hat' ? (
+            <g>
+              <path
+                d="M62 92h116l-18-34H80Z"
+                className="fill-gold-200 stroke-gold-700"
+                strokeWidth="3"
+                strokeLinejoin="round"
+              />
+              <circle cx="120" cy="58" r="8" className="fill-gold-700" />
+            </g>
+          ) : null}
+          {accessory === 'glasses' ? (
+            <g className="stroke-bark-800" strokeWidth="3" fill="none">
+              <circle cx="96" cy="101" r="16" />
+              <circle cx="144" cy="101" r="16" />
+              <path d="M112 101h16" />
+            </g>
+          ) : null}
+        </g>
+
+        {celebrate ? (
+          <g aria-hidden="true" className="animate-sparkle">
+            <path d="M38 96l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z" fill="#ffd66b" />
+            <path d="M204 128l2.4 5.6 5.6 2.4-5.6 2.4-2.4 5.6-2.4-5.6-5.6-2.4 5.6-2.4Z" fill="#8add7f" />
+            <circle cx="50" cy="150" r="3.4" fill="#ff9d8a" />
+            <circle cx="196" cy="82" r="3" fill="#9ccdf4" />
+          </g>
+        ) : null}
+      </g>
     </svg>
   );
 }

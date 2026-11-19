@@ -5,17 +5,17 @@ working tree. It distinguishes what is **implemented and verified**, what is
 **partial**, and what is **missing or unverified**. Nothing here is claimed as
 reviewed, published, launched, or hardware-tested unless it says so.
 
-**Snapshot date:** 2026-11-16, updated 2026-11-18
-**Branch state:** `main` is `82f0f3c` — PR #4 (M2/M4, CI, e2e isolation) and PR #5 (league profile batching, handoff docs) are merged. Nothing is published to a store.
+**Snapshot date:** 2026-11-19, uncommitted working-tree snapshot, based on `main` at `5762c09`
+**Branch state:** `main` remains `5762c09`; the 2026-11-19 polish/hardening work recorded here is uncommitted in this working tree. Nothing is published to a store.
 
 ## Verification baseline (this cycle, from the repo root)
 
 | Command | Result |
 | --- | --- |
 | `pnpm typecheck` | **6/6 Turbo tasks** successful (5 package typechecks + `^build`) |
-| `pnpm test` | **217 unit tests** — 108 core + 16 content (Vitest), 12 API (Vitest), and 81 mobile (Jest, 16 suites). All pass. |
+| `pnpm test` | **260 unit tests** — 149 core + 18 content (Vitest), 12 API (Vitest), and 81 mobile (Jest, 16 suites). All pass. |
 | `pnpm build` | **5/5 Turbo tasks** (core, content, web, API, mobile web export) |
-| `pnpm e2e` | **154 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
+| `pnpm e2e` | **156 Playwright checks** pass at 1280×800 and 390×844, zero console/page errors, zero flakes |
 | `pnpm verify` | typecheck → test → build → secrets → licenses → e2e, all green |
 | Mobile export | 23 static routes exported (`dist/`) |
 
@@ -147,7 +147,7 @@ core/web e2e suite where stated. **None of it is device evidence** — see
 | --- | --- | --- | --- |
 | Onboarding | Full `/onboarding`: language, motivation, level, daily goal, commitment | Full `/onboarding/*`: language, motivation, level, daily goal, commitment; 6 taps to the first lesson. Guest flow works. | `apps/web/app/onboarding/*`, `apps/mobile/app/onboarding/*`; Playwright `onboarding.spec.ts`; Jest `onboarding.test.tsx` |
 | Account creation | Email + password sign-up, merge of guest progress | Email + password sign-up from Account tab; server errors inline; 8-char password hint; merge after auth | `sign-up.tsx`, `sign-in.tsx`; Jest `account.test.tsx` |
-| Exercise kinds present in curriculum | `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10 — 9 of 10 now carry synthetic audio (bn, gu, hi, kn, ml, mr, pa, ta, te); 1 (or) remains excluded | `chooseMeaning`, `typeTranslation`, `matchPairs` playable; `listenChoose` playable **only with non-empty `audioUrl`** (9 of 10 now have audio; 1 still excluded). `chooseImage` is retired from the supported contract. | Content inventory; `eligibility.ts`; `exercise.test.ts`, `lesson-runner.test.tsx` |
+| Exercise kinds present in curriculum | `chooseMeaning` 221, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 9 - all 9 carry synthetic audio | `chooseMeaning`, `typeTranslation`, `matchPairs` playable; `listenChoose` playable **only with non-empty `audioUrl`** (9 of 9 have audio). `chooseImage` is retired from the supported contract. | Content inventory; `eligibility.ts`; `exercise.test.ts`, `lesson-runner.test.tsx` |
 | Extra kinds implemented but not in curriculum | `fillBlank`, `wordBank`, `arrangeSentence`, `chooseImage`, `typeWhatYouHear`, `speak` | All except `chooseImage` are playable; `chooseImage` renders a blocking “not available” screen and cannot submit | `ExerciseBody.tsx`; `lesson-runner.test.tsx` unsupported-kind test |
 | Lesson completion | Server re-grades raw answers; guest path saved locally | Server re-grades; signed-out 401 falls back to device save; other save errors award nothing and offer Retry; hearts exhaustion awards nothing | Core `scoreLessonAttempt`; `lesson-completions.ts`; Jest runner tests; Playwright `rewards.spec.ts` |
 | Progress persistence / reconciliation | Local snapshot + `/api/progress` merge; events authoritative for rewards | Local `speeko.mobile.progress.v2` + cloud merge (union completed, higher-wins XP, cosmetic rules); sign-out clears cookie and local snapshot | `lib/sync.ts`; Jest `sync.test.ts`, `progress.test.ts`, `account.test.tsx` |
@@ -182,28 +182,30 @@ Implemented and verified:
 ## Content
 
 - 11 course bundles in `content/dist` (10 starters + `hi-pilot`).
-- **305 exercises** total (230 starter + 75 draft pilot). Kinds present:
-  `chooseMeaning` 210, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 10.
+- **315 exercises** total (240 starter + 75 draft pilot). Kinds present:
+  `chooseMeaning` 221, `typeTranslation` 65, `matchPairs` 20, `listenChoose` 9.
+  Odia's former listenChoose item was converted to `chooseMeaning` because no Odia
+  voice is available; after the 2026-11-19 "Eight" addition it is a
+  reverse-direction choice rather than a duplicate of the lesson's first item.
 - Every course is now `reviewStatus: "automated_reviewed"` (machine-reviewed via the structural audit + AI-assisted linguistic review); no native-speaker certification has occurred. The `reviewed` status is reserved for genuine human approval.
   The `reviewStatus` field lives on the course, unit, and lesson schemas rather
-  than on each exercise; the review package and audit ledger list every item as
-  draft, and the manifest reports draft for all 11 bundles.
-- `listenChoose` exercises: 8 of 10 now carry synthetic audio generated via Microsoft Edge TTS (offline-bundled MP3); 2 (pa, or) still ship with an empty `audioUrl` and are excluded from every playable queue by `eligibleExercises()` (D81). Audio is synthetic speech, not a native-speaker recording. No audio URL or file is fabricated.
+  than on each exercise; the manifest reports `automated_reviewed` for all 11 bundles.
+- `listenChoose` exercises: 9 of 9 now carry synthetic audio generated via Microsoft Edge TTS / gTTS (offline-bundled MP3); the Odia listenChoose item was converted to a `chooseMeaning` exercise because no Odia voice is available. Audio is synthetic speech, not a native-speaker recording. No audio URL or file is fabricated.
 - **Deterministic structural audit** (`node scripts/audit-content.mjs`): rules
   R-001..R-008 (answer bounds, duplicate options/expected, NFC, invisible
   characters, empty/malformed audio URL, locale-script code points) are clean
-  across the set; 8 items now carry synthetic audio; 2 items blocked on missing audio (pa, or); 2 Hindi items
-  flagged `needs_further_review` by R-010 (cross-course spelling of “Sorry”,
-  AI-assisted and explicitly non-authoritative); 293 match no automated rule;
+  across the set; 9 items carry synthetic audio; 2 Hindi items
+  flagged `needs_further_review` by R-010 (cross-course spelling of "Sorry",
+  AI-assisted and explicitly non-authoritative); 313 match no automated rule;
   `review/audit-ledger.json` is the per-item machine record.
-- **AI-assisted linguistic review** (`node scripts/ai-review-content.mjs`): all
-  305 items judged across 10 categories (meaning, grammar, naturalness,
-  orthography, transliteration, vocabulary, ambiguity, correctness, consistency,
-  pedagogy); 3 Kannada items corrected for a misassigned Unicode glyph
-  (ಐ with U+0B90 → ಐ with U+0C90 in `kn-starter-u2-l1-e2`, `kn-starter-u2-l2-e1`,
-  `kn-starter-u2-l2-e2`); 2 Hindi “Sorry” items preserved (both attested
-  spellings); **zero native approvals**. Both passes ran on one model; they are
-  not statistically independent. Reports at `review/ai-linguistic-review.*`.
+- **AI-assisted linguistic review** (`node scripts/ai-review-content.mjs`): the
+  original 305 items were judged across 10 categories (meaning, grammar,
+  naturalness, orthography, transliteration, vocabulary, ambiguity, correctness,
+  consistency, pedagogy); 3 Kannada items corrected for a misassigned Unicode glyph
+  (U+0C90 variant); 2 Hindi "Sorry" items preserved (both attested
+  spellings); **zero native approvals**. The ten "Eight" items added on
+  2026-11-19 were not included in this review pass, and nothing is native-certified.
+  Reports at `review/ai-linguistic-review.*`.
 
 ## Stitch integration
 
@@ -244,7 +246,7 @@ Not imported, and why:
    a Vivo V2336 (2026-11-17), but the functional pass is waived for the internal
    alpha (D78). A public launch still needs an owner-run device pass; see
    `docs/qa/android-device-qa.md`.
-2. **No native-speaker review.** All 305 exercises are draft. Export and the
+2. **No native-speaker review.** All 315 exercises are `automated_reviewed` only. Export and the
    review protocol (`scripts/export-review.mjs`, `review/REVIEW.md`) are ready;
    nothing is certified and nothing may ship as "reviewed".
 3. **Mobile `chooseImage`** is not rendered; it is not used by any curriculum

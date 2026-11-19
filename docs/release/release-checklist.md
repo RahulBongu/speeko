@@ -17,8 +17,8 @@
 
 1. **Merge** any pending PRs (currently none open).
 2. **Hosting** — provision Neon + Render + Vercel per `docs/deploy-runbook.md`; set `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, `TRUST_PROXY_HOPS=1`, `API_PROXY_TARGET`, `API_PROXY_SECRET`; run backups/restore drill and secret rotation.
-3. **Native-speaker review** — recruit reviewers for 305 items × 10 locales; use `scripts/export-review.mjs` and `review/REVIEWER_ONBOARDING.md`; track in `review/REVIEW_TRACKER.md`; validate returns with `scripts/import-review.mjs`.
-4. **Audio decision** — record/license the 10 `listenChoose` items, or formally ship with the exclusion (already implemented).
+3. **Native-speaker review** — recruit reviewers for 315 items × 10 locales; use `scripts/export-review.mjs` and `review/REVIEWER_ONBOARDING.md`; track in `review/REVIEW_TRACKER.md`; validate returns with `scripts/import-review.mjs`.
+4. **Audio decision** — record/license the 9 `listenChoose` items, or formally ship with the exclusion (already implemented).
 5. **Keystore custody** — verify or create a production signing key; do not reuse the local development keystore for public distribution.
 6. **Rebuild** a clean signed AAB/APK that includes the in-app `/licenses` screen, using the production key.
 7. **Remove unnecessary Android permissions** (`READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `SYSTEM_ALERT_WINDOW`) per `docs/release/permissions-rationale.md`.

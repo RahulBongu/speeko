@@ -35,6 +35,13 @@ jest.mock('../lib/audio', () => ({
   stopMobileAudio: jest.fn(async () => {}),
 }));
 
+jest.mock('../lib/mascot', () => ({
+  isMascotVoiceEnabled: jest.fn(() => true),
+  setMascotVoiceEnabled: jest.fn(),
+  playMascotVoice: jest.fn(async () => true),
+  stopMascotVoice: jest.fn(async () => {}),
+}));
+
 import { apiFetch } from '../lib/api';
 import Lesson from '../app/lesson/[courseId]/[lessonId]';
 

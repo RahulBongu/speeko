@@ -322,6 +322,19 @@
               "answerIndex": 0
             },
             {
+              "id": "gu-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "આઠ",
+                "છ",
+                "સાત",
+                "નવ"
+              ],
+              "answerIndex": 0,
+              "transliteration": "aath"
+            },
+            {
               "id": "gu-starter-u4-l1-e3",
               "kind": "typeTranslation",
               "prompt": "Type \"six\"",

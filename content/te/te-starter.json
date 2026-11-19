@@ -322,6 +322,19 @@
               "answerIndex": 0
             },
             {
+              "id": "te-starter-u4-l1-e4",
+              "kind": "chooseMeaning",
+              "prompt": "Eight",
+              "options": [
+                "ఎనిమిది",
+                "ఆరు",
+                "ఏడు",
+                "తొమ్మిది"
+              ],
+              "answerIndex": 0,
+              "transliteration": "enimidi"
+            },
+            {
               "id": "te-starter-u4-l1-e3",
               "kind": "typeTranslation",
               "prompt": "Type \"six\"",

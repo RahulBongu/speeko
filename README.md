@@ -34,7 +34,7 @@ Open http://localhost:3000. `pnpm dev` starts the web app on port 3000 and the A
 | `pnpm --filter @speeko/api dev` | API on port 3001 (`/health`, `/api/auth/*`, `/api/progress`, `/api/lesson-completions`) |
 | `pnpm --filter @speeko/mobile start` | Expo Go / emulator |
 | `pnpm typecheck` | TypeScript across every package |
-| `pnpm test` | Vitest suites for grading, progress merging, guidebook extraction, eligibility filtering, all course content (108 core + 16 content), and client-IP trust rules (12 API), plus the mobile Jest suite (81 tests, 16 suites) through Turbo |
+| `pnpm test` | Vitest suites for grading, progress merging, guidebook extraction, eligibility filtering, all course content (113 core + 16 content), and client-IP trust rules (12 API), plus the mobile Jest suite (81 tests, 16 suites) through Turbo |
 | `pnpm build` | Production builds for web, API, mobile-web, content |
 | `pnpm lint` | ESLint for web and mobile (non-interactive) |
 | `pnpm e2e` | Playwright route smoke tests + screenshots (requires `pnpm build`) |
@@ -82,8 +82,10 @@ Each lesson starts with **5 hearts**, one answer per exercise, and a progress ba
 - **Feedback** shows the correction, removes a heart on a wrong answer, and tracks XP and combo. A match-pairs mismatch blocks submission and offers a board reset without losing a heart.
 - **Speaking** uses browser speech recognition when available and falls back to typed input; listening exercises expose a "Show the phrase" fallback when no Indic voice is installed.
 - **Exit guard**, out-of-hearts screen, retry, completion summary, confetti, and next-lesson navigation are all implemented.
+- **English-keyboard typing:** Romanized answers ("namaste") are accepted next to native script; "Show letters" reveals a reading while you type.
+- **Learning path:** Units climb bottom-to-top, current lesson auto-scrolls into view.
 - **Practice modes** reuse real exercises from completed lessons: due review, trouble words, and per-unit practice. They award no XP and write no course completion, but they do move each practiced word through its spaced-repetition box.
-- **Mascot:** Speeko the fox is an original inline SVG with idle, happy, sad, and celebrate moods. A Rive animation can replace it later without changing the player shell.
+- **Mascot:** Speeko the fox is an original animated inline SVG on the web (limbs, breathing, expressions, talking mouth, mood transitions) with bundled original voice lines and a separate mascot-voice preference. The mobile app uses the bundled raster fox with Reanimated motion; an animated SVG/Rive asset for native is a future improvement.
 
 ## Progress and accounts
 
@@ -129,7 +131,7 @@ content/<locale>/<course>.json
 apps/web/public/courses/ (synced automatically on dev/build)
 ```
 
-The seeded starter bundle contains **10 courses × 4 units × 2 lessons × 3 exercises = 230 exercises** (one mislabeled English filler exercise per starter was removed 2026-11-16). P4 adds one draft pilot, `content/hi/hi-pilot.json`: **5 units × 5 lessons × 3 exercises = 75 exercises**, with `reviewStatus: "draft"` on every lesson. The content tests grade every exercise to confirm each answer key is reachable (305 total).
+The seeded starter bundle contains **10 courses × 4 units × 2 lessons × 24 exercises = 240 exercises** (one mislabeled English filler exercise per starter was removed 2026-11-16, and each starter now teaches the number Eight). P4 adds one draft pilot, `content/hi/hi-pilot.json`: **5 units × 5 lessons × 3 exercises = 75 exercises**, with no audio. The content tests grade every exercise to confirm each answer key is reachable (315 total).
 
 Optional course fields now include `reviewStatus` (`draft`/`reviewed`, default `draft`), `reviewer`, unit/lesson `guidebook`, and exercise `vocabId` / `transliteration`. Reviewed content requires a reviewer. `ATTRIBUTIONS.md` records font/third-party attribution and the policy for any imported phrases (none are present in the current curriculum).
 
@@ -151,10 +153,10 @@ content/      Per-locale course JSON
 ## Verification
 
 - `pnpm typecheck` — 5 packages clean (6 Turbo tasks including dependency builds)
-- `pnpm test` - 108 core + 16 content + 12 API (Vitest) and 81 mobile (Jest, 16 suites), all passing
-- `pnpm build` — web, API, mobile-web export (23 static routes), and content bundle all succeed
+- `pnpm test` - 149 core + 18 content + 12 API (Vitest) and 81 mobile (Jest, 16 suites), all passing
+- `pnpm build` — web, API, mobile-web export, and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
-- `pnpm e2e` — 154 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `docs/qa/` and are inspected each phase
+- `pnpm e2e` — 156 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, marketing-page rendering, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `test-results/screenshots/`; curated key screenshots live in `docs/qa/` and are inspected each phase
 - `pnpm verify` — runs typecheck → test → build → secrets scan → license check → e2e in order
 - Migrations are applied on API startup. `lesson_events` (0002) and `lesson_completion_rewards` (0005) were smoke-tested; 0005 was applied to a fresh pglite directory and to a populated pre-0005 database with historical events, verifying the non-destructive backfill.
 
@@ -172,7 +174,7 @@ Project status is tracked in [`docs/PROGRESS.md`](docs/PROGRESS.md), durable cho
 ## Roadmap
 
 1. Rive fox asset authored in Rive (runtime integration already in place)
-2. Native-speaker review of the 305 draft exercises (review package and protocol ready)
+2. Native-speaker review of the 315 draft exercises (review package and protocol ready)
 3. Functional on-device QA pass on the release build (owner-run; the render pass is done)
 4. Hosting/database choice, backups, secret rotation
 5. Play Store accounts and listing (draft metadata ready; not published)

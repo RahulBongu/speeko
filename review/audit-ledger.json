@@ -1,6 +1,6 @@
 {
   "ledgerVersion": 1,
-  "generatedAt": "2026-11-18T06:01:20.885Z",
+  "generatedAt": "2026-11-19T12:37:52.875Z",
   "source": "content/dist/*.json",
   "disclaimer": "Automated and AI-assisted internal audit only. No item in this ledger is native-speaker reviewed, approved, verified, or certified. Absent humanStatus changes made by a qualified reviewer, every item remains reviewStatus: draft.",
   "rules": [
@@ -17,9 +17,9 @@
   "stats": {
     "perLocale": {
       "bn": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 17,
           "typeTranslation": 4,
           "matchPairs": 2,
           "listenChoose": 1
@@ -27,9 +27,9 @@
         "blockedAudio": 1
       },
       "gu": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 17,
           "typeTranslation": 4,
           "matchPairs": 2,
           "listenChoose": 1
@@ -37,9 +37,9 @@
         "blockedAudio": 1
       },
       "hi": {
-        "total": 98,
+        "total": 99,
         "byKind": {
-          "chooseMeaning": 66,
+          "chooseMeaning": 67,
           "typeTranslation": 29,
           "matchPairs": 2,
           "listenChoose": 1
@@ -47,9 +47,9 @@
         "blockedAudio": 1
       },
       "kn": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 17,
           "typeTranslation": 4,
           "matchPairs": 2,
           "listenChoose": 1
@@ -57,9 +57,9 @@
         "blockedAudio": 1
       },
       "ml": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 17,
           "typeTranslation": 4,
           "matchPairs": 2,
           "listenChoose": 1
@@ -67,9 +67,9 @@
         "blockedAudio": 1
       },
       "mr": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 17,
           "typeTranslation": 4,
           "matchPairs": 2,
           "listenChoose": 1
@@ -77,19 +77,18 @@
         "blockedAudio": 1
       },
       "or": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 18,
           "typeTranslation": 4,
-          "matchPairs": 2,
-          "listenChoose": 1
+          "matchPairs": 2
         },
-        "blockedAudio": 1
+        "blockedAudio": 0
       },
       "pa": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 17,
           "typeTranslation": 4,
           "matchPairs": 2,
           "listenChoose": 1
@@ -97,9 +96,9 @@
         "blockedAudio": 1
       },
       "ta": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 17,
           "typeTranslation": 4,
           "matchPairs": 2,
           "listenChoose": 1
@@ -107,9 +106,9 @@
         "blockedAudio": 1
       },
       "te": {
-        "total": 23,
+        "total": 24,
         "byKind": {
-          "chooseMeaning": 16,
+          "chooseMeaning": 17,
           "typeTranslation": 4,
           "matchPairs": 2,
           "listenChoose": 1
@@ -119,22 +118,20 @@
     },
     "totals": {
       "courses": 11,
-      "exercises": 305
+      "exercises": 315
     }
   },
   "summary": {
     "byDisposition": {
-      "no_issue_detected": 301,
-      "needs_further_review": 2,
-      "blocked": 2
+      "no_issue_detected": 313,
+      "needs_further_review": 2
     },
     "byRule": {
-      "R-010": 2,
-      "R-006": 2
+      "R-010": 2
     },
-    "deterministicClean": 301,
-    "blocked": 2,
-    "findingsTotal": 4
+    "deterministicClean": 313,
+    "blocked": 0,
+    "findingsTotal": 2
   },
   "items": [
     {
@@ -1056,6 +1053,61 @@
         "সাত"
       ],
       "contentHash": "7988ce87c7952346",
+      "unitId": "bn-starter-u4",
+      "lessonId": "bn-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
+      "exerciseId": "bn-starter-u4-l1-e4",
+      "locale": "bn",
+      "language": "Bengali",
+      "courseId": "bn-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "aat"
+        },
+        {
+          "field": "options[0]",
+          "value": "আট"
+        },
+        {
+          "field": "options[1]",
+          "value": "ছয়"
+        },
+        {
+          "field": "options[2]",
+          "value": "সাত"
+        },
+        {
+          "field": "options[3]",
+          "value": "নয়"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "আট"
+      ],
+      "contentHash": "c2868f3eee84c27f",
       "unitId": "bn-starter-u4",
       "lessonId": "bn-starter-u4-l1",
       "findings": [],
@@ -2187,6 +2239,61 @@
         "સાત"
       ],
       "contentHash": "f3f20b3dfd85422f",
+      "unitId": "gu-starter-u4",
+      "lessonId": "gu-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
+      "exerciseId": "gu-starter-u4-l1-e4",
+      "locale": "gu",
+      "language": "Gujarati",
+      "courseId": "gu-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "aath"
+        },
+        {
+          "field": "options[0]",
+          "value": "આઠ"
+        },
+        {
+          "field": "options[1]",
+          "value": "છ"
+        },
+        {
+          "field": "options[2]",
+          "value": "સાત"
+        },
+        {
+          "field": "options[3]",
+          "value": "નવ"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "આઠ"
+      ],
+      "contentHash": "e65b22ceee65904d",
       "unitId": "gu-starter-u4",
       "lessonId": "gu-starter-u4-l1",
       "findings": [],
@@ -7231,6 +7338,61 @@
       "linguisticReviewStatus": "not_verified_by_human"
     },
     {
+      "exerciseId": "hi-starter-u4-l1-e4",
+      "locale": "hi",
+      "language": "Hindi",
+      "courseId": "hi-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "aath"
+        },
+        {
+          "field": "options[0]",
+          "value": "आठ"
+        },
+        {
+          "field": "options[1]",
+          "value": "छह"
+        },
+        {
+          "field": "options[2]",
+          "value": "सात"
+        },
+        {
+          "field": "options[3]",
+          "value": "नौ"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "आठ"
+      ],
+      "contentHash": "1bdb6ab714961138",
+      "unitId": "hi-starter-u4",
+      "lessonId": "hi-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
       "exerciseId": "hi-starter-u4-l1-e3",
       "locale": "hi",
       "language": "Hindi",
@@ -8344,6 +8506,61 @@
         "ಏಳು"
       ],
       "contentHash": "ccd9b0e33ed1f291",
+      "unitId": "kn-starter-u4",
+      "lessonId": "kn-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
+      "exerciseId": "kn-starter-u4-l1-e4",
+      "locale": "kn",
+      "language": "Kannada",
+      "courseId": "kn-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "entu"
+        },
+        {
+          "field": "options[0]",
+          "value": "ಎಂಟು"
+        },
+        {
+          "field": "options[1]",
+          "value": "ಆರು"
+        },
+        {
+          "field": "options[2]",
+          "value": "ಏಳು"
+        },
+        {
+          "field": "options[3]",
+          "value": "ಒಂಬತ್ತು"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "ಎಂಟು"
+      ],
+      "contentHash": "25dcf6a0e6d7f2fc",
       "unitId": "kn-starter-u4",
       "lessonId": "kn-starter-u4-l1",
       "findings": [],
@@ -9493,6 +9710,61 @@
       "linguisticReviewStatus": "not_verified_by_human"
     },
     {
+      "exerciseId": "ml-starter-u4-l1-e4",
+      "locale": "ml",
+      "language": "Malayalam",
+      "courseId": "ml-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "ettu"
+        },
+        {
+          "field": "options[0]",
+          "value": "എട്ട്"
+        },
+        {
+          "field": "options[1]",
+          "value": "ആറ്"
+        },
+        {
+          "field": "options[2]",
+          "value": "ഏഴ്"
+        },
+        {
+          "field": "options[3]",
+          "value": "ഒമ്പത്"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "എട്ട്"
+      ],
+      "contentHash": "abce207e3c19c0e2",
+      "unitId": "ml-starter-u4",
+      "lessonId": "ml-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
       "exerciseId": "ml-starter-u4-l1-e3",
       "locale": "ml",
       "language": "Malayalam",
@@ -10624,6 +10896,61 @@
       "linguisticReviewStatus": "not_verified_by_human"
     },
     {
+      "exerciseId": "mr-starter-u4-l1-e4",
+      "locale": "mr",
+      "language": "Marathi",
+      "courseId": "mr-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "aath"
+        },
+        {
+          "field": "options[0]",
+          "value": "आठ"
+        },
+        {
+          "field": "options[1]",
+          "value": "सहा"
+        },
+        {
+          "field": "options[2]",
+          "value": "सात"
+        },
+        {
+          "field": "options[3]",
+          "value": "नऊ"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "आठ"
+      ],
+      "contentHash": "c22e3e0cae8dd718",
+      "unitId": "mr-starter-u4",
+      "lessonId": "mr-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
       "exerciseId": "mr-starter-u4-l1-e3",
       "locale": "mr",
       "language": "Marathi",
@@ -11610,47 +11937,39 @@
       "locale": "or",
       "language": "Odia",
       "courseId": "or-starter",
-      "kind": "listenChoose",
-      "prompt": "Listen and choose",
+      "kind": "chooseMeaning",
+      "prompt": "ଶୁଭ ସକାଳ",
       "originalText": [
         {
           "field": "prompt",
-          "value": "Listen and choose"
-        },
-        {
-          "field": "options[0]",
           "value": "ଶୁଭ ସକାଳ"
         },
         {
+          "field": "transliteration",
+          "value": "shubh sakaal"
+        },
+        {
+          "field": "options[0]",
+          "value": "Good morning"
+        },
+        {
           "field": "options[1]",
-          "value": "ନମସ୍କାର"
+          "value": "Hello"
         },
         {
           "field": "options[2]",
-          "value": "କ୍ଷମା କରନ୍ତୁ"
+          "value": "Sorry"
         }
       ],
       "originalExpected": null,
       "originalTarget": [
-        "ଶୁଭ ସକାଳ"
+        "Good morning"
       ],
-      "contentHash": "b4cb16f97bec89eb",
+      "contentHash": "225af73866bfe3fd",
       "unitId": "or-starter-u3",
       "lessonId": "or-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -11749,6 +12068,61 @@
         "ସାତ"
       ],
       "contentHash": "a7208fbeb0d5d1c5",
+      "unitId": "or-starter-u4",
+      "lessonId": "or-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
+      "exerciseId": "or-starter-u4-l1-e4",
+      "locale": "or",
+      "language": "Odia",
+      "courseId": "or-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "aath"
+        },
+        {
+          "field": "options[0]",
+          "value": "ଆଠ"
+        },
+        {
+          "field": "options[1]",
+          "value": "ଛଅ"
+        },
+        {
+          "field": "options[2]",
+          "value": "ସାତ"
+        },
+        {
+          "field": "options[3]",
+          "value": "ନଅ"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "ଆଠ"
+      ],
+      "contentHash": "0a97e35999b2c414",
       "unitId": "or-starter-u4",
       "lessonId": "or-starter-u4-l1",
       "findings": [],
@@ -12777,23 +13151,11 @@
       "originalTarget": [
         "ਸ਼ੁਭ ਸਵੇਰ"
       ],
-      "contentHash": "f13143761ac540c9",
+      "contentHash": "6c4cbd122b9efddc",
       "unitId": "pa-starter-u3",
       "lessonId": "pa-starter-u3-l2",
-      "findings": [
-        {
-          "category": "audio",
-          "rule": "R-006",
-          "check": "listenChoose audioUrl",
-          "disposition": "blocked",
-          "confidence": "high",
-          "deterministic": true,
-          "evidence": "audioUrl is empty: no licensed recording exists; the client renders the explicit no-audio fallback",
-          "proposedCorrection": null,
-          "reason": "No licensed audio recorded yet. The item can only certify listening once audio exists."
-        }
-      ],
-      "disposition": "blocked",
+      "findings": [],
+      "disposition": "no_issue_detected",
       "humanStatus": "unreviewed",
       "deterministicRulesChecked": [
         "R-001",
@@ -12892,6 +13254,61 @@
         "ਸੱਤ"
       ],
       "contentHash": "b8684edcca1dbd3f",
+      "unitId": "pa-starter-u4",
+      "lessonId": "pa-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
+      "exerciseId": "pa-starter-u4-l1-e4",
+      "locale": "pa",
+      "language": "Punjabi",
+      "courseId": "pa-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "atth"
+        },
+        {
+          "field": "options[0]",
+          "value": "ਅੱਠ"
+        },
+        {
+          "field": "options[1]",
+          "value": "ਛੇ"
+        },
+        {
+          "field": "options[2]",
+          "value": "ਸੱਤ"
+        },
+        {
+          "field": "options[3]",
+          "value": "ਨੌਂ"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "ਅੱਠ"
+      ],
+      "contentHash": "6038b6323ca1baac",
       "unitId": "pa-starter-u4",
       "lessonId": "pa-starter-u4-l1",
       "findings": [],
@@ -14041,6 +14458,61 @@
       "linguisticReviewStatus": "not_verified_by_human"
     },
     {
+      "exerciseId": "ta-starter-u4-l1-e4",
+      "locale": "ta",
+      "language": "Tamil",
+      "courseId": "ta-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "ettu"
+        },
+        {
+          "field": "options[0]",
+          "value": "எட்டு"
+        },
+        {
+          "field": "options[1]",
+          "value": "ஆறு"
+        },
+        {
+          "field": "options[2]",
+          "value": "ஏழு"
+        },
+        {
+          "field": "options[3]",
+          "value": "ஒன்பது"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "எட்டு"
+      ],
+      "contentHash": "d8df2f5087e12951",
+      "unitId": "ta-starter-u4",
+      "lessonId": "ta-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
       "exerciseId": "ta-starter-u4-l1-e3",
       "locale": "ta",
       "language": "Tamil",
@@ -15154,6 +15626,61 @@
         "ఏడు"
       ],
       "contentHash": "c83eca77c17b744b",
+      "unitId": "te-starter-u4",
+      "lessonId": "te-starter-u4-l1",
+      "findings": [],
+      "disposition": "no_issue_detected",
+      "humanStatus": "unreviewed",
+      "deterministicRulesChecked": [
+        "R-001",
+        "R-002",
+        "R-003",
+        "R-004",
+        "R-005",
+        "R-006",
+        "R-007",
+        "R-008"
+      ],
+      "linguisticReviewStatus": "not_verified_by_human"
+    },
+    {
+      "exerciseId": "te-starter-u4-l1-e4",
+      "locale": "te",
+      "language": "Telugu",
+      "courseId": "te-starter",
+      "kind": "chooseMeaning",
+      "prompt": "Eight",
+      "originalText": [
+        {
+          "field": "prompt",
+          "value": "Eight"
+        },
+        {
+          "field": "transliteration",
+          "value": "enimidi"
+        },
+        {
+          "field": "options[0]",
+          "value": "ఎనిమిది"
+        },
+        {
+          "field": "options[1]",
+          "value": "ఆరు"
+        },
+        {
+          "field": "options[2]",
+          "value": "ఏడు"
+        },
+        {
+          "field": "options[3]",
+          "value": "తొమ్మిది"
+        }
+      ],
+      "originalExpected": null,
+      "originalTarget": [
+        "ఎనిమిది"
+      ],
+      "contentHash": "78fca8f176fd0492",
       "unitId": "te-starter-u4",
       "lessonId": "te-starter-u4-l1",
       "findings": [],
