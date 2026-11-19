@@ -3,6 +3,7 @@ packages:
   - 'packages/*'
 nodeLinker: hoisted
 allowBuilds:
+  '@parcel/watcher': true
   esbuild: true
   sharp: true
 minimumReleaseAgeExclude:

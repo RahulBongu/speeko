@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 
-type IconProps = SVGProps<SVGSVGElement>;
+type IconProps = Omit<SVGProps<SVGSVGElement>, 'dominantBaseline' | 'textAnchor'>;
 
 export function CheckIcon(props: IconProps) {
   return (
