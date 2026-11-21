@@ -14,6 +14,7 @@ Gamified language learning for Indian scripts. Friendly, vibrant, encouraging, a
 | --- | --- |
 | `speeko-logo.svg` | Primary lockup (fox + wordmark), light backgrounds, 1:3.2 ratio |
 | `speeko-fox-head.svg` | Standalone mark, full color, any surface |
+| `speeko-singing-fox.svg` | Singing mark (head + notes), full color, brand/hero use |
 | `speeko-fox-head-mono.svg` | Monochrome white mark, dark backgrounds / single-color print |
 | `speeko-fox-sitting.svg` | Mascot pose B — lesson exercises, progress screens |
 | `speeko-app-icon.svg` | App icon (iOS & Android squircle) |
@@ -46,7 +47,8 @@ Clearspace = half the fox-head height on all sides. Minimum size for the mark: 2
 Speeko the fox is the mascot: marigold-orange face, cream cheeks and bib, **bindi dot** on the forehead, café-brown outlines. Two canonical poses:
 
 - **Pose A — the Welcomer.** Waving, onboarding, daily greetings, lesson starts.
-- **Pose B — the Listener.** Sitting attentively, quiz/lesson exercises, progress states.
+- **Pose B - the Listener.** Sitting attentively, quiz/lesson exercises, progress states.
+- **Pose C - the Singer.** Head tilted, mouth open, eyes closed in joy, with green musical notes. Brand logo and hero; the web header animates the notes.
 
 Do not redraw the fox off-model; keep the bindi dot, the white double-gradient eye shine, and the stroke weight at 4–5 units on a 100-unit canvas.
 

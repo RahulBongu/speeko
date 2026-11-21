@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { Fox } from './Fox';
 import { AuthMenu } from './AuthMenu';
+import { SingingFox } from './SingingFox';
 import { FlameIcon, ShopIcon, TrophyIcon } from './icons';
 
 export function Brand({ href = '/' }: { href?: string }) {
   return (
     <Link href={href} className="focus-ring flex items-center gap-2 rounded-2xl" aria-label="Speeko home">
-      <Fox className="h-10 w-10" />
+      <SingingFox className="h-10 w-10" />
       <span className="font-display text-2xl font-extrabold tracking-tight text-speeko-600">
         Speeko
       </span>

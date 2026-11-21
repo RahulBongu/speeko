@@ -170,6 +170,28 @@ const config: Config = {
           '0%, 100%': { transform: 'scale(0.85)', opacity: '.55' },
           '50%': { transform: 'scale(1.08)', opacity: '1' },
         },
+        'logo-sway': {
+          '0%, 100%': { transform: 'rotate(-1.4deg) translateY(0)' },
+          '50%': { transform: 'rotate(1.4deg) translateY(-0.8px)' },
+        },
+        'logo-note-a': {
+          '0%': { transform: 'translate(0, 10px) scale(.55) rotate(-10deg)', opacity: '0' },
+          '16%': { opacity: '1' },
+          '68%': { opacity: '1' },
+          '100%': {
+            transform: 'translate(5px, -17px) scale(1) rotate(6deg)',
+            opacity: '0',
+          },
+        },
+        'logo-note-b': {
+          '0%': { transform: 'translate(0, 8px) scale(.45) rotate(8deg)', opacity: '0' },
+          '18%': { opacity: '1' },
+          '70%': { opacity: '1' },
+          '100%': {
+            transform: 'translate(3px, -13px) scale(.9) rotate(-5deg)',
+            opacity: '0',
+          },
+        },
       },
       animation: {
         bob: 'bob 3.2s ease-in-out infinite',
@@ -194,6 +216,9 @@ const config: Config = {
         'toe-tap': 'toe-tap .8s ease-in-out infinite',
         'toe-tap-right': 'toe-tap-right .8s ease-in-out infinite',
         sparkle: 'sparkle 1.1s ease-in-out infinite',
+        'logo-sway': 'logo-sway 5.6s ease-in-out infinite',
+        'logo-note-a': 'logo-note-a 3.9s cubic-bezier(.22,1,.36,1) infinite',
+        'logo-note-b': 'logo-note-b 4.7s cubic-bezier(.22,1,.36,1) 1.3s infinite',
       },
     },
   },

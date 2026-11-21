@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100">
+  <!-- Speeko singing fox logo: head + two green notes. Transparent background. -->
+  <g transform="translate(-4 0)">
+    <g transform="rotate(-5 50 55)">
+      <!-- Ears, behind the head. -->
+      <polygon points="22,48 13,12 44,30" fill="#F97316" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
+      <polygon points="24.2,39 19.7,21 35.2,30" fill="#FED7AA" stroke="#3F2A1D" stroke-width="1.5" stroke-linejoin="round"/>
+      <polygon points="78,48 87,12 56,30" fill="#F97316" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
+      <polygon points="75.8,39 80.3,21 64.8,30" fill="#FED7AA" stroke="#3F2A1D" stroke-width="1.5" stroke-linejoin="round"/>
+
+      <!-- Head. -->
+      <ellipse cx="50" cy="55" rx="35" ry="30" fill="#F97316" stroke="#3F2A1D" stroke-width="5"/>
+
+      <!-- Muzzle. -->
+      <path d="M 26,63 C 26,77 36,83 50,83 C 64,83 74,77 74,63 C 74,56.5 64,54 50,54 C 36,54 26,56.5 26,63 Z"
+        fill="#FFFDF6" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
+
+      <!-- Bindi. -->
+      <circle cx="50" cy="31.5" r="3.4" fill="#DC2626"/>
+
+      <!-- Closed, smiling eyes with a small outer lash. -->
+      <path d="M 31.5,45 Q 38,38.5 44.5,45" fill="none" stroke="#3F2A1D" stroke-width="4.6" stroke-linecap="round"/>
+      <path d="M 55.5,45 Q 62,38.5 68.5,45" fill="none" stroke="#3F2A1D" stroke-width="4.6" stroke-linecap="round"/>
+      <path d="M 31.5,45 L 29.3,47.6" fill="none" stroke="#3F2A1D" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M 68.5,45 L 70.7,47.6" fill="none" stroke="#3F2A1D" stroke-width="3.2" stroke-linecap="round"/>
+
+      <!-- Nose and open singing mouth. -->
+      <path d="M 45.2,60.2 Q 50,57.2 54.8,60.2 Q 52.7,63.8 50,63.8 Q 47.3,63.8 45.2,60.2 Z" fill="#3F2A1D"/>
+      <path d="M 41,66 Q 50,62 59,66 Q 59,77 50,79 Q 41,77 41,66 Z" fill="#3F2A1D"/>
+      <path d="M 45,73.5 Q 50,70 55,73.5 Q 53.3,77.6 50,78.4 Q 46.7,77.6 45,73.5 Z" fill="#DC2626"/>
+    </g>
+  </g>
+
+  <!-- Two green notes floating up from the right ear. -->
+  <g transform="translate(88 12) scale(.72)">
+    <path d="M4 30 V6 L28 2 V26" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4 6 L28 2 L28 10 L4 14 Z" fill="#16A34A"/>
+    <ellipse cx="4" cy="30" rx="7" ry="5" transform="rotate(-20 4 30)" fill="#16A34A"/>
+    <ellipse cx="28" cy="26" rx="7" ry="5" transform="rotate(-20 28 26)" fill="#16A34A"/>
+  </g>
+</svg>
