@@ -28,7 +28,7 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#16a34a",
-        "foregroundImage": "./assets/icon.png"
+        "foregroundImage": "./assets/icon-foreground.png"
       },
       "package": "com.speeko.app"
     },
