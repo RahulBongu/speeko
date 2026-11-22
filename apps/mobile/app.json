@@ -16,7 +16,8 @@
       "expo-router",
       "expo-asset",
       "./plugins/withQaLoopbackCleartext",
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-audio"
     ],
     "extra": {
       "apiUrl": "http://localhost:3001",

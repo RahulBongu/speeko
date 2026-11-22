@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av';
+import { createAudioPlayer } from 'expo-audio';
 import { MASCOT_REACTIONS, type MascotReactionId } from '@speeko/core';
 
 const AUDIO_MAP: Record<string, number> = {
@@ -10,12 +10,10 @@ const AUDIO_MAP: Record<string, number> = {
   encouragement: require('../assets/mascot/encouragement.mp3'),
 };
 
-let currentSound: Audio.Sound | null = null;
+let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 let enabled = true;
 
 try {
-  // Persist across restarts using AsyncStorage via a lazy require to avoid
-  // circular deps at import time.
   const AsyncStorage = require('@react-native-async-storage/async-storage').default;
   AsyncStorage.getItem('speeko.mascotVoiceEnabled')
     .then((value: string | null) => {
@@ -52,17 +50,19 @@ export async function playMascotVoice(reactionId: MascotReactionId): Promise<boo
   if (!source) return false;
   try {
     await stopMascotVoice();
-    const { sound } = await Audio.Sound.createAsync(source, {
-      shouldPlay: true,
-      volume: 1,
-    });
-    currentSound = sound;
-    sound.setOnPlaybackStatusUpdate((status) => {
+    const player = createAudioPlayer(source);
+    player.volume = 1;
+    currentPlayer = player;
+    const subscription = player.addListener('playbackStatusUpdate', (status) => {
       if (status.isLoaded && status.didJustFinish) {
-        sound.unloadAsync().catch(() => {});
-        if (currentSound === sound) currentSound = null;
+        try {
+          player.remove();
+        } catch {}
+        if (currentPlayer === player) currentPlayer = null;
+        subscription.remove();
       }
     });
+    player.play();
     return true;
   } catch {
     return false;
@@ -70,9 +70,13 @@ export async function playMascotVoice(reactionId: MascotReactionId): Promise<boo
 }
 
 export async function stopMascotVoice(): Promise<void> {
-  if (currentSound) {
-    await currentSound.stopAsync().catch(() => {});
-    await currentSound.unloadAsync().catch(() => {});
-    currentSound = null;
+  if (currentPlayer) {
+    try {
+      currentPlayer.pause();
+    } catch {}
+    try {
+      currentPlayer.remove();
+    } catch {}
+    currentPlayer = null;
   }
 }

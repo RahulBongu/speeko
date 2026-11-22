@@ -17,7 +17,9 @@
   },
   "jest": {
     "preset": "./jest.preset.js",
-    "setupFiles": ["./jest.setup.js"],
+    "setupFiles": [
+      "./jest.setup.js"
+    ],
     "transformIgnorePatterns": [
       "node_modules/(?!(.pnpm|(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg))"
     ],
@@ -28,7 +30,7 @@
     "@speeko/core": "workspace:*",
     "expo": "~58.0.26",
     "expo-asset": "~58.0.21",
-    "expo-av": "~16.0.8",
+    "expo-audio": "~58.0.12",
     "expo-haptics": "~58.0.8",
     "expo-linking": "~58.0.17",
     "expo-modules-core": "~58.1.0",

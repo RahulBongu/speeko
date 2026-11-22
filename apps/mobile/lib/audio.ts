@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av';
+import { createAudioPlayer } from 'expo-audio';
 
 const AUDIO_MAP: Record<string, number> = {
   'bn-starter-u3-l2-e3': require('../assets/audio/bn-starter-u3-l2-e3.mp3'),
@@ -12,7 +12,7 @@ const AUDIO_MAP: Record<string, number> = {
   'te-starter-u3-l2-e3': require('../assets/audio/te-starter-u3-l2-e3.mp3'),
 };
 
-let currentSound: Audio.Sound | null = null;
+let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 
 export function hasMobileAudio(exerciseId: string): boolean {
   return Object.prototype.hasOwnProperty.call(AUDIO_MAP, exerciseId);
@@ -22,18 +22,27 @@ export async function playMobileAudio(exerciseId: string): Promise<boolean> {
   const source = AUDIO_MAP[exerciseId];
   if (!source) return false;
   try {
-    if (currentSound) {
-      await currentSound.unloadAsync().catch(() => {});
-      currentSound = null;
+    if (currentPlayer) {
+      try {
+        currentPlayer.pause();
+      } catch {}
+      try {
+        currentPlayer.remove();
+      } catch {}
+      currentPlayer = null;
     }
-    const { sound } = await Audio.Sound.createAsync(source, { shouldPlay: true });
-    currentSound = sound;
-    sound.setOnPlaybackStatusUpdate((status) => {
+    const player = createAudioPlayer(source);
+    currentPlayer = player;
+    const subscription = player.addListener('playbackStatusUpdate', (status) => {
       if (status.isLoaded && status.didJustFinish) {
-        sound.unloadAsync().catch(() => {});
-        if (currentSound === sound) currentSound = null;
+        try {
+          player.remove();
+        } catch {}
+        if (currentPlayer === player) currentPlayer = null;
+        subscription.remove();
       }
     });
+    player.play();
     return true;
   } catch {
     return false;
@@ -41,9 +50,13 @@ export async function playMobileAudio(exerciseId: string): Promise<boolean> {
 }
 
 export async function stopMobileAudio(): Promise<void> {
-  if (currentSound) {
-    await currentSound.stopAsync().catch(() => {});
-    await currentSound.unloadAsync().catch(() => {});
-    currentSound = null;
+  if (currentPlayer) {
+    try {
+      currentPlayer.pause();
+    } catch {}
+    try {
+      currentPlayer.remove();
+    } catch {}
+    currentPlayer = null;
   }
 }
