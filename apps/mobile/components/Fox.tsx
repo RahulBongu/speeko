@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
 import Svg, { Circle, Ellipse, Path, G, Defs, LinearGradient, Stop } from 'react-native-svg';
 import Animated, {
   useSharedValue,
@@ -8,7 +7,6 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
-  withSpring,
   Easing,
 } from 'react-native-reanimated';
 
