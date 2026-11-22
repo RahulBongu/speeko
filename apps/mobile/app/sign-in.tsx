@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ORIGIN, apiFetch } from '../lib/api';
 import { syncProgress } from '../lib/sync';
 import { Screen } from '../components/Screen';
+import { Fox } from '../components/Fox';
 import { TactileButton } from '../components/Tactile';
 import { COLORS } from '../lib/theme';
 
@@ -174,9 +175,9 @@ export default function SignIn() {
             elevation: 4,
           }}
         >
-          <Image
-            source={require('../assets/fox.png')}
-            accessibilityLabel="Speeko the fox"
+          <Fox
+            mood="happy"
+            title="Speeko the fox"
             style={{ width: '100%', height: '100%' }}
           />
         </View>

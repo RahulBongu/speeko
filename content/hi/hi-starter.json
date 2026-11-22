@@ -393,6 +393,111 @@
           ]
         }
       ]
+    },
+    {
+      "id": "hi-starter-u5",
+      "title": "Family",
+      "description": "Family members",
+      "order": 4,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Family members in Hindi.",
+      "lessons": [
+        {
+          "id": "hi-starter-u5-l1",
+          "title": "Parents",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Parents in Hindi.",
+          "exercises": [
+            {
+              "id": "hi-starter-u5-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Mother",
+              "options": [
+                "माँ",
+                "पिता",
+                "बहन",
+                "भाई"
+              ],
+              "answerIndex": 0,
+              "transliteration": "maa"
+            },
+            {
+              "id": "hi-starter-u5-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Father",
+              "options": [
+                "पिता",
+                "माँ",
+                "बहन",
+                "भाई"
+              ],
+              "answerIndex": 0,
+              "transliteration": "pita"
+            },
+            {
+              "id": "hi-starter-u5-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"mother\"",
+              "expected": [
+                "माँ"
+              ],
+              "acceptTypos": true,
+              "transliteration": "maa"
+            }
+          ]
+        },
+        {
+          "id": "hi-starter-u5-l2",
+          "title": "Siblings",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Siblings in Hindi.",
+          "exercises": [
+            {
+              "id": "hi-starter-u5-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sister",
+              "options": [
+                "बहन",
+                "भाई",
+                "माँ",
+                "पिता"
+              ],
+              "answerIndex": 0,
+              "transliteration": "bahan"
+            },
+            {
+              "id": "hi-starter-u5-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Brother",
+              "options": [
+                "भाई",
+                "बहन",
+                "माँ",
+                "पिता"
+              ],
+              "answerIndex": 0,
+              "transliteration": "bhai"
+            },
+            {
+              "id": "hi-starter-u5-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"brother\"",
+              "expected": [
+                "भाई"
+              ],
+              "acceptTypos": true,
+              "transliteration": "bhai"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

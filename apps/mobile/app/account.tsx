@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { ProgressState } from '@speeko/core';
 import * as Haptics from 'expo-haptics';
@@ -8,6 +8,7 @@ import { clearProgress, loadProgress } from '../lib/progress';
 import { syncProgress } from '../lib/sync';
 import { AppNav } from '../components/AppNav';
 import { Screen } from '../components/Screen';
+import { Fox } from '../components/Fox';
 import {
   SpeekoAppBar,
   TactilePressable,
@@ -199,9 +200,9 @@ export default function Account() {
             overflow: 'hidden',
           }}
         >
-          <Image
-            source={require('../assets/fox.png')}
-            accessibilityLabel="Speeko the fox"
+          <Fox
+            mood="idle"
+            title="Speeko the fox"
             style={{ width: '100%', height: '100%' }}
           />
         </View>

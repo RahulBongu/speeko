@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import {
-  Image,
   Pressable,
   Text,
   View,
@@ -8,6 +7,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { COLORS } from '../lib/theme';
+import { Fox } from './Fox';
 
 /**
  * Shared "tactile" primitives.
@@ -277,10 +277,10 @@ export function SpeekoAppBar({
           overflow: 'hidden',
         }}
       >
-        <Image
-          source={require('../assets/fox.png')}
-          accessibilityLabel="Speeko, the friendly fox mascot"
+        <Fox
+          mood="idle"
           style={{ width: '100%', height: '100%' }}
+          title="Speeko, the friendly fox mascot"
         />
       </View>
       <View style={{ flex: 1 }}>

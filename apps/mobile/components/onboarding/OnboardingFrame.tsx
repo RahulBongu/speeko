@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '../Screen';
 import { COLORS } from '../../lib/theme';
+import { Fox } from '../Fox';
 
 export const ONBOARDING_STEPS = 5;
 
@@ -83,10 +84,10 @@ export function OnboardingFrame({
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-            <Image
-              source={require('../../assets/fox.png')}
-              accessibilityLabel="Speeko, the friendly fox mascot"
-              style={{ width: 72, height: 72, borderRadius: 36 }}
+            <Fox
+              mood="happy"
+              title="Speeko, the friendly fox mascot"
+              style={{ width: 72, height: 72 }}
             />
             <View style={{ flex: 1 }}>
               <Text

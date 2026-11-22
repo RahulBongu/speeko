@@ -13,6 +13,7 @@ import { INDIAN_LOCALES, LOCALE_LABEL } from '@speeko/core';
 import { readCompletedOnboarding } from '../lib/onboarding';
 import { loadProgress } from '../lib/progress';
 import { Screen } from '../components/Screen';
+import { Fox } from '../components/Fox';
 import Animated, {
   FadeIn,
   FadeInUp,
@@ -104,10 +105,10 @@ export default function Home() {
         {/* Mascot */}
         <Animated.View entering={entrance(140)} style={styles.foxWrap}>
           <Animated.View style={[styles.foxHalo, foxStyle]}>
-            <Animated.Image
-              source={require('../assets/fox.png')}
+            <Fox
+              mood="happy"
               style={styles.fox}
-              accessibilityLabel="Speeko, the friendly fox mascot"
+              title="Speeko, the friendly fox mascot"
             />
           </Animated.View>
         </Animated.View>
