@@ -4,12 +4,17 @@ import Svg, { Circle, Ellipse, Path, G, Defs, LinearGradient, Stop } from 'react
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  useAnimatedProps,
   withRepeat,
   withSequence,
   withTiming,
   withSpring,
   Easing,
 } from 'react-native-reanimated';
+
+const AnimatedG = Animated.createAnimatedComponent(G);
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedEllipse = Animated.createAnimatedComponent(Ellipse);
 
 export type FoxMood = 'idle' | 'happy' | 'sad' | 'celebrate';
 
@@ -30,9 +35,10 @@ const MOOD_LABEL: Record<FoxMood, string> = {
 /**
  * Speeko, the mascot — vector version for mobile.
  *
- * Mirrors the web `Fox` component: a full body with ears, arms, tail, and a
- * mood-driven face. The whole fox breathes; celebrate adds a dance loop and
- * happy adds a hop. Arms answer the mood (up for happy/celebrate, down for sad).
+ * Full body with ears, arms, tail, and a mood-driven face. The whole fox
+ * breathes; celebrate adds a dance loop and happy adds a hop. The tail wags on
+ * its own, the arms answer the mood, and when `speaking` is true the mouth
+ * pulses open/closed and the eyes blink.
  */
 export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps) {
   const happy = mood === 'happy' || mood === 'celebrate';
@@ -42,6 +48,9 @@ export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps)
   const breathe = useSharedValue(0);
   const hop = useSharedValue(0);
   const dance = useSharedValue(0);
+  const tail = useSharedValue(0);
+  const mouth = useSharedValue(0);
+  const blink = useSharedValue(0);
 
   useEffect(() => {
     breathe.value = withRepeat(
@@ -51,6 +60,14 @@ export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps)
       ),
       -1,
       false,
+    );
+    tail.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 550, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-1, { duration: 550, easing: Easing.inOut(Easing.ease) }),
+      ),
+      -1,
+      true,
     );
     if (celebrate) {
       dance.value = withRepeat(
@@ -62,7 +79,7 @@ export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps)
         true,
       );
     } else {
-      dance.value = 0;
+      dance.value = withTiming(0, { duration: 200 });
     }
     if (happy && !celebrate) {
       hop.value = withSequence(
@@ -70,9 +87,39 @@ export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps)
         withTiming(0, { duration: 380, easing: Easing.in(Easing.ease) }),
       );
     } else {
-      hop.value = 0;
+      hop.value = withTiming(0, { duration: 200 });
     }
-  }, [mood, happy, sad, celebrate, breathe, hop, dance]);
+  }, [mood, happy, sad, celebrate, breathe, tail, dance, hop]);
+
+  useEffect(() => {
+    if (speaking) {
+      mouth.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 180, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 180, easing: Easing.inOut(Easing.ease) }),
+        ),
+        -1,
+        false,
+      );
+    } else {
+      mouth.value = withTiming(0, { duration: 120 });
+    }
+  }, [speaking, mouth]);
+
+  // Periodic blink.
+  useEffect(() => {
+    const cycle = () => {
+      blink.value = withSequence(
+        withTiming(1, { duration: 120, easing: Easing.in(Easing.ease) }),
+        withTiming(0, { duration: 120, easing: Easing.out(Easing.ease) }),
+      );
+    };
+    const id = setInterval(() => {
+      // blink every ~3.5s, but skip while speaking (mouth already animates)
+      if (!speaking) cycle();
+    }, 3500);
+    return () => clearInterval(id);
+  }, [speaking, blink]);
 
   const containerStyle = useAnimatedStyle(() => {
     const y = breathe.value * -2.5 + hop.value * -14 + dance.value * -6;
@@ -86,6 +133,25 @@ export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps)
       ],
     };
   });
+
+  const tailProps = useAnimatedProps(() => ({
+    rotation: tail.value * 6,
+    originX: 150,
+    originY: 198,
+  }));
+
+  const leftBlinkProps = useAnimatedProps(() => ({
+    ry: 0 + blink.value * 10.5,
+  }));
+  const rightBlinkProps = useAnimatedProps(() => ({
+    ry: 0 + blink.value * 10.5,
+  }));
+
+  const mouthOpenD = 'M101 133q19 26 38 0Z';
+  const mouthClosedD = 'M106 137q14 10 28 0';
+  const mouthProps = useAnimatedProps(() => ({
+    d: mouth.value > 0.5 ? mouthOpenD : mouthClosedD,
+  }));
 
   const leftEarRot = sad ? 13 : happy ? -5 : 0;
   const rightEarRot = sad ? -13 : happy ? 5 : 0;
@@ -123,8 +189,8 @@ export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps)
         <Ellipse cx="142" cy="218" rx="18" ry="11" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" />
         <Path d="M129 219h6M138 221h7M147 219h7" stroke="#a8420f" strokeWidth="2.2" strokeLinecap="round" opacity={0.55} />
 
-        {/* Tail */}
-        <G>
+        {/* Tail (animated wag) */}
+        <AnimatedG animatedProps={tailProps}>
           <Path
             d="M150 198c36 8 62-13 68-50 2-14 0-27-6-38-7 19-17 31-33 39-15 8-24 20-27 35Z"
             fill="url(#fur)"
@@ -136,7 +202,7 @@ export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps)
             d="M211 110c6 11 8 24 6 38-2 14-7 26-16 34 9-5 16-17 19-32 3-15 0-29-9-40Z"
             fill="url(#tailtip)"
           />
-        </G>
+        </AnimatedG>
 
         {/* Body */}
         <Ellipse cx="120" cy="181" rx="52" ry="43" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" />
@@ -207,24 +273,27 @@ export function Fox({ mood = 'idle', style, speaking = false, title }: FoxProps)
             </>
           )}
 
+          {/* Blink eyelids (animated) */}
+          <AnimatedEllipse cx="96" cy="101" rx="9" animatedProps={leftBlinkProps} fill="#ffa567" />
+          <AnimatedEllipse cx="144" cy="101" rx="9" animatedProps={rightBlinkProps} fill="#ffa567" />
+
           {/* Nose */}
           <Path d="M112 122h16l-8 10Z" fill="#3b2418" stroke="#3b2418" strokeWidth="2" strokeLinejoin="round" />
 
-          {/* Mouth */}
+          {/* Mouth (animated open/closed when speaking) */}
           {sad ? (
             <Path d="M106 145q14-10 28 0" fill="none" stroke="#5c2a12" strokeWidth="4" strokeLinecap="round" />
           ) : happy ? (
             <>
-              <Path d="M101 133q19 26 38 0Z" fill="#6d2b16" stroke="#5c2a12" strokeWidth="2" strokeLinejoin="round" />
+              <AnimatedPath animatedProps={speaking ? mouthProps : {}} d="M101 133q19 26 38 0Z" fill="#6d2b16" stroke="#5c2a12" strokeWidth="2" strokeLinejoin="round" />
               <Path d="M110 148q10 9 20 0q-10 12-20 0Z" fill="#ff8f8f" />
             </>
           ) : (
             <>
-              <Path d="M106 137q14 10 28 0" fill="#6d2b16" stroke="#5c2a12" strokeWidth="3.5" strokeLinejoin="round" />
+              <AnimatedPath animatedProps={speaking ? mouthProps : {}} d="M106 137q14 10 28 0" fill="#6d2b16" stroke="#5c2a12" strokeWidth="3.5" strokeLinejoin="round" />
               <Path d="M111 146q9 6 18 0q-9 9-18 0Z" fill="#ff8f8f" opacity={0.85} />
             </>
           )}
-
         </G>
 
         {celebrate ? (
