@@ -8,18 +8,19 @@
     <polygon points="75.8,39 80.3,21 64.8,30" fill="#FED7AA" stroke="#3F2A1D" stroke-width="1.5" stroke-linejoin="round"/>
     <!-- head -->
     <ellipse cx="50" cy="55" rx="35" ry="30" fill="#F97316" stroke="#3F2A1D" stroke-width="5"/>
-    <!-- muzzle: dome clears the eyes, bottom meets the head outline -->
+    <!-- muzzle -->
     <path d="M 26,63 C 26,77 36,83 50,83 C 64,83 74,77 74,63 C 74,56.5 64,54 50,54 C 36,54 26,56.5 26,63 Z"
           fill="#FFFDF6" stroke="#3F2A1D" stroke-width="4" stroke-linejoin="round"/>
-    <!-- eyes -->
-    <circle cx="38" cy="45" r="5.2" fill="#3F2A1D"/>
-    <circle cx="39.8" cy="43.2" r="1.7" fill="#FFFDF6"/>
-    <circle cx="62" cy="45" r="5.2" fill="#3F2A1D"/>
-    <circle cx="63.8" cy="43.2" r="1.7" fill="#FFFDF6"/>
     <!-- bindi -->
-    <circle cx="50" cy="34" r="3.4" fill="#DC2626"/>
-    <!-- nose + smile -->
-    <ellipse cx="50" cy="64" rx="4.5" ry="2.8" fill="#3F2A1D"/>
-    <path d="M 46,67 Q 50,71.5 54,67" fill="none" stroke="#3F2A1D" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="50" cy="31.5" r="3.4" fill="#DC2626"/>
+    <!-- closed smiling eyes with outer lash -->
+    <path d="M 31.5,45 Q 38,38.5 44.5,45" fill="none" stroke="#3F2A1D" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M 55.5,45 Q 62,38.5 68.5,45" fill="none" stroke="#3F2A1D" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M 31.5,45 L 29.3,47.6" fill="none" stroke="#3F2A1D" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M 68.5,45 L 70.7,47.6" fill="none" stroke="#3F2A1D" stroke-width="3.2" stroke-linecap="round"/>
+    <!-- nose + open singing mouth -->
+    <path d="M 45.2,60.2 Q 50,57.2 54.8,60.2 Q 52.7,63.8 50,63.8 Q 47.3,63.8 45.2,60.2 Z" fill="#3F2A1D"/>
+    <path d="M 41,66 Q 50,62 59,66 Q 59,77 50,79 Q 41,77 41,66 Z" fill="#3F2A1D"/>
+    <path d="M 45,73.5 Q 50,70 55,73.5 Q 53.3,77.6 50,78.4 Q 46.7,77.6 45,73.5 Z" fill="#DC2626"/>
   </g>
 </svg>
