@@ -88,7 +88,7 @@ No screenshots were taken. P0 produces no UI and this environment has no headles
 | "10 courses × 3 units × 2 lessons × 3 exercises = 180 exercises" | **STALE** | Actual 4 units / 8 lessons / 24 exercises per course = **240**. |
 | "Ten exercise boards" | **TRUE** | 10 kinds in `packages/core/src/content.ts`. |
 | "Five hearts per lesson" | **TRUE** | `INITIAL_HEARTS = 5` in `packages/core/src/session.ts`; per-lesson, resets each attempt. |
-| "Rive fox ... runtime integration already in place" | **PARTIAL** | `components/RiveLayer.tsx` and `@rive-app/react-canvas` exist, but there is no `.riv` asset; the Fox is inline SVG. |
+| "Rive fox ... runtime integration already in place" | **REMOVED** | Rive was removed; the fox is a free inline-SVG rig. Web uses Tailwind keyframes, mobile uses `react-native-svg` + `react-native-reanimated`. |
 | "Native mobile account and sync client" listed as roadmap | **TRUE (missing)** | Only a welcome screen exists. |
 
 ---

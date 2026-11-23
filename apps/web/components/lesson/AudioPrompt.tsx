@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Locale } from '@speeko/core';
 import { speak } from '@/lib/speech';
+import { emitMascotListening } from '@/lib/mascotVoice';
 import { SpeakerIcon } from '@/components/icons';
 
 export interface AudioPromptProps {
@@ -34,6 +35,11 @@ export function AudioPrompt({
   const [unavailable, setUnavailable] = useState(false);
   const [showText, setShowText] = useState(alwaysShowText);
 
+  const setPlayingState = (value: boolean) => {
+    setPlaying(value);
+    emitMascotListening(value);
+  };
+
   const stopTimer = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -49,29 +55,29 @@ export function AudioPrompt({
       audio.currentTime = 0;
       setPlaying(true);
       void audio.play().catch(() => {
-        setPlaying(false);
+        setPlayingState(false);
         setUnavailable(true);
       });
       return;
     }
-    const ok = speak(text, locale, () => setPlaying(false));
+    const ok = speak(text, locale, () => setPlayingState(false));
     if (!ok) {
       setUnavailable(true);
-      setPlaying(false);
+      setPlayingState(false);
       setShowText(true);
       return;
     }
-    setPlaying(true);
+    setPlayingState(true);
     // Safety net for browsers that never fire `onend`.
-    timeoutRef.current = setTimeout(() => setPlaying(false), 4000);
+    timeoutRef.current = setTimeout(() => setPlayingState(false), 4000);
   };
 
   useEffect(() => {
     if (!autoPlay) return;
     const timer = setTimeout(() => {
-      if (audioUrl || speak(text, locale, () => setPlaying(false))) {
-        setPlaying(true);
-        timeoutRef.current = setTimeout(() => setPlaying(false), 4000);
+      if (audioUrl || speak(text, locale, () => setPlayingState(false))) {
+        setPlayingState(true);
+        timeoutRef.current = setTimeout(() => setPlayingState(false), 4000);
       } else {
         setUnavailable(true);
       }
@@ -84,7 +90,10 @@ export function AudioPrompt({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, locale, audioUrl, autoPlay]);
 
-  useEffect(() => () => stopTimer(), []);
+  useEffect(() => () => {
+    stopTimer();
+    emitMascotListening(false);
+  }, []);
 
   const showPhrase = alwaysShowText || showText || unavailable;
   const buttonSize = size === 'lg' ? 'h-24 w-24' : 'h-20 w-20';
@@ -96,10 +105,10 @@ export function AudioPrompt({
           ref={audioRef}
           src={audioUrl}
           preload="none"
-          onEnded={() => setPlaying(false)}
+          onEnded={() => setPlayingState(false)}
           onError={() => {
             setUnavailable(true);
-            setPlaying(false);
+            setPlayingState(false);
           }}
           className="hidden"
         />

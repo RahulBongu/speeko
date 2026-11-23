@@ -40,6 +40,8 @@ jest.mock('../lib/mascot', () => ({
   setMascotVoiceEnabled: jest.fn(),
   playMascotVoice: jest.fn(async () => true),
   stopMascotVoice: jest.fn(async () => {}),
+  useMascotSpeaking: jest.fn(() => false),
+  useMascotListening: jest.fn(() => false),
 }));
 
 import { apiFetch } from '../lib/api';

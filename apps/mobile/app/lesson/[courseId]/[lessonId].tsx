@@ -12,6 +12,7 @@ import {
 import { apiFetch, ORIGIN } from '../../../lib/api';
 import { loadProgress, saveProgress } from '../../../lib/progress';
 import { ExerciseBody } from '../../../components/ExerciseBody';
+import { Fox } from '../../../components/Fox';
 import { Screen } from '../../../components/Screen';
 import {
   ProgressTrack,
@@ -27,7 +28,7 @@ import {
   type DraftAnswer,
 } from '../../../lib/exercise';
 import { COLORS } from '../../../lib/theme';
-import { playMascotVoice } from '../../../lib/mascot';
+import { playMascotVoice, useMascotListening, useMascotSpeaking } from '../../../lib/mascot';
 
 type Phase = 'loading' | 'error' | 'playing' | 'feedback' | 'summary' | 'hearts';
 type SaveState = 'idle' | 'saving' | 'saved' | 'practice' | 'local' | 'error';
@@ -73,6 +74,16 @@ export default function LessonPlayer() {
   const saving = useRef(false);
 
   const exercise = lesson?.exercises[index] ?? null;
+  const mascotSpeaking = useMascotSpeaking();
+  const mascotListening = useMascotListening();
+  const foxMood =
+    phase === 'feedback'
+      ? grade?.correct
+        ? 'correct'
+        : 'incorrect'
+      : phase === 'summary'
+        ? 'celebrate'
+        : 'idle';
 
   const load = useCallback(async () => {
     if (!courseId || !lessonId) {
@@ -326,6 +337,12 @@ export default function LessonPlayer() {
             justifyContent: 'center',
           }}
         >
+        <Fox
+          mood="celebrate"
+          speaking={mascotSpeaking}
+          style={{ width: 132, height: 132 }}
+          title="Speeko celebrating your lesson"
+        />
         <Text style={{ fontSize: 30, fontWeight: '900', color: COLORS.dark }}>
           {saveState === 'practice' ? 'Practice complete!' : 'Lesson complete!'}
         </Text>
@@ -519,9 +536,18 @@ export default function LessonPlayer() {
             gap: 4,
           }}
         >
-          <Text style={{ fontWeight: '900', color: grade.correct ? COLORS.greenDark : COLORS.red }}>
-            {grade.correct ? 'Correct!' : 'Not quite'}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Fox
+              mood={foxMood}
+              speaking={mascotSpeaking}
+              listening={mascotListening}
+              style={{ width: 44, height: 44 }}
+              title="Speeko reacting to your answer"
+            />
+            <Text style={{ fontWeight: '900', color: grade.correct ? COLORS.greenDark : COLORS.red }}>
+              {grade.correct ? 'Correct!' : 'Not quite'}
+            </Text>
+          </View>
           {!grade.correct && grade.expected ? (
             <Text style={{ color: COLORS.dark }}>
               Correct answer: <Text style={{ fontWeight: '800' }}>{grade.expected}</Text>

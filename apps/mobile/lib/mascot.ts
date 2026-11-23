@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { createAudioPlayer } from 'expo-audio';
 import { MASCOT_REACTIONS, type MascotReactionId } from '@speeko/core';
 
@@ -12,6 +13,50 @@ const AUDIO_MAP: Record<string, number> = {
 
 let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 let enabled = true;
+
+type ActiveListener = (active: boolean) => void;
+const speakingListeners = new Set<ActiveListener>();
+const listeningListeners = new Set<ActiveListener>();
+let speaking = false;
+let listening = false;
+
+function emit(listeners: Set<ActiveListener>, active: boolean) {
+  for (const listener of listeners) listener(active);
+}
+
+export function emitMascotListening(active: boolean): void {
+  if (listening === active) return;
+  listening = active;
+  emit(listeningListeners, active);
+}
+
+export function subscribeMascotSpeaking(listener: ActiveListener): () => void {
+  speakingListeners.add(listener);
+  return () => speakingListeners.delete(listener);
+}
+
+export function subscribeMascotListening(listener: ActiveListener): () => void {
+  listeningListeners.add(listener);
+  return () => listeningListeners.delete(listener);
+}
+
+export function useMascotSpeaking(): boolean {
+  const [active, setActive] = useState(speaking);
+  useEffect(() => {
+    setActive(speaking);
+    return subscribeMascotSpeaking(setActive);
+  }, []);
+  return active;
+}
+
+export function useMascotListening(): boolean {
+  const [active, setActive] = useState(listening);
+  useEffect(() => {
+    setActive(listening);
+    return subscribeMascotListening(setActive);
+  }, []);
+  return active;
+}
 
 try {
   const AsyncStorage = require('@react-native-async-storage/async-storage').default;
@@ -59,12 +104,22 @@ export async function playMascotVoice(reactionId: MascotReactionId): Promise<boo
           player.remove();
         } catch {}
         if (currentPlayer === player) currentPlayer = null;
+        if (speaking) {
+          speaking = false;
+          emit(speakingListeners, false);
+        }
         subscription.remove();
       }
     });
     player.play();
+    speaking = true;
+    emit(speakingListeners, true);
     return true;
   } catch {
+    if (speaking) {
+      speaking = false;
+      emit(speakingListeners, false);
+    }
     return false;
   }
 }
@@ -78,5 +133,9 @@ export async function stopMascotVoice(): Promise<void> {
       currentPlayer.remove();
     } catch {}
     currentPlayer = null;
+  }
+  if (speaking) {
+    speaking = false;
+    emit(speakingListeners, false);
   }
 }

@@ -1,4 +1,5 @@
 import { createAudioPlayer } from 'expo-audio';
+import { emitMascotListening } from './mascot';
 
 const AUDIO_MAP: Record<string, number> = {
   'bn-starter-u3-l2-e3': require('../assets/audio/bn-starter-u3-l2-e3.mp3'),
@@ -39,10 +40,12 @@ export async function playMobileAudio(exerciseId: string): Promise<boolean> {
           player.remove();
         } catch {}
         if (currentPlayer === player) currentPlayer = null;
+        emitMascotListening(false);
         subscription.remove();
       }
     });
     player.play();
+    emitMascotListening(true);
     return true;
   } catch {
     return false;
@@ -59,4 +62,5 @@ export async function stopMobileAudio(): Promise<void> {
     } catch {}
     currentPlayer = null;
   }
+  emitMascotListening(false);
 }

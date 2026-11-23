@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { MASCOT_REACTIONS, mascotReaction, pickMascotPhrase } from './mascot.js';
+import {
+  MASCOT_REACTIONS,
+  foxMoodForReaction,
+  mascotReaction,
+  pickMascotPhrase,
+  resolveFoxAnimation,
+} from './mascot.js';
 
 describe('MASCOT_REACTIONS', () => {
   it('has a reaction for every semantic event used by the apps', () => {
@@ -23,6 +29,59 @@ describe('MASCOT_REACTIONS', () => {
       expect(reaction.phrases.length).toBeGreaterThan(0);
       expect(allowed.has(reaction.animation)).toBe(true);
     }
+  });
+});
+
+describe('resolveFoxAnimation', () => {
+  it('maps idle to a calm breathing pose', () => {
+    const state = resolveFoxAnimation({ mood: 'idle' });
+    expect(state.mood).toBe('idle');
+    expect(state.animation).toBe('breathe');
+    expect(state.speaking).toBe(false);
+    expect(state.listening).toBe(false);
+  });
+
+  it('lets a speaking voice line override listening and feedback', () => {
+    const state = resolveFoxAnimation({ mood: 'correct', speaking: true, listening: true });
+    expect(state.mood).toBe('talking');
+    expect(state.animation).toBe('talk');
+  });
+
+  it('uses an attentive pose while an audio prompt plays', () => {
+    const state = resolveFoxAnimation({ listening: true });
+    expect(state.mood).toBe('listening');
+    expect(state.animation).toBe('headBob');
+  });
+
+  it('maps grading aliases to distinct happy and confused reactions', () => {
+    const correct = resolveFoxAnimation({ mood: 'correct' });
+    const incorrect = resolveFoxAnimation({ mood: 'incorrect' });
+    expect(correct.animation).toBe('bounce');
+    expect(incorrect.animation).toBe('confused');
+    expect(incorrect.encourageAfter).toBe(true);
+  });
+
+  it('keeps celebration above speech and tap waves above idle', () => {
+    expect(resolveFoxAnimation({ mood: 'celebrate', speaking: true }).animation).toBe('celebrate');
+    const wave = resolveFoxAnimation({ mood: 'idle', tapped: true });
+    expect(wave.animation).toBe('wave');
+    expect(wave.waving).toBe(true);
+  });
+
+  it('does not start a wave during a confused reaction', () => {
+    const state = resolveFoxAnimation({ mood: 'incorrect', tapped: true });
+    expect(state.animation).toBe('confused');
+    expect(state.waving).toBe(false);
+  });
+});
+
+describe('foxMoodForReaction', () => {
+  it('maps every semantic reaction to a fox mood', () => {
+    expect(foxMoodForReaction('correct_answer')).toBe('happy');
+    expect(foxMoodForReaction('incorrect_answer')).toBe('sad');
+    expect(foxMoodForReaction('lesson_complete')).toBe('celebrate');
+    expect(foxMoodForReaction('discovery')).toBe('listening');
+    expect(foxMoodForReaction('encouragement')).toBe('encouraging');
   });
 });
 

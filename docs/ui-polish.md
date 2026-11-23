@@ -3,7 +3,7 @@
 ## Stack (3 lines)
 - Web: Next.js 15 (App Router) · React 19 · Tailwind CSS 3.4 (no CSS-in-JS)
 - Native shell (Android): Expo RN 0.79 — not in scope for this pass (web is the product surface)
-- Animation: Tailwind keyframes + custom SVG fox (moods), `@rive-app/react-canvas` installed for a future rig; no Framer Motion
+- Animation: Tailwind keyframes + custom SVG fox (moods); mobile uses `react-native-svg` + `react-native-reanimated`. No Rive, Framer Motion, or paid animation service.
 
 ## /design-refs/
 Not present — no external screenshots to anchor to. Stitch screens in `design/stitch/html/` are reference-grade but are our own generated work, not a third-party target.

@@ -170,6 +170,37 @@ const config: Config = {
           '0%, 100%': { transform: 'scale(0.85)', opacity: '.55' },
           '50%': { transform: 'scale(1.08)', opacity: '1' },
         },
+        'ear-flick': {
+          '0%, 68%, 100%': { transform: 'rotate(0deg)' },
+          '76%': { transform: 'rotate(-4deg)' },
+          '84%': { transform: 'rotate(2deg)' },
+        },
+        'ear-flick-right': {
+          '0%, 68%, 100%': { transform: 'rotate(0deg)' },
+          '76%': { transform: 'rotate(4deg)' },
+          '84%': { transform: 'rotate(-2deg)' },
+        },
+        'pupil-look': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(1.5px)' },
+        },
+        'pupil-look-right': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '50%': { transform: 'translateX(-1.5px)' },
+        },
+        'fox-confused': {
+          '0%, 100%': { transform: 'rotate(0deg) translateY(0)' },
+          '30%': { transform: 'rotate(-3deg) translateY(0)' },
+          '65%': { transform: 'rotate(2deg) translateY(-1px)' },
+        },
+        'fox-nod': {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '50%': { transform: 'rotate(2deg) translateY(1px)' },
+        },
+        'fox-wave': {
+          '0%, 100%': { transform: 'rotate(-2deg)' },
+          '50%': { transform: 'rotate(2deg)' },
+        },
         'logo-sway': {
           '0%, 100%': { transform: 'rotate(-1.4deg) translateY(0)' },
           '50%': { transform: 'rotate(1.4deg) translateY(-0.8px)' },
@@ -216,6 +247,13 @@ const config: Config = {
         'toe-tap': 'toe-tap .8s ease-in-out infinite',
         'toe-tap-right': 'toe-tap-right .8s ease-in-out infinite',
         sparkle: 'sparkle 1.1s ease-in-out infinite',
+        'ear-flick': 'ear-flick 4.2s ease-in-out infinite',
+        'ear-flick-right': 'ear-flick-right 4.2s ease-in-out infinite',
+        'pupil-look': 'pupil-look 2.4s ease-in-out infinite',
+        'pupil-look-right': 'pupil-look-right 2.4s ease-in-out infinite',
+        'fox-confused': 'fox-confused 1.1s ease-in-out',
+        'fox-nod': 'fox-nod 1.4s ease-in-out',
+        'fox-wave': 'fox-wave .7s ease-in-out',
         'logo-sway': 'logo-sway 5.6s ease-in-out infinite',
         'logo-note-a': 'logo-note-a 3.9s cubic-bezier(.22,1,.36,1) infinite',
         'logo-note-b': 'logo-note-b 4.7s cubic-bezier(.22,1,.36,1) 1.3s infinite',

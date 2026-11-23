@@ -34,7 +34,7 @@ import { authClient } from '@/lib/auth-client';
 import { readKnownSignedInUserId } from '@/lib/auth-marker';
 import { submitLessonCompletion } from '@/lib/sync';
 import { isSoundEnabled, playSound, setSoundEnabled } from '@/lib/sound';
-import { playMascotVoice, useMascotSpeaking } from '@/lib/mascotVoice';
+import { playMascotVoice, useMascotListening, useMascotSpeaking } from '@/lib/mascotVoice';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
 import { ProgressBar } from '@/components/ProgressBar';
@@ -160,6 +160,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [answeredExercise, setAnsweredExercise] = useState<Exercise | null>(null);
   const [xpGained, setXpGained] = useState(0);
   const mascotSpeaking = useMascotSpeaking();
+  const mascotListening = useMascotListening();
   const [showExit, setShowExit] = useState(false);
   const exitDialogRef = useRef<HTMLDivElement | null>(null);
   const keepPracticingRef = useRef<HTMLButtonElement | null>(null);
@@ -693,7 +694,12 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           </div>
 
           <div className="mt-5 flex items-center gap-3">
-            <Fox mood={mood} speaking={mascotSpeaking} className="hidden h-16 w-16 shrink-0 sm:block" />
+            <Fox
+              mood={mood}
+              speaking={mascotSpeaking}
+              listening={mascotListening}
+              className="hidden h-16 w-16 shrink-0 sm:block"
+            />
             <div className="relative hidden flex-1 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-sm font-semibold text-bark-500 shadow-card-sm sm:block">
               <span
                 aria-hidden="true"

@@ -60,6 +60,33 @@ export function isMascotSpeaking(): boolean {
   return current !== null;
 }
 
+// Listening state is driven by the lesson audio prompt, not by mascot playback.
+let listening = false;
+const listeningListeners = new Set<SpeakingListener>();
+
+export function emitMascotListening(active: boolean): void {
+  if (listening === active) return;
+  listening = active;
+  for (const listener of listeningListeners) listener(active);
+}
+
+export function subscribeMascotListening(listener: SpeakingListener): () => void {
+  listeningListeners.add(listener);
+  return () => {
+    listeningListeners.delete(listener);
+  };
+}
+
+/** React hook for the listening pose while an audio prompt plays. */
+export function useMascotListening(): boolean {
+  const [active, setActive] = useState(listening);
+  useEffect(() => {
+    setActive(listening);
+    return subscribeMascotListening(setActive);
+  }, []);
+  return active;
+}
+
 /** React hook form of {@link isMascotSpeaking}. */
 export function useMascotSpeaking(): boolean {
   const [speaking, setSpeaking] = useState(false);
