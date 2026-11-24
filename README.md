@@ -175,8 +175,8 @@ Project status is tracked in [`docs/PROGRESS.md`](docs/PROGRESS.md), durable cho
 
 ## Roadmap
 
-1. Rive fox asset authored in Rive (runtime integration already in place)
-2. Native-speaker review of the 315 draft exercises (review package and protocol ready)
+1. Optional future mascot expansion — the current fox is a free, code-based SVG rig with no paid animation dependency
+2. Native-speaker review of the 321 shipped exercises (worksheet and reviewer guide ready)
 3. Functional on-device QA pass on the release build (owner-run; the render pass is done)
 4. Hosting/database choice, backups, secret rotation
 5. Play Store accounts and listing (draft metadata ready; not published)
