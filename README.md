@@ -164,7 +164,7 @@ content/      Per-locale course JSON
 
 Playwright uses the installed Google Chrome, so `pnpm e2e` does not download a browser. It serves the production web build and the compiled API, so run `pnpm build` first (or use `pnpm verify`).
 
-Project status is tracked in [`docs/PROGRESS.md`](docs/PROGRESS.md), durable choices in [`docs/DECISIONS.md`](docs/DECISIONS.md), current web/mobile parity in [`docs/product/current-state-and-parity.md`](docs/product/current-state-and-parity.md), the release-readiness verdict in [`docs/READINESS.md`](docs/READINESS.md), and the original ground-truth audit in [`docs/AUDIT.md`](docs/AUDIT.md).
+Project status is tracked in [`docs/PROGRESS.md`](docs/PROGRESS.md), durable choices in [`docs/DECISIONS.md`](docs/DECISIONS.md), current web/mobile parity in [`docs/product/current-state-and-parity.md`](docs/product/current-state-and-parity.md), the release-readiness verdict in [`docs/READINESS.md`](docs/READINESS.md), and the original ground-truth audit in [`docs/AUDIT.md`](docs/AUDIT.md). The latest autonomous finalization run, its exact verification counts and its remaining owner gates are in [`docs/release/speeko-finalization-progress.md`](docs/release/speeko-finalization-progress.md).
 
 ## License
 
