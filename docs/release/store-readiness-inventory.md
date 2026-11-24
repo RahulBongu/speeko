@@ -7,7 +7,7 @@ Everything below was read from the current source/config. Nothing was submitted 
 | Item | Value | Status |
 |---|---|---|
 | Name | Speeko | Present |
-| Version | 0.0.1 | Present; owner sets release version/build number |
+| Version | 0.0.1 | Present; owner must increment version and set an Android build number before any store upload |
 | Orientation | portrait | Present |
 | UI style | light | Present |
 | Deep-link scheme | `speeko` | Present (no verified universal/app links) |
