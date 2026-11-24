@@ -45,6 +45,8 @@ Record the exact command output and exit status in the progress report. Do not d
 
 Expo SDK 58 with `expo-audio`, `expo-router`, `expo-asset` and the local config plugins `./plugins/withQaLoopbackCleartext` and `./plugins/withMinimalAndroidPermissions` should be treated as a **development build**, not assumed to work in Expo Go. The latter strips `SYSTEM_ALERT_WINDOW` and legacy external-storage permissions that a fresh prebuild otherwise adds; it is covered by `apps/mobile/__tests__/permissions-plugin.test.ts`.
 
+`withQaLoopbackCleartext` is a no-op unless `SPEEKO_QA_LOOPBACK_CLEARTEXT=1` is set at prebuild time. For a **local QA build only**, prepend it to the prebuild command: `SPEEKO_QA_LOOPBACK_CLEARTEXT=1 EXPO_NO_GIT_STATUS=1 npx expo prebuild --platform android --clean --no-install`. It permits cleartext HTTP solely to `localhost`/`127.0.0.1`. The plugin hard-refuses when `EAS_BUILD_PROFILE=production`, so it cannot silently ship in a production build; do not set it for store/production builds.
+
 1. Install EAS CLI if absent: `npm i -g eas-cli`. Sign in with an owner account (`eas login`) — owner credential, not available here.
 2. From `apps/mobile`, run `eas build --profile development --platform android` (or `--platform ios` on macOS). This builds an installable development client with the native modules above.
 3. Install the resulting build on a device/emulator. For a local emulator, create an AVD via Android Studio (platform 35+, Google APIs) and start it, then confirm `adb devices` lists it.
