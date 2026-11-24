@@ -58,7 +58,7 @@ Web pages:
 - `/account` — profile, cloud sync status, and sign out
 - `/studio` — course JSON authoring with live validation and download
 
-Mobile (Expo SDK 53) screens:
+Mobile (Expo SDK 58) screens:
 
 - `/onboarding/*` — language, motivation, level, daily goal, commitment (6 taps to the first lesson)
 - `/learn` — course list with real per-course completion, continue card
