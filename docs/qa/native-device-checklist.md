@@ -102,6 +102,7 @@ Run these on Android first; repeat the applicable subset on iOS only if a Mac, X
 | Voice gate shows honest unavailable state PASS/FAIL | NOT RUN |
 
 ### Evidence to capture when run
+- Confirm the runtime is actually attached before starting: `adb devices` must list a row whose second column is `device` (not `unauthorized` or `offline`). Record its serial.
 - Device/emulator model, OS version, build type (development client vs local debug APK), Expo SDK, date.
 - Real device screenshots or short recordings for launch, a lesson in progress, lesson completion, Habits, Shop, Account and reduced-motion state.
 - Store them under `docs/qa/native-<device-os>/` with a manifest row in `docs/design/screenshot-manifest.md`, clearly labelled `native device`.
