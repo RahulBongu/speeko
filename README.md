@@ -11,7 +11,7 @@ A Duolingo-style language-learning app for ten Indian languages, built with orig
 | Layer | Technology |
 | --- | --- |
 | Web | Next.js 15 (App Router), React 19, Tailwind CSS |
-| Mobile | Expo SDK 53, expo-router, React Native |
+| Mobile | Expo SDK 58, expo-router, React Native |
 | API | Fastify 5, Drizzle ORM, pglite (dev) / Postgres |
 | Auth | Better Auth (email + password sessions) |
 | Core | TypeScript answer grading, streak math, progress merging, content schemas |
@@ -32,16 +32,18 @@ Open http://localhost:3000. `pnpm dev` starts the web app on port 3000 and the A
 | `pnpm dev` | Web + API through Turbo |
 | `pnpm --filter @speeko/web dev` | Web app on port 3000 (syncs courses first) |
 | `pnpm --filter @speeko/api dev` | API on port 3001 (`/health`, `/api/auth/*`, `/api/progress`, `/api/lesson-completions`) |
-| `pnpm --filter @speeko/mobile start` | Expo Go / emulator |
+| `pnpm --filter @speeko/mobile start` | Expo dev server (SDK 58 uses a development build for native modules; see `docs/qa/native-device-checklist.md`) |
 | `pnpm typecheck` | TypeScript across every package |
-| `pnpm test` | Vitest suites for grading, progress merging, guidebook extraction, eligibility filtering, all course content (113 core + 16 content), and client-IP trust rules (12 API), plus the mobile Jest suite (81 tests, 16 suites) through Turbo |
+| `pnpm test` | Vitest suites for grading, progress merging, guidebook extraction, eligibility filtering, course content and client-IP trust rules, plus the mobile Jest suite (91 tests, 19 suites) through Turbo |
 | `pnpm build` | Production builds for web, API, mobile-web, content |
 | `pnpm lint` | ESLint for web and mobile (non-interactive) |
 | `pnpm e2e` | Playwright route smoke tests + screenshots (requires `pnpm build`) |
-| `pnpm verify` | typecheck → test → build → secrets scan → e2e |
+| `pnpm verify` | typecheck → test → build → secrets scan → license-text check → e2e |
 | `pnpm sync:content` | Rebuild courses into `apps/web/public/courses` |
 
 Android APK (local): requires JDK 17+ and the Android SDK. Run `cd apps/mobile && npx expo prebuild --platform android && cd android && ./gradlew assembleDebug` (debug) or `assembleRelease` (release-signed with the local keystore). The release APK lands at `apps/mobile/android/app/build/outputs/apk/release/app-release.apk`; a copy exists at `dist/speeko-release.apk` (gitignored). The release APK render is verified on a Vivo V2336 (cold start to the learn screen); functional device QA is waived for the internal alpha. For a production APK, point the mobile client at the production API by setting `expo.extra.apiUrl` and `expo.extra.webOrigin` in `apps/mobile/app.json` at build time (see `apps/mobile/lib/api.ts`).
+
+Native device QA is a separate owner/device task: `docs/qa/native-device-checklist.md` contains the reproducible development-build steps and manual matrix. No device or emulator was attached during the latest verification pass. Native-speaker content review is tracked in `docs/content/native-speaker-review.md` and is **not complete**.
 
 Web pages:
 
@@ -131,7 +133,7 @@ content/<locale>/<course>.json
 apps/web/public/courses/ (synced automatically on dev/build)
 ```
 
-The seeded starter bundle contains **10 courses × 4 units × 2 lessons × 24 exercises = 240 exercises** (one mislabeled English filler exercise per starter was removed 2026-11-16, and each starter now teaches the number Eight). P4 adds one draft pilot, `content/hi/hi-pilot.json`: **5 units × 5 lessons × 3 exercises = 75 exercises**, with no audio. The content tests grade every exercise to confirm each answer key is reachable (315 total).
+The shipped bundle in `content/dist/` contains **321 exercises**: 246 starter exercises (nine starters × 24, plus Hindi starter × 30) and one 75-exercise Hindi pilot (`content/hi/hi-pilot.json`, no audio). Nine `listenChoose` exercises ship a bundled MP3; all other exercises are text-only. The content tests grade every exercise to confirm each answer key is reachable. Shipped courses are marked `automated_reviewed` (structural validation only) — **no native-speaker review has been completed**; see `docs/content/native-speaker-review.md`. The schema allows an optional `transliteration` field, but the current courses do not supply one.
 
 Optional course fields now include `reviewStatus` (`draft`/`reviewed`, default `draft`), `reviewer`, unit/lesson `guidebook`, and exercise `vocabId` / `transliteration`. Reviewed content requires a reviewer. `ATTRIBUTIONS.md` records font/third-party attribution and the policy for any imported phrases (none are present in the current curriculum).
 
@@ -152,11 +154,11 @@ content/      Per-locale course JSON
 
 ## Verification
 
-- `pnpm typecheck` — 5 packages clean (6 Turbo tasks including dependency builds)
-- `pnpm test` - 149 core + 18 content + 12 API (Vitest) and 81 mobile (Jest, 16 suites), all passing
+- `pnpm typecheck` — 6 Turbo tasks clean
+- `pnpm test` — 156 core + 18 content + 12 API (Vitest) and 91 mobile (Jest, 19 suites), all passing
 - `pnpm build` — web, API, mobile-web export, and content bundle all succeed
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
-- `pnpm e2e` — 156 Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, marketing-page rendering, and the progress-endpoint integrity boundary at 1280×800 and 390×844 with zero console/page errors. Screenshots live in `test-results/screenshots/`; curated key screenshots live in `docs/qa/` and are inspected each phase
+- `pnpm e2e` — Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, marketing-page rendering, the progress-endpoint integrity boundary, account deletion, the honest AI gate, and axe-core accessibility at 1280×800 and 390×844. Screenshots live in `test-results/screenshots/`; curated key screenshots live in `docs/qa/`; the axe report is `docs/qa/axe-report.json`
 - `pnpm verify` — runs typecheck → test → build → secrets scan → license check → e2e in order
 - Migrations are applied on API startup. `lesson_events` (0002) and `lesson_completion_rewards` (0005) were smoke-tested; 0005 was applied to a fresh pglite directory and to a populated pre-0005 database with historical events, verifying the non-destructive backfill.
 

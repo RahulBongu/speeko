@@ -106,6 +106,14 @@ body {
     overflow: hidden;
   }
 
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .btn-shine::after {
     content: '';
     position: absolute;

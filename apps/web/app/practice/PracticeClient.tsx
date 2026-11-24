@@ -57,7 +57,7 @@ function PracticeStat({
     <div className={`rounded-2xl border-2 px-3 py-3 text-center ${tones[tone]}`}>
       <span className="mx-auto flex h-6 w-6 items-center justify-center">{icon}</span>
       <p className="mt-1 font-display text-2xl font-extrabold leading-none">{value}</p>
-      <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em] opacity-70">
+      <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em]">
         {label}
       </p>
     </div>

@@ -87,7 +87,6 @@ function PathNode({
   return (
     <Link
       href={href}
-      aria-label={`${label}: ${sub}`}
       className="focus-ring group flex w-24 flex-col items-center gap-1.5 rounded-2xl"
     >
       {circle}
@@ -362,7 +361,11 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                               />
                             ) : null}
                             {status === 'locked' ? (
-                              <span aria-disabled="true" title="Finish the previous lesson first">
+                              <span
+                                role="img"
+                                aria-label={`Locked lesson ${lesson.title}. Finish the previous lesson first.`}
+                                title="Finish the previous lesson first"
+                              >
                                 {node}
                               </span>
                             ) : (

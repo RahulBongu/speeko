@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { eq } from 'drizzle-orm';
 import { getDb } from '../db/client.js';
-import { users } from '../db/schema.js';
+import { energy, progress, srsCards, streaks, users } from '../db/schema.js';
 import { user } from '../db/auth-schema.js';
 import { sessionFromHeaders } from './auth.js';
 
@@ -13,12 +13,19 @@ export async function accountRoutes(app: FastifyInstance) {
 
     const db = getDb();
     try {
-      // Delete app-owned rows that reference the legacy `users` table (no
-      // cascade there). The `user`-table rows cascade automatically.
-      await db.delete(users).where(eq(users.id, userId)).catch(() => {});
-
-      // Delete the Better Auth user row; session/account rows cascade.
-      await db.delete(user).where(eq(user.id, userId));
+      // Everything for one account must disappear together. The legacy tables
+      // reference `users` without ON DELETE CASCADE, so delete their rows
+      // first inside a transaction; the `user`-table rows cascade on their own.
+      // Previously a failed legacy delete was swallowed, which could leave
+      // activity/PII behind after the account was gone.
+      await db.transaction(async (tx) => {
+        await tx.delete(progress).where(eq(progress.userId, userId));
+        await tx.delete(srsCards).where(eq(srsCards.userId, userId));
+        await tx.delete(streaks).where(eq(streaks.userId, userId));
+        await tx.delete(energy).where(eq(energy.userId, userId));
+        await tx.delete(users).where(eq(users.id, userId));
+        await tx.delete(user).where(eq(user.id, userId));
+      });
 
       return reply.status(204).send();
     } catch (err) {

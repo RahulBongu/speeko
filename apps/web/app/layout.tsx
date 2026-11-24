@@ -27,9 +27,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="min-h-screen bg-cream-50 text-bark-800 antialiased">
+        <a
+          href="#main-content"
+          className="focus-ring sr-only absolute left-4 top-4 z-50 rounded-xl bg-white px-4 py-2 font-display font-bold text-bark-800 shadow-card focus:not-sr-only"
+        >
+          Skip to content
+        </a>
         <OfflineBanner />
         <ProgressSync />
-        {children}
+        <div id="main-content">{children}</div>
       </body>
     </html>
   );

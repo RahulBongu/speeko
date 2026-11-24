@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
 import { useRouter, type Href } from 'expo-router';
+import { Icon, type IconName } from './Icons';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -8,12 +9,12 @@ import { COLORS } from '../lib/theme';
 
 export type NavKey = 'learn' | 'practice' | 'habits' | 'shop' | 'account';
 
-const ITEMS: { key: NavKey; label: string; href: Href; icon: string }[] = [
-  { key: 'learn', label: 'Learn', href: '/learn', icon: '📚' },
-  { key: 'practice', label: 'Practice', href: '/practice', icon: '🔁' },
-  { key: 'habits', label: 'Habits', href: '/habits', icon: '📅' },
-  { key: 'shop', label: 'Shop', href: '/shop', icon: '🛍️' },
-  { key: 'account', label: 'Account', href: '/account', icon: '🦊' },
+const ITEMS: { key: NavKey; label: string; href: Href; icon: IconName }[] = [
+  { key: 'learn', label: 'Learn', href: '/learn', icon: 'learn' },
+  { key: 'practice', label: 'Practice', href: '/practice', icon: 'practice' },
+  { key: 'habits', label: 'Habits', href: '/habits', icon: 'habits' },
+  { key: 'shop', label: 'Shop', href: '/shop', icon: 'shop' },
+  { key: 'account', label: 'Account', href: '/account', icon: 'account' },
 ];
 
 /**
@@ -80,7 +81,7 @@ function AppNavBar({ active }: { active: NavKey }) {
                 borderColor: isActive ? COLORS.green : 'transparent',
               }}
             >
-              <Text style={{ fontSize: 16 }}>{item.icon}</Text>
+              <Icon name={item.icon} size={18} color={isActive ? COLORS.greenDark : COLORS.muted} />
               <Text
                 style={{
                   fontSize: 10,

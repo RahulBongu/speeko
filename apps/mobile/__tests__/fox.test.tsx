@@ -1,23 +1,38 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Fox } from '../components/Fox';
 
+/**
+ * Decorative mascots must not be exposed as do-nothing buttons. Only a Fox
+ * with an `onTap` handler is interactive; the rest are hidden from assistive
+ * technology unless the caller supplied a meaningful `title` (image role).
+ */
 describe('Fox mascot', () => {
+  const fox = () => screen.getByTestId('fox-mascot');
+
   it('shows the listening pose while an audio prompt plays', async () => {
     await render(<Fox style={{ width: 80, height: 80 }} listening />);
-    expect(screen.getByRole('button').props.accessibilityLabel).toContain('listening');
+    expect(fox().props.accessibilityLabel).toContain('listening');
+    expect(fox().props.accessible).toBe(false);
+    expect(screen.queryByRole('button')).toBeNull();
   });
 
   it('lets a speaking voice line override listening', async () => {
     await render(<Fox style={{ width: 80, height: 80 }} listening speaking />);
-    expect(screen.getByRole('button').props.accessibilityLabel).toContain('talking');
+    expect(fox().props.accessibilityLabel).toContain('talking');
   });
 
   it('maps grading feedback to happy and confused poses', async () => {
     const view = await render(<Fox style={{ width: 80, height: 80 }} mood="correct" />);
-    expect(screen.getByRole('button').props.accessibilityLabel).toContain('delighted');
+    expect(fox().props.accessibilityLabel).toContain('delighted');
 
     await view.rerender(<Fox style={{ width: 80, height: 80 }} mood="incorrect" />);
-    expect(screen.getByRole('button').props.accessibilityLabel).toContain('confused');
+    expect(fox().props.accessibilityLabel).toContain('confused');
+  });
+
+  it('exposes a titled decorative fox as an image, not a button', async () => {
+    await render(<Fox style={{ width: 80, height: 80 }} title="Speeko, the friendly fox mascot" />);
+    expect(screen.getByRole('image').props.accessibilityLabel).toBe('Speeko, the friendly fox mascot');
+    expect(screen.queryByRole('button')).toBeNull();
   });
 
   it('waves on tap and calls the provided handler', async () => {

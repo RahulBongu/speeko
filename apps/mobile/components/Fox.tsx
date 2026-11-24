@@ -13,6 +13,7 @@ import Animated, {
 import {
   resolveFoxAnimation,
   foxMoodForReaction,
+  type FoxMood,
   type MascotReactionId,
 } from '@speeko/core';
 
@@ -21,8 +22,7 @@ const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedEllipse = Animated.createAnimatedComponent(Ellipse);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-export type { FoxMood } from '@speeko/core';
-import type { FoxMood } from '@speeko/core';
+export type { FoxMood };
 
 export interface FoxProps {
   mood?: FoxMood | 'correct' | 'incorrect' | MascotReactionId;
@@ -30,7 +30,6 @@ export interface FoxProps {
   speaking?: boolean;
   listening?: boolean;
   title?: string;
-  /** Called after a tap; the mascot also plays a short wave. */
   onTap?: () => void;
 }
 
@@ -48,12 +47,12 @@ function isReactionId(value: unknown): value is MascotReactionId {
 }
 
 /**
- * Speeko, the mascot — vector version for mobile.
+ * Speeko the fox, drawn as a code-based SVG rig.
  *
- * The artwork is split into independently animated groups (head, ears, eye
- * highlights, mouth, arms, tail, feet). App events are mapped by
- * `resolveFoxAnimation` in core so web and mobile stay in sync. No paid rig or
- * animation service is used; reduced-motion users see a still vector.
+ * Artwork follows the supplied illustration: large glossy eyes, wide cream
+ * muzzle, pointed warm ears, fluffy cream-tipped tail, dark paws and a teal
+ * scarf. Independent groups (tail, arms, ears, head, pupils, mouth, scarf ends)
+ * are animated with Reanimated; no flattened PNG or paid rig is used.
  */
 export function Fox({
   mood = 'idle',
@@ -90,28 +89,22 @@ export function Fox({
     };
   }, []);
 
-  useEffect(() => {
-    setTapped(false);
-  }, [semanticMood, speaking, listening]);
+  useEffect(() => { setTapped(false); }, [semanticMood, speaking, listening]);
 
-  // Confused reaction → supportive nod, then back to the caller's mood.
   useEffect(() => {
     if (semanticMood !== 'sad' && semanticMood !== 'incorrect') {
       setEncouraging(false);
       return;
     }
     setEncouraging(false);
-    const toEncourage = setTimeout(() => setEncouraging(true), 900);
-    const back = setTimeout(() => setEncouraging(false), 2200);
-    return () => {
-      clearTimeout(toEncourage);
-      clearTimeout(back);
-    };
+    const toEncourage = setTimeout(() => setEncouraging(true), 850);
+    const back = setTimeout(() => setEncouraging(false), 2100);
+    return () => { clearTimeout(toEncourage); clearTimeout(back); };
   }, [semanticMood]);
 
   useEffect(() => {
     if (!tapped) return;
-    const timer = setTimeout(() => setTapped(false), 700);
+    const timer = setTimeout(() => setTapped(false), 720);
     return () => clearTimeout(timer);
   }, [tapped]);
 
@@ -122,25 +115,22 @@ export function Fox({
 
   const breathe = useSharedValue(0);
   const hop = useSharedValue(0);
-  const dance = useSharedValue(0);
+  const celebrate = useSharedValue(0);
   const tail = useSharedValue(0);
   const mouth = useSharedValue(0);
   const blink = useSharedValue(0);
   const head = useSharedValue(0);
   const ear = useSharedValue(0);
   const pupil = useSharedValue(0);
-  const leftArm = useSharedValue(-4);
-  const rightArm = useSharedValue(4);
+  const leftArm = useSharedValue(-8);
+  const rightArm = useSharedValue(6);
 
-  const calm = (value: any, target = 0) => {
+  const calm = useCallback((value: any, target = 0) => {
     if (reduceMotion) value.value = target;
-  };
+  }, [reduceMotion]);
 
   useEffect(() => {
-    if (reduceMotion) {
-      calm(breathe, 0);
-      return;
-    }
+    if (reduceMotion) { calm(breathe, 0); return; }
     breathe.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 2100, easing: Easing.inOut(Easing.ease) }),
@@ -149,208 +139,177 @@ export function Fox({
       -1,
       false,
     );
-  }, [reduceMotion, breathe]);
+  }, [reduceMotion, breathe, calm]);
 
   useEffect(() => {
-    if (reduceMotion || state.mood === 'sad') {
-      calm(tail, 0);
-      return;
-    }
+    if (reduceMotion || state.mood === 'sad') { calm(tail, 0); return; }
     tail.value = withRepeat(
       withSequence(
-        withTiming(1, { duration: 550, easing: Easing.inOut(Easing.ease) }),
-        withTiming(-1, { duration: 550, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1, { duration: 620, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-1, { duration: 620, easing: Easing.inOut(Easing.ease) }),
       ),
       -1,
       true,
     );
-  }, [reduceMotion, state.mood, tail]);
+  }, [reduceMotion, state.mood, tail, calm]);
 
   useEffect(() => {
-    if (reduceMotion) {
-      calm(hop, 0);
-      calm(dance, 0);
-      return;
-    }
+    if (reduceMotion) { calm(hop, 0); calm(celebrate, 0); return; }
     if (state.animation === 'celebrate') {
-      dance.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-          withTiming(-1, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-        ),
-        -1,
-        true,
+      hop.value = withSequence(
+        withTiming(1, { duration: 300, easing: Easing.out(Easing.back(1.7)) }),
+        withTiming(0, { duration: 320, easing: Easing.in(Easing.ease) }),
       );
-      hop.value = withTiming(0, { duration: 100 });
+      celebrate.value = withSequence(
+        withTiming(1, { duration: 420, easing: Easing.out(Easing.back(1.5)) }),
+        withTiming(0, { duration: 460, easing: Easing.inOut(Easing.ease) }),
+      );
     } else {
-      dance.value = withTiming(0, { duration: 200 });
+      celebrate.value = withTiming(0, { duration: 180 });
       if (state.animation === 'bounce') {
         hop.value = withSequence(
-          withTiming(1, { duration: 380, easing: Easing.out(Easing.back(1.6)) }),
-          withTiming(0, { duration: 380, easing: Easing.in(Easing.ease) }),
+          withTiming(1, { duration: 360, easing: Easing.out(Easing.back(1.6)) }),
+          withTiming(0, { duration: 360, easing: Easing.in(Easing.ease) }),
         );
       } else {
-        hop.value = withTiming(0, { duration: 200 });
+        hop.value = withTiming(0, { duration: 180 });
       }
     }
-  }, [reduceMotion, state.animation, hop, dance]);
+  }, [reduceMotion, state.animation, hop, celebrate, calm]);
 
   useEffect(() => {
-    if (reduceMotion) {
-      calm(head, 0);
-      calm(ear, 0);
-      calm(pupil, 0);
-      return;
-    }
+    if (reduceMotion) { calm(head, 0); calm(ear, 0); calm(pupil, 0); return; }
     if (state.listening) {
       head.value = withRepeat(
         withSequence(
           withTiming(-2, { duration: 900, easing: Easing.inOut(Easing.ease) }),
           withTiming(2, { duration: 900, easing: Easing.inOut(Easing.ease) }),
-        ),
-        -1,
-        true,
+        ), -1, true,
       );
       ear.value = withRepeat(
-        withSequence(
-          withTiming(-4, { duration: 1200 }),
-          withTiming(0, { duration: 1200 }),
-        ),
-        -1,
-        true,
+        withSequence(withTiming(-4, { duration: 1200 }), withTiming(0, { duration: 1200 })), -1, true,
       );
       pupil.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 1200 }),
-          withTiming(-1, { duration: 1200 }),
-        ),
-        -1,
-        true,
+        withSequence(withTiming(1, { duration: 1200 }), withTiming(-1, { duration: 1200 })), -1, true,
       );
     } else {
-      head.value = withTiming(0, { duration: 250 });
-      ear.value = withTiming(0, { duration: 250 });
-      pupil.value = withTiming(0, { duration: 250 });
+      head.value = withTiming(state.mood === 'encouraging' ? 2 : 0, { duration: 260 });
+      ear.value = withTiming(0, { duration: 260 });
+      pupil.value = withTiming(0, { duration: 260 });
     }
-  }, [reduceMotion, state.listening, head, ear, pupil]);
+  }, [reduceMotion, state.listening, state.mood, head, ear, pupil, calm]);
 
   useEffect(() => {
-    if (reduceMotion) {
-      calm(mouth, 0);
-      return;
-    }
+    if (reduceMotion) { calm(mouth, 0); return; }
     if (state.speaking) {
       mouth.value = withRepeat(
         withSequence(
-          withTiming(1, { duration: 180, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0, { duration: 180, easing: Easing.inOut(Easing.ease) }),
-        ),
-        -1,
-        false,
+          withTiming(1, { duration: 170, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 170, easing: Easing.inOut(Easing.ease) }),
+        ), -1, false,
       );
     } else {
       mouth.value = withTiming(0, { duration: 120 });
     }
-  }, [reduceMotion, state.speaking, mouth]);
+  }, [reduceMotion, state.speaking, mouth, calm]);
 
   useEffect(() => {
-    if (reduceMotion || state.speaking) {
-      calm(blink, 0);
-      return;
-    }
+    if (reduceMotion || state.speaking) { calm(blink, 0); return; }
     const timer = setInterval(() => {
       blink.value = withSequence(
-        withTiming(1, { duration: 120, easing: Easing.in(Easing.ease) }),
-        withTiming(0, { duration: 120, easing: Easing.out(Easing.ease) }),
+        withTiming(1, { duration: 110, easing: Easing.in(Easing.ease) }),
+        withTiming(0, { duration: 110, easing: Easing.out(Easing.ease) }),
       );
-    }, 3500);
+    }, 3600);
     return () => clearInterval(timer);
-  }, [reduceMotion, state.speaking, blink]);
+  }, [reduceMotion, state.speaking, blink, calm]);
 
   useEffect(() => {
-    const wavePose = state.waving || state.animation === 'celebrate';
+    const wave = state.waving || state.animation === 'celebrate' || state.animation === 'bounce';
     if (reduceMotion) {
-      calm(leftArm, wavePose ? 104 : -4);
-      calm(rightArm, state.animation === 'celebrate' ? -104 : 4);
+      calm(leftArm, wave ? -92 : -8);
+      calm(rightArm, state.animation === 'celebrate' ? 88 : 6);
       return;
     }
-    if (wavePose) {
-      leftArm.value = withRepeat(
-        withSequence(
-          withTiming(96, { duration: 320 }),
-          withTiming(124, { duration: 320 }),
-        ),
-        -1,
-        true,
+    if (wave || state.animation === 'celebrate') {
+      leftArm.value = withSequence(
+        withTiming(-92, { duration: 260, easing: Easing.out(Easing.ease) }),
+        withTiming(-72, { duration: 220, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-92, { duration: 220, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-8, { duration: 320, easing: Easing.inOut(Easing.ease) }),
       );
     } else if (state.mood === 'sad') {
-      leftArm.value = withTiming(10, { duration: 250 });
+      leftArm.value = withTiming(12, { duration: 260 });
     } else {
-      leftArm.value = withTiming(-4, { duration: 250 });
+      leftArm.value = withTiming(-8, { duration: 260 });
     }
-
     if (state.animation === 'celebrate') {
-      rightArm.value = withRepeat(
-        withSequence(
-          withTiming(-96, { duration: 320 }),
-          withTiming(-124, { duration: 320 }),
-        ),
-        -1,
-        true,
+      rightArm.value = withSequence(
+        withTiming(88, { duration: 300, easing: Easing.out(Easing.ease) }),
+        withTiming(6, { duration: 420, easing: Easing.inOut(Easing.ease) }),
       );
     } else if (state.mood === 'sad') {
-      rightArm.value = withTiming(-10, { duration: 250 });
+      rightArm.value = withTiming(-12, { duration: 260 });
     } else {
-      rightArm.value = withTiming(4, { duration: 250 });
+      rightArm.value = withTiming(6, { duration: 260 });
     }
-  }, [reduceMotion, state.waving, state.animation, state.mood, leftArm, rightArm]);
+  }, [reduceMotion, state.waving, state.animation, state.mood, leftArm, rightArm, calm]);
 
   const containerStyle = useAnimatedStyle(() => {
     if (reduceMotion) return {};
     return {
       transform: [
-        { translateY: breathe.value * -2.5 + hop.value * -14 + dance.value * -6 },
-        { rotate: `${dance.value * 4}deg` },
+        { translateY: breathe.value * -2.5 + hop.value * -15 + celebrate.value * -4 },
+        { rotate: `${celebrate.value * 5}deg` },
         { scale: 1 + breathe.value * 0.008 + hop.value * 0.02 },
       ],
     };
   });
 
+  // Use SVG transform strings with an explicit centre instead of originX/originY.
+  // react-native-svg's web renderer maps originX/originY to a DOM
+  // `transform-origin` prop, which React warns about.
   const tailProps = useAnimatedProps(() => ({
-    rotation: tail.value * 6,
-    originX: 150,
-    originY: 198,
+    transform: `rotate(${tail.value * 6} 150 190)`,
   }));
-  const headProps = useAnimatedProps(() => ({ rotation: head.value, originX: 120, originY: 150 }));
-  const leftEarProps = useAnimatedProps(() => ({ rotation: ear.value, originX: 76, originY: 74 }));
-  const rightEarProps = useAnimatedProps(() => ({ rotation: -ear.value, originX: 164, originY: 74 }));
-  const leftPupilProps = useAnimatedProps(() => ({ cx: 99 + pupil.value * 1.5 }));
-  const rightPupilProps = useAnimatedProps(() => ({ cx: 147 - pupil.value * 1.5 }));
+  const headProps = useAnimatedProps(() => ({
+    transform: `rotate(${head.value} 120 150)`,
+  }));
+  const leftEarProps = useAnimatedProps(() => ({
+    transform: `rotate(${ear.value} 62 74)`,
+  }));
+  const rightEarProps = useAnimatedProps(() => ({
+    transform: `rotate(${-ear.value} 178 74)`,
+  }));
   const leftArmProps = useAnimatedProps(() => ({
-    rotation: leftArm.value,
-    originX: 84,
-    originY: 164,
+    transform: `rotate(${leftArm.value} 90 160)`,
   }));
   const rightArmProps = useAnimatedProps(() => ({
-    rotation: rightArm.value,
-    originX: 156,
-    originY: 164,
+    transform: `rotate(${rightArm.value} 150 160)`,
   }));
-  const leftBlinkProps = useAnimatedProps(() => ({ ry: blink.value * 10.5 }));
-  const rightBlinkProps = useAnimatedProps(() => ({ ry: blink.value * 10.5 }));
+  const leftPupilProps = useAnimatedProps(() => ({ cx: 94 + pupil.value * 1.6 }));
+  const rightPupilProps = useAnimatedProps(() => ({ cx: 146 - pupil.value * 1.6 }));
+  const leftBlinkProps = useAnimatedProps(() => ({ ry: blink.value * 24 }));
+  const rightBlinkProps = useAnimatedProps(() => ({ ry: blink.value * 24 }));
 
-  const mouthOpenD = state.mood === 'happy' ? 'M101 133q19 26 38 0Z' : 'M101 133q19 26 38 0Z';
-  const mouthClosedD = 'M106 137q14 10 28 0';
-  const mouthProps = useAnimatedProps(() => ({ d: mouth.value > 0.5 ? mouthOpenD : mouthClosedD }));
+  const mouthOpenD = 'M102 136 Q120 154 138 136 Q136 160 120 164 Q104 160 102 136 Z';
+  const mouthTalkD = 'M108 138 Q120 150 132 138 Q130 156 120 158 Q110 156 108 138 Z';
+  const mouthClosedD = 'M108 138 Q120 148 132 138';
+  const mouthProps = useAnimatedProps(() => ({
+    d: mouth.value > 0.5 ? mouthTalkD : mouthClosedD,
+  }));
 
   const happy = state.mood === 'happy' || state.mood === 'celebrate';
   const sad = state.mood === 'sad';
-  const celebrate = state.animation === 'celebrate';
+  const isCelebrate = state.animation === 'celebrate';
 
   return (
     <Pressable
-      onPress={handlePress}
-      accessibilityRole="button"
+      onPress={onTap ? handlePress : undefined}
+      disabled={!onTap}
+      testID="fox-mascot"
+      accessible={Boolean(onTap || title)}
+      accessibilityRole={onTap ? 'button' : title ? 'image' : undefined}
       accessibilityLabel={title ?? state.label}
       style={style}
     >
@@ -358,123 +317,150 @@ export function Fox({
         <Svg viewBox="0 0 240 240" width="100%" height="100%">
           <Defs>
             <LinearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#ffa567" />
-              <Stop offset="1" stopColor="#ef6a1c" />
+              <Stop offset="0" stopColor="#FFB067" />
+              <Stop offset="1" stopColor="#F4761A" />
             </LinearGradient>
-            <LinearGradient id="belly" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#fff8ee" />
-              <Stop offset="1" stopColor="#ffe8cf" />
-            </LinearGradient>
-            <LinearGradient id="tailtip" x1="0" y1="0" x2="1" y2="0">
-              <Stop offset="0" stopColor="#ffd9bd" />
-              <Stop offset="1" stopColor="#fff6ea" />
+            <LinearGradient id="cream" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor="#FFFDF6" />
+              <Stop offset="1" stopColor="#FFE6C2" />
             </LinearGradient>
           </Defs>
 
-          <Ellipse cx="120" cy="225" rx="66" ry="8.5" fill="#3b2a1f" opacity={0.09} />
+          <Ellipse cx="120" cy="232" rx="68" ry="7" fill="#3F2A1D" opacity={0.09} />
 
-          <Ellipse cx="98" cy="218" rx="18" ry="11" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" />
-          <Path d="M87 219h7M96 221h7M105 219h6" stroke="#a8420f" strokeWidth="2.2" strokeLinecap="round" opacity={0.55} />
-          <Ellipse cx="142" cy="218" rx="18" ry="11" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" />
-          <Path d="M129 219h6M138 221h7M147 219h7" stroke="#a8420f" strokeWidth="2.2" strokeLinecap="round" opacity={0.55} />
-
+          {/* Fluffy cream-tipped tail */}
           <AnimatedG animatedProps={tailProps}>
             <Path
-              d="M150 198c36 8 62-13 68-50 2-14 0-27-6-38-7 19-17 31-33 39-15 8-24 20-27 35Z"
+              d="M150 190 C176 197 204 189 220 166 C233 148 233 122 220 103 C216 128 204 145 186 155 C168 165 156 176 150 190 Z"
               fill="url(#fur)"
-              stroke="#a8420f"
-              strokeWidth="3"
+              stroke="#4A2B1B"
+              strokeWidth="4"
               strokeLinejoin="round"
             />
             <Path
-              d="M211 110c6 11 8 24 6 38-2 14-7 26-16 34 9-5 16-17 19-32 3-15 0-29-9-40Z"
-              fill="url(#tailtip)"
+              d="M220 103 C226 116 228 130 225 145 C221 133 214 124 206 118 C214 114 219 109 220 103 Z"
+              fill="url(#cream)"
+              stroke="#4A2B1B"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
             />
           </AnimatedG>
 
-          <Ellipse cx="120" cy="181" rx="52" ry="43" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" />
-          <Ellipse cx="120" cy="190" rx="34" ry="28" fill="url(#belly)" />
+          {/* Dark paws and feet */}
+          <Ellipse cx="92" cy="224" rx="21" ry="11" fill="#4A2B1B" />
+          <Ellipse cx="146" cy="224" rx="21" ry="11" fill="#4A2B1B" />
+          <Path d="M80 226h8M90 229h8M100 226h8M134 226h8M144 229h8M154 226h8" stroke="#2E1A10" strokeWidth="2" strokeLinecap="round" opacity={0.7} />
 
+          {/* Body */}
+          <Ellipse cx="120" cy="184" rx="52" ry="42" fill="url(#fur)" stroke="#4A2B1B" strokeWidth="4" />
+          <Path
+            d="M96 156 C104 150 136 150 144 156 L150 178 L143 176 L147 198 L137 194 L132 214 L120 206 L108 214 L103 194 L93 198 L97 176 L90 178 Z"
+            fill="url(#cream)"
+          />
+
+          {/* Arms */}
           <AnimatedG animatedProps={leftArmProps}>
-            <Path d="M84 164c-9 9-16 19-19 30" fill="none" stroke="#a8420f" strokeWidth="18" strokeLinecap="round" opacity={0.18} />
-            <Circle cx="64" cy="194" r="10.5" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" />
-            <Path d="M59 199h11" stroke="#a8420f" strokeWidth="2" strokeLinecap="round" opacity={0.5} />
+            <Path d="M90 160 C78 150 66 136 56 122" fill="none" stroke="#F4761A" strokeWidth="20" strokeLinecap="round" />
+            <Path d="M90 160 C78 150 66 136 56 122" fill="none" stroke="#4A2B1B" strokeWidth="4" strokeLinecap="round" opacity={0.35} />
+            <Circle cx="52" cy="116" r="16" fill="#4A2B1B" />
+            <Circle cx="45" cy="110" r="3.2" fill="#8B5A3C" />
+            <Circle cx="54" cy="106" r="3.2" fill="#8B5A3C" />
+            <Circle cx="62" cy="112" r="3.2" fill="#8B5A3C" />
+            <Circle cx="52" cy="121" r="4.5" fill="#8B5A3C" />
           </AnimatedG>
           <AnimatedG animatedProps={rightArmProps}>
-            <Path d="M156 164c9 9 16 19 19 30" fill="none" stroke="#a8420f" strokeWidth="18" strokeLinecap="round" opacity={0.18} />
-            <Circle cx="176" cy="194" r="10.5" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" />
-            <Path d="M171 199h11" stroke="#a8420f" strokeWidth="2" strokeLinecap="round" opacity={0.5} />
+            <Path d="M150 160 C162 170 172 180 180 188" fill="none" stroke="#F4761A" strokeWidth="20" strokeLinecap="round" />
+            <Path d="M150 160 C162 170 172 180 180 188" fill="none" stroke="#4A2B1B" strokeWidth="4" strokeLinecap="round" opacity={0.35} />
+            <Circle cx="182" cy="192" r="15" fill="#4A2B1B" />
+            <Path d="M174 190h16" stroke="#2E1A10" strokeWidth="2.4" strokeLinecap="round" opacity={0.7} />
           </AnimatedG>
 
+          {/* Ears */}
           <AnimatedG animatedProps={leftEarProps}>
-            <Path d="M54 83 66 23q2-7 9-2l25 35Z" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" strokeLinejoin="round" />
-            <Path d="M69 69 76 39l16 20Z" fill="#ffc3a1" />
+            <Path d="M50 82 L38 18 Q36 10 44 14 L86 52 Z" fill="url(#fur)" stroke="#4A2B1B" strokeWidth="4" strokeLinejoin="round" />
+            <Path d="M58 70 L50 30 L78 58 Z" fill="#FFE3C6" />
           </AnimatedG>
           <AnimatedG animatedProps={rightEarProps}>
-            <Path d="M186 83 174 23q-2-7-9-2l-25 35Z" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" strokeLinejoin="round" />
-            <Path d="M171 69 164 39l-16 20Z" fill="#ffc3a1" />
+            <Path d="M190 82 L202 18 Q204 10 196 14 L154 52 Z" fill="url(#fur)" stroke="#4A2B1B" strokeWidth="4" strokeLinejoin="round" />
+            <Path d="M182 70 L190 30 L162 58 Z" fill="#FFE3C6" />
           </AnimatedG>
 
+          {/* Head */}
           <AnimatedG animatedProps={headProps}>
-            <Ellipse cx="120" cy="108" rx="66" ry="58" fill="url(#fur)" stroke="#a8420f" strokeWidth="3" />
+            <Path
+              d="M120 40 C158 40 186 66 186 102 C186 134 160 154 120 154 C80 154 54 134 54 102 C54 66 82 40 120 40 Z"
+              fill="url(#fur)"
+              stroke="#4A2B1B"
+              strokeWidth="4"
+            />
+            <Path d="M96 44 Q108 28 120 40 Q134 26 144 44 Q132 38 120 46 Q108 38 96 44 Z" fill="#F4761A" />
 
-            <Path d="M78 150c13 10 27 15 42 15s29-5 42-15l7 21c-15 10-31 15-49 15s-34-5-49-15Z" fill="#37b02c" />
-            <Path d="M78 150c13 10 27 15 42 15s29-5 42-15l2 6c-14 10-28 15-44 15s-30-5-44-15Z" fill="#58c94d" />
-            <Circle cx="120" cy="171" r="8.5" fill="#269020" />
-
-            <Ellipse cx="120" cy="134" rx="39" ry="30" fill="url(#belly)" />
+            {/* Wide cream muzzle */}
+            <Path
+              d="M64 106 C64 94 80 90 94 96 C104 100 112 104 120 104 C128 104 136 100 146 96 C160 90 176 94 176 106 C176 128 156 144 120 144 C84 144 64 128 64 106 Z"
+              fill="url(#cream)"
+              stroke="#4A2B1B"
+              strokeWidth="3"
+              strokeLinejoin="round"
+            />
+            <Path d="M52 112 L66 108 L60 120 Z" fill="url(#cream)" stroke="#4A2B1B" strokeWidth="2" strokeLinejoin="round" />
+            <Path d="M188 112 L174 108 L180 120 Z" fill="url(#cream)" stroke="#4A2B1B" strokeWidth="2" strokeLinejoin="round" />
 
             {happy ? (
               <>
-                <Circle cx="76" cy="124" r="15" fill="#ff9d8a" opacity={0.62} />
-                <Circle cx="164" cy="124" r="15" fill="#ff9d8a" opacity={0.62} />
+                <Circle cx="74" cy="110" r="12" fill="#FF9D8A" opacity={0.5} />
+                <Circle cx="166" cy="110" r="12" fill="#FF9D8A" opacity={0.5} />
               </>
             ) : null}
 
-            {happy ? (
-              <>
-                <Path d="M85 103q11-14 22 0" fill="none" stroke="#2d1f18" strokeWidth="5" strokeLinecap="round" />
-                <Path d="M133 103q11-14 22 0" fill="none" stroke="#2d1f18" strokeWidth="5" strokeLinecap="round" />
-              </>
-            ) : (
-              <>
-                <Ellipse cx="96" cy="101" rx="8.5" ry="10.5" fill="#2d1f18" />
-                <AnimatedCircle cx={99} cy="97.5" r="2.7" fill="#fff8ee" animatedProps={leftPupilProps} />
-                <Ellipse cx="144" cy="101" rx="8.5" ry="10.5" fill="#2d1f18" />
-                <AnimatedCircle cx={147} cy="97.5" r="2.7" fill="#fff8ee" animatedProps={rightPupilProps} />
-                <AnimatedEllipse cx="96" cy="101" rx="9" animatedProps={leftBlinkProps} fill="#ffa567" />
-                <AnimatedEllipse cx="144" cy="101" rx="9" animatedProps={rightBlinkProps} fill="#ffa567" />
-                {sad ? (
-                  <>
-                    <Path d="M84 86l21 7" fill="none" stroke="#8a3a12" strokeWidth="3.4" strokeLinecap="round" />
-                    <Path d="M156 86l-21 7" fill="none" stroke="#8a3a12" strokeWidth="3.4" strokeLinecap="round" />
-                    <Path d="M87 118q9 6 18 2" fill="none" stroke="#3b82b8" strokeWidth="3" strokeLinecap="round" />
-                  </>
-                ) : null}
-              </>
-            )}
+            {/* Eyes */}
+            <Ellipse cx="92" cy="96" rx="20" ry="24" fill="#FFFFFF" stroke="#4A2B1B" strokeWidth="3" />
+            <Ellipse cx="148" cy="96" rx="20" ry="24" fill="#FFFFFF" stroke="#4A2B1B" strokeWidth="3" />
+            <Circle cx={94} cy="98" r="14" fill="#7A3B16" />
+            <Circle cx={146} cy="98" r="14" fill="#7A3B16" />
+            <Circle cx="94" cy="98" r="7" fill="#2E1A10" />
+            <Circle cx="146" cy="98" r="7" fill="#2E1A10" />
+            <AnimatedCircle cx={94} cy="98" r="4" fill="#FFFFFF" animatedProps={leftPupilProps} />
+            <AnimatedCircle cx={146} cy="98" r="4" fill="#FFFFFF" animatedProps={rightPupilProps} />
+            <Circle cx="99" cy="106" r="2" fill="#FFFFFF" opacity={0.8} />
+            <Circle cx="151" cy="106" r="2" fill="#FFFFFF" opacity={0.8} />
+            <AnimatedEllipse cx="92" cy="96" rx="21" animatedProps={leftBlinkProps} fill="url(#fur)" />
+            <AnimatedEllipse cx="148" cy="96" rx="21" animatedProps={rightBlinkProps} fill="url(#fur)" />
 
-            <Path d="M112 122h16l-8 10Z" fill="#3b2418" stroke="#3b2418" strokeWidth="2" strokeLinejoin="round" />
+            {/* Brows */}
+            <Path d="M76 68 Q92 58 108 68" fill="none" stroke="#4A2B1B" strokeWidth="5" strokeLinecap="round" />
+            <Path d="M132 68 Q148 58 164 68" fill="none" stroke="#4A2B1B" strokeWidth="5" strokeLinecap="round" />
 
+            {/* Nose + mouth */}
+            <Path d="M112 120 Q120 116 128 120 Q126 130 120 132 Q114 130 112 120 Z" fill="#4A2B1B" />
             {sad ? (
-              <Path d="M106 145q14-10 28 0" fill="none" stroke="#5c2a12" strokeWidth="4" strokeLinecap="round" />
+              <Path d="M106 140 Q120 132 134 140" fill="none" stroke="#5C2A12" strokeWidth="4" strokeLinecap="round" />
             ) : happy ? (
               <>
-                <AnimatedPath animatedProps={state.speaking ? mouthProps : {}} d={mouthOpenD} fill="#6d2b16" stroke="#5c2a12" strokeWidth="2" strokeLinejoin="round" />
-                <Path d="M110 148q10 9 20 0q-10 12-20 0Z" fill="#ff8f8f" />
+                <AnimatedPath animatedProps={state.speaking ? mouthProps : {}} d={mouthOpenD} fill="#5C2A12" stroke="#4A2B1B" strokeWidth="3" strokeLinejoin="round" />
+                <Path d="M110 152 Q120 147 130 152 Q126 164 120 166 Q114 164 110 152 Z" fill="#FF8F8F" />
               </>
             ) : (
               <>
-                <AnimatedPath animatedProps={state.speaking ? mouthProps : {}} d={mouthClosedD} fill="#6d2b16" stroke="#5c2a12" strokeWidth="3.5" strokeLinejoin="round" />
-                <Path d="M111 146q9 6 18 0q-9 9-18 0Z" fill="#ff8f8f" opacity={0.85} />
+                <AnimatedPath animatedProps={state.speaking ? mouthProps : {}} d={mouthClosedD} fill="none" stroke="#5C2A12" strokeWidth="4" strokeLinecap="round" />
+                <Path d="M111 146 Q120 151 129 146 Q120 156 111 146 Z" fill="#FF8F8F" opacity={0.85} />
               </>
             )}
           </AnimatedG>
 
-          {celebrate ? (
+          {/* Teal scarf with knot and tails */}
+          <G>
+            <Path d="M80 150 C96 162 144 162 160 150 L168 170 C150 184 90 184 72 170 Z" fill="#159CA6" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
+            <Path d="M96 156 C110 164 130 164 144 156 L148 164 C132 174 108 174 92 164 Z" fill="#4ABFC7" />
+            <Circle cx="160" cy="158" r="11" fill="#0E7C86" stroke="#0E6F78" strokeWidth="3" />
+            <Path d="M164 162 L196 176 L186 190 L158 174 Z" fill="#159CA6" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
+            <Path d="M158 166 L184 198 L172 202 L152 174 Z" fill="#0E7C86" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
+          </G>
+
+          {isCelebrate ? (
             <G>
-              <Path d="M38 96l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z" fill="#ffd66b" />
-              <Path d="M204 128l2.4 5.6 5.6 2.4-5.6 2.4-2.4 5.6-2.4-5.6-5.6-2.4 5.6-2.4Z" fill="#8add7f" />
+              <Path d="M36 92 L40 102 L50 106 L40 110 L36 120 L32 110 L22 106 L32 102 Z" fill="#FBBF24" />
+              <Path d="M204 120 L207 128 L215 131 L207 134 L204 142 L201 134 L193 131 L201 128 Z" fill="#8ADD7F" />
             </G>
           ) : null}
         </Svg>

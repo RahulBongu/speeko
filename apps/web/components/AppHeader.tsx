@@ -5,7 +5,7 @@ import { FlameIcon, ShopIcon, TrophyIcon } from './icons';
 
 export function Brand({ href = '/' }: { href?: string }) {
   return (
-    <Link href={href} className="focus-ring flex items-center gap-2 rounded-2xl" aria-label="Speeko home">
+    <Link href={href} className="focus-ring flex shrink-0 items-center gap-2 rounded-2xl" aria-label="Speeko home">
       <SingingFox className="h-10 w-10" />
       <span className="font-display text-2xl font-extrabold tracking-tight text-speeko-600">
         Speeko
@@ -25,10 +25,10 @@ export function SiteHeader({
     }`;
   const current = (isActive: boolean) => (isActive ? ('page' as const) : undefined);
   return (
-    <header className="border-b border-cream-200/80 bg-cream-50/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-5">
+    <header className="overflow-hidden border-b border-cream-200/80 bg-cream-50/80 backdrop-blur">
+      <div className="mx-auto flex max-w-5xl min-w-0 items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-5">
         <Brand />
-        <nav className="flex items-center gap-0.5 sm:gap-1" aria-label="Main">
+        <nav className="no-scrollbar flex min-w-0 flex-1 items-center justify-start gap-0.5 overflow-x-auto px-2 sm:justify-end sm:gap-1" aria-label="Main">
           <Link href="/learn" className={linkClass(active === 'learn')} aria-current={current(active === 'learn')}>
             Learn
           </Link>

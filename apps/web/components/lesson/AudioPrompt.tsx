@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { Locale } from '@speeko/core';
-import { speak } from '@/lib/speech';
+import { cancelSpeech, speak } from '@/lib/speech';
 import { emitMascotListening } from '@/lib/mascotVoice';
 import { SpeakerIcon } from '@/components/icons';
 
@@ -53,7 +53,7 @@ export function AudioPrompt({
       const audio = audioRef.current;
       if (!audio) return;
       audio.currentTime = 0;
-      setPlaying(true);
+      setPlayingState(true);
       void audio.play().catch(() => {
         setPlayingState(false);
         setUnavailable(true);
@@ -75,12 +75,9 @@ export function AudioPrompt({
   useEffect(() => {
     if (!autoPlay) return;
     const timer = setTimeout(() => {
-      if (audioUrl || speak(text, locale, () => setPlayingState(false))) {
-        setPlayingState(true);
-        timeoutRef.current = setTimeout(() => setPlayingState(false), 4000);
-      } else {
-        setUnavailable(true);
-      }
+      // Reuse the single playback path so recorded audio really plays and the
+      // mascot receives the same listening state as a manual tap.
+      play();
     }, 350);
     return () => {
       clearTimeout(timer);
@@ -92,6 +89,12 @@ export function AudioPrompt({
 
   useEffect(() => () => {
     stopTimer();
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    cancelSpeech();
     emitMascotListening(false);
   }, []);
 

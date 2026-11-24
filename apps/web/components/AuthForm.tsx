@@ -67,6 +67,8 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
                 onChange={(event) => setName(event.target.value)}
                 placeholder="Your name"
                 autoComplete="name"
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? 'auth-error' : undefined}
                 className={fieldClass}
               />
             </label>
@@ -83,6 +85,8 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
               autoComplete="email"
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? 'auth-error' : undefined}
               className={fieldClass}
             />
           </label>
@@ -99,12 +103,14 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
               onChange={(event) => setPassword(event.target.value)}
               placeholder={isSignUp ? 'At least 8 characters' : 'Your password'}
               autoComplete={isSignUp ? 'new-password' : 'current-password'}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? 'auth-error' : undefined}
               className={fieldClass}
             />
           </label>
 
           {error ? (
-            <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
+            <p id="auth-error" role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
               {error}
             </p>
           ) : null}

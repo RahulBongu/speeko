@@ -83,7 +83,7 @@ test('checkpoint stays locked until prior units are complete', async ({ page }) 
   await expect(page.getByText('Checkpoint').first()).toBeVisible();
   await expect(page.getByText('Finish units 1–2 first').first()).toBeVisible();
   await expect(
-    page.getByRole('link', { name: /Checkpoint:/ }).first(),
+    page.getByRole('link', { name: /Checkpoint/ }).first(),
   ).toHaveCount(0);
 });
 
@@ -124,7 +124,7 @@ test('checkpoint unlocks and opens a practice-only lesson', async ({ page }) => 
   }, snapshot);
 
   await page.goto('/learn/hi-starter');
-  const checkpoint = page.getByRole('link', { name: /Checkpoint:/ }).first();
+  const checkpoint = page.getByRole('link', { name: /Checkpoint/ }).first();
   await expect(checkpoint).toBeVisible();
   await checkpoint.click();
   await expect(page).toHaveURL(/\/lesson\/hi-starter\/checkpoint-unit-2$/);

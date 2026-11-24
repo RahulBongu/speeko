@@ -16,7 +16,7 @@ const config: Config = {
           300: '#8add7f',
           400: '#58c94d',
           500: '#37b02c',
-          600: '#269020',
+          600: '#217a1b',
           700: '#1f741d',
           800: '#1b5c1c',
           900: '#174c1a',
@@ -24,7 +24,7 @@ const config: Config = {
         gold: {
           100: '#fff9e0',
           200: '#ffe9a8',
-          700: '#a06b00',
+          700: '#8a5d00',
         },
         ice: {
           100: '#e8f4ff',
@@ -32,7 +32,7 @@ const config: Config = {
           300: '#9ccdf4',
           400: '#8fc8f2',
           600: '#3b82b8',
-          700: '#2f74a8',
+          700: '#2a6b99',
         },
         fox: {
           100: '#fff1e8',
@@ -41,7 +41,7 @@ const config: Config = {
           400: '#ffa567',
           500: '#ff8a3d',
           600: '#ef6a1c',
-          700: '#c84e12',
+          700: '#a33d0a',
         },
         cream: {
           50: '#fffaf2',
@@ -50,8 +50,9 @@ const config: Config = {
           300: '#f0d7ba',
         },
         bark: {
-          300: '#b49a86',
-          400: '#8f735f',
+          // Darkened to meet WCAG AA on cream/white surfaces (axe audit).
+          300: '#806b5a',
+          400: '#7a5f4c',
           500: '#715845',
           600: '#5a4535',
           700: '#453328',
@@ -201,6 +202,21 @@ const config: Config = {
           '0%, 100%': { transform: 'rotate(-2deg)' },
           '50%': { transform: 'rotate(2deg)' },
         },
+        'fox-cheer': {
+          '0%, 100%': { transform: 'rotate(0deg) translateY(0)' },
+          '40%': { transform: 'rotate(5deg) translateY(-2px)' },
+          '70%': { transform: 'rotate(-3deg) translateY(0)' },
+        },
+        'arm-cheer': {
+          '0%, 100%': { transform: 'rotate(-8deg)' },
+          '40%': { transform: 'rotate(-100deg)' },
+          '70%': { transform: 'rotate(-72deg)' },
+        },
+        'arm-cheer-right': {
+          '0%, 100%': { transform: 'rotate(8deg)' },
+          '40%': { transform: 'rotate(100deg)' },
+          '70%': { transform: 'rotate(72deg)' },
+        },
         'logo-sway': {
           '0%, 100%': { transform: 'rotate(-1.4deg) translateY(0)' },
           '50%': { transform: 'rotate(1.4deg) translateY(-0.8px)' },
@@ -254,6 +270,9 @@ const config: Config = {
         'fox-confused': 'fox-confused 1.1s ease-in-out',
         'fox-nod': 'fox-nod 1.4s ease-in-out',
         'fox-wave': 'fox-wave .7s ease-in-out',
+        'fox-cheer': 'fox-cheer .9s ease-in-out',
+        'arm-cheer': 'arm-cheer .9s ease-in-out',
+        'arm-cheer-right': 'arm-cheer .9s ease-in-out',
         'logo-sway': 'logo-sway 5.6s ease-in-out infinite',
         'logo-note-a': 'logo-note-a 3.9s cubic-bezier(.22,1,.36,1) infinite',
         'logo-note-b': 'logo-note-b 4.7s cubic-bezier(.22,1,.36,1) 1.3s infinite',

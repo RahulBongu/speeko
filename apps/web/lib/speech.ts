@@ -19,6 +19,13 @@ function pickVoice(voices: SpeechSynthesisVoice[], lang: string, locale: string)
   return prefix ?? null;
 }
 
+/** Stop any in-flight speech utterance (e.g. when a lesson screen unmounts). */
+export function cancelSpeech(): void {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
 /** Speak target-language text. Returns false when the browser has no speech synthesis. */
 export function speak(text: string, locale: Locale, onEnd?: () => void): boolean {
   if (!speechAvailable() || !text.trim()) return false;

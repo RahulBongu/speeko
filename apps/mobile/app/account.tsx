@@ -9,8 +9,10 @@ import { syncProgress } from '../lib/sync';
 import { AppNav } from '../components/AppNav';
 import { Screen } from '../components/Screen';
 import { Fox } from '../components/Fox';
+import { Icon } from '../components/Icons';
 import {
   SpeekoAppBar,
+  TactileCard,
   TactilePressable,
 } from '../components/Tactile';
 import { COLORS } from '../lib/theme';
@@ -20,17 +22,11 @@ interface SessionUser {
   name?: string;
 }
 
-/** Event-derived stats, the same numbers the public profile sees. */
 interface VerifiedStats {
   xp: number;
   streak: number;
   lessons: number;
   dailyGoal: number;
-}
-
-interface VerifiedResult {
-  stats: VerifiedStats | null;
-  failed: boolean;
 }
 
 export default function Account() {
@@ -52,9 +48,7 @@ export default function Account() {
       const sessionResponse = await apiFetch('/api/auth/get-session');
       let signedInUser: SessionUser | null = null;
       if (sessionResponse.ok) {
-        const session = (await sessionResponse.json()) as {
-          user?: SessionUser | null;
-        } | null;
+        const session = (await sessionResponse.json()) as { user?: SessionUser | null } | null;
         signedInUser = session?.user ?? null;
       }
       setSignedIn(Boolean(signedInUser));
@@ -68,11 +62,7 @@ export default function Account() {
         if (habitsResult.status === 'fulfilled' && habitsResult.value.ok) {
           try {
             const body = (await habitsResult.value.json()) as {
-              habits?: {
-                dailyGoal?: number;
-                totals?: { xp?: number; lessons?: number };
-                streak?: { current?: number };
-              };
+              habits?: { dailyGoal?: number; totals?: { xp?: number; lessons?: number }; streak?: { current?: number } };
             };
             const habits = body.habits;
             if (!habits) throw new Error('Habits response was empty.');
@@ -91,9 +81,7 @@ export default function Account() {
           setVerified(null);
           setVerifiedFailed(true);
         }
-        setProgress(
-          synced.status === 'fulfilled' ? synced.value.progress : await loadProgress(),
-        );
+        setProgress(synced.status === 'fulfilled' ? synced.value.progress : await loadProgress());
       } else {
         setVerified(null);
         setVerifiedFailed(false);
@@ -107,9 +95,7 @@ export default function Account() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => { void load(); }, [load]);
 
   async function signOut() {
     if (busy) return;
@@ -121,23 +107,14 @@ export default function Account() {
         method: 'POST',
         headers: { origin: ORIGIN },
       });
-      if (!response.ok && response.status !== 401) {
-        throw new Error(`Sign out failed (${response.status}).`);
-      }
-      // Clear both the credential and the snapshot so the next person on this
-      // device cannot see this account's XP, SRS cards, or cosmetics.
+      if (!response.ok && response.status !== 401) throw new Error(`Sign out failed (${response.status}).`);
       await setCookie(null);
       await clearProgress();
       setSignedIn(false);
       setEmail(null);
       setProgress(await loadProgress());
       setStatus('Signed out. Local progress was cleared from this device.');
-      // Confirm the sign-out with a success haptic. Never let it block the redirect.
-      try {
-        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      } catch {
-        // Intentionally non-fatal.
-      }
+      try { await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); } catch { /* non-fatal */ }
       router.replace('/');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not sign out. Try again.');
@@ -146,192 +123,130 @@ export default function Account() {
     }
   }
 
+  const xp = verified?.xp ?? progress?.xp ?? 0;
+  const streak = verified?.streak ?? progress?.streak ?? 0;
+  const lessons = verified?.lessons ?? Object.keys(progress?.completed ?? {}).length;
+  const dailyGoal = verified?.dailyGoal ?? progress?.dailyGoal ?? 0;
+
   return (
     <Screen>
-      <ScrollView
-        contentContainerStyle={{ padding: 18, gap: 14, backgroundColor: COLORS.cream, flexGrow: 1 }}
-      >
+      <ScrollView contentContainerStyle={{ padding: 16, gap: 14, backgroundColor: COLORS.cream, flexGrow: 1 }}>
         <SpeekoAppBar
-        subtitle={
-          signedIn
-            ? verified
-              ? 'Verified account'
-              : 'Account sync unreachable'
-            : 'This device'
-        }
-        streak={verified?.streak ?? progress?.streak ?? 0}
-        xp={verified?.xp ?? progress?.xp ?? 0}
-      />
-
-      <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Account</Text>
-
-      {loading ? (
-        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-          <ActivityIndicator color={COLORS.green} />
-          <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Loading…</Text>
-        </View>
-      ) : null}
-      {error ? <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error}</Text> : null}
-      {status ? (
-        <Text style={{ color: COLORS.greenDark, fontWeight: '700' }}>{status}</Text>
-      ) : null}
-
-      {/* Profile header */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 12,
-          padding: 16,
-          borderRadius: 20,
-          borderWidth: 2,
-          borderColor: COLORS.line,
-          backgroundColor: COLORS.white,
-        }}
-      >
-        <View
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: 32,
-            borderWidth: 3,
-            borderColor: COLORS.dark,
-            backgroundColor: COLORS.creamDeep,
-            overflow: 'hidden',
-          }}
-        >
-          <Fox
-            mood="idle"
-            title="Speeko the fox"
-            style={{ width: '100%', height: '100%' }}
-          />
-        </View>
-        <View style={{ flex: 1, gap: 2 }}>
-          <Text style={{ fontSize: 11, fontWeight: '900', color: COLORS.muted, letterSpacing: 0.5 }}>
-            {signedIn ? (verified ? 'VERIFIED ACCOUNT' : 'DEVICE ONLY') : 'DEVICE ONLY'}
-          </Text>
-          <Text
-            style={{ fontSize: 16, fontWeight: '900', color: COLORS.dark }}
-            numberOfLines={1}
-          >
-            {signedIn ? email ?? 'Signed in' : 'Not signed in · this device only'}
+          subtitle={signedIn ? (verified ? 'Verified account' : 'Account sync unreachable') : 'This device'}
+          streak={streak}
+          xp={xp}
+        />
+        <View style={{ gap: 4 }}>
+          <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Account</Text>
+          <Text style={{ color: COLORS.muted, fontSize: 13 }}>
+            {signedIn ? 'Your verified progress and settings.' : 'Your progress stays on this device until you sign in.'}
           </Text>
         </View>
-      </View>
 
-      {verifiedFailed ? (
-        <View
-          accessibilityRole="alert"
-          style={{
-            padding: 12,
-            borderRadius: 14,
-            borderWidth: 2,
-            borderColor: '#F59E0B',
-            backgroundColor: '#FEF3C7',
-            gap: 4,
-          }}
-        >
-          <Text style={{ fontWeight: '800', color: '#92400E' }}>
-            Account sync could not be reached.
-          </Text>
-          <Text style={{ fontSize: 12, color: '#92400E' }}>
-            The numbers below come from this device, not the cloud. Sign in again or retry later
-            for verified totals.
-          </Text>
-        </View>
-      ) : null}
+        {loading ? (
+          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+            <ActivityIndicator color={COLORS.green} />
+            <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Loading…</Text>
+          </View>
+        ) : null}
+        {error ? <Text accessibilityRole="alert" style={{ color: COLORS.red }}>{error}</Text> : null}
+        {status ? <Text style={{ color: COLORS.greenDark, fontWeight: '700' }}>{status}</Text> : null}
 
-      {progress || verified ? (
-        <View
-          style={{
-            padding: 16,
-            borderRadius: 16,
-            borderWidth: 2,
-            borderColor: COLORS.line,
-            backgroundColor: COLORS.white,
-            gap: 6,
-          }}
-        >
-          <Text style={{ fontWeight: '900', fontSize: 16, color: COLORS.dark }}>
-            {verified ? 'Verified account progress' : 'Device progress'}
-          </Text>
-          <Text style={{ color: COLORS.dark }}>
-            XP: {verified?.xp ?? progress?.xp ?? 0}
-          </Text>
-          <Text style={{ color: COLORS.dark }}>
-            Streak: {verified?.streak ?? progress?.streak ?? 0} days
-          </Text>
-          <Text style={{ color: COLORS.dark }}>
-            Daily goal: {verified?.dailyGoal ?? progress?.dailyGoal ?? 0} XP
-          </Text>
-          <Text style={{ color: COLORS.dark }}>
-            Lessons completed:{' '}
-            {verified?.lessons ?? Object.keys(progress?.completed ?? {}).length}
-          </Text>
-          <Text style={{ color: COLORS.muted, fontSize: 12 }}>
-            {verified
-              ? 'XP, streak, and lessons below come from server-verified attempts. A forged snapshot cannot change them.'
-              : 'Complete lessons and sign in later to merge this device progress into your account.'}
-          </Text>
-        </View>
-      ) : null}
+        <TactileCard tone="white">
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: COLORS.greenSoft, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              <Fox mood={signedIn ? 'happy' : 'idle'} title="Speeko the fox" style={{ width: 64, height: 64 }} />
+            </View>
+            <View style={{ flex: 1, gap: 3 }}>
+              <Text style={{ fontSize: 10, fontWeight: '900', color: COLORS.muted, letterSpacing: 0.6 }}>
+                {signedIn ? (verified ? 'VERIFIED ACCOUNT' : 'DEVICE ONLY') : 'DEVICE ONLY'}
+              </Text>
+              <Text style={{ fontSize: 16, fontWeight: '900', color: COLORS.dark }} numberOfLines={1}>
+                {signedIn ? email ?? 'Signed in' : 'Not signed in · this device only'}
+              </Text>
+            </View>
+          </View>
+        </TactileCard>
 
-      <View style={{ flexDirection: 'row', gap: 8 }}>
-        <TactilePressable
-          onPress={() => router.push('/leagues')}
-          tone="white"
-          style={{ flex: 1 }}
-        >
-          <Text style={{ fontWeight: '800', color: COLORS.dark }}>Leagues</Text>
-        </TactilePressable>
-        <TactilePressable
-          onPress={() => router.push('/people')}
-          tone="white"
-          style={{ flex: 1 }}
-        >
-          <Text style={{ fontWeight: '800', color: COLORS.dark }}>Find people</Text>
-        </TactilePressable>
-      </View>
+        {verifiedFailed ? (
+          <TactileCard tone="cream">
+            <Text accessibilityRole="alert" style={{ fontWeight: '800', color: COLORS.muted, fontSize: 12 }}>
+              Account sync could not be reached.
+            </Text>
+            <Text style={{ fontWeight: '600', color: COLORS.muted, fontSize: 12, marginTop: 4 }}>
+              The numbers below come from this device, not the cloud. Sign in again or retry later for
+              verified totals.
+            </Text>
+          </TactileCard>
+        ) : null}
 
-      <TactilePressable
-        onPress={() => router.push('/licenses')}
-        tone="white"
-        accessibilityHint="Opens the bundled license and attribution texts"
-      >
-        <Text style={{ fontWeight: '800', color: COLORS.dark }}>
-          Licenses and attributions
-        </Text>
-      </TactilePressable>
+        {(progress || verified) && (
+          <TactileCard tone="white">
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Icon name="trophy" size={16} color={COLORS.marigold} />
+              <Text style={{ fontWeight: '900', fontSize: 16, color: COLORS.dark }}>
+                {verified ? 'Verified account progress' : 'Device progress'}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+              {[
+                { label: 'XP', value: xp, text: `XP: ${xp}`, icon: 'bolt' as const },
+                { label: 'Streak', value: `${streak} days`, text: `Streak: ${streak} days`, icon: 'flame' as const },
+                { label: 'Lessons', value: lessons, text: `Lessons completed: ${lessons}`, icon: 'learn' as const },
+                { label: 'Daily goal', value: `${dailyGoal} XP`, text: `Daily goal: ${dailyGoal} XP`, icon: 'habits' as const },
+              ].map((stat) => (
+                <View key={stat.label} style={{ width: '47%', backgroundColor: COLORS.cream, borderRadius: 14, padding: 12, gap: 4 }}>
+                  <Icon name={stat.icon} size={14} color={COLORS.green} />
+                  <Text style={{ fontSize: 18, fontWeight: '900', color: COLORS.dark }}>{stat.text}</Text>
+                </View>
+              ))}
+            </View>
+            <Text style={{ color: COLORS.muted, fontSize: 11, marginTop: 10 }}>
+              {verified
+                ? 'XP, streak, and lessons come from server-verified attempts. A forged snapshot cannot change them.'
+                : 'Complete lessons and sign in later to merge this device progress into your account.'}
+            </Text>
+          </TactileCard>
+        )}
 
-      {signedIn ? (
-        <TactilePressable
-          onPress={() => void signOut()}
-          disabled={busy}
-          tone="cream"
-          accessibilityHint="Clears this device's saved progress"
-        >
-          <Text style={{ fontWeight: '800', color: COLORS.dark }}>
-            {busy ? 'Signing out…' : 'Sign out and clear this device'}
-          </Text>
-        </TactilePressable>
-      ) : (
-        <>
-          <TactilePressable
-            onPress={() => router.push('/sign-in')}
-            tone="green"
-          >
-            <Text style={{ color: COLORS.white, fontWeight: '800' }}>Sign in</Text>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <TactilePressable onPress={() => router.push('/leagues')} tone="white" style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Icon name="trophy" size={15} color={COLORS.muted} />
+              <Text style={{ fontWeight: '800', color: COLORS.dark }}>Leagues</Text>
+            </View>
           </TactilePressable>
-          <TactilePressable
-            onPress={() => router.push('/sign-up')}
-            tone="cream"
-          >
-            <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Create account</Text>
+          <TactilePressable onPress={() => router.push('/people')} tone="white" style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Icon name="account" size={15} color={COLORS.muted} />
+              <Text style={{ fontWeight: '800', color: COLORS.dark }}>Find people</Text>
+            </View>
           </TactilePressable>
-        </>
-      )}
+        </View>
 
-      <AppNav active="account" />
+        <TactilePressable onPress={() => router.push('/licenses')} tone="white" accessibilityHint="Opens the bundled license and attribution texts">
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Icon name="guidebook" size={15} color={COLORS.muted} />
+            <Text style={{ fontWeight: '800', color: COLORS.dark }}>Licenses and attributions</Text>
+          </View>
+        </TactilePressable>
+
+        {signedIn ? (
+          <TactilePressable onPress={() => void signOut()} disabled={busy} tone="cream" accessibilityHint="Clears this device's saved progress">
+            <Text style={{ fontWeight: '800', color: COLORS.dark }}>{busy ? 'Signing out…' : 'Sign out and clear this device'}</Text>
+          </TactilePressable>
+        ) : (
+          <>
+            <TactilePressable onPress={() => router.push('/sign-in')} tone="green">
+              <Text style={{ color: COLORS.white, fontWeight: '800' }}>Sign in</Text>
+            </TactilePressable>
+            <TactilePressable onPress={() => router.push('/sign-up')} tone="cream">
+              <Text style={{ color: COLORS.dark, fontWeight: '800' }}>Create account</Text>
+            </TactilePressable>
+          </>
+        )}
+
+        <AppNav active="account" />
       </ScrollView>
     </Screen>
   );

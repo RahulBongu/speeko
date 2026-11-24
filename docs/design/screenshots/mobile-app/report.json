@@ -1,0 +1,72 @@
+[
+  {
+    "screen": "learn",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\learn-390x844.png",
+    "errors": [],
+    "text": "speeko\nTen Indian languages\n🔥\n0\n⚡\n0\nLearn\nThree-minute lessons in ten Indian languages. Content is in draft review — lessons stay open, but a native speaker has not signed off yet.\nSTART LEARNING\nBen"
+  },
+  {
+    "screen": "path",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\path-390x844.png",
+    "errors": [],
+    "text": "speeko\nहिन्दी · A1\n🔥\n0\n⚡\n0\n← Learn\nहिन्दी — Starter\nहिन्दी · A1 · 0 of 10 lessons complete\n↑ CLIMB TO THE NEXT UNIT\nUNIT 5\nGuidebook\nFamily\nFamily members\n0/2 lessons done\nSiblings\n3 exercises · 10 X"
+  },
+  {
+    "screen": "lesson",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\lesson-390x844.png",
+    "errors": [],
+    "text": "✕\n♥ 5\nQuestion 1 of 3\nCHOOSE THE MEANING\nHello & Thanks\nHello\n1\nनमस्ते\n2\nधन्यवाद\n3\nहाँ\n4\nनहीं\nCheck\nChoose an answer, then check."
+  },
+  {
+    "screen": "practice",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\practice-390x844.png",
+    "errors": [],
+    "text": "speeko\nSpaced repetition\nPractice\nShort reviews from lessons you actually finished. Practice never awards XP and never unlocks unseen lessons.\nYOUR REVIEW QUEUE\nNothing due yet\nFinish a lesson to add "
+  },
+  {
+    "screen": "account",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\account-390x844.png",
+    "errors": [],
+    "text": "speeko\nThis device\n🔥\n0\n⚡\n0\nAccount\nYour progress stays on this device until you sign in.\nDEVICE ONLY\nNot signed in · this device only\nDevice progress\nXP: 0\nStreak: 0 days\nLessons completed: 0\nDaily g"
+  },
+  {
+    "screen": "learn",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\learn-360x800.png",
+    "errors": [],
+    "text": "speeko\nTen Indian languages\n🔥\n0\n⚡\n0\nLearn\nThree-minute lessons in ten Indian languages. Content is in draft review — lessons stay open, but a native speaker has not signed off yet.\nSTART LEARNING\nBen"
+  },
+  {
+    "screen": "path",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\path-360x800.png",
+    "errors": [],
+    "text": "speeko\nहिन्दी · A1\n🔥\n0\n⚡\n0\n← Learn\nहिन्दी — Starter\nहिन्दी · A1 · 0 of 10 lessons complete\n↑ CLIMB TO THE NEXT UNIT\nUNIT 5\nGuidebook\nFamily\nFamily members\n0/2 lessons done\nSiblings\n3 exercises · 10 X"
+  },
+  {
+    "screen": "lesson",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\lesson-360x800.png",
+    "errors": [],
+    "text": "✕\n♥ 5\nQuestion 1 of 3\nCHOOSE THE MEANING\nHello & Thanks\nHello\n1\nनमस्ते\n2\nधन्यवाद\n3\nहाँ\n4\nनहीं\nCheck\nChoose an answer, then check."
+  },
+  {
+    "screen": "practice",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\practice-360x800.png",
+    "errors": [],
+    "text": "speeko\nSpaced repetition\nPractice\nShort reviews from lessons you actually finished. Practice never awards XP and never unlocks unseen lessons.\nYOUR REVIEW QUEUE\nNothing due yet\nFinish a lesson to add "
+  },
+  {
+    "screen": "account",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\mobile-app\\account-360x800.png",
+    "errors": [],
+    "text": "speeko\nThis device\n🔥\n0\n⚡\n0\nAccount\nYour progress stays on this device until you sign in.\nDEVICE ONLY\nNot signed in · this device only\nDevice progress\nXP: 0\nStreak: 0 days\nLessons completed: 0\nDaily g"
+  }
+]

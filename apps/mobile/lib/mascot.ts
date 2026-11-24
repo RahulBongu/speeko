@@ -12,7 +12,26 @@ const AUDIO_MAP: Record<string, number> = {
 };
 
 let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
+let currentSubscription: { remove(): void } | null = null;
 let enabled = true;
+
+function releasePlayer(): void {
+  if (currentSubscription) {
+    try {
+      currentSubscription.remove();
+    } catch {}
+    currentSubscription = null;
+  }
+  if (currentPlayer) {
+    try {
+      currentPlayer.pause();
+    } catch {}
+    try {
+      currentPlayer.remove();
+    } catch {}
+    currentPlayer = null;
+  }
+}
 
 type ActiveListener = (active: boolean) => void;
 const speakingListeners = new Set<ActiveListener>();
@@ -100,17 +119,14 @@ export async function playMascotVoice(reactionId: MascotReactionId): Promise<boo
     currentPlayer = player;
     const subscription = player.addListener('playbackStatusUpdate', (status) => {
       if (status.isLoaded && status.didJustFinish) {
-        try {
-          player.remove();
-        } catch {}
-        if (currentPlayer === player) currentPlayer = null;
+        if (currentPlayer === player) releasePlayer();
         if (speaking) {
           speaking = false;
           emit(speakingListeners, false);
         }
-        subscription.remove();
       }
     });
+    currentSubscription = subscription;
     player.play();
     speaking = true;
     emit(speakingListeners, true);
@@ -125,15 +141,7 @@ export async function playMascotVoice(reactionId: MascotReactionId): Promise<boo
 }
 
 export async function stopMascotVoice(): Promise<void> {
-  if (currentPlayer) {
-    try {
-      currentPlayer.pause();
-    } catch {}
-    try {
-      currentPlayer.remove();
-    } catch {}
-    currentPlayer = null;
-  }
+  releasePlayer();
   if (speaking) {
     speaking = false;
     emit(speakingListeners, false);

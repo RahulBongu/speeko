@@ -10,12 +10,13 @@
  *       (scripts/..): apps/web/.next/static, apps/web/out, apps/mobile/dist
  *       (Android web export) and apps/api/dist (compiled JS). A missing dir is
  *       noted as skipped; everything that exists is scanned.
- *   (b) If apps/api/.env exists, every KEY=VALUE pair is parsed and any pair
- *       whose VALUE is non-empty and at least 8 chars long is searched for —
- *       by VALUE, reported by NAME. Otherwise (no .env) the outputs are scanned
+ *   (b) Env values are collected from .env, apps/api/.env, apps/web/.env and
+ *       apps/mobile/.env when present; non-empty values >= 8 chars are searched
+ *       by VALUE and reported by NAME. Independently, outputs are always scanned
  *       with well-known secret patterns (Stripe live keys, private key blocks,
  *       BETTER_AUTH_SECRET / generic high-entropy secret assignments and
- *       password assignments in bundles).
+ *       password assignments in bundles) so secrets configured only in CI or a
+ *       deployed environment are still detected.
  *   (c) On a match this prints the FILE and the secret NAME (or
  *       "matched pattern '<name>'"). The secret VALUE is never printed.
  *   (d) Exit code 1 when anything is found, 0 otherwise.
@@ -39,6 +40,13 @@ const SCANNABLE_EXTENSIONS = new Set([
   '.js', '.mjs', '.cjs', '.jsx', '.ts', '.tsx',
   '.css', '.html', '.htm', '.json', '.map', '.txt', '.xml', '.svg', '.webmanifest',
 ]);
+
+const ENV_PATHS = [
+  path.join('.env'),
+  path.join('apps', 'api', '.env'),
+  path.join('apps', 'web', '.env'),
+  path.join('apps', 'mobile', '.env'),
+];
 
 const MAX_FILE_BYTES = 32 * 1024 * 1024; // skip anything larger, note it
 const MIN_ENV_VALUE_LENGTH = 8;
@@ -151,23 +159,28 @@ function main() {
   let dirsSkipped = 0;
   const notes = [];
 
-  const envPath = path.join(repoRoot, 'apps', 'api', '.env');
-  const envExists = fs.existsSync(envPath);
-  let envEntries = [];
-  if (envExists) {
+  // Secrets can be configured in any workspace package or at the repo root.
+  // Load every available env file by value (never printing a value), but keep
+  // the pattern scan active as well: a value-only scan misses secrets that
+  // were configured in a different environment (CI, Vercel, EAS).
+  const envEntries = [];
+  const envNames = new Set();
+  for (const relPath of ENV_PATHS) {
+    const envPath = path.join(repoRoot, relPath);
+    if (!fs.existsSync(envPath)) continue;
     try {
-      envEntries = parseEnvFile(envPath);
-      if (envEntries.length === 0) {
-        notes.push('apps/api/.env found but no values of length >= 8 to search for');
+      for (const entry of parseEnvFile(envPath)) {
+        if (envNames.has(entry.name)) continue;
+        envNames.add(entry.name);
+        envEntries.push(entry);
       }
     } catch (err) {
-      notes.push(`apps/api/.env could not be parsed (${err.message}); falling back to pattern scan`);
+      notes.push(`${relPath} could not be parsed (${err.message}); continuing with pattern scan`);
     }
   }
-  const useEnvValues = envExists && envEntries.length > 0;
-  const mode = useEnvValues
-    ? 'values from apps/api/.env'
-    : 'fallback secret patterns (apps/api/.env absent)';
+  const mode = envEntries.length > 0
+    ? `${envEntries.length} env value(s) + ${FALLBACK_PATTERNS.length} fallback patterns`
+    : `${FALLBACK_PATTERNS.length} fallback patterns (no env values available)`;
 
   for (const candidate of CANDIDATE_DIRS) {
     const absDir = path.join(repoRoot, candidate.rel);
@@ -203,14 +216,13 @@ function main() {
       dirFiles += 1;
       dirBytes += stat.size;
 
-      if (useEnvValues) {
-        for (const entry of envEntries) {
-          const index = content.indexOf(entry.value);
-          if (index !== -1) {
-            hits.push({ file: rel(file), line: lineNumberAt(content, index), name: entry.name });
-          }
+      for (const entry of envEntries) {
+        const index = content.indexOf(entry.value);
+        if (index !== -1) {
+          hits.push({ file: rel(file), line: lineNumberAt(content, index), name: entry.name });
         }
-      } else {
+      }
+      {
         for (const pattern of FALLBACK_PATTERNS) {
           pattern.re.lastIndex = 0;
           let match;

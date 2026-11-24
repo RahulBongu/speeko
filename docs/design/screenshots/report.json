@@ -1,0 +1,105 @@
+[
+  {
+    "screen": "learn",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\learn-390x844.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "path",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\path-390x844.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "lesson",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\lesson-390x844.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "practice",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\practice-390x844.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "habits",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\habits-390x844.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "shop",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\shop-390x844.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "account",
+    "viewport": "390x844",
+    "file": "C:\\duo\\docs\\design\\screenshots\\account-390x844.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "learn",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\learn-360x800.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "path",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\path-360x800.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "lesson",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\lesson-360x800.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "practice",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\practice-360x800.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "habits",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\habits-360x800.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "shop",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\shop-360x800.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "account",
+    "viewport": "360x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\account-360x800.png",
+    "overflow": 0,
+    "errors": []
+  },
+  {
+    "screen": "learn",
+    "viewport": "1280x800",
+    "file": "C:\\duo\\docs\\design\\screenshots\\learn-1280x800.png"
+  }
+]

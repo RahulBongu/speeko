@@ -20,7 +20,7 @@ const FIRST_LESSON = {
     },
     {
       exerciseId: 'hi-starter-u1-l1-e3',
-      input: { kind: 'text', value: 'à¤¨à¤®à¤¸à¥à¤¤à¥‡' },
+      input: { kind: 'text', value: 'नमस्ते' },
       ms: 2100,
     },
   ],

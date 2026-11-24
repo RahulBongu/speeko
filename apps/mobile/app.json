@@ -17,7 +17,8 @@
       "expo-asset",
       "./plugins/withQaLoopbackCleartext",
       "expo-status-bar",
-      "expo-audio"
+      "expo-audio",
+      "./plugins/withMinimalAndroidPermissions"
     ],
     "extra": {
       "apiUrl": "http://localhost:3001",

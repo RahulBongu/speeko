@@ -110,7 +110,7 @@ function GoalPicker({
               }`}
             >
               <span className="block font-display text-xl font-extrabold leading-none">{goal}</span>
-              <span className="mt-1 block text-[9px] font-extrabold uppercase tracking-[0.1em] opacity-70">
+              <span className="mt-1 block text-[9px] font-extrabold uppercase tracking-[0.1em]">
                 XP
               </span>
             </button>
@@ -228,7 +228,7 @@ function AchievementTile({ achievement }: { achievement: AchievementProgress }) 
       className={`rounded-2xl border-2 p-3 ${
         achievement.complete
           ? 'border-speeko-200 bg-speeko-50'
-          : 'border-cream-200 bg-white opacity-80'
+          : 'border-cream-200 bg-white'
       }`}
     >
       <div className="flex items-center gap-2">
@@ -461,7 +461,7 @@ export default function HabitsClient() {
             <p className="mt-1 font-display text-2xl font-extrabold leading-none">
               {report.streak.current}
             </p>
-            <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em] opacity-70">
+            <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em]">
               Day streak
             </p>
           </div>
@@ -471,9 +471,9 @@ export default function HabitsClient() {
             </span>
             <p className="mt-1 font-display text-2xl font-extrabold leading-none">
               {report.today.xp}
-              <span className="text-sm opacity-70"> / {report.dailyGoal}</span>
+              <span className="text-sm"> / {report.dailyGoal}</span>
             </p>
-            <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em] opacity-70">
+            <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em]">
               Today&apos;s XP
             </p>
           </div>
@@ -483,9 +483,9 @@ export default function HabitsClient() {
             </span>
             <p className="mt-1 font-display text-2xl font-extrabold leading-none">
               {report.streak.freezesAvailable}
-              <span className="text-sm opacity-70"> / {report.streak.maxFreezes}</span>
+              <span className="text-sm"> / {report.streak.maxFreezes}</span>
             </p>
-            <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em] opacity-70">
+            <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em]">
               Freezes held
             </p>
           </div>
@@ -517,7 +517,7 @@ export default function HabitsClient() {
             </p>
           </div>
 
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex min-w-0 gap-2">
             <div className="grid grid-rows-7 gap-1" aria-hidden="true">
               {DAY_LABELS.map((label, index) => (
                 <span
@@ -529,7 +529,7 @@ export default function HabitsClient() {
               ))}
             </div>
             <div
-              className="grid grid-flow-col grid-rows-7 gap-1"
+              className="no-scrollbar grid min-w-0 flex-1 grid-flow-col grid-rows-7 gap-1 overflow-x-auto"
               role="grid"
               aria-label="Daily activity calendar for the last twelve weeks"
             >

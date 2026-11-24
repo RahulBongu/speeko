@@ -605,7 +605,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             <button
               type="button"
               onClick={() => setShowExit(true)}
-              className="focus-ring flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-bark-400 transition hover:bg-cream-100 hover:text-bark-700"
+              className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-bark-400 transition hover:bg-cream-100 hover:text-bark-700"
               aria-label="Quit lesson"
             >
               <XIcon className="h-5 w-5" />
@@ -617,6 +617,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               label="Lesson progress"
             />
             <div
+              role="img"
               className="flex shrink-0 items-center gap-0.5"
               aria-label={`${session.hearts} of ${INITIAL_HEARTS} hearts left`}
             >
@@ -625,7 +626,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
                   key={index}
                   filled={index < session.hearts}
                   className={`h-5 w-5 ${
-                    index < session.hearts ? 'text-red-500' : 'text-cream-300'
+                    index < session.hearts ? 'text-red-500' : 'text-bark-300'
                   }`}
                 />
               ))}
@@ -639,7 +640,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               type="button"
               onClick={toggleSound}
               aria-label={soundOn ? 'Mute sound effects' : 'Unmute sound effects'}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cream-100 text-bark-500 transition hover:bg-cream-200"
+              className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cream-100 text-bark-500 transition hover:bg-cream-200"
             >
               {soundOn ? '🔊' : '🔇'}
             </button>
@@ -1104,7 +1105,7 @@ function StatCard({
     <div className={`rounded-2xl border-2 px-3 py-3 text-center ${tones[tone]}`}>
       <span className="mx-auto flex h-6 w-6 items-center justify-center">{icon}</span>
       <p className="mt-1 font-display text-xl font-extrabold leading-none sm:text-2xl">{value}</p>
-      <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em] opacity-70">
+      <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.12em]">
         {label}
       </p>
     </div>
@@ -1125,9 +1126,9 @@ function OutOfHeartsScreen({
   const accuracy = sessionAccuracy(session);
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-4 py-12 text-center sm:px-6">
-      <div className="flex items-center gap-1" aria-label="No hearts left">
+      <div role="img" className="flex items-center gap-1" aria-label="No hearts left">
         {Array.from({ length: INITIAL_HEARTS }, (_, index) => (
-          <HeartIcon key={index} filled={false} className="h-7 w-7 text-cream-300" />
+          <HeartIcon key={index} filled={false} className="h-7 w-7 text-bark-300" />
         ))}
       </div>
       <Fox mood="sad" className="mt-2 h-40 w-40" />

@@ -277,7 +277,7 @@ export default function HomePage() {
                   <Link
                     href="/habits"
                     className="focus-ring group mt-4 block max-w-md rounded-2xl border-2 border-cream-200 bg-white p-4 shadow-card-sm transition hover:border-speeko-200 hover:shadow-card"
-                    aria-label="Open habits, daily goal, and streak calendar"
+                    aria-label="Habits — daily goal and streak calendar"
                   >
                     <div className="flex items-baseline justify-between gap-3">
                       <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-bark-500">
@@ -394,7 +394,7 @@ export default function HomePage() {
                   <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-speeko-700 shadow-card-sm">
                     {step.icon}
                   </span>
-                  <span className="font-display text-2xl font-extrabold text-cream-300">
+                  <span className="font-display text-2xl font-extrabold text-bark-300">
                     0{index + 1}
                   </span>
                 </div>
@@ -450,7 +450,6 @@ export default function HomePage() {
                 <Link
                   key={locale}
                   href={`/learn/${locale}-starter`}
-                  aria-label={`Open the ${meta.english} starter course`}
                   className="focus-ring group flex flex-col gap-2 rounded-2xl border-2 border-cream-200 bg-white p-3.5 shadow-card-sm transition duration-200 hover:-translate-y-0.5 hover:border-speeko-300 hover:shadow-card"
                 >
                   <span className="flex items-start justify-between gap-2">

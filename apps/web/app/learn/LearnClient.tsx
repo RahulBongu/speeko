@@ -87,7 +87,7 @@ export default function LearnClient() {
             />
             <Link
               href="/habits"
-              aria-label="Open habits, daily goal, and streak calendar"
+              aria-label={`${Math.min(todayXp, dailyGoal)}/${dailyGoal} XP — daily goal and streak calendar`}
               className="focus-ring rounded-2xl"
             >
               <StatPill
@@ -142,7 +142,7 @@ export default function LearnClient() {
           <div className="flex flex-wrap items-end justify-between gap-2">
             <h2 className="font-display text-2xl font-extrabold text-bark-800">All courses</h2>
             <p className="text-xs font-bold uppercase tracking-[0.14em] text-bark-500">
-              {manifest?.length ?? 10} languages
+              {new Set((manifest ?? []).map((course) => course.locale)).size || 10} languages
             </p>
           </div>
 

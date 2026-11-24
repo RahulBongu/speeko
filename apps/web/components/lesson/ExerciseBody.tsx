@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { romanHint, type Exercise, type GradeResult, type Locale } from '@speeko/core';
 import { LOCALE_META } from '@/lib/courses';
 import { createRecognizer, recognitionAvailable, speak, type Recognizer } from '@/lib/speech';
@@ -160,9 +161,12 @@ function ChoiceBoard({
               className={`focus-ring group flex min-h-[68px] items-center justify-between gap-3 rounded-2xl border-2 px-5 py-4 text-left font-display text-xl font-bold transition duration-150 disabled:cursor-default ${CHOICE_CLASSES[state]}`}
             >
               {showImage ? (
-                <img
+                <Image
                   src={option}
                   alt={`Option ${index + 1}`}
+                  width={240}
+                  height={96}
+                  unoptimized
                   className="h-24 w-full rounded-xl object-cover"
                 />
               ) : (
@@ -464,6 +468,7 @@ function PairsBoard({
             type="button"
             disabled={disabled || isMatched}
             aria-pressed={selected?.side === side && selected.index === pairIndex}
+            aria-label={isMatched ? `${text}, matched` : text}
             onClick={() => tap(side, pairIndex)}
             className={`focus-ring flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl border-2 px-4 py-3 text-center font-display text-lg font-bold transition duration-150 disabled:cursor-default ${buttonClass(side, pairIndex)}`}
           >

@@ -15,6 +15,8 @@ import {
   TactilePressable,
 } from '../../components/Tactile';
 import { COLORS } from '../../lib/theme';
+import { Fox } from '../../components/Fox';
+import { Icon } from '../../components/Icons';
 
 type LessonState = 'completed' | 'current' | 'locked';
 
@@ -57,21 +59,28 @@ function PathNode({
       }}
     >
       {current ? (
-        <View
-          style={{
-            marginBottom: 6,
-            borderRadius: 999,
-            backgroundColor: COLORS.fox,
-            borderWidth: 2,
-            borderColor: '#C2410C',
-            paddingHorizontal: 12,
-            paddingVertical: 4,
-          }}
-        >
+        <>
+          <Fox
+            mood="happy"
+            style={{ width: 56, height: 56, marginBottom: -6 }}
+            title="Speeko cheering you on"
+          />
+          <View
+            style={{
+              marginBottom: 6,
+              borderRadius: 999,
+              backgroundColor: COLORS.fox,
+              borderWidth: 2,
+              borderColor: '#C2410C',
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+            }}
+          >
           <Text style={{ fontSize: 10, fontWeight: '900', color: COLORS.white }}>
             START · LESSON {index + 1}
           </Text>
-        </View>
+          </View>
+        </>
       ) : null}
 
       <View
@@ -112,7 +121,7 @@ function PathNode({
               color: locked ? COLORS.muted : COLORS.white,
             }}
           >
-            {state === 'completed' ? '✓' : locked ? '🔒' : '▶'}
+            {state === 'completed' ? <Icon name="check" size={24} color={COLORS.white} /> : locked ? <Icon name="lock" size={20} color={COLORS.muted} /> : <Icon name="play" size={22} color={COLORS.white} />}
           </Text>
         </Pressable>
       </View>
@@ -338,9 +347,12 @@ export default function Path() {
                     paddingVertical: 6,
                   }}
                 >
-                  <Text style={{ fontSize: 11, fontWeight: '900', color: COLORS.white }}>
-                    📖 Guidebook
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                    <Icon name="guidebook" size={13} color={COLORS.white} />
+                    <Text style={{ fontSize: 11, fontWeight: '900', color: COLORS.white }}>
+                      Guidebook
+                    </Text>
+                  </View>
                 </Pressable>
               </View>
               <Text style={{ fontSize: 21, fontWeight: '900', color: COLORS.white }}>

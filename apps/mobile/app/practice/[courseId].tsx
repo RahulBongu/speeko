@@ -23,6 +23,8 @@ import {
   type DraftAnswer,
 } from '../../lib/exercise';
 import { COLORS } from '../../lib/theme';
+import { stopMobileAudio } from '../../lib/audio';
+import { stopMascotVoice } from '../../lib/mascot';
 
 type Phase = 'loading' | 'error' | 'empty' | 'playing' | 'feedback' | 'summary';
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
@@ -153,6 +155,14 @@ export default function PracticeRunner() {
     if (phase !== 'summary' || saveState !== 'idle') return;
     void saveReviews();
   }, [phase, saveReviews, saveState]);
+
+  // Practice exercises can play recorded audio; never let it outlive the screen.
+  useEffect(() => {
+    return () => {
+      void stopMobileAudio();
+      void stopMascotVoice();
+    };
+  }, []);
 
   if (phase === 'loading') {
     return (

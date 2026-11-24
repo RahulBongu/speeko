@@ -229,8 +229,13 @@ export async function shopRoutes(app: FastifyInstance) {
       if (message === 'FREEZE_INVENTORY_FULL') {
         return reply.status(409).send({ error: 'Your freeze inventory is full.' });
       }
-      // Unique-constraint race on sourceKey: treat as a successful replay.
-      if (message.toLowerCase().includes('unique') || message.toLowerCase().includes('duplicate')) {
+      // Only the gem-ledger sourceKey uniqueness race is a successful replay.
+      // Matching any error containing "unique"/"duplicate" could mask an
+      // unrelated constraint failure as a paid-order success.
+      const isSourceKeyRace =
+        /unique constraint|duplicate key/i.test(message) &&
+        /gem_ledger_user_source_idx/i.test(message);
+      if (isSourceKeyRace) {
         const [balance, owned, credits] = await Promise.all([
           gemBalance(db, userId),
           ownedItems(db, userId),

@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import type { AttemptAnswer, Course, Exercise, GradeResult, Lesson } from '@speeko/core';
 import {
   applyReviews,
@@ -28,7 +29,8 @@ import {
   type DraftAnswer,
 } from '../../../lib/exercise';
 import { COLORS } from '../../../lib/theme';
-import { playMascotVoice, useMascotListening, useMascotSpeaking } from '../../../lib/mascot';
+import { playMascotVoice, stopMascotVoice, useMascotListening, useMascotSpeaking } from '../../../lib/mascot';
+import { stopMobileAudio } from '../../../lib/audio';
 
 type Phase = 'loading' | 'error' | 'playing' | 'feedback' | 'summary' | 'hearts';
 type SaveState = 'idle' | 'saving' | 'saved' | 'practice' | 'local' | 'error';
@@ -134,6 +136,15 @@ export default function LessonPlayer() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Stop any lesson audio or mascot voice when this screen goes away, so
+  // playback never continues behind another screen or after a deep-link exit.
+  useEffect(() => {
+    return () => {
+      void stopMobileAudio();
+      void stopMascotVoice();
+    };
+  }, []);
 
   const restart = useCallback(() => {
     if (!lesson) return;
@@ -427,11 +438,34 @@ export default function LessonPlayer() {
   const progressLabel = `Question ${index + 1} of ${lesson?.exercises.length ?? 0}`;
   const total = lesson?.exercises.length ?? 0;
 
+  const actionButton = !supported ? (
+    <TactileButton label="Back to lessons" tone="cream" onPress={() => router.back()} />
+  ) : phase === 'feedback' ? (
+    <TactileButton
+      label={
+        hearts <= 0
+          ? 'See result'
+          : index + 1 >= (lesson?.exercises.length ?? 0)
+            ? 'See results'
+            : 'Continue'
+      }
+      onPress={next}
+    />
+  ) : (
+    <TactileButton
+      label="Check"
+      onPress={check}
+      disabled={!ready}
+      accessibilityState={{ disabled: !ready }}
+    />
+  );
+
   return (
     <Screen>
       <ScrollView
         contentContainerStyle={{
           padding: 18,
+          paddingBottom: 110,
           gap: 14,
           backgroundColor: COLORS.cream,
           flexGrow: 1,
@@ -556,28 +590,27 @@ export default function LessonPlayer() {
         </View>
       ) : null}
 
-      {!supported ? (
-        <TactileButton label="Back to lessons" tone="cream" onPress={() => router.back()} />
-      ) : phase === 'feedback' ? (
-        <TactileButton
-          label={
-            hearts <= 0
-              ? 'See result'
-              : index + 1 >= (lesson?.exercises.length ?? 0)
-                ? 'See results'
-                : 'Continue'
-          }
-          onPress={next}
-        />
-      ) : (
-        <TactileButton
-          label="Check"
-          onPress={check}
-          disabled={!ready}
-          accessibilityState={{ disabled: !ready }}
-        />
-      )}
       </ScrollView>
+      <SafeAreaView edges={['bottom']} style={{ backgroundColor: COLORS.cream }}>
+        <View
+          style={{
+            borderTopWidth: 1,
+            borderTopColor: COLORS.line,
+            paddingHorizontal: 18,
+            paddingTop: 10,
+            paddingBottom: 6,
+            backgroundColor: COLORS.cream,
+            gap: 6,
+          }}
+        >
+          {actionButton}
+          {phase === 'playing' ? (
+            <Text style={{ textAlign: 'center', fontSize: 11, color: COLORS.muted }}>
+              Choose an answer, then check.
+            </Text>
+          ) : null}
+        </View>
+      </SafeAreaView>
     </Screen>
   );
 }

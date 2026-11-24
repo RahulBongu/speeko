@@ -10,6 +10,7 @@ import {
   type DraftAnswer,
 } from '../lib/exercise';
 import { TactileCard } from './Tactile';
+import { Icon } from './Icons';
 import { COLORS } from '../lib/theme';
 import { hasMobileAudio, playMobileAudio } from '../lib/audio';
 
@@ -177,9 +178,9 @@ export function ExerciseBody({
                 {option}
               </Text>
               {isExpected ? (
-                <Text style={{ fontWeight: '900', color: COLORS.greenDark }}>✓</Text>
+                <Icon name="check" size={18} color={COLORS.greenDark} />
               ) : wrongPick ? (
-                <Text style={{ fontWeight: '900', color: COLORS.red }}>✕</Text>
+                <Icon name="close" size={18} color={COLORS.red} />
               ) : null}
             </Pressable>
           );
@@ -576,6 +577,8 @@ export function ExerciseBody({
                 <Pressable
                   key={`${exercise.id}-left-${index}`}
                   accessibilityRole="button"
+                  accessibilityLabel={isMatched ? `${pair[0]}, matched` : pair[0]}
+                  accessibilityState={{ selected: leftSelected === index, disabled: disabled || isMatched }}
                   disabled={disabled || isMatched}
                   onPress={() => setLeftSelected(index)}
                   style={{
@@ -610,6 +613,8 @@ export function ExerciseBody({
                 <Pressable
                   key={`${exercise.id}-right-${originalIndex}`}
                   accessibilityRole="button"
+                  accessibilityLabel={isMatched ? `${pair?.[1]}, matched` : pair?.[1]}
+                  accessibilityState={{ selected: leftSelected === originalIndex, disabled: disabled || isMatched }}
                   disabled={disabled || isMatched}
                   onPress={() => {
                     if (leftSelected === null || draft.kind !== 'pairs') return;

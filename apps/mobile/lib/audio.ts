@@ -14,45 +14,15 @@ const AUDIO_MAP: Record<string, number> = {
 };
 
 let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
+let currentSubscription: { remove(): void } | null = null;
 
-export function hasMobileAudio(exerciseId: string): boolean {
-  return Object.prototype.hasOwnProperty.call(AUDIO_MAP, exerciseId);
-}
-
-export async function playMobileAudio(exerciseId: string): Promise<boolean> {
-  const source = AUDIO_MAP[exerciseId];
-  if (!source) return false;
-  try {
-    if (currentPlayer) {
-      try {
-        currentPlayer.pause();
-      } catch {}
-      try {
-        currentPlayer.remove();
-      } catch {}
-      currentPlayer = null;
-    }
-    const player = createAudioPlayer(source);
-    currentPlayer = player;
-    const subscription = player.addListener('playbackStatusUpdate', (status) => {
-      if (status.isLoaded && status.didJustFinish) {
-        try {
-          player.remove();
-        } catch {}
-        if (currentPlayer === player) currentPlayer = null;
-        emitMascotListening(false);
-        subscription.remove();
-      }
-    });
-    player.play();
-    emitMascotListening(true);
-    return true;
-  } catch {
-    return false;
+function releasePlayer(): void {
+  if (currentSubscription) {
+    try {
+      currentSubscription.remove();
+    } catch {}
+    currentSubscription = null;
   }
-}
-
-export async function stopMobileAudio(): Promise<void> {
   if (currentPlayer) {
     try {
       currentPlayer.pause();
@@ -62,5 +32,35 @@ export async function stopMobileAudio(): Promise<void> {
     } catch {}
     currentPlayer = null;
   }
+}
+
+export function hasMobileAudio(exerciseId: string): boolean {
+  return Object.prototype.hasOwnProperty.call(AUDIO_MAP, exerciseId);
+}
+
+export async function playMobileAudio(exerciseId: string): Promise<boolean> {
+  const source = AUDIO_MAP[exerciseId];
+  if (!source) return false;
+  try {
+    releasePlayer();
+    const player = createAudioPlayer(source);
+    currentPlayer = player;
+    const subscription = player.addListener('playbackStatusUpdate', (status) => {
+      if (status.isLoaded && status.didJustFinish) {
+        if (currentPlayer === player) releasePlayer();
+        emitMascotListening(false);
+      }
+    });
+    currentSubscription = subscription;
+    player.play();
+    emitMascotListening(true);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function stopMobileAudio(): Promise<void> {
+  releasePlayer();
   emitMascotListening(false);
 }

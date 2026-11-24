@@ -237,14 +237,19 @@ export async function socialRoutes(app: FastifyInstance) {
     const query = String((request.query as { q?: string })?.q ?? '').trim();
     if (query.length < 2) return reply.send({ results: [] });
 
+    // Treat `%`, `_` and `\` in the user's query as literal characters.
+    // Without this, a search string can act as a LIKE wildcard and enumerate
+    // profiles rather than matching a substring.
+    const escaped = query.replace(/[\\%_]/g, (character) => `\\${character}`);
+    const pattern = `%${escaped}%`;
     const db = getDb();
     const rows = await db
       .select()
       .from(userProfiles)
       .where(
         or(
-          ilike(userProfiles.username, `%${query}%`),
-          ilike(userProfiles.displayName, `%${query}%`),
+          sql`${userProfiles.username} ilike ${pattern} escape '\\'`,
+          sql`${userProfiles.displayName} ilike ${pattern} escape '\\'`,
         ),
       )
       .limit(10);

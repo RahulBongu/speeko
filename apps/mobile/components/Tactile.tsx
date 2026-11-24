@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { COLORS } from '../lib/theme';
 import { Fox } from './Fox';
+import { Icon, type IconName } from './Icons';
 
 /**
  * Shared "tactile" primitives.
@@ -220,11 +221,13 @@ export function ProgressTrack({
 /** Compact status pill for streak / XP / other single-number stats. */
 export function StatPill({
   icon,
+  iconName,
   value,
   label,
   iconColor,
 }: {
-  icon: string;
+  icon?: string;
+  iconName?: IconName;
   value: number | string;
   label: string;
   iconColor?: string;
@@ -247,7 +250,11 @@ export function StatPill({
           paddingVertical: 4,
         }}
       >
-        <Text style={{ fontSize: 13, color: iconColor ?? COLORS.dark }}>{icon}</Text>
+        {iconName ? (
+          <Icon name={iconName} size={14} color={iconColor ?? COLORS.dark} />
+        ) : (
+          <Text style={{ fontSize: 13, color: iconColor ?? COLORS.dark }}>{icon}</Text>
+        )}
         <Text style={{ fontSize: 12, fontWeight: '900', color: COLORS.dark }}>{value}</Text>
       </View>
     </View>
@@ -298,10 +305,10 @@ export function SpeekoAppBar({
         ) : null}
       </View>
       {typeof streak === 'number' ? (
-        <StatPill icon="🔥" value={streak} label={`${streak} day streak`} />
+        <StatPill iconName="flame" iconColor={COLORS.fox} value={streak} label={`${streak} day streak`} />
       ) : null}
       {typeof xp === 'number' ? (
-        <StatPill icon="⚡" value={xp} label={`${xp} XP`} />
+        <StatPill iconName="bolt" iconColor={COLORS.marigold} value={xp} label={`${xp} XP`} />
       ) : null}
     </View>
   );
