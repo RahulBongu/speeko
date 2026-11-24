@@ -2,6 +2,8 @@
 
 Run against the deployed **web origin** and **API origin** after provisioning per `docs/deploy-runbook.md`. Use a throwaway test account only. Never use a real learner account, real purchase, or production secret values in chat.
 
+Record PASS/FAIL plus status codes and screenshots in a local owner log (for example `docs/release/owner-smoke-log.md`). Do not commit that log if it contains account identifiers, tokens or private data — keep it out of the public repository.
+
 ## Preconditions to verify without printing values
 
 - Required names present in each environment: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CLIENT_ORIGINS`, `TRUST_PROXY_HOPS`, `API_PROXY_TARGET`, `API_PROXY_SECRET` on web + API; optional `AI_API_KEY` / `AI_API_URL` (see gate 7). `.env.example` files are placeholder-only.
