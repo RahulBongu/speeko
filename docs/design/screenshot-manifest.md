@@ -184,3 +184,11 @@ All files below are **real captures of the running application**. No Stitch mock
 - "Data scenario" is inferred from capture filename and the originating E2E spec; it is not a claim about a specific persisted account.
 - `docs/design/screenshots/report.json` records console-error arrays for the design captures; all are empty.
 - `docs/design/screenshots/responsive-audit/report.json` records per-viewport overflow/accessibility metrics from the final responsive pass.
+- `docs/qa/axe-report.json` records zero serious/critical WCAG A/AA violations across 10 routes × 2 viewports; the guard is `tests/e2e/a11y.spec.ts`.
+
+## Regenerating evidence
+
+- Browser captures and responsive audit: run the real web app and API (`pnpm dev` or `pnpm build && pnpm --filter @speeko/web start` plus `node apps/api/dist/index.js`), then capture with Playwright at the listed viewports against `http://localhost:3000`. Keep `report.json` alongside the images.
+- E2E QA screenshots are produced by `pnpm e2e` (Playwright projects `mobile-390x844` and `desktop-1280x800`).
+- Expo-web captures: `pnpm --filter @speeko/mobile build`, serve `apps/mobile/dist`, and label every image as **Expo web renderer**.
+- Native captures require the steps in `docs/qa/native-device-checklist.md`; none exist yet. Never relabel a browser or Expo-web image as a device capture.
