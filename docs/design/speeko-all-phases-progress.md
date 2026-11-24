@@ -146,3 +146,7 @@ This report, `docs/qa/native-device-checklist.md`, `docs/content/native-speaker-
 3. **Voice conversation** — `/api/ai/conversation` remains an honest 503 until owner supplies `AI_API_KEY` / `AI_API_URL`; the gate was not bypassed.
 4. **Hosting/secrets/rotation, backups, store accounts, keystore custody** — owner-only, per `docs/deploy-runbook.md` and `docs/release/release-checklist.md`.
 5. **Deployed-config security verification** — needs Vercel/Render/DB access; source-level auth, ownership and secret handling were verified.
+
+## Post-run disposition
+
+The owner explicitly authorized a GitHub push after this phase log was written. All work was committed and pushed to `origin/main`; the final commit and verification record are in `docs/release/speeko-finalization-progress.md`. This log is kept as the historical Phase 0–12 record and is not rewritten to hide its earlier "uncommitted" status.
