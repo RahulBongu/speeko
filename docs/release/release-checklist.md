@@ -4,7 +4,7 @@
 
 ## Pre-release (engineering, already done)
 
-- [x] `pnpm verify` green — exact current counts and exit status are recorded in `docs/design/speeko-all-phases-progress.md` (the earlier 217-unit / 154-e2e figures were from the previous phase)
+- [x] `pnpm verify` green — exact current counts and exit status are recorded in `docs/release/speeko-finalization-progress.md` (the earlier 217-unit / 154-e2e figures were from a previous phase)
 - [x] Android debug + release APK and AAB were built successfully in earlier owner phases (Vivo V2336 render evidence in `docs/qa/`). A fresh static build in the current workspace is **blocked** by a stale generated Android project vs installed Expo 58 / AGP 9; see `docs/qa/native-device-checklist.md`. Do not treat the earlier artifact as proof that the current source builds natively.
 - [x] License texts bundled (web `/licenses/*`, mobile in-app `/licenses`)
 - [x] Proxy-aware rate limiting implemented and verified
