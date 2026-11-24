@@ -160,6 +160,7 @@ content/      Per-locale course JSON
 - `pnpm lint` — web and mobile pass (one intentional `<img>` warning in the lesson player)
 - `pnpm e2e` — Playwright checks across routes, onboarding, rewards, reward integrity, habits, shop, social, practice, rate limiting, license texts, marketing-page rendering, the progress-endpoint integrity boundary, account deletion, the honest AI gate, and axe-core accessibility at 1280×800 and 390×844. Screenshots live in `test-results/screenshots/`; curated key screenshots live in `docs/qa/`; the axe report is `docs/qa/axe-report.json`
 - `pnpm verify` — runs typecheck → test → build → secrets scan → license check → e2e in order
+- `pnpm e2e -- tests/e2e/a11y.spec.ts` — focused axe-core accessibility guard (10 routes × 2 viewports)
 - Migrations are applied on API startup. `lesson_events` (0002) and `lesson_completion_rewards` (0005) were smoke-tested; 0005 was applied to a fresh pglite directory and to a populated pre-0005 database with historical events, verifying the non-destructive backfill.
 
 Playwright uses the installed Google Chrome, so `pnpm e2e` does not download a browser. It serves the production web build and the compiled API, so run `pnpm build` first (or use `pnpm verify`).
