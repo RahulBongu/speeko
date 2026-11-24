@@ -15,7 +15,7 @@ Companion to `docs/design/ui-rescue-audit.md` (Phase 1/2 history) and `docs/desi
 ## Theme tokens
 
 - **Web:** `apps/web/tailwind.config.ts` — `speeko`, `gold`, `fox`, `cream`, `bark`, `ice` scales plus shadows and keyframes. Tokens verified by real axe-core runs, not estimates: `bark-300 #806b5a`, `bark-400 #7a5f4c`, `speeko-600 #217a1b`, `gold-700 #8a5d00`, `fox-700 #a33d0a`, `ice-700 #2a6b99`. Continuous amber/orange illustration colours remain decorative. Text `opacity-70`/`opacity-80` was removed from small labels because it reduced real contrast below 4.5:1.
-- **Automated accessibility guard:** `tests/e2e/a11y.spec.ts` injects the already-installed `axe-core` bundle (no new dependency) and fails on serious/critical WCAG A/AA violations for 10 routes × 2 Playwright projects. Raw audit output is `docs/qa/axe-report.json`.
+- **Automated accessibility guard:** `tests/e2e/a11y.spec.ts` injects the already-installed `axe-core` bundle (no new dependency) and fails on serious/critical WCAG A/AA violations for 10 routes × 2 Playwright projects. Run it alone with `pnpm e2e -- tests/e2e/a11y.spec.ts`. Raw audit output is `docs/qa/axe-report.json`.
 - **Mobile:** `apps/mobile/lib/theme.ts` — `COLORS` mirrors the web palette. Primary green is `#15803D` so white button text reaches 5.02:1; `greenSoft` is `#EFFAF0` so light text on green reaches 4.68:1; `goldInk` `#8A5D00` is the text-on-paper gold.
 - Do not introduce a second theme. Add a token in these two files and use it everywhere.
 
