@@ -128,10 +128,10 @@ This checkpoint, release checklist, native checklist, content packet, screenshot
 
 ## Final git status / decision
 
-- Branch: `main`, HEAD `cf9f126e89f978fc49af63e1c4a1ac32e1a9bc9b` (unchanged), tracking `origin/main` with no ahead/behind marker.
-- Staged: none. `git diff --cached --stat` empty. `git diff --check` reports no whitespace errors (only LF→CRLF notices).
+- **Post-run owner authorization:** the owner explicitly requested a GitHub push. All work was committed and pushed on 2026-11-24. Commit `ff2f1b2ecfe63ea29978cc3cd8fbb331972c12a4` — "Polish Speeko release candidate: accessibility, native config, tests and handoff". Local `main` and `origin/main` both point at `ff2f1b2`; working tree is clean. This supersedes the earlier uncommitted/unpushed status recorded during the autonomous run.
+- Before that authorized push: branch `main`, HEAD `cf9f126...`, 69 changed paths, nothing staged, `git diff --check` clean (LF→CRLF notices only). No secret, keystore, `.env`, build output or test result was staged.
 - 69 changed paths: 54 modified tracked + 15 untracked.
 - Untracked: `apps/mobile/__tests__/audio-cleanup.test.ts`, `apps/mobile/__tests__/permissions-plugin.test.ts`, `apps/mobile/components/Icons.tsx`, `apps/mobile/plugins/withMinimalAndroidPermissions.js`, `design/reference/`, `docs/content/`, `docs/design/`, `docs/qa/axe-report.json`, `docs/qa/native-device-checklist.md`, `docs/release/deployment-smoke-checklist.md`, `docs/release/speeko-finalization-progress.md`, `docs/release/store-readiness-inventory.md`, `tests/e2e/a11y.spec.ts`, `tests/e2e/account-deletion.spec.ts`, `tests/e2e/ai-gate.spec.ts`.
-- No commit, push, tag, release, deploy, production mutation, purchase, real-account deletion or secret disclosure occurred.
+- No tag, release, deploy, production mutation, purchase, real-account deletion or secret disclosure occurred. The only commit/push is the owner-authorized one described above.
 
 **Final decision: NOT READY — EXTERNAL GATES OPEN.** Local code, tests, builds, browser UI, accessibility and screenshots are green. The mandatory native build artifact, native device/accessibility QA, human content review, configured voice provider, deployed security validation and backup restore drill are not satisfied, and owner/legal/store readiness is incomplete. The correct next step is owner review of the uncommitted tree, not release authorization.
