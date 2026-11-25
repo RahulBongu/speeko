@@ -317,10 +317,16 @@ export function AccountPanel() {
                 'Delete your account permanently? This removes your progress, rewards, and shop purchases. This cannot be undone.',
               );
               if (!confirmed) return;
-              const response = await fetch('/api/account', {
-                method: 'DELETE',
-                credentials: 'include',
-              });
+              let response: Response;
+              try {
+                response = await fetch('/api/account', {
+                  method: 'DELETE',
+                  credentials: 'include',
+                });
+              } catch {
+                alert('Could not delete the account. Check your connection and try again.');
+                return;
+              }
               if (!response.ok) {
                 alert('Could not delete the account. Please try again.');
                 return;
@@ -330,7 +336,11 @@ export function AccountPanel() {
               } catch {
                 // ignore storage failures
               }
-              await authClient.signOut();
+              try {
+                await authClient.signOut();
+              } catch {
+                // ignore sign-out failures after deletion
+              }
               router.push('/');
               router.refresh();
             }}

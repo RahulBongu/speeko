@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { ProgressState } from '@speeko/core';
 import * as Haptics from 'expo-haptics';
 import { ORIGIN, apiFetch, setCookie } from '../lib/api';
 import { clearProgress, loadProgress } from '../lib/progress';
 import { syncProgress } from '../lib/sync';
+import { isMascotVoiceEnabled, setMascotVoiceEnabled } from '../lib/mascot';
 import { AppNav } from '../components/AppNav';
 import { Screen } from '../components/Screen';
 import { Fox } from '../components/Fox';
@@ -40,6 +41,7 @@ export default function Account() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [mascotVoiceOn, setMascotVoiceOn] = useState<boolean>(isMascotVoiceEnabled());
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -230,6 +232,46 @@ export default function Account() {
             <Text style={{ fontWeight: '800', color: COLORS.dark }}>Licenses and attributions</Text>
           </View>
         </TactilePressable>
+
+        <TactileCard tone="white">
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Icon name="account" size={15} color={COLORS.muted} />
+            <Text style={{ fontWeight: '900', fontSize: 16, color: COLORS.dark }}>Settings</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={{ fontWeight: '800', color: COLORS.dark }}>Mascot voice</Text>
+              <Text style={{ color: COLORS.muted, fontSize: 12 }}>Speeko's spoken reactions</Text>
+            </View>
+            <Pressable
+              accessibilityRole="switch"
+              accessibilityState={{ checked: mascotVoiceOn }}
+              onPress={() => {
+                const next = !mascotVoiceOn;
+                setMascotVoiceOn(next);
+                setMascotVoiceEnabled(next);
+              }}
+              style={{
+                width: 52,
+                height: 30,
+                borderRadius: 15,
+                backgroundColor: mascotVoiceOn ? COLORS.green : COLORS.disabled,
+                justifyContent: 'center',
+                paddingHorizontal: 3,
+              }}
+            >
+              <View
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 12,
+                  backgroundColor: COLORS.white,
+                  alignSelf: mascotVoiceOn ? 'flex-end' : 'flex-start',
+                }}
+              />
+            </Pressable>
+          </View>
+        </TactileCard>
 
         {signedIn ? (
           <TactilePressable onPress={() => void signOut()} disabled={busy} tone="cream" accessibilityHint="Clears this device's saved progress">

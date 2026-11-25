@@ -32,6 +32,15 @@ jest.mock('../lib/sync', () => ({
   syncProgress: jest.fn(),
 }));
 
+jest.mock('../lib/mascot', () => ({
+  isMascotVoiceEnabled: jest.fn(() => true),
+  setMascotVoiceEnabled: jest.fn(),
+  playMascotVoice: jest.fn(async () => true),
+  stopMascotVoice: jest.fn(async () => {}),
+  useMascotSpeaking: jest.fn(() => false),
+  useMascotListening: jest.fn(() => false),
+}));
+
 import { apiFetch, setCookie } from '../lib/api';
 import { syncProgress } from '../lib/sync';
 import Account from '../app/account';
