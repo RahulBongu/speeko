@@ -65,18 +65,22 @@ export default function PeopleClient() {
   }, [debouncedQuery, session?.user.id]);
 
   async function toggleFollow(username: string, isFollowing: boolean) {
-    const response = await fetch('/api/follows', {
-      method: isFollowing ? 'DELETE' : 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username }),
-    });
-    if (!response.ok) {
+    try {
+      const response = await fetch('/api/follows', {
+        method: isFollowing ? 'DELETE' : 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+      if (!response.ok) {
+        setError('Could not update that follow. Check your connection and try again.');
+        return;
+      }
+      setError(null);
+      setFollowing((current) => ({ ...current, [username]: !isFollowing }));
+    } catch {
       setError('Could not update that follow. Check your connection and try again.');
-      return;
     }
-    setError(null);
-    setFollowing((current) => ({ ...current, [username]: !isFollowing }));
   }
 
   const header = <SiteHeader active="leagues" />;

@@ -41,12 +41,17 @@ export async function purchaseItem(
   itemId: string,
   requestId: string,
 ): Promise<{ duplicate: boolean; balance: number; freezeCredits: number; item: ShopItem }> {
-  const response = await fetch(`${API_URL}/api/shop/purchase`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ itemId, requestId }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/api/shop/purchase`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemId, requestId }),
+    });
+  } catch {
+    throw new Error('Could not reach Speeko. Check your connection and try again.');
+  }
   const text = await response.text();
   let json: any = null;
   try {
@@ -60,7 +65,12 @@ export async function purchaseItem(
 }
 
 export async function fetchGems(): Promise<{ balance: number; freezeCredits: number } | null> {
-  const response = await fetch(`${API_URL}/api/gems`, { credentials: 'include' });
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/api/gems`, { credentials: 'include' });
+  } catch {
+    throw new Error('Could not reach Speeko. Check your connection and try again.');
+  }
   if (response.status === 401) return null;
   if (!response.ok) throw new Error(`Gems could not load (status ${response.status}).`);
   const body = (await response.json()) as { balance: number; freezeCredits: number };
