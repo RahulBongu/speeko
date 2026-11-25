@@ -1,6 +1,6 @@
 # Speeko — post-deployment smoke checklist (owner-run; nothing deployed here)
 
-Run against the deployed **web origin** and **API origin** after provisioning per `docs/deploy-runbook.md`. Use a throwaway test account only. Never use a real learner account, real purchase, or production secret values in chat.
+Run against the deployed **web origin** and **API origin** after provisioning per `docs/deploy-runbook.md`. Use a throwaway test account only. Never use a real learner account, real purchase, or production secret values in chat. Each gate is PASS/FAIL with evidence; a single FAIL blocks release authorization.
 
 Record PASS/FAIL plus status codes and screenshots in a local owner log (for example `docs/release/owner-smoke-log.md`). Do not commit that log if it contains account identifiers, tokens or private data — keep it out of the public repository.
 

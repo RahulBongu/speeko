@@ -10,7 +10,7 @@ Everything below was read from the current source/config. Nothing was submitted 
 | Version | 0.0.1 | Present; owner must increment version and set an Android build number before any store upload |
 | Orientation | portrait | Present |
 | UI style | light | Present |
-| Deep-link scheme | `speeko` | Present (no verified universal/app links) |
+| Deep-link scheme | `speeko` | Present (no verified universal/app links); example `speeko://learn/hi-starter` |
 | Android package | `com.speeko.app` | Present |
 | iOS bundle id | `com.speeko.app` | Present |
 | New architecture | enabled | Present |
