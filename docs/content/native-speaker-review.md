@@ -1083,6 +1083,22 @@ Starter course for తెలుగు (Tier 1: greetings, numbers, essentials).
 
 ---
 
+## Reviewer sign-off (fill when a locale is finished)
+
+| Locale | Reviewer alias | Qualification | Date | Dispositions (APPROVE/CORRECT/REJECT/ABSTAIN) | Final status | Notes |
+|---|---|---|---|---|---|---|
+| bn |  |  |  |  |  |  |
+| gu |  |  |  |  |  |  |
+| hi |  |  |  |  |  |  |
+| hi-pilot |  |  |  |  |  |  |
+| kn |  |  |  |  |  |  |
+| ml |  |  |  |  |  |  |
+| mr |  |  |  |  |  |  |
+| or |  |  |  |  |  |  |
+| pa |  |  |  |  |  |  |
+| ta |  |  |  |  |  |  |
+| te |  |  |  |  |  |  |
+
 ## Recording a completed review
 
 Once a qualified reviewer finishes, the owner should: (1) apply any corrections to the source course JSON under `content/<locale>/`; (2) re-run `pnpm sync:content`; (3) replace `reviewStatus` with a dated, attributable value such as `native_reviewed_YYYY-MM-DD` plus a reviewer alias; (4) add the signed-off packet to version control; (5) update `docs/design/speeko-all-phases-progress.md`. Until then, no content in this app may be described as native-speaker reviewed.
