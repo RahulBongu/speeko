@@ -35,6 +35,9 @@ pnpm test
 pnpm lint
 pnpm build
 pnpm verify              # typecheck, test, build, secrets, licenses, e2e
+# Secrets scan note: values are collected from root/API/web/mobile .env files
+# (names only) and the fallback patterns always run, so CI and deployed
+# secrets are still detected even when no local .env exists.
 pnpm e2e                 # requires a prior build; Playwright + installed Chrome
 pnpm sync:content        # regenerate apps/web/public/courses from content/
 ```

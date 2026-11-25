@@ -184,6 +184,7 @@ All files below are **real captures of the running application**. No Stitch mock
 - "Data scenario" is inferred from capture filename and the originating E2E spec; it is not a claim about a specific persisted account.
 - `docs/design/screenshots/report.json` records console-error arrays for the design captures; all are empty.
 - `docs/design/screenshots/responsive-audit/report.json` records per-viewport overflow/accessibility metrics from the final responsive pass.
+- All captures are 8-bit PNG; dimensions are recorded in the Viewport column and verified against file metadata.
 - `docs/qa/axe-report.json` records zero serious/critical WCAG A/AA violations across 10 routes × 2 viewports; the guard is `tests/e2e/a11y.spec.ts`.
 
 ## Regenerating evidence
