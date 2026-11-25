@@ -107,6 +107,7 @@ Run these on Android first; repeat the applicable subset on iOS only if a Mac, X
 - Real device screenshots or short recordings for launch, a lesson in progress, lesson completion, Habits, Shop, Account and reduced-motion state.
 - Store them under `docs/qa/native-<device-os>/` with a manifest row in `docs/design/screenshot-manifest.md`, clearly labelled `native device`.
 - Do not use an Expo-web screenshot as native evidence.
+- If the device reaches a local API over USB, set up `adb reverse tcp:3001 tcp:3001` and keep the API `CLIENT_ORIGINS` value aligned with the web origin.
 
 ## Owner-only external steps (not performed here)
 
