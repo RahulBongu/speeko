@@ -62,6 +62,8 @@ export default function PracticeRunner() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [feedbackPhrase, setFeedbackPhrase] = useState('');
   const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Review complete!');
+  const [combo, setCombo] = useState(0);
+  const [lookAt, setLookAt] = useState<{ x: number; y: number } | null>(null);
 
   const varietyPicker = useRef(createMascotVarietyPicker());
   const mascotSpeaking = useMascotSpeaking();
@@ -127,6 +129,8 @@ export default function PracticeRunner() {
     const result = gradeExercise(exercise, input);
     setOutcomes((previous) => [...previous, { exerciseId: exercise.id, correct: result.correct }]);
     setGrade(result);
+    setCombo((current) => (result.correct ? current + 1 : 0));
+    setLookAt(null);
     const pick = varietyPicker.current.pick(
       result.correct ? 'correct_answer' : 'incorrect_answer',
     );
@@ -150,6 +154,7 @@ export default function PracticeRunner() {
     setIndex(nextIndex);
     setDraft(initialDraft(exercises[nextIndex]!));
     setGrade(null);
+    setLookAt(null);
     setPhase('playing');
   }, [exercises, index, phase]);
 
@@ -362,11 +367,37 @@ export default function PracticeRunner() {
         key={exercise.id}
         exercise={exercise}
         draft={draft}
-        onChange={setDraft}
+        onChange={(nextDraft) => {
+          setDraft(nextDraft);
+          if (nextDraft.kind === 'choice' && nextDraft.index !== null) {
+            setLookAt({ x: nextDraft.index % 2 === 0 ? -0.45 : 0.45, y: -0.65 });
+          } else {
+            setLookAt({ x: 0, y: -0.6 });
+          }
+        }}
         disabled={phase !== 'playing'}
         reveal={grade}
         locale={course?.locale}
       />
+
+      {phase === 'playing' ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <Fox
+            mood="idle"
+            accessory={progress?.equippedCosmetic ?? null}
+            speaking={mascotSpeaking}
+            listening={mascotListening}
+            lookAt={lookAt}
+            combo={combo}
+            style={{ width: 48, height: 48 }}
+          />
+          <Text style={{ flex: 1, fontSize: 12, fontWeight: '700', color: COLORS.muted }}>
+            {combo >= 3
+              ? `${combo} streak! Sharp memory!`
+              : 'Review each word cleanly — Speeko is watching.'}
+          </Text>
+        </View>
+      ) : null}
 
       {phase === 'feedback' && grade ? (
         <View
@@ -384,6 +415,7 @@ export default function PracticeRunner() {
               accessory={progress?.equippedCosmetic ?? null}
               speaking={mascotSpeaking}
               listening={mascotListening}
+              combo={combo}
               style={{ width: 48, height: 48 }}
               title="Speeko reacting to your answer"
             />

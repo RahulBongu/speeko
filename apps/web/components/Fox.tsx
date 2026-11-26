@@ -32,6 +32,10 @@ export interface FoxProps {
   speaking?: boolean;
   listening?: boolean;
   patrol?: boolean;
+  /** Normalized target direction (`-1..1`) for eye & head tracking. */
+  lookAt?: { x: number; y: number } | null;
+  /** Consecutive correct answers; escalates leap energy at 3+ and 5+. */
+  combo?: number;
   onTap?: () => void;
 }
 
@@ -47,6 +51,8 @@ export function Fox({
   speaking = false,
   listening = false,
   patrol = false,
+  lookAt = null,
+  combo = 0,
   onTap,
 }: FoxProps) {
   const uid = useId().replace(/:/g, '');
@@ -66,6 +72,7 @@ export function Fox({
     speaking,
     listening,
     tapped,
+    combo,
   });
 
   useEffect(() => {
@@ -107,7 +114,11 @@ export function Fox({
   const bodyAnim = celebrate
     ? 'animate-fox-dance'
     : state.animation === 'bounce'
-      ? 'animate-fox-hop'
+      ? state.intensity === 'ultra'
+        ? 'animate-fox-hop-ultra'
+        : state.intensity === 'super'
+          ? 'animate-fox-hop-super'
+          : 'animate-fox-hop'
       : state.animation === 'confused'
         ? 'animate-fox-confused'
         : state.animation === 'nod'
@@ -153,14 +164,40 @@ export function Fox({
   });
 
   const tailStyle = center(152, 188);
-  const headStyle = center(120, 144);
-  const leftEarStyle = center(72, 68);
-  const rightEarStyle = center(168, 68);
+  const headStyle: CSSProperties = {
+    ...center(120, 144),
+    animationDelay: jumping ? '55ms' : undefined,
+  };
+  const leftEarStyle: CSSProperties = {
+    ...center(72, 68),
+    animationDelay: jumping ? '75ms' : undefined,
+  };
+  const rightEarStyle: CSSProperties = {
+    ...center(168, 68),
+    animationDelay: jumping ? '75ms' : undefined,
+  };
+  const bandanaTailStyle: CSSProperties = {
+    ...center(150, 147),
+    animationDelay: jumping || patrol ? '90ms' : undefined,
+  };
   const leftArmStyle = center(86, 154);
   const rightArmStyle = center(148, 156);
   const mouthStyle = center(120, 130);
   const leftLidStyle = center(96, 91);
   const rightLidStyle = center(144, 91);
+
+  const gazeX = lookAt ? Math.max(-1, Math.min(1, lookAt.x)) : 0;
+  const gazeY = lookAt ? Math.max(-1, Math.min(1, lookAt.y)) : 0;
+  const eyeGazeStyle: CSSProperties = {
+    transform: lookAt ? `translate(${(gazeX * 3.8).toFixed(2)}px, ${(gazeY * 2.8).toFixed(2)}px)` : undefined,
+    transition: 'transform 130ms ease-out',
+  };
+  const headGazeStyle: CSSProperties = {
+    ...center(120, 144),
+    transform: lookAt ? `rotate(${(gazeX * 3.4).toFixed(2)}deg)` : undefined,
+    transition: 'transform 160ms ease-out',
+  };
+  const scarfFlutterAnim = jumping || patrol ? 'animate-bandana-flutter' : '';
 
   return (
     <svg
@@ -329,7 +366,7 @@ export function Fox({
           <circle cx="155" cy="186" r="14" fill="#4A1C0E" stroke="#2A1008" strokeWidth="3.2" />
         </g>
 
-        {/* Bandana or Shop Green Scarf */}
+        {/* Bandana or Shop Green Scarf (trailing knot lags body jump cleanly) */}
         {scarfMode === 'green' ? (
           <g>
             <path
@@ -340,7 +377,9 @@ export function Fox({
               strokeLinejoin="round"
             />
             <path d="M90 147 C110 154 130 154 150 147" fill="none" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" />
-            <path d="M138 148 L164 176 L146 184 L130 158 Z" fill="#15803D" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
+            <g className={scarfFlutterAnim} style={bandanaTailStyle}>
+              <path d="M138 148 L164 176 L146 184 L130 158 Z" fill="#15803D" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
+            </g>
             <path d="M100 156 L120 178 L142 156 Z" fill="#22C55E" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
           </g>
         ) : (
@@ -353,18 +392,21 @@ export function Fox({
               strokeLinejoin="round"
             />
             <path d="M94 146 L120 168 L146 146" fill="none" stroke="#1CC4D8" strokeWidth="2.5" strokeLinecap="round" opacity="0.7" />
-            <path
-              d="M148 143 C162 141 178 146 184 154 L166 156 L176 169 L154 162 Z"
-              fill="#008C9E"
-              stroke="#094854"
-              strokeWidth="2.8"
-              strokeLinejoin="round"
-            />
-            <circle cx="150" cy="147" r="7" fill="#007C8E" stroke="#094854" strokeWidth="2.6" />
+            <g className={scarfFlutterAnim} style={bandanaTailStyle}>
+              <path
+                d="M148 143 C162 141 178 146 184 154 L166 156 L176 169 L154 162 Z"
+                fill="#008C9E"
+                stroke="#094854"
+                strokeWidth="2.8"
+                strokeLinejoin="round"
+              />
+              <circle cx="150" cy="147" r="7" fill="#007C8E" stroke="#094854" strokeWidth="2.6" />
+            </g>
           </g>
         )}
 
-        {/* Animated Head & Ears */}
+        {/* Animated Head & Ears + gaze turn */}
+        <g style={headGazeStyle}>
         <g className={headAnim} style={headStyle}>
           {/* Pointed ears with dark chocolate tips & warm inner tufts */}
           <g className={sad ? '' : 'animate-ear-flick'} style={leftEarStyle}>
@@ -423,20 +465,22 @@ export function Fox({
             </>
           ) : null}
 
-          {/* Glossy Expressive Eyes */}
+          {/* Glossy Expressive Eyes (follow lookAt target cleanly) */}
           <ellipse cx="96" cy="91" rx="16.5" ry="20" fill="#FFFFFF" stroke="#3B170A" strokeWidth="3.2" />
           <ellipse cx="144" cy="91" rx="16.5" ry="20" fill="#FFFFFF" stroke="#3B170A" strokeWidth="3.2" />
-          <g className={state.listening || patrol ? 'animate-pupil-look' : ''}>
-            <circle cx="97" cy="92" r="12.5" fill="#3A180B" />
-            <circle cx="97" cy="93" r="6.5" fill="#180A05" />
-            <circle cx="102" cy="84" r="4.5" fill="#FFFFFF" />
-            <circle cx="93" cy="98" r="2.2" fill="#FFFFFF" opacity="0.85" />
-          </g>
-          <g className={state.listening || patrol ? 'animate-pupil-look-right' : ''}>
-            <circle cx="143" cy="92" r="12.5" fill="#3A180B" />
-            <circle cx="143" cy="93" r="6.5" fill="#180A05" />
-            <circle cx="148" cy="84" r="4.5" fill="#FFFFFF" />
-            <circle cx="139" cy="98" r="2.2" fill="#FFFFFF" opacity="0.85" />
+          <g style={eyeGazeStyle}>
+            <g className={!lookAt && (state.listening || patrol) ? 'animate-pupil-look' : ''}>
+              <circle cx="97" cy="92" r="12.5" fill="#3A180B" />
+              <circle cx="97" cy="93" r="6.5" fill="#180A05" />
+              <circle cx="102" cy="84" r="4.5" fill="#FFFFFF" />
+              <circle cx="93" cy="98" r="2.2" fill="#FFFFFF" opacity="0.85" />
+            </g>
+            <g className={!lookAt && (state.listening || patrol) ? 'animate-pupil-look-right' : ''}>
+              <circle cx="143" cy="92" r="12.5" fill="#3A180B" />
+              <circle cx="143" cy="93" r="6.5" fill="#180A05" />
+              <circle cx="148" cy="84" r="4.5" fill="#FFFFFF" />
+              <circle cx="139" cy="98" r="2.2" fill="#FFFFFF" opacity="0.85" />
+            </g>
           </g>
 
           {/* Animated natural blink lids (default scale-y-0 so reduced-motion keeps eyes open) */}
@@ -496,14 +540,22 @@ export function Fox({
             )}
           </g>
         </g>
+        </g>
 
-        {/* Celebration / victory jump sparkles */}
+        {/* Celebration / victory jump sparkles (escalate on combos) */}
         {jumping ? (
           <g aria-hidden="true" className="animate-sparkle">
             <path d="M30 56 L33 65 L42 68 L33 71 L30 80 L27 71 L18 68 L27 65 Z" fill="#FBBF24" />
             <path d="M210 56 L213 65 L222 68 L213 71 L210 80 L207 71 L198 68 L207 65 Z" fill="#58CC02" />
             <circle cx="44" cy="40" r="4" fill="#38BDF8" />
             <circle cx="198" cy="42" r="4" fill="#FBBF24" />
+            {state.intensity !== 'normal' ? (
+              <>
+                <path d="M120 12 L123 20 L131 23 L123 26 L120 34 L117 26 L109 23 L117 20 Z" fill="#FBBF24" />
+                <circle cx="24" cy="94" r="4.5" fill="#58CC02" />
+                <circle cx="216" cy="94" r="4.5" fill="#38BDF8" />
+              </>
+            ) : null}
           </g>
         ) : null}
       </g>

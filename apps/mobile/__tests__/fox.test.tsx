@@ -52,4 +52,18 @@ describe('Fox mascot', () => {
     expect(onTap).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('button').props.accessibilityLabel).toContain('confused');
   });
+
+  it('accepts lookAt gaze tracking, scarf cosmetic, and escalating combo without errors', async () => {
+    await render(
+      <Fox
+        style={{ width: 80, height: 80 }}
+        mood="correct"
+        accessory="scarf"
+        lookAt={{ x: -0.5, y: -0.6 }}
+        combo={5}
+        title="Speeko cheering combo"
+      />,
+    );
+    expect(screen.getByRole('image').props.accessibilityLabel).toBe('Speeko cheering combo');
+  });
 });

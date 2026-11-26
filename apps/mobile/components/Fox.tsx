@@ -23,7 +23,6 @@ import {
 
 const AnimatedG = Animated.createAnimatedComponent(G);
 const AnimatedEllipse = Animated.createAnimatedComponent(Ellipse);
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export type { FoxMood };
 
@@ -34,6 +33,10 @@ export interface FoxProps {
   speaking?: boolean;
   listening?: boolean;
   patrol?: boolean;
+  /** Normalized gaze direction (`-1..1`) for eye & subtle head tracking. */
+  lookAt?: { x: number; y: number } | null;
+  /** Consecutive correct answers; escalates jump energy at 3+ and 5+. */
+  combo?: number;
   title?: string;
   onTap?: () => void;
 }
@@ -67,6 +70,8 @@ export function Fox({
   speaking = false,
   listening = false,
   patrol = false,
+  lookAt = null,
+  combo = 0,
   title,
   onTap,
 }: FoxProps) {
@@ -83,6 +88,7 @@ export function Fox({
     speaking,
     listening,
     tapped,
+    combo,
   });
 
   useEffect(() => {
@@ -138,6 +144,9 @@ export function Fox({
   const head = useSharedValue(0);
   const ear = useSharedValue(0);
   const pupil = useSharedValue(0);
+  const gazeX = useSharedValue(0);
+  const gazeY = useSharedValue(0);
+  const bandanaLag = useSharedValue(0);
   const leftArm = useSharedValue(0);
   const rightArm = useSharedValue(0);
   const sparkle = useSharedValue(0);
@@ -194,11 +203,14 @@ export function Fox({
       return;
     }
 
+    const jumpHeight =
+      state.intensity === 'ultra' ? -34 : state.intensity === 'super' ? -28 : -20;
+
     if (state.animation === 'celebrate') {
       jumpY.value = withRepeat(
         withSequence(
           withTiming(3, { duration: 90, easing: Easing.inOut(Easing.ease) }),
-          withSpring(-26, { damping: 9, stiffness: 220 }),
+          withSpring(state.intensity === 'ultra' ? -34 : -26, { damping: 9, stiffness: 220 }),
           withTiming(2, { duration: 220, easing: Easing.in(Easing.ease) }),
           withSpring(-16, { damping: 10, stiffness: 200 }),
           withTiming(0, { duration: 220, easing: Easing.out(Easing.ease) }),
@@ -235,6 +247,18 @@ export function Fox({
         2,
         false,
       );
+      bandanaLag.value = withDelay(
+        85,
+        withRepeat(
+          withSequence(
+            withTiming(10, { duration: 220 }),
+            withTiming(-12, { duration: 240 }),
+            withTiming(0, { duration: 180 }),
+          ),
+          2,
+          false,
+        ),
+      );
       sparkle.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 420, easing: Easing.inOut(Easing.ease) }),
@@ -246,9 +270,17 @@ export function Fox({
     } else if (state.animation === 'bounce' || state.waving) {
       jumpY.value = withSequence(
         withTiming(3.5, { duration: 85 }),
-        withSpring(-20, { damping: 8, stiffness: 240 }),
+        withSpring(jumpHeight, { damping: 8, stiffness: 240 }),
         withTiming(2, { duration: 190 }),
         withSpring(0, { damping: 11, stiffness: 180 }),
+      );
+      bandanaLag.value = withDelay(
+        85,
+        withSequence(
+          withTiming(11, { duration: 150 }),
+          withTiming(-13, { duration: 180 }),
+          withSpring(0, { damping: 10, stiffness: 180 }),
+        ),
       );
       scaleX.value = withSequence(
         withTiming(1.11, { duration: 85 }),
@@ -263,8 +295,8 @@ export function Fox({
         withTiming(1, { duration: 160 }),
       );
       bodyTilt.value = withSequence(
-        withTiming(-4, { duration: 160 }),
-        withTiming(4, { duration: 160 }),
+        withTiming(state.intensity === 'normal' ? -4 : -7, { duration: 160 }),
+        withTiming(state.intensity === 'normal' ? 4 : 6, { duration: 160 }),
         withTiming(0, { duration: 160 }),
       );
       sparkle.value = withSequence(withTiming(1, { duration: 220 }), withTiming(0, { duration: 650 }));
@@ -280,15 +312,42 @@ export function Fox({
       );
       scaleX.value = withTiming(1, { duration: 180 });
       scaleY.value = withTiming(0.96, { duration: 220 });
+      bandanaLag.value = withTiming(0, { duration: 180 });
       sparkle.value = withTiming(0, { duration: 150 });
     } else {
       jumpY.value = withTiming(0, { duration: 180 });
       scaleX.value = withTiming(1, { duration: 180 });
       scaleY.value = withTiming(1, { duration: 180 });
       bodyTilt.value = withTiming(0, { duration: 180 });
+      bandanaLag.value = withTiming(0, { duration: 180 });
       sparkle.value = withTiming(0, { duration: 150 });
     }
-  }, [reduceMotion, state.animation, state.waving, jumpY, scaleX, scaleY, bodyTilt, sparkle, calm]);
+  }, [
+    reduceMotion,
+    state.animation,
+    state.waving,
+    state.intensity,
+    jumpY,
+    scaleX,
+    scaleY,
+    bodyTilt,
+    bandanaLag,
+    sparkle,
+    calm,
+  ]);
+
+  // Smooth spring eye & subtle head tracking when learner explores options
+  useEffect(() => {
+    if (reduceMotion) {
+      calm(gazeX, 0);
+      calm(gazeY, 0);
+      return;
+    }
+    const nx = lookAt ? Math.max(-1, Math.min(1, lookAt.x)) : 0;
+    const ny = lookAt ? Math.max(-1, Math.min(1, lookAt.y)) : 0;
+    gazeX.value = withSpring(nx, { damping: 14, stiffness: 180 });
+    gazeY.value = withSpring(ny, { damping: 14, stiffness: 180 });
+  }, [reduceMotion, lookAt, gazeX, gazeY, calm]);
 
   // Optional lively patrol hop across header/welcome banners
   useEffect(() => {
@@ -358,9 +417,12 @@ export function Fox({
         withTiming(3, { duration: 220 }),
         withTiming(0, { duration: 220 }),
       );
-      ear.value = withSequence(
-        withTiming(11, { duration: 200 }),
-        withTiming(4, { duration: 240 }),
+      ear.value = withDelay(
+        65,
+        withSequence(
+          withTiming(12, { duration: 200 }),
+          withTiming(4, { duration: 240 }),
+        ),
       );
       pupil.value = withTiming(0, { duration: 200 });
     } else {
@@ -478,7 +540,10 @@ export function Fox({
     transform: `rotate(${tail.value * 8} 152 188)`,
   }));
   const headProps = useAnimatedProps(() => ({
-    transform: `rotate(${head.value} 120 144)`,
+    transform: `rotate(${head.value + gazeX.value * 3.4} 120 144)`,
+  }));
+  const bandanaProps = useAnimatedProps(() => ({
+    transform: `rotate(${bandanaLag.value} 150 147)`,
   }));
   const leftEarProps = useAnimatedProps(() => ({
     transform: `rotate(${ear.value} 72 68)`,
@@ -492,8 +557,9 @@ export function Fox({
   const rightArmProps = useAnimatedProps(() => ({
     transform: `rotate(${rightArm.value} 148 156)`,
   }));
-  const leftPupilProps = useAnimatedProps(() => ({ cx: 97 + pupil.value * 1.8 }));
-  const rightPupilProps = useAnimatedProps(() => ({ cx: 145 + pupil.value * 1.8 }));
+  const eyeGazeProps = useAnimatedProps(() => ({
+    transform: `translate(${pupil.value * 1.8 + gazeX.value * 3.8} ${gazeY.value * 2.8})`,
+  }));
   const leftBlinkProps = useAnimatedProps(() => ({ ry: blink.value * 24 }));
   const rightBlinkProps = useAnimatedProps(() => ({ ry: blink.value * 24 }));
   const sparkleProps = useAnimatedProps(() => ({ opacity: sparkle.value }));
@@ -656,7 +722,9 @@ export function Fox({
                 strokeLinejoin="round"
               />
               <Path d="M90 147 C110 154 130 154 150 147" fill="none" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" />
-              <Path d="M138 148 L164 176 L146 184 L130 158 Z" fill="#15803D" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
+              <AnimatedG animatedProps={bandanaProps}>
+                <Path d="M138 148 L164 176 L146 184 L130 158 Z" fill="#15803D" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
+              </AnimatedG>
               <Path d="M100 156 L120 178 L142 156 Z" fill="#22C55E" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
             </G>
           ) : (
@@ -669,14 +737,16 @@ export function Fox({
                 strokeLinejoin="round"
               />
               <Path d="M94 146 L120 168 L146 146" fill="none" stroke="#1CC4D8" strokeWidth="2.5" strokeLinecap="round" opacity={0.7} />
-              <Path
-                d="M148 143 C162 141 178 146 184 154 L166 156 L176 169 L154 162 Z"
-                fill="#008C9E"
-                stroke="#094854"
-                strokeWidth="2.8"
-                strokeLinejoin="round"
-              />
-              <Circle cx="150" cy="147" r="7" fill="#007C8E" stroke="#094854" strokeWidth="2.6" />
+              <AnimatedG animatedProps={bandanaProps}>
+                <Path
+                  d="M148 143 C162 141 178 146 184 154 L166 156 L176 169 L154 162 Z"
+                  fill="#008C9E"
+                  stroke="#094854"
+                  strokeWidth="2.8"
+                  strokeLinejoin="round"
+                />
+                <Circle cx="150" cy="147" r="7" fill="#007C8E" stroke="#094854" strokeWidth="2.6" />
+              </AnimatedG>
             </G>
           )}
 
@@ -742,14 +812,16 @@ export function Fox({
             {/* Glossy eyes matching reference */}
             <Ellipse cx="96" cy="91" rx="16.5" ry="20" fill="#FFFFFF" stroke="#3B170A" strokeWidth="3.2" />
             <Ellipse cx="144" cy="91" rx="16.5" ry="20" fill="#FFFFFF" stroke="#3B170A" strokeWidth="3.2" />
-            <AnimatedCircle cx={97} cy="92" r="12.5" fill="#3A180B" animatedProps={leftPupilProps} />
-            <AnimatedCircle cx={143} cy="92" r="12.5" fill="#3A180B" animatedProps={rightPupilProps} />
-            <Circle cx="97" cy="93" r="6.5" fill="#180A05" />
-            <Circle cx="143" cy="93" r="6.5" fill="#180A05" />
-            <Circle cx="102" cy="84" r="4.5" fill="#FFFFFF" />
-            <Circle cx="148" cy="84" r="4.5" fill="#FFFFFF" />
-            <Circle cx="93" cy="98" r="2.2" fill="#FFFFFF" opacity={0.85} />
-            <Circle cx="139" cy="98" r="2.2" fill="#FFFFFF" opacity={0.85} />
+            <AnimatedG animatedProps={eyeGazeProps}>
+              <Circle cx="97" cy="92" r="12.5" fill="#3A180B" />
+              <Circle cx="143" cy="92" r="12.5" fill="#3A180B" />
+              <Circle cx="97" cy="93" r="6.5" fill="#180A05" />
+              <Circle cx="143" cy="93" r="6.5" fill="#180A05" />
+              <Circle cx="102" cy="84" r="4.5" fill="#FFFFFF" />
+              <Circle cx="148" cy="84" r="4.5" fill="#FFFFFF" />
+              <Circle cx="93" cy="98" r="2.2" fill="#FFFFFF" opacity={0.85} />
+              <Circle cx="139" cy="98" r="2.2" fill="#FFFFFF" opacity={0.85} />
+            </AnimatedG>
             <AnimatedEllipse cx="96" cy="91" rx="18" animatedProps={leftBlinkProps} fill="#FA640D" />
             <AnimatedEllipse cx="144" cy="91" rx="18" animatedProps={rightBlinkProps} fill="#FA640D" />
 
@@ -811,6 +883,13 @@ export function Fox({
             <Path d="M210 56 L213 65 L222 68 L213 71 L210 80 L207 71 L198 68 L207 65 Z" fill="#58CC02" />
             <Circle cx="44" cy="40" r="4" fill="#38BDF8" />
             <Circle cx="198" cy="42" r="4" fill="#FBBF24" />
+            {state.intensity !== 'normal' ? (
+              <>
+                <Path d="M120 12 L123 20 L131 23 L123 26 L120 34 L117 26 L109 23 L117 20 Z" fill="#FBBF24" />
+                <Circle cx="24" cy="94" r="4.5" fill="#58CC02" />
+                <Circle cx="216" cy="94" r="4.5" fill="#38BDF8" />
+              </>
+            ) : null}
           </AnimatedG>
         </Svg>
       </Animated.View>

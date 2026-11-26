@@ -75,6 +75,8 @@ export default function LessonPlayer() {
   const [cosmetic, setCosmetic] = useState<ProgressState['equippedCosmetic']>(null);
   const [feedbackPhrase, setFeedbackPhrase] = useState('');
   const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Lesson conquered!');
+  const [combo, setCombo] = useState(0);
+  const [lookAt, setLookAt] = useState<{ x: number; y: number } | null>(null);
 
   const attemptId = useRef(newAttemptId());
   const shownAt = useRef(Date.now());
@@ -168,6 +170,8 @@ export default function LessonPlayer() {
     setSaveState('idle');
     setSaveError(null);
     setAwardedXp(0);
+    setCombo(0);
+    setLookAt(null);
     attemptId.current = newAttemptId();
     shownAt.current = Date.now();
     setPhase('playing');
@@ -183,6 +187,8 @@ export default function LessonPlayer() {
     setAnswers((previous) => [...previous, { exerciseId: exercise.id, input, ms: elapsed }]);
     setOutcomes((previous) => [...previous, { exerciseId: exercise.id, correct: result.correct }]);
     setGrade(result);
+    setCombo((current) => (result.correct ? current + 1 : 0));
+    setLookAt(null);
     const pick = varietyPicker.current.pick(
       result.correct ? 'correct_answer' : 'incorrect_answer',
     );
@@ -302,6 +308,7 @@ export default function LessonPlayer() {
     setIndex(nextIndex);
     setDraft(initialDraft(nextExercise));
     setGrade(null);
+    setLookAt(null);
     shownAt.current = Date.now();
     setPhase('playing');
   }, [hearts, index, lesson, phase]);
@@ -583,11 +590,39 @@ export default function LessonPlayer() {
         key={exercise.id}
         exercise={exercise}
         draft={draft}
-        onChange={setDraft}
+        onChange={(nextDraft) => {
+          setDraft(nextDraft);
+          if (nextDraft.kind === 'choice' && nextDraft.index !== null) {
+            setLookAt({ x: nextDraft.index % 2 === 0 ? -0.45 : 0.45, y: -0.65 });
+          } else {
+            setLookAt({ x: 0, y: -0.6 });
+          }
+        }}
         disabled={phase !== 'playing'}
         reveal={grade}
         locale={course?.locale}
       />
+
+      {phase === 'playing' ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <Fox
+            mood={foxMood}
+            accessory={cosmetic}
+            speaking={mascotSpeaking}
+            listening={mascotListening}
+            lookAt={lookAt}
+            combo={combo}
+            style={{ width: 52, height: 52 }}
+          />
+          <Text style={{ flex: 1, fontSize: 12, fontWeight: '700', color: COLORS.muted }}>
+            {mascotListening
+              ? 'Speeko is listening carefully…'
+              : combo >= 3
+                ? `${combo} in a row! Keep that streak burning!`
+                : 'Tap an answer — Speeko is cheering you on.'}
+          </Text>
+        </View>
+      ) : null}
 
       {phase === 'feedback' && grade ? (
         <View
@@ -607,6 +642,7 @@ export default function LessonPlayer() {
               accessory={cosmetic}
               speaking={mascotSpeaking}
               listening={mascotListening}
+              combo={combo}
               style={{ width: 52, height: 52 }}
               title="Speeko reacting to your answer"
             />

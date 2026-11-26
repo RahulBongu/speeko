@@ -353,6 +353,17 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                         className={`flex scroll-mt-24 animate-rise ${offset}`}
                       >
                         <div className="relative flex flex-col items-center">
+                          {status === 'current' ? (
+                            <div aria-hidden="true" className="-mb-3 pointer-events-none">
+                              <Fox
+                                mood="happy"
+                                patrol
+                                accessory={progress?.equippedCosmetic ?? null}
+                                lookAt={{ x: 0, y: 0.65 }}
+                                className="h-20 w-20 drop-shadow-sm"
+                              />
+                            </div>
+                          ) : null}
                           <div className="relative">
                             {status === 'current' ? (
                               <span

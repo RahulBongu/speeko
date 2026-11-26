@@ -166,6 +166,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [xpGained, setXpGained] = useState(0);
   const [feedbackPhrase, setFeedbackPhrase] = useState('');
   const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Lesson conquered!');
+  const [lookAt, setLookAt] = useState<{ x: number; y: number } | null>(null);
   const liveProgress = useProgress();
   const equippedCosmetic = liveProgress?.equippedCosmetic ?? null;
   const varietyPicker = useRef(createMascotVarietyPicker());
@@ -395,6 +396,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setGrade(null);
     setAnsweredExercise(null);
     setXpGained(0);
+    setLookAt(null);
     shownAt.current = Date.now();
     setPhase('playing');
   }, [session, entry]);
@@ -702,13 +704,38 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             </p>
           </div>
 
-          <div className="card min-h-[380px] p-5 sm:p-8">
+          <div
+            className="card min-h-[380px] p-5 sm:p-8"
+            onPointerMove={(event) => {
+              if (phase !== 'playing') return;
+              const rect = event.currentTarget.getBoundingClientRect();
+              if (rect.width <= 0 || rect.height <= 0) return;
+              const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+              const ny = ((event.clientY - rect.top) / rect.height) - 1;
+              setLookAt({
+                x: Math.max(-1, Math.min(1, nx)),
+                y: Math.max(-1, Math.min(-0.15, ny)),
+              });
+            }}
+            onPointerLeave={() => {
+              if (phase === 'playing') setLookAt(null);
+            }}
+          >
             {displayExercise && draft ? (
               <ExerciseBody
                 key={displayExercise.id}
                 exercise={displayExercise}
                 draft={draft}
-                onChange={setDraft}
+                onChange={(nextDraft) => {
+                  setDraft(nextDraft);
+                  if (nextDraft.kind === 'choice' && nextDraft.index !== null) {
+                    setLookAt({ x: nextDraft.index % 2 === 0 ? -0.45 : 0.45, y: -0.65 });
+                  } else if (nextDraft.kind === 'pairs') {
+                    setLookAt({ x: 0, y: -0.6 });
+                  } else {
+                    setLookAt({ x: 0, y: -0.55 });
+                  }
+                }}
                 disabled={phase === 'feedback'}
                 reveal={phase === 'feedback' ? grade : null}
                 locale={course.locale}
@@ -722,6 +749,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               accessory={equippedCosmetic}
               speaking={mascotSpeaking}
               listening={mascotListening}
+              lookAt={phase === 'playing' ? lookAt : null}
+              combo={session.combo}
               className="h-14 w-14 shrink-0 sm:h-16 sm:w-16"
             />
             <div className="relative flex-1 rounded-2xl border-2 border-cream-200 bg-white px-4 py-2.5 text-sm font-semibold text-bark-500 shadow-card-sm">
@@ -842,6 +871,7 @@ function FeedbackBar({
           <Fox
             mood={correct ? 'happy' : 'sad'}
             accessory={accessory}
+            combo={combo}
             className="h-14 w-14 shrink-0"
           />
           <div>
@@ -964,6 +994,7 @@ function SummaryScreen({
           <Fox
             mood="celebrate"
             accessory={accessory}
+            combo={session.maxCombo}
             speaking={mascotSpeaking}
             className="relative h-44 w-44"
           />

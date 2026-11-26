@@ -55,6 +55,13 @@ describe('resolveFoxAnimation', () => {
     expect(state.animation).toBe('headBob');
   });
 
+  it('escalates celebratory intensity at 3+ and 5+ answer combos', () => {
+    expect(resolveFoxAnimation({ mood: 'correct', combo: 1 }).intensity).toBe('normal');
+    expect(resolveFoxAnimation({ mood: 'correct', combo: 3 }).intensity).toBe('super');
+    expect(resolveFoxAnimation({ mood: 'celebrate', combo: 5 }).intensity).toBe('ultra');
+    expect(resolveFoxAnimation({ mood: 'correct', combo: -4 }).intensity).toBe('normal');
+  });
+
   it('maps grading aliases to distinct happy and confused reactions', () => {
     const correct = resolveFoxAnimation({ mood: 'correct' });
     const incorrect = resolveFoxAnimation({ mood: 'incorrect' });

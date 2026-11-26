@@ -40,6 +40,8 @@ export type FoxAnimation =
   | 'wave'
   | 'nod';
 
+export type FoxIntensity = 'normal' | 'super' | 'ultra';
+
 export interface FoxAnimationInput {
   /** Semantic mood. `correct`/`incorrect` are accepted aliases for feedback. */
   mood?: FoxMood | 'correct' | 'incorrect';
@@ -49,6 +51,8 @@ export interface FoxAnimationInput {
   listening?: boolean;
   /** True for one tap interaction. Highest priority below celebration. */
   tapped?: boolean;
+  /** Consecutive correct answers in the session; escalates jump energy at 3+ and 5+. */
+  combo?: number;
 }
 
 export interface FoxAnimationState {
@@ -60,6 +64,8 @@ export interface FoxAnimationState {
   waving: boolean;
   /** True when a short confused reaction should be followed by encouragement. */
   encourageAfter: boolean;
+  /** Jump/celebration energy level driven by answer streaks. */
+  intensity: FoxIntensity;
 }
 
 const FOX_LABEL: Record<FoxMood, string> = {
@@ -80,11 +86,15 @@ const FOX_LABEL: Record<FoxMood, string> = {
  * mapping is unit-testable without rendering SVG.
  */
 export function resolveFoxAnimation(input: FoxAnimationInput = {}): FoxAnimationState {
+  const combo = Math.max(0, Math.floor(input.combo ?? 0));
+  const intensity: FoxIntensity =
+    combo >= 5 ? 'ultra' : combo >= 3 ? 'super' : 'normal';
   const base = {
     speaking: Boolean(input.speaking),
     listening: Boolean(input.listening),
     waving: false,
     encourageAfter: false,
+    intensity,
   };
   const tapped = Boolean(input.tapped);
   const feedbackMood = input.mood === 'incorrect' ? 'sad' : input.mood;

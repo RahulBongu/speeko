@@ -24,4 +24,4 @@ Voice lines are synthetic speech generated locally via Flow MCP Kokoro TTS (`af_
 | encouragement | Let's figure it out together, step by step. | 19343 B | 19343 B | 2.31 | yes |
 | encouragement-2 | Every single try makes your memory stronger. | 19727 B | 19727 B | 2.37 | yes |
 
-Validated on 2026-11-26T08:39:01.472Z. ALL CHECKS PASS
+Validated on 2026-11-26T09:08:57.601Z. ALL CHECKS PASS

@@ -29,12 +29,14 @@ function PathNode({
   lesson,
   index,
   state,
+  accessory,
   onPress,
   onCurrentLayout,
 }: {
   lesson: Lesson;
   index: number;
   state: LessonState;
+  accessory?: ProgressState['equippedCosmetic'];
   onPress: () => void;
   onCurrentLayout?: ((y: number) => void) | undefined;
 }) {
@@ -63,7 +65,10 @@ function PathNode({
         <>
           <Fox
             mood="happy"
-            style={{ width: 56, height: 56, marginBottom: -6 }}
+            accessory={accessory ?? null}
+            patrol
+            lookAt={{ x: 0, y: 0.7 }}
+            style={{ width: 64, height: 64, marginBottom: -8 }}
             title="Speeko cheering you on"
           />
           <View
@@ -387,6 +392,7 @@ export default function Path() {
                   lesson={lesson}
                   index={globalIndex < 0 ? 0 : globalIndex}
                   state={statusOf(lesson.id)}
+                  accessory={progress?.equippedCosmetic ?? null}
                   onPress={() => router.push(`/lesson/${course.id}/${lesson.id}`)}
                   onCurrentLayout={
                     lesson.id === currentId
