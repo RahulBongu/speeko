@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import {
+  Image,
   Pressable,
   Text,
   View,
@@ -7,7 +8,6 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { COLORS } from '../lib/theme';
-import { Fox } from './Fox';
 import { Icon, type IconName } from './Icons';
 
 /**
@@ -284,10 +284,11 @@ export function SpeekoAppBar({
           overflow: 'hidden',
         }}
       >
-        <Fox
-          mood="idle"
+        <Image
+          source={require('../assets/brand/speeko-flow-logo.png')}
+          resizeMode="contain"
+          accessibilityLabel="Speeko mascot logo"
           style={{ width: '100%', height: '100%' }}
-          title="Speeko, the friendly fox mascot"
         />
       </View>
       <View style={{ flex: 1 }}>

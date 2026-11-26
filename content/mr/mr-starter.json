@@ -3,7 +3,7 @@
   "locale": "mr",
   "sourceLocale": "en",
   "title": "मराठी — Starter",
-  "description": "Starter course for मराठी (Tier 1: greetings, numbers, essentials).",
+  "description": "Starter course for Marathi (11 modules: greetings, numbers, essentials, family, food, places, colors, daily actions, nature, and conversations).",
   "difficulty": "A1",
   "version": "1.0.0",
   "units": [
@@ -48,7 +48,7 @@
             {
               "id": "mr-starter-u1-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"hello\"",
+              "prompt": "Type \"hello\" (in Marathi)",
               "expected": [
                 "नमस्कार"
               ]
@@ -233,7 +233,7 @@
             {
               "id": "mr-starter-u3-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"please\"",
+              "prompt": "Type \"please\" (in Marathi)",
               "expected": [
                 "कृपया"
               ]
@@ -262,7 +262,7 @@
             {
               "id": "mr-starter-u3-l2-e2",
               "kind": "typeTranslation",
-              "prompt": "Type \"good morning\"",
+              "prompt": "Type \"good morning\" (in Marathi)",
               "expected": [
                 "शुभ सकाळ"
               ]
@@ -337,10 +337,22 @@
             {
               "id": "mr-starter-u4-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"six\"",
+              "prompt": "Type \"six\" (in Marathi)",
               "expected": [
                 "सहा"
               ]
+            },
+            {
+              "id": "mr-starter-u4-l1-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "सहा",
+                "सात",
+                "आठ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u4-l1-listen.mp3"
             }
           ]
         },
@@ -389,6 +401,18 @@
                   "दहा"
                 ]
               ]
+            },
+            {
+              "id": "mr-starter-u4-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "दहा",
+                "नऊ",
+                "सहा"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u4-l2-listen.mp3"
             }
           ]
         }
@@ -439,7 +463,7 @@
             {
               "id": "mr-starter-u5-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"mother\"",
+              "prompt": "Type \"mother\" (in Marathi)",
               "expected": [
                 "आई"
               ],
@@ -483,11 +507,23 @@
             {
               "id": "mr-starter-u5-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"brother\"",
+              "prompt": "Type \"brother\" (in Marathi)",
               "expected": [
                 "भाऊ"
               ],
               "acceptTypos": true
+            },
+            {
+              "id": "mr-starter-u5-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "आई",
+                "बाबा",
+                "बहीण"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u5-l2-listen.mp3"
             }
           ]
         }
@@ -550,7 +586,7 @@
             {
               "id": "mr-starter-u6-l1-e4",
               "kind": "typeTranslation",
-              "prompt": "Type \"water\"",
+              "prompt": "Type \"water\" (in Marathi)",
               "expected": [
                 "पाणी"
               ],
@@ -609,6 +645,18 @@
                   "चहा"
                 ]
               ]
+            },
+            {
+              "id": "mr-starter-u6-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "पाणी",
+                "चहा",
+                "दूध"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u6-l2-listen.mp3"
             }
           ]
         }
@@ -659,7 +707,7 @@
             {
               "id": "mr-starter-u7-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"home\"",
+              "prompt": "Type \"home\" (in Marathi)",
               "expected": [
                 "घर"
               ],
@@ -718,6 +766,18 @@
                   "रस्ता"
                 ]
               ]
+            },
+            {
+              "id": "mr-starter-u7-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "घर",
+                "शाळा",
+                "बाजार"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u7-l2-listen.mp3"
             }
           ]
         }
@@ -768,7 +828,7 @@
             {
               "id": "mr-starter-u8-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"red\"",
+              "prompt": "Type \"red\" (in Marathi)",
               "expected": [
                 "लाल"
               ],
@@ -825,6 +885,381 @@
                 [
                   "Blue",
                   "निळा"
+                ]
+              ]
+            },
+            {
+              "id": "mr-starter-u8-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "लाल",
+                "निळा",
+                "आज"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u8-l2-listen.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mr-starter-u9",
+      "title": "Daily Actions",
+      "description": "Come, go, sit, walk, read, write",
+      "order": 8,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Everyday action verbs for moving, reading, and writing in Marathi.",
+      "lessons": [
+        {
+          "id": "mr-starter-u9-l1",
+          "title": "Come & Go",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Polite everyday requests: come, go, sit, walk.",
+          "exercises": [
+            {
+              "id": "mr-starter-u9-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Come",
+              "options": [
+                "या",
+                "जा",
+                "बसा",
+                "चाला"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u9-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Go",
+              "options": [
+                "जा",
+                "या",
+                "चाला",
+                "बसा"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u9-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "बसा",
+                "या",
+                "जा"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u9-l1-e3.mp3"
+            },
+            {
+              "id": "mr-starter-u9-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"come\" (in Marathi)",
+              "expected": [
+                "या"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "mr-starter-u9-l2",
+          "title": "Read & Write",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice study and daily verbs: read, write, walk.",
+          "exercises": [
+            {
+              "id": "mr-starter-u9-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Read",
+              "options": [
+                "वाचा",
+                "लिहा",
+                "चाला",
+                "बसा"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u9-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "लिहा",
+                "वाचा",
+                "चाला"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u9-l2-e2.mp3"
+            },
+            {
+              "id": "mr-starter-u9-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Read",
+                  "वाचा"
+                ],
+                [
+                  "Write",
+                  "लिहा"
+                ],
+                [
+                  "Walk",
+                  "चाला"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mr-starter-u10",
+      "title": "Nature & Sky",
+      "description": "Sun, moon, rain, wind, trees",
+      "order": 9,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Talk about weather and nature around you in Marathi.",
+      "lessons": [
+        {
+          "id": "mr-starter-u10-l1",
+          "title": "Sun & Rain",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Sun, moon, rain, and wind.",
+          "exercises": [
+            {
+              "id": "mr-starter-u10-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sun",
+              "options": [
+                "सूर्य",
+                "चंद्र",
+                "पाऊस",
+                "वारा"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u10-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Moon",
+              "options": [
+                "चंद्र",
+                "सूर्य",
+                "वारा",
+                "पाऊस"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u10-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "पाऊस",
+                "सूर्य",
+                "वारा"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u10-l1-e3.mp3"
+            },
+            {
+              "id": "mr-starter-u10-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"sun\" (in Marathi)",
+              "expected": [
+                "सूर्य"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "mr-starter-u10-l2",
+          "title": "Earth & Trees",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Trees, flowers, rivers, and mountains.",
+          "exercises": [
+            {
+              "id": "mr-starter-u10-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Tree",
+              "options": [
+                "झाड",
+                "फूल",
+                "नदी",
+                "डोंगर"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u10-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "फूल",
+                "झाड",
+                "नदी"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u10-l2-e2.mp3"
+            },
+            {
+              "id": "mr-starter-u10-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Tree",
+                  "झाड"
+                ],
+                [
+                  "River",
+                  "नदी"
+                ],
+                [
+                  "Mountain",
+                  "डोंगर"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mr-starter-u11",
+      "title": "Conversations & Feelings",
+      "description": "Check-ins, friend, happy, see you soon",
+      "order": 10,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Put greetings and feelings into real everyday Marathi conversation.",
+      "lessons": [
+        {
+          "id": "mr-starter-u11-l1",
+          "title": "Checking In",
+          "order": 0,
+          "difficulty": "A2",
+          "xpReward": 18,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Asking how someone is doing and replying warmly.",
+          "exercises": [
+            {
+              "id": "mr-starter-u11-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "How are you?",
+              "options": [
+                "तुम्ही कसे आहात?",
+                "मी बरा आहे",
+                "लवकरच भेटू",
+                "चांगला"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u11-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "I am fine",
+              "options": [
+                "मी बरा आहे",
+                "तुम्ही कसे आहात?",
+                "लवकरच भेटू",
+                "आनंदी"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u11-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "तुम्ही कसे आहात?",
+                "मी बरा आहे",
+                "लवकरच भेटू"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u11-l1-e3.mp3"
+            },
+            {
+              "id": "mr-starter-u11-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"happy\" (in Marathi)",
+              "expected": [
+                "आनंदी"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "mr-starter-u11-l2",
+          "title": "Warm Goodbyes",
+          "order": 1,
+          "difficulty": "A2",
+          "xpReward": 20,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Friendships and warm farewells.",
+          "exercises": [
+            {
+              "id": "mr-starter-u11-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Friend",
+              "options": [
+                "मित्र",
+                "आनंदी",
+                "चांगला",
+                "मी बरा आहे"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "mr-starter-u11-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "लवकरच भेटू",
+                "मित्र",
+                "चांगला"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/mr-starter-u11-l2-e2.mp3"
+            },
+            {
+              "id": "mr-starter-u11-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Friend",
+                  "मित्र"
+                ],
+                [
+                  "Happy",
+                  "आनंदी"
+                ],
+                [
+                  "Good",
+                  "चांगला"
                 ]
               ]
             }

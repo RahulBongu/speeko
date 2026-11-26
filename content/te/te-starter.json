@@ -3,7 +3,7 @@
   "locale": "te",
   "sourceLocale": "en",
   "title": "తెలుగు — Starter",
-  "description": "Starter course for తెలుగు (Tier 1: greetings, numbers, essentials).",
+  "description": "Starter course for Telugu (11 modules: greetings, numbers, essentials, family, food, places, colors, daily actions, nature, and conversations).",
   "difficulty": "A1",
   "version": "1.0.0",
   "units": [
@@ -48,7 +48,7 @@
             {
               "id": "te-starter-u1-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"hello\"",
+              "prompt": "Type \"hello\" (in Telugu)",
               "expected": [
                 "నమస్కారం"
               ]
@@ -233,7 +233,7 @@
             {
               "id": "te-starter-u3-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"please\"",
+              "prompt": "Type \"please\" (in Telugu)",
               "expected": [
                 "దయచేసి"
               ]
@@ -262,7 +262,7 @@
             {
               "id": "te-starter-u3-l2-e2",
               "kind": "typeTranslation",
-              "prompt": "Type \"good morning\"",
+              "prompt": "Type \"good morning\" (in Telugu)",
               "expected": [
                 "శుభోదయం"
               ]
@@ -337,10 +337,22 @@
             {
               "id": "te-starter-u4-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"six\"",
+              "prompt": "Type \"six\" (in Telugu)",
               "expected": [
                 "ఆరు"
               ]
+            },
+            {
+              "id": "te-starter-u4-l1-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ఆరు",
+                "ఏడు",
+                "ఎనిమిది"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u4-l1-listen.mp3"
             }
           ]
         },
@@ -389,6 +401,18 @@
                   "పది"
                 ]
               ]
+            },
+            {
+              "id": "te-starter-u4-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "పది",
+                "తొమ్మిది",
+                "ఆరు"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u4-l2-listen.mp3"
             }
           ]
         }
@@ -439,7 +463,7 @@
             {
               "id": "te-starter-u5-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"mother\"",
+              "prompt": "Type \"mother\" (in Telugu)",
               "expected": [
                 "అమ్మ"
               ],
@@ -483,11 +507,23 @@
             {
               "id": "te-starter-u5-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"brother\"",
+              "prompt": "Type \"brother\" (in Telugu)",
               "expected": [
                 "అన్న"
               ],
               "acceptTypos": true
+            },
+            {
+              "id": "te-starter-u5-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "అమ్మ",
+                "నాన్న",
+                "చెల్లి"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u5-l2-listen.mp3"
             }
           ]
         }
@@ -550,7 +586,7 @@
             {
               "id": "te-starter-u6-l1-e4",
               "kind": "typeTranslation",
-              "prompt": "Type \"water\"",
+              "prompt": "Type \"water\" (in Telugu)",
               "expected": [
                 "నీరు"
               ],
@@ -609,6 +645,18 @@
                   "టీ"
                 ]
               ]
+            },
+            {
+              "id": "te-starter-u6-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "నీరు",
+                "టీ",
+                "పాలు"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u6-l2-listen.mp3"
             }
           ]
         }
@@ -659,7 +707,7 @@
             {
               "id": "te-starter-u7-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"home\"",
+              "prompt": "Type \"home\" (in Telugu)",
               "expected": [
                 "ఇల్లు"
               ],
@@ -718,6 +766,18 @@
                   "రోడ్డు"
                 ]
               ]
+            },
+            {
+              "id": "te-starter-u7-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ఇల్లు",
+                "బడి",
+                "సంత"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u7-l2-listen.mp3"
             }
           ]
         }
@@ -768,7 +828,7 @@
             {
               "id": "te-starter-u8-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"red\"",
+              "prompt": "Type \"red\" (in Telugu)",
               "expected": [
                 "ఎరుపు"
               ],
@@ -825,6 +885,381 @@
                 [
                   "Blue",
                   "నీలం"
+                ]
+              ]
+            },
+            {
+              "id": "te-starter-u8-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ఎరుపు",
+                "నీలం",
+                "ఈరోజు"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u8-l2-listen.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "te-starter-u9",
+      "title": "Daily Actions",
+      "description": "Come, go, sit, walk, read, write",
+      "order": 8,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Everyday action verbs for moving, reading, and writing in Telugu.",
+      "lessons": [
+        {
+          "id": "te-starter-u9-l1",
+          "title": "Come & Go",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Polite everyday requests: come, go, sit, walk.",
+          "exercises": [
+            {
+              "id": "te-starter-u9-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Come",
+              "options": [
+                "రండి",
+                "వెళ్ళండి",
+                "కూర్చోండి",
+                "నడవండి"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u9-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Go",
+              "options": [
+                "వెళ్ళండి",
+                "రండి",
+                "నడవండి",
+                "కూర్చోండి"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u9-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "కూర్చోండి",
+                "రండి",
+                "వెళ్ళండి"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u9-l1-e3.mp3"
+            },
+            {
+              "id": "te-starter-u9-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"come\" (in Telugu)",
+              "expected": [
+                "రండి"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "te-starter-u9-l2",
+          "title": "Read & Write",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice study and daily verbs: read, write, walk.",
+          "exercises": [
+            {
+              "id": "te-starter-u9-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Read",
+              "options": [
+                "చదవండి",
+                "రాయండి",
+                "నడవండి",
+                "కూర్చోండి"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u9-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "రాయండి",
+                "చదవండి",
+                "నడవండి"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u9-l2-e2.mp3"
+            },
+            {
+              "id": "te-starter-u9-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Read",
+                  "చదవండి"
+                ],
+                [
+                  "Write",
+                  "రాయండి"
+                ],
+                [
+                  "Walk",
+                  "నడవండి"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "te-starter-u10",
+      "title": "Nature & Sky",
+      "description": "Sun, moon, rain, wind, trees",
+      "order": 9,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Talk about weather and nature around you in Telugu.",
+      "lessons": [
+        {
+          "id": "te-starter-u10-l1",
+          "title": "Sun & Rain",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Sun, moon, rain, and wind.",
+          "exercises": [
+            {
+              "id": "te-starter-u10-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sun",
+              "options": [
+                "సూర్యుడు",
+                "చంద్రుడు",
+                "వర్షం",
+                "గాలి"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u10-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Moon",
+              "options": [
+                "చంద్రుడు",
+                "సూర్యుడు",
+                "గాలి",
+                "వర్షం"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u10-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "వర్షం",
+                "సూర్యుడు",
+                "గాలి"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u10-l1-e3.mp3"
+            },
+            {
+              "id": "te-starter-u10-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"sun\" (in Telugu)",
+              "expected": [
+                "సూర్యుడు"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "te-starter-u10-l2",
+          "title": "Earth & Trees",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Trees, flowers, rivers, and mountains.",
+          "exercises": [
+            {
+              "id": "te-starter-u10-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Tree",
+              "options": [
+                "చెట్టు",
+                "పువ్వు",
+                "నది",
+                "కొండ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u10-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "పువ్వు",
+                "చెట్టు",
+                "నది"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u10-l2-e2.mp3"
+            },
+            {
+              "id": "te-starter-u10-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Tree",
+                  "చెట్టు"
+                ],
+                [
+                  "River",
+                  "నది"
+                ],
+                [
+                  "Mountain",
+                  "కొండ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "te-starter-u11",
+      "title": "Conversations & Feelings",
+      "description": "Check-ins, friend, happy, see you soon",
+      "order": 10,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Put greetings and feelings into real everyday Telugu conversation.",
+      "lessons": [
+        {
+          "id": "te-starter-u11-l1",
+          "title": "Checking In",
+          "order": 0,
+          "difficulty": "A2",
+          "xpReward": 18,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Asking how someone is doing and replying warmly.",
+          "exercises": [
+            {
+              "id": "te-starter-u11-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "How are you?",
+              "options": [
+                "మీరు ఎలా ఉన్నారు?",
+                "నేను బాగున్నాను",
+                "త్వరలో కలుద్దాం",
+                "మంచిది"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u11-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "I am fine",
+              "options": [
+                "నేను బాగున్నాను",
+                "మీరు ఎలా ఉన్నారు?",
+                "త్వరలో కలుద్దాం",
+                "సంతోషం"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u11-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "మీరు ఎలా ఉన్నారు?",
+                "నేను బాగున్నాను",
+                "త్వరలో కలుద్దాం"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u11-l1-e3.mp3"
+            },
+            {
+              "id": "te-starter-u11-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"happy\" (in Telugu)",
+              "expected": [
+                "సంతోషం"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "te-starter-u11-l2",
+          "title": "Warm Goodbyes",
+          "order": 1,
+          "difficulty": "A2",
+          "xpReward": 20,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Friendships and warm farewells.",
+          "exercises": [
+            {
+              "id": "te-starter-u11-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Friend",
+              "options": [
+                "స్నేహితుడు",
+                "సంతోషం",
+                "మంచిది",
+                "నేను బాగున్నాను"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "te-starter-u11-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "త్వరలో కలుద్దాం",
+                "స్నేహితుడు",
+                "మంచిది"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/te-starter-u11-l2-e2.mp3"
+            },
+            {
+              "id": "te-starter-u11-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Friend",
+                  "స్నేహితుడు"
+                ],
+                [
+                  "Happy",
+                  "సంతోషం"
+                ],
+                [
+                  "Good",
+                  "మంచిది"
                 ]
               ]
             }

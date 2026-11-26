@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { romanHint, type Exercise, type GradeResult, type Locale } from '@speeko/core';
+import { formatExercisePrompt, romanHint, type Exercise, type GradeResult, type Locale } from '@speeko/core';
 import { LOCALE_META } from '@/lib/courses';
 import { createRecognizer, recognitionAvailable, speak, type Recognizer } from '@/lib/speech';
 import { CheckIcon, MicIcon, SpeakerIcon, XIcon } from '@/components/icons';
@@ -198,6 +198,7 @@ function TypeBoard({
   const expected = exercise.expected[0] ?? '';
   const reading = exercise.transliteration ?? romanHint(expected);
   const [showReading, setShowReading] = useState(false);
+  const promptText = formatExercisePrompt(exercise, meta.english);
 
   return (
     <div className="space-y-7">
@@ -206,7 +207,7 @@ function TypeBoard({
           {exercise.kind === 'typeTranslation' ? `Write in ${meta.native}` : 'Listen, then write it'}
         </Eyebrow>
         <h2 className="font-display text-3xl font-extrabold leading-tight text-bark-800">
-          {exercise.prompt}
+          {promptText}
         </h2>
       </div>
 

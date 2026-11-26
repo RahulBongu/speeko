@@ -48,6 +48,20 @@ export const LOCALE_SCRIPT: Record<Locale, string> = {
   or: 'Odia',
 };
 
+export const LOCALE_ENGLISH_NAME: Record<Locale, string> = {
+  en: 'English',
+  hi: 'Hindi',
+  bn: 'Bengali',
+  mr: 'Marathi',
+  te: 'Telugu',
+  ta: 'Tamil',
+  kn: 'Kannada',
+  ml: 'Malayalam',
+  gu: 'Gujarati',
+  pa: 'Punjabi',
+  or: 'Odia',
+};
+
 // Native digit sets per locale. 'en' uses ASCII digits.
 export const NATIVE_DIGITS: Record<Locale, readonly string[]> = {
   en: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],

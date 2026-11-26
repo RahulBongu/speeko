@@ -100,3 +100,41 @@ export type RequiredOnboarding = OnboardingDraft & {
   dailyGoal: number;
   commitment: string;
 };
+
+/** Reads the learner's selected language experience level ('zero' | 'some' | 'returning' | 'conversant'). */
+export function readExperienceLevel(): string {
+  const completed = readCompletedOnboarding();
+  if (completed?.level) return completed.level;
+  const draft = readOnboardingDraft();
+  return draft?.level ?? 'zero';
+}
+
+/** Updates language experience level in local storage without requiring a new onboarding run. */
+export function saveExperienceLevel(level: string, defaultLocale: Locale = 'hi'): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const completed = readCompletedOnboarding();
+    if (completed) {
+      window.localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...completed, level }));
+      return;
+    }
+    const draft = readOnboardingDraft();
+    if (draft) {
+      saveOnboardingDraft({ ...draft, level });
+      return;
+    }
+    window.localStorage.setItem(
+      ONBOARDING_KEY,
+      JSON.stringify({
+        locale: defaultLocale,
+        motivation: 'Just for fun',
+        level,
+        dailyGoal: 50,
+        commitment: 'daily',
+        completedAt: new Date().toISOString(),
+      }),
+    );
+  } catch {
+    // ignore storage failures
+  }
+}

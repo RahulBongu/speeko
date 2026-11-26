@@ -66,4 +66,31 @@ describe('Fox mascot', () => {
     );
     expect(screen.getByRole('image').props.accessibilityLabel).toBe('Speeko cheering combo');
   });
+
+  it('renders all 15 Flow-guided semantic states cleanly without duplicate characters', async () => {
+    const states = [
+      'idle',
+      'greeting',
+      'excited',
+      'thinking',
+      'correct_answer',
+      'incorrect_supportive',
+      'encouragement',
+      'talking',
+      'listening',
+      'surprise',
+      'lesson_complete',
+      'victory_dance',
+      'sleepy',
+      'curious_discovery',
+      'welcome_back',
+    ] as const;
+
+    const view = await render(<Fox style={{ width: 80, height: 80 }} mood={states[0]} />);
+    for (const s of states) {
+      await view.rerender(<Fox style={{ width: 80, height: 80 }} mood={s} />);
+      expect(screen.getAllByTestId('fox-mascot')).toHaveLength(1);
+      expect(fox().props.accessibilityLabel).toBeTruthy();
+    }
+  });
 });

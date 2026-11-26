@@ -177,22 +177,6 @@ const config: Config = {
           '0%, 100%': { transform: 'rotate(-5deg)' },
           '50%': { transform: 'rotate(5deg)' },
         },
-        'arm-sway': {
-          '0%, 100%': { transform: 'rotate(-4deg)' },
-          '50%': { transform: 'rotate(4deg)' },
-        },
-        'arm-sway-right': {
-          '0%, 100%': { transform: 'rotate(4deg)' },
-          '50%': { transform: 'rotate(-4deg)' },
-        },
-        'arm-wave': {
-          '0%, 100%': { transform: 'rotate(96deg)' },
-          '50%': { transform: 'rotate(128deg)' },
-        },
-        'arm-wave-right': {
-          '0%, 100%': { transform: 'rotate(-96deg)' },
-          '50%': { transform: 'rotate(-128deg)' },
-        },
         blink: {
           '0%, 91%, 100%': { transform: 'scaleY(0)' },
           '93.5%': { transform: 'scaleY(1)' },
@@ -252,15 +236,85 @@ const config: Config = {
           '50%': { transform: 'rotate(6deg) translateY(-22px) scale(0.94, 1.07)' },
           '75%': { transform: 'rotate(-3deg) translateY(-10px) scale(0.98, 1.02)' },
         },
+        'fox-excited': {
+          '0%, 100%': { transform: 'translateY(0) scale(1, 1)' },
+          '15%': { transform: 'translateY(3px) scale(1.08, 0.91)' },
+          '38%': { transform: 'translateY(-20px) scale(0.94, 1.07)' },
+          '56%': { transform: 'translateY(2px) scale(1.06, 0.94)' },
+          '76%': { transform: 'translateY(-14px) scale(0.96, 1.05)' },
+        },
+        'fox-surprise': {
+          '0%': { transform: 'translateY(0) scale(1, 1)' },
+          '22%': { transform: 'translateY(-13px) scale(0.95, 1.07)' },
+          '48%': { transform: 'translateY(2px) scale(1.06, 0.93)' },
+          '72%': { transform: 'translateY(-8px) scale(0.97, 1.03)' },
+          '100%': { transform: 'translateY(0) scale(1, 1)' },
+        },
+        'fox-victory-dance': {
+          '0%, 100%': { transform: 'translate(0, 0) rotate(0deg) scale(1, 1)' },
+          '18%': { transform: 'translate(-7px, -11px) rotate(-5deg) scale(0.96, 1.05)' },
+          '36%': { transform: 'translate(0, 2px) rotate(0deg) scale(1.05, 0.94)' },
+          '54%': { transform: 'translate(7px, -12px) rotate(5deg) scale(0.96, 1.05)' },
+          '74%': { transform: 'translate(0, -18px) rotate(-2deg) scale(0.94, 1.07)' },
+          '90%': { transform: 'translate(0, 2px) rotate(0deg) scale(1.04, 0.96)' },
+        },
+        'fox-sleepy': {
+          '0%, 100%': { transform: 'translateY(1px) rotate(-1deg) scale(1.01, 0.99)' },
+          '50%': { transform: 'translateY(3.5px) rotate(1.5deg) scale(1.03, 0.97)' },
+        },
+        'fox-thinking': {
+          '0%, 100%': { transform: 'translateY(0) rotate(3deg)' },
+          '50%': { transform: 'translateY(-2px) rotate(5deg)' },
+        },
+        'fox-curious': {
+          '0%, 100%': { transform: 'translateX(0) rotate(4deg)' },
+          '50%': { transform: 'translateX(4px) rotate(7deg)' },
+        },
+        'ear-perked': {
+          '0%, 100%': { transform: 'rotate(5deg)' },
+          '50%': { transform: 'rotate(11deg)' },
+        },
+        'ear-perked-right': {
+          '0%, 100%': { transform: 'rotate(-5deg)' },
+          '50%': { transform: 'rotate(-11deg)' },
+        },
+        'arm-reassure': {
+          '0%, 100%': { transform: 'rotate(-36deg)' },
+          '50%': { transform: 'rotate(-22deg)' },
+        },
+        'arm-dance-left': {
+          '0%, 100%': { transform: 'rotate(6deg)' },
+          '50%': { transform: 'rotate(38deg)' },
+        },
+        'arm-dance-right': {
+          '0%, 100%': { transform: 'rotate(-128deg)' },
+          '50%': { transform: 'rotate(-86deg)' },
+        },
         'arm-cheer': {
-          '0%, 100%': { transform: 'rotate(-8deg)' },
-          '40%': { transform: 'rotate(-100deg)' },
-          '70%': { transform: 'rotate(-72deg)' },
+          '0%, 100%': { transform: 'rotate(8deg)' },
+          '38%': { transform: 'rotate(44deg)' },
+          '70%': { transform: 'rotate(24deg)' },
         },
         'arm-cheer-right': {
-          '0%, 100%': { transform: 'rotate(8deg)' },
-          '40%': { transform: 'rotate(100deg)' },
-          '70%': { transform: 'rotate(72deg)' },
+          '0%, 100%': { transform: 'rotate(-10deg)' },
+          '38%': { transform: 'rotate(-134deg)' },
+          '70%': { transform: 'rotate(-108deg)' },
+        },
+        'arm-wave': {
+          '0%, 100%': { transform: 'rotate(-2deg)' },
+          '50%': { transform: 'rotate(26deg)' },
+        },
+        'arm-wave-right': {
+          '0%, 100%': { transform: 'rotate(-26deg)' },
+          '50%': { transform: 'rotate(-48deg)' },
+        },
+        'arm-sway': {
+          '0%, 100%': { transform: 'rotate(-44deg)' },
+          '50%': { transform: 'rotate(-36deg)' },
+        },
+        'arm-sway-right': {
+          '0%, 100%': { transform: 'rotate(-4deg)' },
+          '50%': { transform: 'rotate(4deg)' },
         },
         'logo-sway': {
           '0%, 100%': { transform: 'rotate(-1.4deg) translateY(0)' },
@@ -322,6 +376,17 @@ const config: Config = {
         'fox-nod': 'fox-nod 1.4s ease-in-out',
         'fox-wave': 'fox-wave .7s ease-in-out',
         'fox-cheer': 'fox-cheer .9s ease-in-out',
+        'fox-excited': 'fox-excited 1.15s cubic-bezier(.34,1.56,.64,1)',
+        'fox-surprise': 'fox-surprise 0.9s cubic-bezier(.34,1.56,.64,1)',
+        'fox-victory-dance': 'fox-victory-dance 1.6s ease-in-out infinite',
+        'fox-sleepy': 'fox-sleepy 3.8s ease-in-out infinite',
+        'fox-thinking': 'fox-thinking 2.8s ease-in-out infinite',
+        'fox-curious': 'fox-curious 2.2s ease-in-out infinite',
+        'ear-perked': 'ear-perked 0.9s ease-in-out infinite',
+        'ear-perked-right': 'ear-perked-right 0.9s ease-in-out infinite',
+        'arm-reassure': 'arm-reassure 1.4s ease-in-out infinite',
+        'arm-dance-left': 'arm-dance-left 0.7s ease-in-out infinite',
+        'arm-dance-right': 'arm-dance-right 0.7s ease-in-out infinite',
         'arm-cheer': 'arm-cheer .9s ease-in-out',
         'arm-cheer-right': 'arm-cheer-right .9s ease-in-out',
         'logo-sway': 'logo-sway 5.6s ease-in-out infinite',

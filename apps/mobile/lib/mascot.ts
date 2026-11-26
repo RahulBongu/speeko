@@ -41,6 +41,7 @@ const AUDIO_MAP: Record<string, number> = {
   'streak-2': require('../assets/mascot/streak-2.mp3'),
   encouragement: require('../assets/mascot/encouragement.mp3'),
   'encouragement-2': require('../assets/mascot/encouragement-2.mp3'),
+  'lets-go': require('../assets/mascot/lets-go.mp3'),
 };
 
 let mobileVarietyCache: string | null = null;
@@ -213,6 +214,34 @@ export async function playMascotVoice(
       speaking = false;
       emit(speakingListeners, false);
     }
+    return false;
+  }
+}
+
+export async function playLetsGoSound(): Promise<boolean> {
+  if (!enabled) return false;
+  const source = AUDIO_MAP['lets-go'];
+  if (!source) return false;
+  try {
+    await stopMascotVoice();
+    const player = createAudioPlayer(source);
+    player.volume = 1;
+    currentPlayer = player;
+    const subscription = player.addListener('playbackStatusUpdate', (status) => {
+      if (status.isLoaded && status.didJustFinish) {
+        if (currentPlayer === player) releasePlayer();
+        if (speaking) {
+          speaking = false;
+          emit(speakingListeners, false);
+        }
+      }
+    });
+    currentSubscription = subscription;
+    player.play();
+    speaking = true;
+    emit(speakingListeners, true);
+    return true;
+  } catch {
     return false;
   }
 }

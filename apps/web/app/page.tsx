@@ -90,19 +90,19 @@ const VOICE_DEMOS: Array<{
   line: string;
   mood: FoxMood;
 }> = [
-  { id: 'correct_answer', label: 'Cheer me on', line: 'Hurray! You did it!', mood: 'happy' },
+  { id: 'correct_answer', label: 'Cheer me on', line: 'Hurray! You did it!', mood: 'correct_answer' },
   {
     id: 'encouragement',
     label: 'Pick me up',
     line: "Let's figure it out together.",
-    mood: 'idle',
+    mood: 'encouragement',
   },
-  { id: 'lesson_complete', label: 'Celebrate', line: 'Amazing work!', mood: 'celebrate' },
+  { id: 'lesson_complete', label: 'Celebrate', line: 'Amazing work!', mood: 'victory_dance' },
   {
     id: 'discovery',
     label: 'Surprise me',
     line: 'Ooh, let us learn something new!',
-    mood: 'happy',
+    mood: 'curious_discovery',
   },
 ];
 
@@ -312,13 +312,17 @@ export default function HomePage() {
                 aria-hidden="true"
                 className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-speeko-200/50 blur-2xl"
               />
-              <div className="relative mx-auto flex h-[296px] w-[296px] items-center justify-center rounded-[3rem] border-2 border-cream-200 bg-white shadow-card">
+              <div className="relative mx-auto flex h-[296px] w-[296px] items-center justify-center rounded-[3rem] border-2 border-cream-200 bg-white shadow-card md:h-[344px] md:w-[344px]">
                 <div className="absolute inset-4 rounded-[2.4rem] bg-gradient-to-br from-speeko-50 via-cream-50 to-fox-100" />
                 <Fox
-                  mood="happy"
+                  mood={started ? 'welcome_back' : 'greeting'}
                   accessory={progress?.equippedCosmetic ?? null}
                   patrol
-                  className="relative h-[268px] w-[268px]"
+                  onTap={() => {
+                    const pick = nextVariedMascotReaction('correct_answer');
+                    playMascotVoice('correct_answer', pick.audioKey);
+                  }}
+                  className="relative h-[268px] w-[268px] md:h-[316px] md:w-[316px]"
                 />
               </div>
 
@@ -347,8 +351,8 @@ export default function HomePage() {
         <dl className="mx-auto grid max-w-5xl grid-cols-2 gap-y-4 px-5 py-6 sm:grid-cols-4">
           {[
             ['10', 'Indian languages'],
-            ['88', 'units to climb'],
-            ['610', 'exercises'],
+            ['118', 'modules to climb'],
+            ['880', 'exercises'],
             ['3 min', 'per lesson'],
           ].map(([value, label]) => (
             <div key={label} className="text-center">
@@ -487,7 +491,7 @@ export default function HomePage() {
               aria-hidden="true"
               className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-fox-200/50 blur-2xl"
             />
-            <div className="relative flex h-64 w-full items-center justify-center rounded-[2.5rem] border-2 border-cream-200 bg-white shadow-card">
+            <div className="relative flex h-64 w-full items-center justify-center rounded-[2.5rem] border-2 border-cream-200 bg-white shadow-card md:h-72">
               <div
                 aria-hidden="true"
                 className="absolute inset-4 rounded-[2rem] bg-gradient-to-br from-fox-100 via-cream-50 to-speeko-50"
@@ -497,7 +501,7 @@ export default function HomePage() {
                 accessory={progress?.equippedCosmetic ?? null}
                 patrol
                 speaking={mascotSpeaking}
-                className="relative h-56 w-56"
+                className="relative h-56 w-56 md:h-64 md:w-64"
               />
             </div>
           </div>
@@ -508,7 +512,7 @@ export default function HomePage() {
               The fox has a voice.
             </h2>
             <p className="mt-2 max-w-lg text-sm font-semibold leading-relaxed text-bark-500">
-              Eighteen varied reaction voice clips are bundled offline with Speeko. Tap any button —
+              Thirty-three varied reaction voice clips are bundled offline with Speeko. Tap any button —
               even twice in a row — to hear different cheers and watch the ears, arms, tail and
               jumps respond.
             </p>

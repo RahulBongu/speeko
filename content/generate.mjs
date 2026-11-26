@@ -7,6 +7,7 @@ const phrases = JSON.parse(readFileSync(resolve(here, '_config', 'phrases.json')
 
 const LOCALES = ['hi','bn','mr','te','ta','kn','ml','gu','pa','or'];
 const LABELS = { hi:'हिन्दी', bn:'বাংলা', mr:'मराठी', te:'తెలుగు', ta:'தமிழ்', kn:'ಕನ್ನಡ', ml:'മലയാളം', gu:'ગુજરાતી', pa:'ਪੰਜਾਬੀ', or:'ଓଡ଼ିଆ' };
+const ENGLISH_NAMES = { hi:'Hindi', bn:'Bengali', mr:'Marathi', te:'Telugu', ta:'Tamil', kn:'Kannada', ml:'Malayalam', gu:'Gujarati', pa:'Punjabi', or:'Odia' };
 
 function t(locale, key) { return phrases[key][locale]; }
 
@@ -37,7 +38,7 @@ for (const locale of LOCALES) {
             exercises: [
               { id: `${id}-u1-l1-e1`, kind: 'chooseMeaning', prompt: 'Hello', options: [t(locale,'hello'), t(locale,'thank_you'), t(locale,'yes'), t(locale,'no')], answerIndex: 0 },
               { id: `${id}-u1-l1-e2`, kind: 'chooseMeaning', prompt: 'Thank you', options: [t(locale,'thank_you'), t(locale,'hello'), t(locale,'please'), t(locale,'sorry')], answerIndex: 0 },
-              { id: `${id}-u1-l1-e3`, kind: 'typeTranslation', prompt: 'Type "hello"', expected: [t(locale,'hello')] },
+              { id: `${id}-u1-l1-e3`, kind: 'typeTranslation', prompt: `Type "hello" (in ${ENGLISH_NAMES[locale]})`, expected: [t(locale,'hello')] },
             ],
           },
           {
@@ -103,7 +104,7 @@ for (const locale of LOCALES) {
             exercises: [
               { id: `${id}-u3-l1-e1`, kind: 'chooseMeaning', prompt: 'Please', options: [t(locale,'please'), t(locale,'sorry'), t(locale,'hello'), t(locale,'thank_you')], answerIndex: 0 },
               { id: `${id}-u3-l1-e2`, kind: 'chooseMeaning', prompt: 'Sorry', options: [t(locale,'sorry'), t(locale,'please'), t(locale,'yes'), t(locale,'no')], answerIndex: 0 },
-              { id: `${id}-u3-l1-e3`, kind: 'typeTranslation', prompt: 'Type "please"', expected: [t(locale,'please')] },
+              { id: `${id}-u3-l1-e3`, kind: 'typeTranslation', prompt: `Type "please" (in ${ENGLISH_NAMES[locale]})`, expected: [t(locale,'please')] },
             ],
           },
           {
@@ -114,7 +115,7 @@ for (const locale of LOCALES) {
             xpReward: 10,
             exercises: [
               { id: `${id}-u3-l2-e1`, kind: 'chooseMeaning', prompt: 'Good morning', options: [t(locale,'good_morning'), t(locale,'hello'), t(locale,'thank_you'), t(locale,'please')], answerIndex: 0 },
-              { id: `${id}-u3-l2-e2`, kind: 'typeTranslation', prompt: 'Type "good morning"', expected: [t(locale,'good_morning')] },
+              { id: `${id}-u3-l2-e2`, kind: 'typeTranslation', prompt: `Type "good morning" (in ${ENGLISH_NAMES[locale]})`, expected: [t(locale,'good_morning')] },
               { id: `${id}-u3-l2-e3`, kind: 'listenChoose', prompt: 'Listen and choose', options: [t(locale,'good_morning'), t(locale,'hello'), t(locale,'sorry')], answerIndex: 0, audioUrl: '' },
             ],
           },
@@ -136,7 +137,7 @@ for (const locale of LOCALES) {
             exercises: [
               { id: `${id}-u4-l1-e1`, kind: 'chooseMeaning', prompt: 'Six', options: [t(locale,'six'), t(locale,'seven'), t(locale,'eight'), t(locale,'nine')], answerIndex: 0 },
               { id: `${id}-u4-l1-e2`, kind: 'chooseMeaning', prompt: 'Seven', options: [t(locale,'seven'), t(locale,'six'), t(locale,'eight'), t(locale,'ten')], answerIndex: 0 },
-              { id: `${id}-u4-l1-e3`, kind: 'typeTranslation', prompt: 'Type "six"', expected: [t(locale,'six')] },
+              { id: `${id}-u4-l1-e3`, kind: 'typeTranslation', prompt: `Type "six" (in ${ENGLISH_NAMES[locale]})`, expected: [t(locale,'six')] },
             ],
           },
           {

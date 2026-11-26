@@ -3,7 +3,7 @@
   "locale": "kn",
   "sourceLocale": "en",
   "title": "ಕನ್ನಡ — Starter",
-  "description": "Starter course for ಕನ್ನಡ (Tier 1: greetings, numbers, essentials).",
+  "description": "Starter course for Kannada (11 modules: greetings, numbers, essentials, family, food, places, colors, daily actions, nature, and conversations).",
   "difficulty": "A1",
   "version": "1.0.0",
   "units": [
@@ -48,7 +48,7 @@
             {
               "id": "kn-starter-u1-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"hello\"",
+              "prompt": "Type \"hello\" (in Kannada)",
               "expected": [
                 "ನಮಸ್ಕಾರ"
               ]
@@ -233,7 +233,7 @@
             {
               "id": "kn-starter-u3-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"please\"",
+              "prompt": "Type \"please\" (in Kannada)",
               "expected": [
                 "ದಯವಿಟ್ಟು"
               ]
@@ -262,7 +262,7 @@
             {
               "id": "kn-starter-u3-l2-e2",
               "kind": "typeTranslation",
-              "prompt": "Type \"good morning\"",
+              "prompt": "Type \"good morning\" (in Kannada)",
               "expected": [
                 "ಶುಭೋದಯ"
               ]
@@ -337,10 +337,22 @@
             {
               "id": "kn-starter-u4-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"six\"",
+              "prompt": "Type \"six\" (in Kannada)",
               "expected": [
                 "ಆರು"
               ]
+            },
+            {
+              "id": "kn-starter-u4-l1-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಆರು",
+                "ಏಳು",
+                "ಎಂಟು"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u4-l1-listen.mp3"
             }
           ]
         },
@@ -389,6 +401,18 @@
                   "ಹತ್ತು"
                 ]
               ]
+            },
+            {
+              "id": "kn-starter-u4-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಹತ್ತು",
+                "ಒಂಬತ್ತು",
+                "ಆರು"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u4-l2-listen.mp3"
             }
           ]
         }
@@ -439,7 +463,7 @@
             {
               "id": "kn-starter-u5-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"mother\"",
+              "prompt": "Type \"mother\" (in Kannada)",
               "expected": [
                 "ಅಮ್ಮ"
               ],
@@ -483,11 +507,23 @@
             {
               "id": "kn-starter-u5-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"brother\"",
+              "prompt": "Type \"brother\" (in Kannada)",
               "expected": [
                 "ಅಣ್ಣ"
               ],
               "acceptTypos": true
+            },
+            {
+              "id": "kn-starter-u5-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಅಮ್ಮ",
+                "ಅಪ್ಪ",
+                "ಅಕ್ಕ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u5-l2-listen.mp3"
             }
           ]
         }
@@ -550,7 +586,7 @@
             {
               "id": "kn-starter-u6-l1-e4",
               "kind": "typeTranslation",
-              "prompt": "Type \"water\"",
+              "prompt": "Type \"water\" (in Kannada)",
               "expected": [
                 "ನೀರು"
               ],
@@ -609,6 +645,18 @@
                   "ಚಹಾ"
                 ]
               ]
+            },
+            {
+              "id": "kn-starter-u6-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ನೀರು",
+                "ಚಹಾ",
+                "ಹಾಲು"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u6-l2-listen.mp3"
             }
           ]
         }
@@ -659,7 +707,7 @@
             {
               "id": "kn-starter-u7-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"home\"",
+              "prompt": "Type \"home\" (in Kannada)",
               "expected": [
                 "ಮನೆ"
               ],
@@ -718,6 +766,18 @@
                   "ರಸ್ತೆ"
                 ]
               ]
+            },
+            {
+              "id": "kn-starter-u7-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಮನೆ",
+                "ಶಾಲೆ",
+                "ಮಾರುಕಟ್ಟೆ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u7-l2-listen.mp3"
             }
           ]
         }
@@ -768,7 +828,7 @@
             {
               "id": "kn-starter-u8-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"red\"",
+              "prompt": "Type \"red\" (in Kannada)",
               "expected": [
                 "ಕೆಂಪು"
               ],
@@ -825,6 +885,381 @@
                 [
                   "Blue",
                   "ನೀಲಿ"
+                ]
+              ]
+            },
+            {
+              "id": "kn-starter-u8-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಕೆಂಪು",
+                "ನೀಲಿ",
+                "ಇಂದು"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u8-l2-listen.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kn-starter-u9",
+      "title": "Daily Actions",
+      "description": "Come, go, sit, walk, read, write",
+      "order": 8,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Everyday action verbs for moving, reading, and writing in Kannada.",
+      "lessons": [
+        {
+          "id": "kn-starter-u9-l1",
+          "title": "Come & Go",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Polite everyday requests: come, go, sit, walk.",
+          "exercises": [
+            {
+              "id": "kn-starter-u9-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Come",
+              "options": [
+                "ಬನ್ನಿ",
+                "ಹೋಗಿ",
+                "ಕುಳಿತುಕೊಳ್ಳಿ",
+                "ನಡೆಯಿರಿ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u9-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Go",
+              "options": [
+                "ಹೋಗಿ",
+                "ಬನ್ನಿ",
+                "ನಡೆಯಿರಿ",
+                "ಕುಳಿತುಕೊಳ್ಳಿ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u9-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಕುಳಿತುಕೊಳ್ಳಿ",
+                "ಬನ್ನಿ",
+                "ಹೋಗಿ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u9-l1-e3.mp3"
+            },
+            {
+              "id": "kn-starter-u9-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"come\" (in Kannada)",
+              "expected": [
+                "ಬನ್ನಿ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "kn-starter-u9-l2",
+          "title": "Read & Write",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice study and daily verbs: read, write, walk.",
+          "exercises": [
+            {
+              "id": "kn-starter-u9-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Read",
+              "options": [
+                "ಓದಿ",
+                "ಬರೆಯಿರಿ",
+                "ನಡೆಯಿರಿ",
+                "ಕುಳಿತುಕೊಳ್ಳಿ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u9-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಬರೆಯಿರಿ",
+                "ಓದಿ",
+                "ನಡೆಯಿರಿ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u9-l2-e2.mp3"
+            },
+            {
+              "id": "kn-starter-u9-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Read",
+                  "ಓದಿ"
+                ],
+                [
+                  "Write",
+                  "ಬರೆಯಿರಿ"
+                ],
+                [
+                  "Walk",
+                  "ನಡೆಯಿರಿ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kn-starter-u10",
+      "title": "Nature & Sky",
+      "description": "Sun, moon, rain, wind, trees",
+      "order": 9,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Talk about weather and nature around you in Kannada.",
+      "lessons": [
+        {
+          "id": "kn-starter-u10-l1",
+          "title": "Sun & Rain",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Sun, moon, rain, and wind.",
+          "exercises": [
+            {
+              "id": "kn-starter-u10-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sun",
+              "options": [
+                "ಸೂರ್ಯ",
+                "ಚಂದ್ರ",
+                "ಮಳೆ",
+                "ಗಾಳಿ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u10-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Moon",
+              "options": [
+                "ಚಂದ್ರ",
+                "ಸೂರ್ಯ",
+                "ಗಾಳಿ",
+                "ಮಳೆ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u10-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಮಳೆ",
+                "ಸೂರ್ಯ",
+                "ಗಾಳಿ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u10-l1-e3.mp3"
+            },
+            {
+              "id": "kn-starter-u10-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"sun\" (in Kannada)",
+              "expected": [
+                "ಸೂರ್ಯ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "kn-starter-u10-l2",
+          "title": "Earth & Trees",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Trees, flowers, rivers, and mountains.",
+          "exercises": [
+            {
+              "id": "kn-starter-u10-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Tree",
+              "options": [
+                "ಮರ",
+                "ಹೂವು",
+                "ನದಿ",
+                "ಬೆಟ್ಟ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u10-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಹೂವು",
+                "ಮರ",
+                "ನದಿ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u10-l2-e2.mp3"
+            },
+            {
+              "id": "kn-starter-u10-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Tree",
+                  "ಮರ"
+                ],
+                [
+                  "River",
+                  "ನದಿ"
+                ],
+                [
+                  "Mountain",
+                  "ಬೆಟ್ಟ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kn-starter-u11",
+      "title": "Conversations & Feelings",
+      "description": "Check-ins, friend, happy, see you soon",
+      "order": 10,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Put greetings and feelings into real everyday Kannada conversation.",
+      "lessons": [
+        {
+          "id": "kn-starter-u11-l1",
+          "title": "Checking In",
+          "order": 0,
+          "difficulty": "A2",
+          "xpReward": 18,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Asking how someone is doing and replying warmly.",
+          "exercises": [
+            {
+              "id": "kn-starter-u11-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "How are you?",
+              "options": [
+                "ನೀವು ಹೇಗಿದ್ದೀರಿ?",
+                "ನಾನು ಚೆನ್ನಾಗಿದ್ದೇನೆ",
+                "ಬೇಗ ಸಿಗೋಣ",
+                "ಒಳ್ಳೆಯದು"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u11-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "I am fine",
+              "options": [
+                "ನಾನು ಚೆನ್ನಾಗಿದ್ದೇನೆ",
+                "ನೀವು ಹೇಗಿದ್ದೀರಿ?",
+                "ಬೇಗ ಸಿಗೋಣ",
+                "ಸಂತೋಷ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u11-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ನೀವು ಹೇಗಿದ್ದೀರಿ?",
+                "ನಾನು ಚೆನ್ನಾಗಿದ್ದೇನೆ",
+                "ಬೇಗ ಸಿಗೋಣ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u11-l1-e3.mp3"
+            },
+            {
+              "id": "kn-starter-u11-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"happy\" (in Kannada)",
+              "expected": [
+                "ಸಂತೋಷ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "kn-starter-u11-l2",
+          "title": "Warm Goodbyes",
+          "order": 1,
+          "difficulty": "A2",
+          "xpReward": 20,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Friendships and warm farewells.",
+          "exercises": [
+            {
+              "id": "kn-starter-u11-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Friend",
+              "options": [
+                "ಸ್ನೇಹಿತ",
+                "ಸಂತೋಷ",
+                "ಒಳ್ಳೆಯದು",
+                "ನಾನು ಚೆನ್ನಾಗಿದ್ದೇನೆ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "kn-starter-u11-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ಬೇಗ ಸಿಗೋಣ",
+                "ಸ್ನೇಹಿತ",
+                "ಒಳ್ಳೆಯದು"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/kn-starter-u11-l2-e2.mp3"
+            },
+            {
+              "id": "kn-starter-u11-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Friend",
+                  "ಸ್ನೇಹಿತ"
+                ],
+                [
+                  "Happy",
+                  "ಸಂತೋಷ"
+                ],
+                [
+                  "Good",
+                  "ಒಳ್ಳೆಯದು"
                 ]
               ]
             }

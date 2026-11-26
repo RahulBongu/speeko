@@ -87,9 +87,12 @@ const SOUND_PATHS: Record<string, string> = {
   'streak-2': 'streak-2.mp3',
   encouragement: 'encouragement.mp3',
   'encouragement-2': 'encouragement-2.mp3',
+  'lets-go': 'lets-go.mp3',
 };
 
 let current: HTMLAudioElement | null = null;
+const preloadedAudio = new Map<string, HTMLAudioElement>();
+let voicePreloaded = false;
 
 type SpeakingListener = (speaking: boolean) => void;
 const speakingListeners = new Set<SpeakingListener>();
@@ -170,11 +173,74 @@ export function playMascotVoice(
   stopMascotVoice();
 
   try {
-    const audio = new Audio(`${ASSET_DIR}/${file}`);
-    audio.preload = 'auto';
+    let audio = preloadedAudio.get(file);
+    if (!audio) {
+      audio = new Audio(`${ASSET_DIR}/${file}`);
+      audio.preload = 'auto';
+      preloadedAudio.set(file, audio);
+    }
+    audio.pause();
+    audio.currentTime = 0;
+    audio.playbackRate = 1.07;
     current = audio;
     const finish = () => {
       // A newer line may have replaced this one; only the active clip clears.
+      if (current !== audio) return;
+      current = null;
+      emitSpeaking(false);
+    };
+    audio.addEventListener('ended', finish, { once: true });
+    audio.addEventListener('error', finish, { once: true });
+    void audio.play().catch(finish);
+    emitSpeaking(true);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Pre-warm core mascot reaction audio + "Let's go!" clip so appreciation fires instantaneously. */
+export function preloadMascotAudio(): void {
+  if (typeof window === 'undefined' || voicePreloaded) return;
+  voicePreloaded = true;
+  const warmupFiles = [
+    'lets-go.mp3',
+    'correct.mp3',
+    'correct-2.mp3',
+    'correct-3.mp3',
+    'incorrect.mp3',
+    'incorrect-2.mp3',
+    'complete.mp3',
+    'unit-complete.mp3',
+  ];
+  for (const file of warmupFiles) {
+    if (preloadedAudio.has(file)) continue;
+    try {
+      const a = new Audio(`${ASSET_DIR}/${file}`);
+      a.preload = 'auto';
+      preloadedAudio.set(file, a);
+    } catch {
+      // ignore
+    }
+  }
+}
+
+/** Crisp energetic "Let's go!" cue when continuing from a module start brief. */
+export function playLetsGoSound(): boolean {
+  if (typeof window === 'undefined' || !isMascotVoiceEnabled()) return false;
+  stopMascotVoice();
+  try {
+    let audio = preloadedAudio.get('lets-go.mp3');
+    if (!audio) {
+      audio = new Audio(`${ASSET_DIR}/lets-go.mp3`);
+      audio.preload = 'auto';
+      preloadedAudio.set('lets-go.mp3', audio);
+    }
+    audio.pause();
+    audio.currentTime = 0;
+    audio.playbackRate = 1.08;
+    current = audio;
+    const finish = () => {
       if (current !== audio) return;
       current = null;
       emitSpeaking(false);

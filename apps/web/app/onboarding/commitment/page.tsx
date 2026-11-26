@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { OnboardingFrame } from '@/components/onboarding/OnboardingFrame';
 import { OptionButton } from '@/components/onboarding/OptionButton';
 import { completeOnboarding, readOnboardingDraft } from '@/lib/onboarding';
+import { normalizeExperienceLevel } from '@speeko/core';
 import { loadProgress, saveProgress, browserTimeZone } from '@/lib/progress';
 
 const COMMITMENTS = [
@@ -52,13 +53,22 @@ export default function CommitmentStep() {
     const timeZone = browserTimeZone();
     const current = loadProgress();
     const courseId = `${draft.locale}-starter`;
+    const experience = normalizeExperienceLevel(draft.level);
+    const startSuffix =
+      experience === 'some'
+        ? 'u3-l1'
+        : experience === 'returning'
+          ? 'u5-l1'
+          : experience === 'conversant'
+            ? 'u11-l1'
+            : 'u1-l1';
     saveProgress({
       ...current,
       dailyGoal: draft.dailyGoal,
       lastCourseId: courseId,
       timeZone,
     });
-    router.push(`/lesson/${courseId}/${courseId}-u1-l1`);
+    router.push(`/lesson/${courseId}/${courseId}-${startSuffix}`);
   }
 
   return (

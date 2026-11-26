@@ -198,7 +198,7 @@ export default function ShopClient() {
             <Fox
               mood="happy"
               patrol
-              className="h-40 w-40"
+              className="h-40 w-40 md:h-48 md:w-48"
               accessory={equippedAccessory}
             />
             <p className="mt-3 font-display text-sm font-extrabold uppercase tracking-[0.14em] text-bark-500">

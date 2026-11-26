@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   MASCOT_REACTIONS,
+  MASCOT_STATE_META,
   createMascotVarietyPicker,
   foxMoodForReaction,
   mascotReaction,
   pickMascotAudioKey,
   pickMascotPhrase,
   resolveFoxAnimation,
+  resolveMascotTransition,
+  type MascotState,
 } from './mascot.js';
 
 describe('MASCOT_REACTIONS', () => {
@@ -94,8 +97,53 @@ describe('foxMoodForReaction', () => {
     expect(foxMoodForReaction('incorrect_answer')).toBe('sad');
     expect(foxMoodForReaction('lesson_complete')).toBe('celebrate');
     expect(foxMoodForReaction('unit_complete')).toBe('celebrate');
-    expect(foxMoodForReaction('discovery')).toBe('listening');
+    expect(foxMoodForReaction('streak_milestone')).toBe('excited');
+    expect(foxMoodForReaction('discovery')).toBe('curious_discovery');
     expect(foxMoodForReaction('encouragement')).toBe('encouraging');
+  });
+
+  it('resolves all 15 Flow-guided mascot states with coordinated facial and limb hints', () => {
+    const allStates: MascotState[] = [
+      'idle',
+      'greeting',
+      'excited',
+      'thinking',
+      'correct_answer',
+      'incorrect_supportive',
+      'encouragement',
+      'talking',
+      'listening',
+      'surprise',
+      'lesson_complete',
+      'victory_dance',
+      'sleepy',
+      'curious_discovery',
+      'welcome_back',
+    ];
+    for (const s of allStates) {
+      const resolved = resolveFoxAnimation({ mood: s });
+      expect(resolved.semanticState).toBe(s);
+      expect(resolved.label).toBeTruthy();
+      expect(MASCOT_STATE_META[s]).toBeDefined();
+    }
+    expect(resolveFoxAnimation({ mood: 'thinking' }).pawPose).toBe('chin');
+    expect(resolveFoxAnimation({ mood: 'surprise' }).pawPose).toBe('cheeks');
+    expect(resolveFoxAnimation({ mood: 'surprise' }).mouthStyle).toBe('oval');
+    expect(resolveFoxAnimation({ mood: 'sleepy' }).eyeStyle).toBe('sleepy');
+    expect(resolveFoxAnimation({ mood: 'victory_dance' }).animation).toBe('victoryDance');
+    expect(resolveFoxAnimation({ mood: 'incorrect_supportive' }).earPose).toBe('droop');
+  });
+
+  it('enforces priority rules on animation interruption and allows explicit recovery to idle', () => {
+    // Low-priority thinking cannot interrupt active lesson completion celebration
+    expect(resolveMascotTransition('lesson_complete', 'thinking')).toBe('lesson_complete');
+    expect(resolveMascotTransition('victory_dance', 'listening')).toBe('victory_dance');
+    // Higher-priority event or explicit settle replaces previous state
+    expect(resolveMascotTransition('thinking', 'correct_answer')).toBe('correct_answer');
+    expect(resolveMascotTransition('greeting', 'idle')).toBe('idle');
+    expect(
+      resolveMascotTransition('victory_dance', 'thinking', { currentSettled: true }),
+    ).toBe('thinking');
   });
 });
 

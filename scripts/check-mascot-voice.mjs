@@ -50,6 +50,7 @@ const VOICE_JOBS = [
   { key: 'discovery-2', phrase: "Ready for a fun new challenge? Let's dive in!" },
   { key: 'encouragement', phrase: "Let's figure it out together, step by step." },
   { key: 'encouragement-2', phrase: 'Every single try makes your memory stronger.' },
+  { key: 'lets-go', phrase: "Let's go!" },
 ];
 
 const SFX_JOBS = [

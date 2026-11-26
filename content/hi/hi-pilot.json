@@ -58,7 +58,7 @@
             {
               "id": "hi-pilot-u1-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"hello\"",
+              "prompt": "Type \"hello\" (in Hindi)",
               "expected": [
                 "नमस्ते"
               ],
@@ -108,7 +108,7 @@
             {
               "id": "hi-pilot-u1-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"thank you\"",
+              "prompt": "Type \"thank you\" (in Hindi)",
               "expected": [
                 "धन्यवाद"
               ],
@@ -158,7 +158,7 @@
             {
               "id": "hi-pilot-u1-l3-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"please\"",
+              "prompt": "Type \"please\" (in Hindi)",
               "expected": [
                 "कृपया"
               ],
@@ -208,7 +208,7 @@
             {
               "id": "hi-pilot-u1-l4-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"sorry\"",
+              "prompt": "Type \"sorry\" (in Hindi)",
               "expected": [
                 "माफ कीजिए"
               ],
@@ -258,7 +258,7 @@
             {
               "id": "hi-pilot-u1-l5-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"goodbye\"",
+              "prompt": "Type \"goodbye\" (in Hindi)",
               "expected": [
                 "अलविदा"
               ],
@@ -319,7 +319,7 @@
             {
               "id": "hi-pilot-u2-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"one\"",
+              "prompt": "Type \"one\" (in Hindi)",
               "expected": [
                 "एक"
               ],
@@ -369,7 +369,7 @@
             {
               "id": "hi-pilot-u2-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"two\"",
+              "prompt": "Type \"two\" (in Hindi)",
               "expected": [
                 "दो"
               ],
@@ -419,7 +419,7 @@
             {
               "id": "hi-pilot-u2-l3-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"three\"",
+              "prompt": "Type \"three\" (in Hindi)",
               "expected": [
                 "तीन"
               ],
@@ -469,7 +469,7 @@
             {
               "id": "hi-pilot-u2-l4-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"four\"",
+              "prompt": "Type \"four\" (in Hindi)",
               "expected": [
                 "चार"
               ],
@@ -519,7 +519,7 @@
             {
               "id": "hi-pilot-u2-l5-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"five\"",
+              "prompt": "Type \"five\" (in Hindi)",
               "expected": [
                 "पाँच"
               ],
@@ -580,7 +580,7 @@
             {
               "id": "hi-pilot-u3-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"mother\"",
+              "prompt": "Type \"mother\" (in Hindi)",
               "expected": [
                 "माँ"
               ],
@@ -630,7 +630,7 @@
             {
               "id": "hi-pilot-u3-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"father\"",
+              "prompt": "Type \"father\" (in Hindi)",
               "expected": [
                 "पिता"
               ],
@@ -680,7 +680,7 @@
             {
               "id": "hi-pilot-u3-l3-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"brother\"",
+              "prompt": "Type \"brother\" (in Hindi)",
               "expected": [
                 "भाई"
               ],
@@ -730,7 +730,7 @@
             {
               "id": "hi-pilot-u3-l4-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"sister\"",
+              "prompt": "Type \"sister\" (in Hindi)",
               "expected": [
                 "बहन"
               ],
@@ -780,7 +780,7 @@
             {
               "id": "hi-pilot-u3-l5-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"child\"",
+              "prompt": "Type \"child\" (in Hindi)",
               "expected": [
                 "बच्चा"
               ],
@@ -841,7 +841,7 @@
             {
               "id": "hi-pilot-u4-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"water\"",
+              "prompt": "Type \"water\" (in Hindi)",
               "expected": [
                 "पानी"
               ],
@@ -891,7 +891,7 @@
             {
               "id": "hi-pilot-u4-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"tea\"",
+              "prompt": "Type \"tea\" (in Hindi)",
               "expected": [
                 "चाय"
               ],
@@ -941,7 +941,7 @@
             {
               "id": "hi-pilot-u4-l3-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"rice\"",
+              "prompt": "Type \"rice\" (in Hindi)",
               "expected": [
                 "चावल"
               ],
@@ -991,7 +991,7 @@
             {
               "id": "hi-pilot-u4-l4-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"bread\"",
+              "prompt": "Type \"bread\" (in Hindi)",
               "expected": [
                 "रोटी"
               ],
@@ -1041,7 +1041,7 @@
             {
               "id": "hi-pilot-u4-l5-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"milk\"",
+              "prompt": "Type \"milk\" (in Hindi)",
               "expected": [
                 "दूध"
               ],
@@ -1102,7 +1102,7 @@
             {
               "id": "hi-pilot-u5-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"home\"",
+              "prompt": "Type \"home\" (in Hindi)",
               "expected": [
                 "घर"
               ],
@@ -1152,7 +1152,7 @@
             {
               "id": "hi-pilot-u5-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"school\"",
+              "prompt": "Type \"school\" (in Hindi)",
               "expected": [
                 "स्कूल"
               ],
@@ -1202,7 +1202,7 @@
             {
               "id": "hi-pilot-u5-l3-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"market\"",
+              "prompt": "Type \"market\" (in Hindi)",
               "expected": [
                 "बाजार"
               ],
@@ -1252,7 +1252,7 @@
             {
               "id": "hi-pilot-u5-l4-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"station\"",
+              "prompt": "Type \"station\" (in Hindi)",
               "expected": [
                 "स्टेशन"
               ],
@@ -1302,7 +1302,7 @@
             {
               "id": "hi-pilot-u5-l5-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"road\"",
+              "prompt": "Type \"road\" (in Hindi)",
               "expected": [
                 "सड़क"
               ],
@@ -1360,7 +1360,7 @@
             {
               "id": "hi-pilot-u6-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"red\"",
+              "prompt": "Type \"red\" (in Hindi)",
               "expected": [
                 "लाल"
               ],
@@ -1406,7 +1406,7 @@
             {
               "id": "hi-pilot-u6-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"blue\"",
+              "prompt": "Type \"blue\" (in Hindi)",
               "expected": [
                 "नीला"
               ],
@@ -1452,7 +1452,7 @@
             {
               "id": "hi-pilot-u6-l3-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"green\"",
+              "prompt": "Type \"green\" (in Hindi)",
               "expected": [
                 "हरा"
               ],
@@ -1498,7 +1498,7 @@
             {
               "id": "hi-pilot-u6-l4-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"sun\"",
+              "prompt": "Type \"sun\" (in Hindi)",
               "expected": [
                 "सूरज"
               ],
@@ -1544,7 +1544,7 @@
             {
               "id": "hi-pilot-u6-l5-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"moon\"",
+              "prompt": "Type \"moon\" (in Hindi)",
               "expected": [
                 "चाँद"
               ],
@@ -1601,7 +1601,7 @@
             {
               "id": "hi-pilot-u7-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"morning\"",
+              "prompt": "Type \"morning\" (in Hindi)",
               "expected": [
                 "सुबह"
               ],
@@ -1647,7 +1647,7 @@
             {
               "id": "hi-pilot-u7-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"evening\"",
+              "prompt": "Type \"evening\" (in Hindi)",
               "expected": [
                 "शाम"
               ],
@@ -1693,7 +1693,7 @@
             {
               "id": "hi-pilot-u7-l3-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"today\"",
+              "prompt": "Type \"today\" (in Hindi)",
               "expected": [
                 "आज"
               ],
@@ -1739,7 +1739,7 @@
             {
               "id": "hi-pilot-u7-l4-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"tomorrow\"",
+              "prompt": "Type \"tomorrow\" (in Hindi)",
               "expected": [
                 "कल"
               ],
@@ -1785,7 +1785,7 @@
             {
               "id": "hi-pilot-u7-l5-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"day\"",
+              "prompt": "Type \"day\" (in Hindi)",
               "expected": [
                 "दिन"
               ],
@@ -1842,7 +1842,7 @@
             {
               "id": "hi-pilot-u8-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"who\"",
+              "prompt": "Type \"who\" (in Hindi)",
               "expected": [
                 "कौन"
               ],
@@ -1888,7 +1888,7 @@
             {
               "id": "hi-pilot-u8-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"what\"",
+              "prompt": "Type \"what\" (in Hindi)",
               "expected": [
                 "क्या"
               ],
@@ -1934,7 +1934,7 @@
             {
               "id": "hi-pilot-u8-l3-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"where\"",
+              "prompt": "Type \"where\" (in Hindi)",
               "expected": [
                 "कहाँ"
               ],
@@ -1980,7 +1980,7 @@
             {
               "id": "hi-pilot-u8-l4-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"help\"",
+              "prompt": "Type \"help\" (in Hindi)",
               "expected": [
                 "मदद"
               ],
@@ -2026,7 +2026,7 @@
             {
               "id": "hi-pilot-u8-l5-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"welcome\"",
+              "prompt": "Type \"welcome\" (in Hindi)",
               "expected": [
                 "स्वागत"
               ],

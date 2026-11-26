@@ -269,10 +269,10 @@ export default function PracticeClient() {
         ) : (
           <section className="card mt-6 flex flex-col items-center gap-4 p-6 text-center sm:flex-row sm:text-left">
             <Fox
-              mood="idle"
+              mood="sleepy"
               accessory={progress.equippedCosmetic ?? null}
-              patrol
               className="h-24 w-24 shrink-0"
+              title="Speeko resting until your first lesson"
             />
             <div className="flex-1">
               <h2 className="font-display text-2xl font-extrabold text-bark-800">

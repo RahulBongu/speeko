@@ -6,6 +6,23 @@
  * Audio asset resolution differs per platform (bundled MP3 paths).
  */
 
+export type MascotState =
+  | 'idle'
+  | 'greeting'
+  | 'excited'
+  | 'thinking'
+  | 'correct_answer'
+  | 'incorrect_supportive'
+  | 'encouragement'
+  | 'talking'
+  | 'listening'
+  | 'surprise'
+  | 'lesson_complete'
+  | 'victory_dance'
+  | 'sleepy'
+  | 'curious_discovery'
+  | 'welcome_back';
+
 export type MascotReactionId =
   | 'correct_answer'
   | 'incorrect_answer'
@@ -17,7 +34,7 @@ export type MascotReactionId =
 
 export type MascotAnimation = 'bounce' | 'wiggle' | 'celebrate' | 'nod';
 
-/** Visual moods the vector fox supports on both web and mobile. */
+/** Visual moods and semantic states the vector fox supports on both web and mobile. */
 export type FoxMood =
   | 'idle'
   | 'listening'
@@ -25,9 +42,10 @@ export type FoxMood =
   | 'happy'
   | 'sad'
   | 'celebrate'
-  | 'encouraging';
+  | 'encouraging'
+  | MascotState;
 
-/** Independent motion states derived from app events. */
+/** Independent motion states derived from app events and Flow reference clips. */
 export type FoxAnimation =
   | 'breathe'
   | 'blink'
@@ -39,12 +57,58 @@ export type FoxAnimation =
   | 'confused'
   | 'celebrate'
   | 'wave'
-  | 'nod';
+  | 'nod'
+  | 'thinking'
+  | 'excited'
+  | 'surprise'
+  | 'victoryDance'
+  | 'sleepy'
+  | 'curious'
+  | 'welcomeBack';
 
+export type FoxEyeStyle = 'open' | 'crescent' | 'wide' | 'sleepy' | 'soft';
+export type FoxMouthStyle = 'smile' | 'open' | 'softSmile' | 'thoughtful' | 'oval' | 'talk';
+export type FoxEarPose = 'neutral' | 'perked' | 'droop' | 'curious';
+export type FoxPawPose =
+  | 'rest'
+  | 'wave'
+  | 'chin'
+  | 'cheer'
+  | 'reassure'
+  | 'cheeks'
+  | 'dance'
+  | 'yawn'
+  | 'curious';
+export type FoxTailStyle = 'sway' | 'wagFast' | 'relaxed' | 'tucked';
 export type FoxIntensity = 'normal' | 'super' | 'ultra';
 
+export interface MascotStateMeta {
+  state: MascotState;
+  priority: number;
+  /** Non-null ms when a transient reaction should automatically recover to `idle`. */
+  settleAfterMs: number | null;
+}
+
+export const MASCOT_STATE_META: Record<MascotState, MascotStateMeta> = {
+  idle: { state: 'idle', priority: 0, settleAfterMs: null },
+  sleepy: { state: 'sleepy', priority: 20, settleAfterMs: null },
+  thinking: { state: 'thinking', priority: 30, settleAfterMs: null },
+  curious_discovery: { state: 'curious_discovery', priority: 35, settleAfterMs: 2600 },
+  listening: { state: 'listening', priority: 45, settleAfterMs: null },
+  talking: { state: 'talking', priority: 50, settleAfterMs: null },
+  excited: { state: 'excited', priority: 60, settleAfterMs: 2000 },
+  encouragement: { state: 'encouragement', priority: 65, settleAfterMs: 1800 },
+  greeting: { state: 'greeting', priority: 68, settleAfterMs: 1700 },
+  welcome_back: { state: 'welcome_back', priority: 70, settleAfterMs: 2200 },
+  incorrect_supportive: { state: 'incorrect_supportive', priority: 82, settleAfterMs: 2200 },
+  correct_answer: { state: 'correct_answer', priority: 85, settleAfterMs: 1500 },
+  surprise: { state: 'surprise', priority: 95, settleAfterMs: 1600 },
+  victory_dance: { state: 'victory_dance', priority: 115, settleAfterMs: 3200 },
+  lesson_complete: { state: 'lesson_complete', priority: 120, settleAfterMs: null },
+};
+
 export interface FoxAnimationInput {
-  /** Semantic mood. `correct`/`incorrect` are accepted aliases for feedback. */
+  /** Semantic mood or state. `correct`/`incorrect` are accepted aliases for feedback. */
   mood?: FoxMood | 'correct' | 'incorrect';
   /** True while a mascot voice line is playing. */
   speaking?: boolean;
@@ -58,6 +122,7 @@ export interface FoxAnimationInput {
 
 export interface FoxAnimationState {
   mood: FoxMood;
+  semanticState: MascotState;
   animation: FoxAnimation;
   label: string;
   speaking: boolean;
@@ -67,24 +132,94 @@ export interface FoxAnimationState {
   encourageAfter: boolean;
   /** Jump/celebration energy level driven by answer streaks. */
   intensity: FoxIntensity;
+  eyeStyle: FoxEyeStyle;
+  mouthStyle: FoxMouthStyle;
+  earPose: FoxEarPose;
+  pawPose: FoxPawPose;
+  tailStyle: FoxTailStyle;
+  priority: number;
+  settleAfterMs: number | null;
 }
 
-const FOX_LABEL: Record<FoxMood, string> = {
+const FOX_LABEL: Record<MascotState, string> = {
   idle: 'Speeko the fox, ready to learn',
-  listening: 'Speeko the fox, listening',
+  greeting: 'Speeko the fox, waving hello',
+  excited: 'Speeko the fox, excited',
+  thinking: 'Speeko the fox, thinking thoughtfully',
+  correct_answer: 'Speeko the fox, delighted',
+  incorrect_supportive: 'Speeko the fox, a little confused',
+  encouragement: 'Speeko the fox, encouraging you',
   talking: 'Speeko the fox, talking',
-  happy: 'Speeko the fox, delighted',
-  sad: 'Speeko the fox, a little confused',
-  celebrate: 'Speeko the fox, celebrating',
-  encouraging: 'Speeko the fox, encouraging you',
+  listening: 'Speeko the fox, listening',
+  surprise: 'Speeko the fox, pleasantly surprised',
+  lesson_complete: 'Speeko the fox, celebrating',
+  victory_dance: 'Speeko the fox, doing a victory dance',
+  sleepy: 'Speeko the fox, sleepy and yawning',
+  curious_discovery: 'Speeko the fox, curious about something new',
+  welcome_back: 'Speeko the fox, welcoming you back',
 };
 
+function makeState(
+  mood: FoxMood,
+  semanticState: MascotState,
+  animation: FoxAnimation,
+  base: { speaking: boolean; listening: boolean; intensity: FoxIntensity },
+  rig: {
+    waving?: boolean;
+    encourageAfter?: boolean;
+    eyeStyle?: FoxEyeStyle;
+    mouthStyle?: FoxMouthStyle;
+    earPose?: FoxEarPose;
+    pawPose?: FoxPawPose;
+    tailStyle?: FoxTailStyle;
+  } = {},
+  customLabel?: string,
+): FoxAnimationState {
+  const meta = MASCOT_STATE_META[semanticState];
+  return {
+    mood,
+    semanticState,
+    animation,
+    label: customLabel ?? FOX_LABEL[semanticState],
+    speaking: base.speaking,
+    listening: base.listening,
+    waving: rig.waving ?? false,
+    encourageAfter: rig.encourageAfter ?? false,
+    intensity: base.intensity,
+    eyeStyle: rig.eyeStyle ?? 'open',
+    mouthStyle: rig.mouthStyle ?? (base.speaking ? 'talk' : 'open'),
+    earPose: rig.earPose ?? 'neutral',
+    pawPose: rig.pawPose ?? 'rest',
+    tailStyle: rig.tailStyle ?? 'sway',
+    priority: meta.priority,
+    settleAfterMs: meta.settleAfterMs,
+  };
+}
+
 /**
- * Maps real app events to one unambiguous fox pose.
- *
- * Priority: celebration > tap > speaking > listening > feedback > idle. Keeping
- * this in core means the web and mobile components cannot drift apart, and the
- * mapping is unit-testable without rendering SVG.
+ * Decides whether a candidate state can replace a currently active state
+ * cleanly without stacking or letting low-priority motion cut off a celebration.
+ */
+export function resolveMascotTransition(
+  current: MascotState,
+  candidate: MascotState,
+  opts: { currentSettled?: boolean; force?: boolean } = {},
+): MascotState {
+  if (opts.force || candidate === 'idle' || opts.currentSettled) {
+    return candidate;
+  }
+  const currentMeta = MASCOT_STATE_META[current];
+  const nextMeta = MASCOT_STATE_META[candidate];
+  if (nextMeta.priority >= currentMeta.priority) {
+    return candidate;
+  }
+  return current;
+}
+
+/**
+ * Maps real app events to one unambiguous fox pose across all 15 Flow-guided
+ * semantic states. Keeping this in core means web and mobile cannot drift apart
+ * and every pose/priority transition is unit-testable without rendering SVG.
  */
 export function resolveFoxAnimation(input: FoxAnimationInput = {}): FoxAnimationState {
   const combo = Math.max(0, Math.floor(input.combo ?? 0));
@@ -93,50 +228,180 @@ export function resolveFoxAnimation(input: FoxAnimationInput = {}): FoxAnimation
   const base = {
     speaking: Boolean(input.speaking),
     listening: Boolean(input.listening),
-    waving: false,
-    encourageAfter: false,
     intensity,
   };
   const tapped = Boolean(input.tapped);
-  const feedbackMood = input.mood === 'incorrect' ? 'sad' : input.mood;
+  const rawMood = input.mood ?? 'idle';
+  const isNegative = rawMood === 'incorrect' || rawMood === 'sad' || rawMood === 'incorrect_supportive';
 
-  if (input.mood === 'celebrate' || (tapped && feedbackMood !== 'sad')) {
-    return {
-      ...base,
-      mood: tapped && input.mood !== 'celebrate' ? 'happy' : 'celebrate',
-      animation: tapped && input.mood !== 'celebrate' ? 'wave' : 'celebrate',
-      label: tapped && input.mood !== 'celebrate' ? 'Speeko the fox, waving hello' : FOX_LABEL.celebrate,
-      waving: tapped,
-    };
+  if (rawMood === 'victory_dance') {
+    return makeState('celebrate', 'victory_dance', 'victoryDance', base, {
+      eyeStyle: 'crescent',
+      mouthStyle: 'open',
+      earPose: 'perked',
+      pawPose: 'dance',
+      tailStyle: 'wagFast',
+    });
   }
 
-  if (base.speaking || input.mood === 'talking') {
-    return { ...base, mood: 'talking', animation: 'talk', label: FOX_LABEL.talking };
+  if (rawMood === 'celebrate' || rawMood === 'lesson_complete') {
+    return makeState('celebrate', 'lesson_complete', 'celebrate', base, {
+      eyeStyle: 'crescent',
+      mouthStyle: base.speaking ? 'talk' : 'open',
+      earPose: 'perked',
+      pawPose: 'cheer',
+      tailStyle: 'wagFast',
+    });
   }
 
-  if (base.listening || input.mood === 'listening') {
-    return { ...base, mood: 'listening', animation: 'headBob', label: FOX_LABEL.listening };
+  if (tapped && !isNegative) {
+    return makeState(
+      'happy',
+      'greeting',
+      'wave',
+      base,
+      {
+        waving: true,
+        eyeStyle: 'open',
+        mouthStyle: base.speaking ? 'talk' : 'open',
+        earPose: 'perked',
+        pawPose: 'wave',
+        tailStyle: 'wagFast',
+      },
+      'Speeko the fox, waving hello',
+    );
   }
 
-  if (input.mood === 'correct' || input.mood === 'happy') {
-    return { ...base, mood: 'happy', animation: 'bounce', label: FOX_LABEL.happy };
+  if (rawMood === 'surprise') {
+    return makeState('happy', 'surprise', 'surprise', base, {
+      eyeStyle: 'wide',
+      mouthStyle: 'oval',
+      earPose: 'perked',
+      pawPose: 'cheeks',
+      tailStyle: 'wagFast',
+    });
   }
 
-  if (input.mood === 'incorrect' || input.mood === 'sad') {
-    return {
-      ...base,
-      mood: 'sad',
-      animation: 'confused',
-      label: FOX_LABEL.sad,
+  if (base.speaking || rawMood === 'talking') {
+    return makeState('talking', 'talking', 'talk', base, {
+      eyeStyle: 'open',
+      mouthStyle: 'talk',
+      earPose: 'neutral',
+      pawPose: 'wave',
+      tailStyle: 'sway',
+    });
+  }
+
+  if (base.listening || rawMood === 'listening') {
+    return makeState('listening', 'listening', 'headBob', base, {
+      eyeStyle: 'open',
+      mouthStyle: 'smile',
+      earPose: 'perked',
+      pawPose: 'rest',
+      tailStyle: 'sway',
+    });
+  }
+
+  if (rawMood === 'welcome_back') {
+    return makeState('happy', 'welcome_back', 'welcomeBack', base, {
+      waving: true,
+      eyeStyle: 'crescent',
+      mouthStyle: 'open',
+      earPose: 'perked',
+      pawPose: 'wave',
+      tailStyle: 'wagFast',
+    });
+  }
+
+  if (rawMood === 'greeting') {
+    return makeState('happy', 'greeting', 'wave', base, {
+      waving: true,
+      eyeStyle: 'open',
+      mouthStyle: 'open',
+      earPose: 'perked',
+      pawPose: 'wave',
+      tailStyle: 'sway',
+    });
+  }
+
+  if (rawMood === 'excited') {
+    return makeState('happy', 'excited', 'excited', base, {
+      eyeStyle: 'crescent',
+      mouthStyle: 'open',
+      earPose: 'perked',
+      pawPose: 'cheer',
+      tailStyle: 'wagFast',
+    });
+  }
+
+  if (rawMood === 'correct' || rawMood === 'happy' || rawMood === 'correct_answer') {
+    return makeState('happy', 'correct_answer', 'bounce', base, {
+      eyeStyle: intensity === 'normal' ? 'open' : 'crescent',
+      mouthStyle: 'open',
+      earPose: 'perked',
+      pawPose: 'cheer',
+      tailStyle: 'wagFast',
+    });
+  }
+
+  if (isNegative) {
+    return makeState('sad', 'incorrect_supportive', 'confused', base, {
       encourageAfter: true,
-    };
+      eyeStyle: 'soft',
+      mouthStyle: 'softSmile',
+      earPose: 'droop',
+      pawPose: 'reassure',
+      tailStyle: 'relaxed',
+    });
   }
 
-  if (input.mood === 'encouraging') {
-    return { ...base, mood: 'encouraging', animation: 'nod', label: FOX_LABEL.encouraging };
+  if (rawMood === 'encouraging' || rawMood === 'encouragement') {
+    return makeState('encouraging', 'encouragement', 'nod', base, {
+      eyeStyle: 'open',
+      mouthStyle: 'open',
+      earPose: 'neutral',
+      pawPose: 'reassure',
+      tailStyle: 'sway',
+    });
   }
 
-  return { ...base, mood: 'idle', animation: 'breathe', label: FOX_LABEL.idle };
+  if (rawMood === 'curious_discovery') {
+    return makeState('idle', 'curious_discovery', 'curious', base, {
+      eyeStyle: 'open',
+      mouthStyle: 'smile',
+      earPose: 'curious',
+      pawPose: 'curious',
+      tailStyle: 'sway',
+    });
+  }
+
+  if (rawMood === 'thinking') {
+    return makeState('idle', 'thinking', 'thinking', base, {
+      eyeStyle: 'open',
+      mouthStyle: 'thoughtful',
+      earPose: 'curious',
+      pawPose: 'chin',
+      tailStyle: 'sway',
+    });
+  }
+
+  if (rawMood === 'sleepy') {
+    return makeState('idle', 'sleepy', 'sleepy', base, {
+      eyeStyle: 'sleepy',
+      mouthStyle: 'oval',
+      earPose: 'droop',
+      pawPose: 'yawn',
+      tailStyle: 'relaxed',
+    });
+  }
+
+  return makeState('idle', 'idle', 'breathe', base, {
+    eyeStyle: 'open',
+    mouthStyle: 'open',
+    earPose: 'neutral',
+    pawPose: 'rest',
+    tailStyle: 'sway',
+  });
 }
 
 /** Map a semantic mascot reaction to a fox mood. */
@@ -148,10 +413,11 @@ export function foxMoodForReaction(reactionId: MascotReactionId): FoxMood {
       return 'sad';
     case 'lesson_complete':
     case 'unit_complete':
-    case 'streak_milestone':
       return 'celebrate';
+    case 'streak_milestone':
+      return 'excited';
     case 'discovery':
-      return 'listening';
+      return 'curious_discovery';
     case 'encouragement':
       return 'encouraging';
   }

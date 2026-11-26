@@ -102,3 +102,38 @@ export type RequiredOnboarding = OnboardingDraft & {
   dailyGoal: number;
   commitment: string;
 };
+
+export async function readExperienceLevel(): Promise<string> {
+  const completed = await readCompletedOnboarding();
+  if (completed?.level) return completed.level;
+  const draft = await readOnboardingDraft();
+  return draft?.level ?? 'zero';
+}
+
+export async function saveExperienceLevel(level: string, defaultLocale: Locale = 'hi'): Promise<void> {
+  try {
+    const completed = await readCompletedOnboarding();
+    if (completed) {
+      await AsyncStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...completed, level }));
+      return;
+    }
+    const draft = await readOnboardingDraft();
+    if (draft) {
+      await saveOnboardingDraft({ ...draft, level });
+      return;
+    }
+    await AsyncStorage.setItem(
+      ONBOARDING_KEY,
+      JSON.stringify({
+        locale: defaultLocale,
+        motivation: 'Just for fun',
+        level,
+        dailyGoal: 50,
+        commitment: 'daily',
+        completedAt: new Date().toISOString(),
+      }),
+    );
+  } catch {
+    // ignore storage failures
+  }
+}

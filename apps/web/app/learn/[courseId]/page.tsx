@@ -2,13 +2,26 @@
 
 import { use, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { eligibleExercises, type Course } from '@speeko/core';
+import { useRouter } from 'next/navigation';
+import {
+  EXPERIENCE_LEVELS,
+  EXPERIENCE_PROFILES,
+  buildModuleBrief,
+  eligibleExercises,
+  normalizeExperienceLevel,
+  personalizeCoursePath,
+  type Course,
+  type ExperienceLevel,
+  type ModuleBrief,
+} from '@speeko/core';
 import { ProgressBar } from '@/components/ProgressBar';
 import { Fox } from '@/components/Fox';
 import { StatPill } from '@/components/AppHeader';
+import { ModuleBriefCard } from '@/components/lesson/ModuleBriefCard';
 import {
   ArrowLeftIcon,
   BoltIcon,
+  BookOpenIcon,
   CheckIcon,
   FlameIcon,
   GiftIcon,
@@ -18,6 +31,7 @@ import {
   TrophyIcon,
 } from '@/components/icons';
 import { LOCALE_META, fetchCourse } from '@/lib/courses';
+import { readExperienceLevel, saveExperienceLevel } from '@/lib/onboarding';
 import { dueReviewCount } from '@/lib/review';
 import { courseStats, isLessonCompleted, lessonStatus } from '@/lib/progress';
 import { useProgress } from '@/lib/use-progress';
@@ -168,10 +182,20 @@ function PathNode({
 
 export default function CoursePathPage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = use(params);
+  const router = useRouter();
   const progress = useProgress();
   const [course, setCourse] = useState<Course | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [experience, setExperience] = useState<ExperienceLevel>('zero');
+  const [pendingBrief, setPendingBrief] = useState<{
+    brief: ModuleBrief;
+    lessonId: string;
+  } | null>(null);
   const scrolledToCurrent = useRef(false);
+
+  useEffect(() => {
+    setExperience(normalizeExperienceLevel(readExperienceLevel()));
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -246,8 +270,30 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
 
   const meta = LOCALE_META[course.locale];
   const stats = courseStats(course, progress);
-  const nextLessonId = stats.nextLessonId;
+  const completedIds = new Set(
+    course.units
+      .flatMap((u) => u.lessons)
+      .filter((l) => isLessonCompleted(progress, course.id, l.id))
+      .map((l) => l.id),
+  );
+  const personalized = personalizeCoursePath(course, experience, completedIds);
+  const nextLessonId =
+    experience === 'zero' ? stats.nextLessonId : (personalized.recommendedLessonId ?? stats.nextLessonId);
   const dueCount = dueReviewCount(course, progress);
+
+  function selectExperience(nextLevel: ExperienceLevel) {
+    setExperience(nextLevel);
+    saveExperienceLevel(nextLevel, course!.locale);
+  }
+
+  function openBriefForModule(originalIndex: number, lessonId: string) {
+    const brief = buildModuleBrief(course!, originalIndex);
+    if (!brief) {
+      router.push(`/lesson/${course!.id}/${lessonId}`);
+      return;
+    }
+    setPendingBrief({ brief, lessonId });
+  }
 
   return (
     <div className="min-h-screen">
@@ -340,8 +386,46 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
           </div>
         </section>
 
-        <div className="mt-10 flex flex-col items-center">
-          {course.units.map((unit, unitIndex) => {
+        <section
+          aria-label="Personalize modules by experience"
+          className="mt-6 rounded-3xl border-2 border-cream-200 bg-white p-4 shadow-card-sm sm:p-5"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-bark-500">
+                Your experience level
+              </p>
+              <p className="mt-0.5 text-sm font-semibold text-bark-600">
+                {EXPERIENCE_PROFILES[experience].description}
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Language experience level">
+            {EXPERIENCE_LEVELS.map((lvl) => {
+              const active = experience === lvl;
+              return (
+                <button
+                  key={lvl}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => selectExperience(lvl)}
+                  className={`focus-ring rounded-xl border-2 px-3 py-1.5 font-display text-xs font-extrabold transition ${
+                    active
+                      ? 'border-speeko-500 bg-speeko-50 text-speeko-800 shadow-green-sm'
+                      : 'border-cream-200 bg-cream-50 text-bark-600 hover:border-speeko-300'
+                  }`}
+                >
+                  {EXPERIENCE_PROFILES[lvl].shortLabel}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <div className="mt-8 flex flex-col items-center">
+          {personalized.units.map((unitEntry, displayIdx) => {
+            const unit = unitEntry.unit;
+            const unitIndex = unitEntry.originalIndex;
             const unitDone = unit.lessons.filter((lesson) =>
               isLessonCompleted(progress, course.id, lesson.id),
             ).length;
@@ -359,10 +443,10 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
               );
             const checkpointId = `checkpoint-unit-${checkpointUpTo}`;
             const bannerGradient = UNIT_BANNERS[unitIndex % UNIT_BANNERS.length] ?? meta.gradient;
-            const hasNextUnit = unitIndex < course.units.length - 1;
-            const nextUnit = hasNextUnit ? course.units[unitIndex + 1]! : null;
+            const hasNextUnit = displayIdx < personalized.units.length - 1;
+            const nextUnit = hasNextUnit ? personalized.units[displayIdx + 1]!.unit : null;
             const lessonOffsets = unit.lessons.map((_, lessonIndex) =>
-              waveX(unitIndex * 2 + lessonIndex),
+              waveX(displayIdx * 2 + lessonIndex),
             );
             const firstOffsetX = lessonOffsets[0] ?? 0;
             const lastOffsetX = lessonOffsets[lessonOffsets.length - 1] ?? 0;
@@ -381,7 +465,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                   <div className="relative flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-white/85">
-                        Module {unitNumber} · Unit {unitNumber}
+                        Module {unitNumber} · {unitEntry.trackRole === 'recommended' ? 'Recommended for you' : unitEntry.trackRole === 'warmup' ? 'Optional warmup' : `Unit ${unitNumber}`}
                       </p>
                       <h2 className="font-display text-2xl font-extrabold leading-tight">
                         {unit.title}
@@ -396,6 +480,16 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                       <span className="rounded-full bg-white/20 px-3 py-1 font-display text-xs font-extrabold">
                         {unitDone}/{unit.lessons.length}
                       </span>
+                      {unit.lessons[0] ? (
+                        <button
+                          type="button"
+                          onClick={() => openBriefForModule(unitIndex, unit.lessons[0]!.id)}
+                          className="focus-ring inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1 font-display text-[11px] font-extrabold text-white transition hover:bg-white/30"
+                        >
+                          <BookOpenIcon className="h-3.5 w-3.5" />
+                          Topics &amp; Guide
+                        </button>
+                      ) : null}
                       {unitAllDone ? (
                         <span className="rounded-full bg-white/90 px-2.5 py-0.5 font-display text-[10px] font-extrabold uppercase tracking-[0.12em] text-speeko-700">
                           Complete
@@ -416,7 +510,18 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
 
                 <ol className="flex w-full flex-col items-center">
                   {unit.lessons.map((lesson, lessonIndex) => {
-                    const status = lessonStatus(course, lesson.id, progress, stats);
+                    const baseStatus = lessonStatus(course, lesson.id, progress, stats);
+                    const status =
+                      experience === 'zero'
+                        ? baseStatus
+                        : isLessonCompleted(progress, course.id, lesson.id)
+                          ? 'completed'
+                          : lesson.id === nextLessonId
+                            ? 'current'
+                            : personalized.unlockedLessonIds.has(lesson.id)
+                              ? 'current'
+                              : 'locked';
+                    const isPrimaryCurrent = lesson.id === nextLessonId;
                     const x = lessonOffsets[lessonIndex] ?? 0;
                     const nextLessonInUnit = unit.lessons[lessonIndex + 1];
                     const nextX = lessonOffsets[lessonIndex + 1] ?? 0;
@@ -458,14 +563,14 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                           className="relative z-10 flex flex-col items-center"
                           style={{ transform: `translateX(${x}px)` }}
                         >
-                          {status === 'current' ? (
+                          {isPrimaryCurrent ? (
                             <span className="mb-1.5 inline-block animate-bob rounded-xl border-2 border-fox-600 bg-white px-3 py-1 font-display text-[11px] font-extrabold uppercase tracking-[0.14em] text-fox-700 shadow-card-sm">
                               Start now
                             </span>
                           ) : null}
 
                           <div className="relative flex items-center justify-center">
-                            {status === 'current' ? (
+                            {isPrimaryCurrent ? (
                               <>
                                 <span
                                   aria-hidden="true"
@@ -482,7 +587,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                                     patrol
                                     accessory={progress?.equippedCosmetic ?? null}
                                     lookAt={{ x: x > 0 ? 0.65 : -0.65, y: 0.15 }}
-                                    className="h-20 w-20 drop-shadow-sm sm:h-24 sm:w-24"
+                                    className="h-24 w-24 drop-shadow-sm sm:h-28 sm:w-28 md:h-32 md:w-32"
                                   />
                                 </div>
                               </>
@@ -499,6 +604,12 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                             ) : (
                               <Link
                                 href={`/lesson/${course.id}/${lesson.id}`}
+                                onClick={(event) => {
+                                  if (lessonIndex === 0 && status === 'current') {
+                                    event.preventDefault();
+                                    openBriefForModule(unitIndex, lesson.id);
+                                  }
+                                }}
                                 className="focus-ring group block rounded-full"
                                 aria-label={`${status === 'completed' ? 'Review' : 'Start'} lesson ${lesson.title}`}
                               >
@@ -619,7 +730,7 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
             mood={stats.allComplete ? 'celebrate' : 'idle'}
             accessory={progress?.equippedCosmetic ?? null}
             patrol
-            className="h-20 w-20 shrink-0"
+            className="h-24 w-24 shrink-0 md:h-32 md:w-32"
           />
           <div className="flex-1">
             <h2 className="font-display text-xl font-extrabold text-bark-800">
@@ -645,6 +756,20 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
           ) : null}
         </section>
       </main>
+
+      {pendingBrief ? (
+        <ModuleBriefCard
+          brief={pendingBrief.brief}
+          locale={course.locale}
+          variant="modal"
+          onClose={() => setPendingBrief(null)}
+          onContinue={() => {
+            const lessonId = pendingBrief.lessonId;
+            setPendingBrief(null);
+            router.push(`/lesson/${course.id}/${lessonId}?briefed=1`);
+          }}
+        />
+      ) : null}
     </div>
   );
 }

@@ -131,9 +131,9 @@ test('hub counts only learned cards and unlocks started units', async ({ page },
   await expect(page.getByRole('heading', { name: 'Make it stick.' })).toBeVisible();
   await expect(page.getByText('1 word ready')).toBeVisible();
   await expect(page.getByText(/3 learned words in rotation/)).toBeVisible();
-  await expect(page.getByText('1 of 8 units started')).toBeVisible();
+  await expect(page.getByText('1 of 11 units started')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Practice unit 2: Numbers' })).toBeVisible();
-  await expect(page.getByText('Finish a lesson to unlock practice')).toHaveCount(7);
+  await expect(page.getByText('Finish a lesson to unlock practice')).toHaveCount(10);
   await expect(page.getByRole('link', { name: 'Practice trouble words' })).toBeVisible();
   await screenshot(page, testInfo, 'practice-hub.png');
 });

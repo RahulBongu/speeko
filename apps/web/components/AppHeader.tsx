@@ -1,12 +1,19 @@
 import Link from 'next/link';
 import { AuthMenu } from './AuthMenu';
-import { SingingFox } from './SingingFox';
 import { FlameIcon, ShopIcon, TrophyIcon } from './icons';
 
 export function Brand({ href = '/' }: { href?: string }) {
   return (
     <Link href={href} className="focus-ring flex shrink-0 items-center gap-2 rounded-2xl" aria-label="Speeko home">
-      <SingingFox className="h-10 w-10" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/brand/speeko-flow-logo.png"
+        alt=""
+        aria-hidden="true"
+        width={44}
+        height={44}
+        className="h-10 w-10 shrink-0 select-none object-contain sm:h-11 sm:w-11"
+      />
       <span className="font-display text-2xl font-extrabold tracking-tight text-speeko-600">
         Speeko
       </span>

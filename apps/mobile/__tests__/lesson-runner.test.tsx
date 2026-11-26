@@ -45,6 +45,7 @@ jest.mock('../lib/mascot', () => ({
     sfxKey: null,
   })),
   playMascotVoice: jest.fn(async () => true),
+  playLetsGoSound: jest.fn(async () => true),
   stopMascotVoice: jest.fn(async () => {}),
   useMascotSpeaking: jest.fn(() => false),
   useMascotListening: jest.fn(() => false),

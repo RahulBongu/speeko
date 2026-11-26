@@ -63,6 +63,22 @@ export function setSoundEnabled(value: boolean): void {
 }
 
 const activeAudio = new Map<string, HTMLAudioElement>();
+let sfxPreloaded = false;
+
+export function preloadSounds(): void {
+  if (typeof window === 'undefined' || sfxPreloaded) return;
+  sfxPreloaded = true;
+  for (const [key, src] of Object.entries(SOUND_FILES)) {
+    if (activeAudio.has(key)) continue;
+    try {
+      const a = new Audio(src);
+      a.preload = 'auto';
+      activeAudio.set(key, a);
+    } catch {
+      // ignore
+    }
+  }
+}
 
 export function playSound(
   name: 'correct' | 'incorrect' | 'complete' | 'unit_complete',

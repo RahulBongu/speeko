@@ -3,7 +3,7 @@
   "locale": "ml",
   "sourceLocale": "en",
   "title": "മലയാളം — Starter",
-  "description": "Starter course for മലയാളം (Tier 1: greetings, numbers, essentials).",
+  "description": "Starter course for Malayalam (11 modules: greetings, numbers, essentials, family, food, places, colors, daily actions, nature, and conversations).",
   "difficulty": "A1",
   "version": "1.0.0",
   "units": [
@@ -48,7 +48,7 @@
             {
               "id": "ml-starter-u1-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"hello\"",
+              "prompt": "Type \"hello\" (in Malayalam)",
               "expected": [
                 "നമസ്കാരം"
               ]
@@ -233,7 +233,7 @@
             {
               "id": "ml-starter-u3-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"please\"",
+              "prompt": "Type \"please\" (in Malayalam)",
               "expected": [
                 "ദയവായി"
               ]
@@ -262,7 +262,7 @@
             {
               "id": "ml-starter-u3-l2-e2",
               "kind": "typeTranslation",
-              "prompt": "Type \"good morning\"",
+              "prompt": "Type \"good morning\" (in Malayalam)",
               "expected": [
                 "സുപ്രഭാതം"
               ]
@@ -337,10 +337,22 @@
             {
               "id": "ml-starter-u4-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"six\"",
+              "prompt": "Type \"six\" (in Malayalam)",
               "expected": [
                 "ആറ്"
               ]
+            },
+            {
+              "id": "ml-starter-u4-l1-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ആറ്",
+                "ഏഴ്",
+                "എട്ട്"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u4-l1-listen.mp3"
             }
           ]
         },
@@ -389,6 +401,18 @@
                   "പത്ത്"
                 ]
               ]
+            },
+            {
+              "id": "ml-starter-u4-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "പത്ത്",
+                "ഒമ്പത്",
+                "ആറ്"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u4-l2-listen.mp3"
             }
           ]
         }
@@ -439,7 +463,7 @@
             {
               "id": "ml-starter-u5-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"mother\"",
+              "prompt": "Type \"mother\" (in Malayalam)",
               "expected": [
                 "അമ്മ"
               ],
@@ -483,11 +507,23 @@
             {
               "id": "ml-starter-u5-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"brother\"",
+              "prompt": "Type \"brother\" (in Malayalam)",
               "expected": [
                 "സഹോദരൻ"
               ],
               "acceptTypos": true
+            },
+            {
+              "id": "ml-starter-u5-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "അമ്മ",
+                "അച്ഛൻ",
+                "സഹോദരി"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u5-l2-listen.mp3"
             }
           ]
         }
@@ -550,7 +586,7 @@
             {
               "id": "ml-starter-u6-l1-e4",
               "kind": "typeTranslation",
-              "prompt": "Type \"water\"",
+              "prompt": "Type \"water\" (in Malayalam)",
               "expected": [
                 "വെള്ളം"
               ],
@@ -609,6 +645,18 @@
                   "ചായ"
                 ]
               ]
+            },
+            {
+              "id": "ml-starter-u6-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "വെള്ളം",
+                "ചായ",
+                "പാൽ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u6-l2-listen.mp3"
             }
           ]
         }
@@ -659,7 +707,7 @@
             {
               "id": "ml-starter-u7-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"home\"",
+              "prompt": "Type \"home\" (in Malayalam)",
               "expected": [
                 "വീട്"
               ],
@@ -718,6 +766,18 @@
                   "റോഡ്"
                 ]
               ]
+            },
+            {
+              "id": "ml-starter-u7-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "വീട്",
+                "സ്കൂൾ",
+                "ചന്ത"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u7-l2-listen.mp3"
             }
           ]
         }
@@ -768,7 +828,7 @@
             {
               "id": "ml-starter-u8-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"red\"",
+              "prompt": "Type \"red\" (in Malayalam)",
               "expected": [
                 "ചുവപ്പ്"
               ],
@@ -825,6 +885,381 @@
                 [
                   "Blue",
                   "നീല"
+                ]
+              ]
+            },
+            {
+              "id": "ml-starter-u8-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ചുവപ്പ്",
+                "നീല",
+                "ഇന്ന്"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u8-l2-listen.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ml-starter-u9",
+      "title": "Daily Actions",
+      "description": "Come, go, sit, walk, read, write",
+      "order": 8,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Everyday action verbs for moving, reading, and writing in Malayalam.",
+      "lessons": [
+        {
+          "id": "ml-starter-u9-l1",
+          "title": "Come & Go",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Polite everyday requests: come, go, sit, walk.",
+          "exercises": [
+            {
+              "id": "ml-starter-u9-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Come",
+              "options": [
+                "വരൂ",
+                "പോകൂ",
+                "ഇരിക്കൂ",
+                "നടക്കൂ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u9-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Go",
+              "options": [
+                "പോകൂ",
+                "വരൂ",
+                "നടക്കൂ",
+                "ഇരിക്കൂ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u9-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ഇരിക്കൂ",
+                "വരൂ",
+                "പോകൂ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u9-l1-e3.mp3"
+            },
+            {
+              "id": "ml-starter-u9-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"come\" (in Malayalam)",
+              "expected": [
+                "വരൂ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "ml-starter-u9-l2",
+          "title": "Read & Write",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice study and daily verbs: read, write, walk.",
+          "exercises": [
+            {
+              "id": "ml-starter-u9-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Read",
+              "options": [
+                "വായിക്കൂ",
+                "എഴുതൂ",
+                "നടക്കൂ",
+                "ഇരിക്കൂ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u9-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "എഴുതൂ",
+                "വായിക്കൂ",
+                "നടക്കൂ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u9-l2-e2.mp3"
+            },
+            {
+              "id": "ml-starter-u9-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Read",
+                  "വായിക്കൂ"
+                ],
+                [
+                  "Write",
+                  "എഴുതൂ"
+                ],
+                [
+                  "Walk",
+                  "നടക്കൂ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ml-starter-u10",
+      "title": "Nature & Sky",
+      "description": "Sun, moon, rain, wind, trees",
+      "order": 9,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Talk about weather and nature around you in Malayalam.",
+      "lessons": [
+        {
+          "id": "ml-starter-u10-l1",
+          "title": "Sun & Rain",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Sun, moon, rain, and wind.",
+          "exercises": [
+            {
+              "id": "ml-starter-u10-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sun",
+              "options": [
+                "സൂര്യൻ",
+                "ചന്ദ്രൻ",
+                "മഴ",
+                "കാറ്റ്"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u10-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Moon",
+              "options": [
+                "ചന്ദ്രൻ",
+                "സൂര്യൻ",
+                "കാറ്റ്",
+                "മഴ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u10-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "മഴ",
+                "സൂര്യൻ",
+                "കാറ്റ്"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u10-l1-e3.mp3"
+            },
+            {
+              "id": "ml-starter-u10-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"sun\" (in Malayalam)",
+              "expected": [
+                "സൂര്യൻ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "ml-starter-u10-l2",
+          "title": "Earth & Trees",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Trees, flowers, rivers, and mountains.",
+          "exercises": [
+            {
+              "id": "ml-starter-u10-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Tree",
+              "options": [
+                "മരം",
+                "പൂവ്",
+                "നദി",
+                "മല"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u10-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "പൂവ്",
+                "മരം",
+                "നദി"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u10-l2-e2.mp3"
+            },
+            {
+              "id": "ml-starter-u10-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Tree",
+                  "മരം"
+                ],
+                [
+                  "River",
+                  "നദി"
+                ],
+                [
+                  "Mountain",
+                  "മല"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ml-starter-u11",
+      "title": "Conversations & Feelings",
+      "description": "Check-ins, friend, happy, see you soon",
+      "order": 10,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Put greetings and feelings into real everyday Malayalam conversation.",
+      "lessons": [
+        {
+          "id": "ml-starter-u11-l1",
+          "title": "Checking In",
+          "order": 0,
+          "difficulty": "A2",
+          "xpReward": 18,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Asking how someone is doing and replying warmly.",
+          "exercises": [
+            {
+              "id": "ml-starter-u11-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "How are you?",
+              "options": [
+                "സുഖമാണോ?",
+                "എനിക്ക് സുഖമാണ്",
+                "വീണ്ടും കാണാം",
+                "നല്ലത്"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u11-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "I am fine",
+              "options": [
+                "എനിക്ക് സുഖമാണ്",
+                "സുഖമാണോ?",
+                "വീണ്ടും കാണാം",
+                "സന്തോഷം"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u11-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "സുഖമാണോ?",
+                "എനിക്ക് സുഖമാണ്",
+                "വീണ്ടും കാണാം"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u11-l1-e3.mp3"
+            },
+            {
+              "id": "ml-starter-u11-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"happy\" (in Malayalam)",
+              "expected": [
+                "സന്തോഷം"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "ml-starter-u11-l2",
+          "title": "Warm Goodbyes",
+          "order": 1,
+          "difficulty": "A2",
+          "xpReward": 20,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Friendships and warm farewells.",
+          "exercises": [
+            {
+              "id": "ml-starter-u11-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Friend",
+              "options": [
+                "സുഹൃത്ത്",
+                "സന്തോഷം",
+                "നല്ലത്",
+                "എനിക്ക് സുഖമാണ്"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ml-starter-u11-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "വീണ്ടും കാണാം",
+                "സുഹൃത്ത്",
+                "നല്ലത്"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/ml-starter-u11-l2-e2.mp3"
+            },
+            {
+              "id": "ml-starter-u11-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Friend",
+                  "സുഹൃത്ത്"
+                ],
+                [
+                  "Happy",
+                  "സന്തോഷം"
+                ],
+                [
+                  "Good",
+                  "നല്ലത്"
                 ]
               ]
             }

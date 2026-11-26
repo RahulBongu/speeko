@@ -2,19 +2,24 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { AttemptAnswer, Course, Exercise, GradeResult, Lesson, ProgressState, Unit } from '@speeko/core';
+import type { AttemptAnswer, Course, Exercise, GradeResult, Lesson, MascotState, ProgressState, Unit } from '@speeko/core';
 import {
+  LOCALE_ENGLISH_NAME,
   applyReviews,
+  buildModuleBrief,
   eligibleExercises,
+  formatExercisePrompt,
   gradeExercise,
   lessonKey,
   recordCompletion,
+  resolveMascotTransition,
   reviewsForAttempt,
 } from '@speeko/core';
 import { apiFetch, ORIGIN } from '../../../lib/api';
 import { loadProgress, saveProgress } from '../../../lib/progress';
 import { ExerciseBody } from '../../../components/ExerciseBody';
 import { Fox } from '../../../components/Fox';
+import { InlineModuleBriefBanner } from '../../../components/ModuleBriefModal';
 import { Screen } from '../../../components/Screen';
 import {
   ProgressTrack,
@@ -62,8 +67,13 @@ function newAttemptId() {
 }
 
 export default function LessonPlayer() {
-  const { courseId, lessonId } = useLocalSearchParams<{ courseId: string; lessonId: string }>();
+  const { courseId, lessonId, briefed } = useLocalSearchParams<{
+    courseId: string;
+    lessonId: string;
+    briefed?: string;
+  }>();
   const router = useRouter();
+  const [briefDismissed, setBriefDismissed] = useState(briefed === '1');
 
   const [course, setCourse] = useState<Course | null>(null);
   const [lesson, setLesson] = useState<Lesson | null>(null);
@@ -86,22 +96,48 @@ export default function LessonPlayer() {
   const [priorProgress, setPriorProgress] = useState<ProgressState | null>(null);
   const [combo, setCombo] = useState(0);
   const [lookAt, setLookAt] = useState<{ x: number; y: number } | null>(null);
+  const [greetingIntro, setGreetingIntro] = useState(false);
+  const [learnerConsidering, setLearnerConsidering] = useState(false);
 
   const attemptId = useRef(newAttemptId());
   const shownAt = useRef(Date.now());
   const saving = useRef(false);
+  const greetingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const exercise = lesson?.exercises[index] ?? null;
   const mascotSpeaking = useMascotSpeaking();
   const mascotListening = useMascotListening();
-  const foxMood =
+  const feedbackMood: MascotState =
+    phase === 'feedback' && grade
+      ? grade.correct
+        ? combo >= 4
+          ? 'excited'
+          : combo === 3
+            ? 'surprise'
+            : 'correct_answer'
+        : 'incorrect_supportive'
+      : 'idle';
+  const summaryAccuracy =
+    outcomes.length === 0
+      ? 0
+      : outcomes.filter((outcome) => outcome.correct).length / outcomes.length;
+  const foxMood: MascotState =
     phase === 'feedback'
-      ? grade?.correct
-        ? 'correct'
-        : 'incorrect'
+      ? feedbackMood
       : phase === 'summary'
-        ? 'celebrate'
-        : 'idle';
+        ? completedUnitTitle || summaryAccuracy >= 1
+          ? 'victory_dance'
+          : 'lesson_complete'
+        : resolveMascotTransition(
+            greetingIntro ? 'greeting' : 'idle',
+            mascotSpeaking
+              ? 'talking'
+              : mascotListening
+                ? 'listening'
+                : learnerConsidering
+                  ? 'thinking'
+                  : 'idle',
+          );
 
   const load = useCallback(async () => {
     if (!courseId || !lessonId) {
@@ -151,6 +187,13 @@ export default function LessonPlayer() {
       setAwardedXp(0);
       attemptId.current = newAttemptId();
       shownAt.current = Date.now();
+      setLearnerConsidering(false);
+      setGreetingIntro(true);
+      if (greetingTimer.current) clearTimeout(greetingTimer.current);
+      greetingTimer.current = setTimeout(() => {
+        setGreetingIntro(false);
+        greetingTimer.current = null;
+      }, 950);
       setPhase('playing');
     } catch (error) {
       setLoadError(error instanceof Error ? error.message : 'Lesson could not load.');
@@ -166,6 +209,10 @@ export default function LessonPlayer() {
   // playback never continues behind another screen or after a deep-link exit.
   useEffect(() => {
     return () => {
+      if (greetingTimer.current) {
+        clearTimeout(greetingTimer.current);
+        greetingTimer.current = null;
+      }
       void stopMobileAudio();
       void stopMascotVoice();
       void stopMobileSound();
@@ -184,6 +231,8 @@ export default function LessonPlayer() {
     setSaveError(null);
     setAwardedXp(0);
     setCombo(0);
+    setLearnerConsidering(false);
+    setGreetingIntro(false);
     setLookAt(null);
     attemptId.current = newAttemptId();
     shownAt.current = Date.now();
@@ -334,6 +383,8 @@ export default function LessonPlayer() {
     setIndex(nextIndex);
     setDraft(initialDraft(nextExercise));
     setGrade(null);
+    setLearnerConsidering(false);
+    setGreetingIntro(false);
     setLookAt(null);
     shownAt.current = Date.now();
     setPhase('playing');
@@ -409,7 +460,7 @@ export default function LessonPlayer() {
           }}
         >
         <Fox
-          mood="celebrate"
+          mood={foxMood}
           accessory={cosmetic}
           combo={completedUnitTitle ? Math.max(5, combo) : combo}
           speaking={mascotSpeaking}
@@ -599,6 +650,19 @@ export default function LessonPlayer() {
 
       <Text style={{ fontWeight: '800', color: COLORS.muted, fontSize: 12 }}>{progressLabel}</Text>
 
+      {phase === 'playing' && course && unit && lesson?.order === 0 && index === 0 && !briefDismissed ? (
+        (() => {
+          const uIdx = course.units.findIndex((u) => u.id === unit.id);
+          const brief = uIdx >= 0 ? buildModuleBrief(course, uIdx) : null;
+          return brief ? (
+            <InlineModuleBriefBanner
+              brief={brief}
+              onContinue={() => setBriefDismissed(true)}
+            />
+          ) : null;
+        })()
+      ) : null}
+
       <TactileCard tone="white">
         <View
           style={{
@@ -620,7 +684,10 @@ export default function LessonPlayer() {
           {lesson?.title}
         </Text>
         <Text style={{ fontSize: 22, fontWeight: '900', color: COLORS.dark }}>
-          {exercise.prompt}
+          {formatExercisePrompt(
+            exercise,
+            course ? LOCALE_ENGLISH_NAME[course.locale] : 'target language',
+          )}
         </Text>
         {exercise.transliteration ? (
           <Text style={{ color: COLORS.muted, fontWeight: '600', marginTop: 2 }}>
@@ -635,6 +702,8 @@ export default function LessonPlayer() {
         draft={draft}
         onChange={(nextDraft) => {
           setDraft(nextDraft);
+          setGreetingIntro(false);
+          setLearnerConsidering(true);
           if (nextDraft.kind === 'choice' && nextDraft.index !== null) {
             setLookAt({ x: nextDraft.index % 2 === 0 ? -0.45 : 0.45, y: -0.65 });
           } else {

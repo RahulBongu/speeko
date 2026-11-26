@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   accuracy as sessionAccuracy,
+  buildModuleBrief,
   buildTroublePracticePlan,
   buildUnitPracticePlan,
   createSession,
@@ -12,9 +13,11 @@ import {
   gradeExercise,
   INITIAL_HEARTS,
   reduceSession,
+  resolveMascotTransition,
   type Course,
   type Exercise,
   type GradeResult,
+  type MascotState,
   type SessionState,
   type AttemptAnswer,
 } from '@speeko/core';
@@ -33,16 +36,18 @@ import { checkUnitPractice, isPracticeLessonId, practiceKind } from '@/lib/pract
 import { authClient } from '@/lib/auth-client';
 import { readKnownSignedInUserId } from '@/lib/auth-marker';
 import { submitLessonCompletion } from '@/lib/sync';
-import { isSoundEnabled, playSound, setSoundEnabled } from '@/lib/sound';
+import { isSoundEnabled, playSound, preloadSounds, setSoundEnabled } from '@/lib/sound';
 import {
   nextVariedMascotReaction,
   playMascotVoice,
+  preloadMascotAudio,
   useMascotListening,
   useMascotSpeaking,
 } from '@/lib/mascotVoice';
 import { useProgress } from '@/lib/use-progress';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
+import { ModuleBriefCard } from '@/components/lesson/ModuleBriefCard';
 import { ProgressBar } from '@/components/ProgressBar';
 import {
   ArrowLeftIcon,
@@ -73,7 +78,7 @@ function newAttemptId(): string {
 }
 
 /** Count from 0 to `target` — instantly under prefers-reduced-motion. */
-function useCountUp(target: number, duration = 900): number {
+function useCountUp(target: number, duration = 550): number {
   const [value, setValue] = useState(0);
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -172,6 +177,10 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Lesson conquered!');
   const [moduleCompleted, setModuleCompleted] = useState(false);
   const [lookAt, setLookAt] = useState<{ x: number; y: number } | null>(null);
+  const [greetingIntro, setGreetingIntro] = useState(false);
+  const [learnerConsidering, setLearnerConsidering] = useState(false);
+  const [briefDismissed, setBriefDismissed] = useState(false);
+  const greetingTimerRef = useRef<number | null>(null);
   const liveProgress = useProgress();
   const equippedCosmetic = liveProgress?.equippedCosmetic ?? null;
   const mascotSpeaking = useMascotSpeaking();
@@ -417,6 +426,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setAnsweredExercise(null);
     setXpGained(0);
     setModuleCompleted(false);
+    setLearnerConsidering(false);
+    setGreetingIntro(false);
     setLookAt(null);
     shownAt.current = Date.now();
     setPhase('playing');
@@ -433,6 +444,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setAnsweredExercise(null);
     setXpGained(0);
     setModuleCompleted(false);
+    setLearnerConsidering(false);
     setPostProgress(null);
     savedRef.current = false;
     savingRef.current = false;
@@ -588,9 +600,30 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     }
   }, []);
 
-  // Reset moduleCompleted flag cleanly when lesson route changes
+  // Brief friendly wave when a lesson starts; cleanly settles back to idle
+  // without delaying interaction or stacking animations.
   useEffect(() => {
-    setModuleCompleted(false);
+    preloadMascotAudio();
+    preloadSounds();
+    if (typeof window !== 'undefined') {
+      const qs = new URLSearchParams(window.location.search);
+      setBriefDismissed(qs.get('briefed') === '1');
+    } else {
+      setBriefDismissed(false);
+    }
+    setGreetingIntro(true);
+    setLearnerConsidering(false);
+    if (greetingTimerRef.current !== null) window.clearTimeout(greetingTimerRef.current);
+    greetingTimerRef.current = window.setTimeout(() => {
+      setGreetingIntro(false);
+      greetingTimerRef.current = null;
+    }, 950);
+    return () => {
+      if (greetingTimerRef.current !== null) {
+        window.clearTimeout(greetingTimerRef.current);
+        greetingTimerRef.current = null;
+      }
+    };
   }, [courseId, lessonId]);
 
   if (phase === 'loading') {
@@ -639,8 +672,29 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     session.answers.length + (phase === 'playing' ? 1 : 0),
     total,
   );
-  const mood =
-    phase === 'feedback' ? (grade?.correct ? 'happy' : 'sad') : 'idle';
+  const activeFeedbackMood: MascotState =
+    phase === 'feedback' && grade
+      ? grade.correct
+        ? session.combo >= 4
+          ? 'excited'
+          : session.combo === 3
+            ? 'surprise'
+            : 'correct_answer'
+        : 'incorrect_supportive'
+      : 'idle';
+  const mood: MascotState =
+    phase === 'feedback'
+      ? activeFeedbackMood
+      : resolveMascotTransition(
+          greetingIntro ? 'greeting' : 'idle',
+          mascotSpeaking
+            ? 'talking'
+            : mascotListening
+              ? 'listening'
+              : learnerConsidering
+                ? 'thinking'
+                : 'idle',
+        );
   const tip = TIPS[session.index % TIPS.length] ?? TIPS[0];
 
   return (
@@ -720,7 +774,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
       ) : (
         <main
           className={`mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pt-6 sm:px-6 ${
-            phase === 'feedback' ? 'pb-44' : 'pb-10'
+            phase === 'feedback' ? 'pb-48 sm:pb-44' : 'pb-10'
           }`}
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
@@ -731,6 +785,21 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
               {entry.unit.title} · {entry.lesson.title}
             </p>
           </div>
+
+          {phase === 'playing' && !practiceRoute && entry.lesson.order === 0 && session.index === 0 && !briefDismissed ? (
+            (() => {
+              const unitIdx = course.units.findIndex((u) => u.id === entry.unit.id);
+              const brief = unitIdx >= 0 ? buildModuleBrief(course, unitIdx) : null;
+              return brief ? (
+                <ModuleBriefCard
+                  brief={brief}
+                  locale={course.locale}
+                  variant="inline"
+                  onContinue={() => setBriefDismissed(true)}
+                />
+              ) : null;
+            })()
+          ) : null}
 
           <div
             className="card min-h-[380px] p-5 sm:p-8"
@@ -756,6 +825,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
                 draft={draft}
                 onChange={(nextDraft) => {
                   setDraft(nextDraft);
+                  setGreetingIntro(false);
+                  setLearnerConsidering(true);
                   if (nextDraft.kind === 'choice' && nextDraft.index !== null) {
                     setLookAt({ x: nextDraft.index % 2 === 0 ? -0.45 : 0.45, y: -0.65 });
                   } else if (nextDraft.kind === 'pairs') {
@@ -772,7 +843,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           </div>
 
           {phase === 'playing' ? (
-            <div className="mt-5 flex items-center gap-3">
+            <div className="mt-5 flex items-center gap-3 sm:gap-4">
               <Fox
                 mood={mood}
                 accessory={equippedCosmetic}
@@ -780,7 +851,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
                 listening={mascotListening}
                 lookAt={lookAt}
                 combo={session.combo}
-                className="h-14 w-14 shrink-0 sm:h-16 sm:w-16"
+                className="h-16 w-16 shrink-0 sm:h-20 sm:w-20 md:h-28 md:w-28"
               />
               <div className="relative flex-1 rounded-2xl border-2 border-cream-200 bg-white px-4 py-2.5 text-sm font-semibold text-bark-500 shadow-card-sm">
                 <span
@@ -813,6 +884,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
       {phase === 'feedback' && grade ? (
         <FeedbackBar
           correct={grade.correct}
+          mood={activeFeedbackMood}
           expected={grade.expected}
           phrase={feedbackPhrase}
           accessory={equippedCosmetic}
@@ -865,6 +937,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
 
 function FeedbackBar({
   correct,
+  mood,
   expected,
   phrase,
   accessory,
@@ -875,6 +948,7 @@ function FeedbackBar({
   onContinue,
 }: {
   correct: boolean;
+  mood: MascotState;
   expected: string | null;
   phrase: string;
   accessory: ProgressState['equippedCosmetic'];
@@ -894,10 +968,10 @@ function FeedbackBar({
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-start gap-3">
           <Fox
-            mood={correct ? 'happy' : 'sad'}
+            mood={mood}
             accessory={accessory}
             combo={combo}
-            className="h-14 w-14 shrink-0"
+            className="h-16 w-16 shrink-0 sm:h-20 sm:w-20 md:h-28 md:w-28"
           />
           <div>
             <div className="flex flex-wrap items-baseline gap-2">
@@ -1021,14 +1095,14 @@ function SummaryScreen({
     <main className="relative mx-auto w-full max-w-2xl flex-1 px-4 py-10 sm:px-6">
       {showModuleBanner ? <Confetti /> : null}
       <div className="text-center">
-        <div className="relative mx-auto h-44 w-44">
+        <div className="relative mx-auto h-40 w-40 md:h-52 md:w-52">
           <div className="absolute inset-0 animate-pop rounded-full bg-gradient-to-br from-fox-300/70 to-speeko-200/70 blur-xl" />
           <Fox
-            mood="celebrate"
+            mood={showModuleBanner || accuracy >= 1 ? 'victory_dance' : 'lesson_complete'}
             accessory={accessory}
             combo={showModuleBanner ? Math.max(5, session.maxCombo) : session.maxCombo}
             speaking={mascotSpeaking}
-            className="relative h-44 w-44"
+            className="relative h-40 w-40 md:h-52 md:w-52"
           />
         </div>
         {showModuleBanner ? (

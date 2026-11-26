@@ -3,7 +3,7 @@
   "locale": "gu",
   "sourceLocale": "en",
   "title": "ગુજરાતી — Starter",
-  "description": "Starter course for ગુજરાતી (Tier 1: greetings, numbers, essentials).",
+  "description": "Starter course for Gujarati (11 modules: greetings, numbers, essentials, family, food, places, colors, daily actions, nature, and conversations).",
   "difficulty": "A1",
   "version": "1.0.0",
   "units": [
@@ -48,7 +48,7 @@
             {
               "id": "gu-starter-u1-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"hello\"",
+              "prompt": "Type \"hello\" (in Gujarati)",
               "expected": [
                 "નમસ્તે"
               ]
@@ -233,7 +233,7 @@
             {
               "id": "gu-starter-u3-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"please\"",
+              "prompt": "Type \"please\" (in Gujarati)",
               "expected": [
                 "કૃપા કરીને"
               ]
@@ -262,7 +262,7 @@
             {
               "id": "gu-starter-u3-l2-e2",
               "kind": "typeTranslation",
-              "prompt": "Type \"good morning\"",
+              "prompt": "Type \"good morning\" (in Gujarati)",
               "expected": [
                 "સુપ્રભાત"
               ]
@@ -337,10 +337,22 @@
             {
               "id": "gu-starter-u4-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"six\"",
+              "prompt": "Type \"six\" (in Gujarati)",
               "expected": [
                 "છ"
               ]
+            },
+            {
+              "id": "gu-starter-u4-l1-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "છ",
+                "સાત",
+                "આઠ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u4-l1-listen.mp3"
             }
           ]
         },
@@ -389,6 +401,18 @@
                   "દસ"
                 ]
               ]
+            },
+            {
+              "id": "gu-starter-u4-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "દસ",
+                "નવ",
+                "છ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u4-l2-listen.mp3"
             }
           ]
         }
@@ -439,7 +463,7 @@
             {
               "id": "gu-starter-u5-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"mother\"",
+              "prompt": "Type \"mother\" (in Gujarati)",
               "expected": [
                 "મા"
               ],
@@ -483,11 +507,23 @@
             {
               "id": "gu-starter-u5-l2-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"brother\"",
+              "prompt": "Type \"brother\" (in Gujarati)",
               "expected": [
                 "ભાઈ"
               ],
               "acceptTypos": true
+            },
+            {
+              "id": "gu-starter-u5-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "મા",
+                "પિતા",
+                "બહેન"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u5-l2-listen.mp3"
             }
           ]
         }
@@ -550,7 +586,7 @@
             {
               "id": "gu-starter-u6-l1-e4",
               "kind": "typeTranslation",
-              "prompt": "Type \"water\"",
+              "prompt": "Type \"water\" (in Gujarati)",
               "expected": [
                 "પાણી"
               ],
@@ -609,6 +645,18 @@
                   "ચા"
                 ]
               ]
+            },
+            {
+              "id": "gu-starter-u6-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "પાણી",
+                "ચા",
+                "દૂધ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u6-l2-listen.mp3"
             }
           ]
         }
@@ -659,7 +707,7 @@
             {
               "id": "gu-starter-u7-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"home\"",
+              "prompt": "Type \"home\" (in Gujarati)",
               "expected": [
                 "ઘર"
               ],
@@ -718,6 +766,18 @@
                   "રસ્તો"
                 ]
               ]
+            },
+            {
+              "id": "gu-starter-u7-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ઘર",
+                "શાળા",
+                "બજાર"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u7-l2-listen.mp3"
             }
           ]
         }
@@ -768,7 +828,7 @@
             {
               "id": "gu-starter-u8-l1-e3",
               "kind": "typeTranslation",
-              "prompt": "Type \"red\"",
+              "prompt": "Type \"red\" (in Gujarati)",
               "expected": [
                 "લાલ"
               ],
@@ -825,6 +885,381 @@
                 [
                   "Blue",
                   "વાદળી"
+                ]
+              ]
+            },
+            {
+              "id": "gu-starter-u8-l2-listen",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "લાલ",
+                "વાદળી",
+                "આજે"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u8-l2-listen.mp3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gu-starter-u9",
+      "title": "Daily Actions",
+      "description": "Come, go, sit, walk, read, write",
+      "order": 8,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Everyday action verbs for moving, reading, and writing in Gujarati.",
+      "lessons": [
+        {
+          "id": "gu-starter-u9-l1",
+          "title": "Come & Go",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Polite everyday requests: come, go, sit, walk.",
+          "exercises": [
+            {
+              "id": "gu-starter-u9-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Come",
+              "options": [
+                "આવો",
+                "જાઓ",
+                "બેસો",
+                "ચાલો"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u9-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Go",
+              "options": [
+                "જાઓ",
+                "આવો",
+                "ચાલો",
+                "બેસો"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u9-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "બેસો",
+                "આવો",
+                "જાઓ"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u9-l1-e3.mp3"
+            },
+            {
+              "id": "gu-starter-u9-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"come\" (in Gujarati)",
+              "expected": [
+                "આવો"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "gu-starter-u9-l2",
+          "title": "Read & Write",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice study and daily verbs: read, write, walk.",
+          "exercises": [
+            {
+              "id": "gu-starter-u9-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Read",
+              "options": [
+                "વાંચો",
+                "લખો",
+                "ચાલો",
+                "બેસો"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u9-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "લખો",
+                "વાંચો",
+                "ચાલો"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u9-l2-e2.mp3"
+            },
+            {
+              "id": "gu-starter-u9-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Read",
+                  "વાંચો"
+                ],
+                [
+                  "Write",
+                  "લખો"
+                ],
+                [
+                  "Walk",
+                  "ચાલો"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gu-starter-u10",
+      "title": "Nature & Sky",
+      "description": "Sun, moon, rain, wind, trees",
+      "order": 9,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Talk about weather and nature around you in Gujarati.",
+      "lessons": [
+        {
+          "id": "gu-starter-u10-l1",
+          "title": "Sun & Rain",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Sun, moon, rain, and wind.",
+          "exercises": [
+            {
+              "id": "gu-starter-u10-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sun",
+              "options": [
+                "સૂર્ય",
+                "ચંદ્ર",
+                "વરસાદ",
+                "પવન"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u10-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Moon",
+              "options": [
+                "ચંદ્ર",
+                "સૂર્ય",
+                "પવન",
+                "વરસાદ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u10-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "વરસાદ",
+                "સૂર્ય",
+                "પવન"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u10-l1-e3.mp3"
+            },
+            {
+              "id": "gu-starter-u10-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"sun\" (in Gujarati)",
+              "expected": [
+                "સૂર્ય"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "gu-starter-u10-l2",
+          "title": "Earth & Trees",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Trees, flowers, rivers, and mountains.",
+          "exercises": [
+            {
+              "id": "gu-starter-u10-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Tree",
+              "options": [
+                "ઝાડ",
+                "ફૂલ",
+                "નદી",
+                "પહાડ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u10-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ફૂલ",
+                "ઝાડ",
+                "નદી"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u10-l2-e2.mp3"
+            },
+            {
+              "id": "gu-starter-u10-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Tree",
+                  "ઝાડ"
+                ],
+                [
+                  "River",
+                  "નદી"
+                ],
+                [
+                  "Mountain",
+                  "પહાડ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gu-starter-u11",
+      "title": "Conversations & Feelings",
+      "description": "Check-ins, friend, happy, see you soon",
+      "order": 10,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Put greetings and feelings into real everyday Gujarati conversation.",
+      "lessons": [
+        {
+          "id": "gu-starter-u11-l1",
+          "title": "Checking In",
+          "order": 0,
+          "difficulty": "A2",
+          "xpReward": 18,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Asking how someone is doing and replying warmly.",
+          "exercises": [
+            {
+              "id": "gu-starter-u11-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "How are you?",
+              "options": [
+                "તમે કેમ છો?",
+                "હું મજામાં છું",
+                "ફરી મળીશું",
+                "સારું"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u11-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "I am fine",
+              "options": [
+                "હું મજામાં છું",
+                "તમે કેમ છો?",
+                "ફરી મળીશું",
+                "ખુશ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u11-l1-e3",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "તમે કેમ છો?",
+                "હું મજામાં છું",
+                "ફરી મળીશું"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u11-l1-e3.mp3"
+            },
+            {
+              "id": "gu-starter-u11-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"happy\" (in Gujarati)",
+              "expected": [
+                "ખુશ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "gu-starter-u11-l2",
+          "title": "Warm Goodbyes",
+          "order": 1,
+          "difficulty": "A2",
+          "xpReward": 20,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Friendships and warm farewells.",
+          "exercises": [
+            {
+              "id": "gu-starter-u11-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Friend",
+              "options": [
+                "મિત્ર",
+                "ખુશ",
+                "સારું",
+                "હું મજામાં છું"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "gu-starter-u11-l2-e2",
+              "kind": "listenChoose",
+              "prompt": "Listen and choose",
+              "options": [
+                "ફરી મળીશું",
+                "મિત્ર",
+                "સારું"
+              ],
+              "answerIndex": 0,
+              "audioUrl": "/courses/audio/gu-starter-u11-l2-e2.mp3"
+            },
+            {
+              "id": "gu-starter-u11-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Friend",
+                  "મિત્ર"
+                ],
+                [
+                  "Happy",
+                  "ખુશ"
+                ],
+                [
+                  "Good",
+                  "સારું"
                 ]
               ]
             }

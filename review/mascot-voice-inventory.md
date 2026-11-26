@@ -1,6 +1,6 @@
 # Speeko mascot voice & sound inventory
 
-Both web (`/mascot/*.mp3`, `/sounds/*.mp3`) and mobile (`assets/mascot/*.mp3`, `assets/sounds/*.mp3`) bundle 33 varied mascot voice lines and 14 harmonic chime SFX clips.
+Both web (`/mascot/*.mp3`, `/sounds/*.mp3`) and mobile (`assets/mascot/*.mp3`, `assets/sounds/*.mp3`) bundle 34 varied mascot voice lines and 14 harmonic chime SFX clips.
 Voice lines are synthetic speech generated locally via Flow MCP Kokoro TTS (`af_heart`, `af_bella`, `af_emma`/`bf_emma`, `am_puck`, 0 credits), not a native-speaker recording.
 
 | Key | Reaction phrase | Web size | Mobile size | Duration (s) | Valid |
@@ -38,5 +38,6 @@ Voice lines are synthetic speech generated locally via Flow MCP Kokoro TTS (`af_
 | discovery-2 | Ready for a fun new challenge? Let's dive in! | 21263 B | 21263 B | 2.55 | yes |
 | encouragement | Let's figure it out together, step by step. | 19343 B | 19343 B | 2.31 | yes |
 | encouragement-2 | Every single try makes your memory stronger. | 19727 B | 19727 B | 2.37 | yes |
+| lets-go | Let's go! | 4943 B | 4943 B | 0.70 | yes |
 
-Validated on 2026-11-26T09:59:50.956Z. ALL CHECKS PASS
+Validated on 2026-11-26T14:26:24.979Z. ALL CHECKS PASS

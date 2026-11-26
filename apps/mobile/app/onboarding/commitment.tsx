@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { browserTimeZone } from '@speeko/core';
+import { browserTimeZone, normalizeExperienceLevel } from '@speeko/core';
 import { completeOnboarding, readOnboardingDraft } from '../../lib/onboarding';
 import { loadProgress, saveProgress } from '../../lib/progress';
 import { OnboardingFrame } from '../../components/onboarding/OnboardingFrame';
@@ -59,6 +59,15 @@ export default function CommitmentStep() {
     const current = await loadProgress();
     const timeZone = browserTimeZone() ?? current.timeZone ?? null;
     const courseId = `${draft.locale}-starter`;
+    const experience = normalizeExperienceLevel(draft.level);
+    const startSuffix =
+      experience === 'some'
+        ? 'u3-l1'
+        : experience === 'returning'
+          ? 'u5-l1'
+          : experience === 'conversant'
+            ? 'u11-l1'
+            : 'u1-l1';
     await saveProgress({
       ...current,
       dailyGoal: draft.dailyGoal,
@@ -67,7 +76,7 @@ export default function CommitmentStep() {
     });
     // Guest semantics: progress stays on this device, so we deliberately do
     // not call syncProgress() here — the account merge happens at sign-in.
-    router.push(`/lesson/${courseId}/${courseId}-u1-l1`);
+    router.push(`/lesson/${courseId}/${courseId}-${startSuffix}`);
   }
 
   return (

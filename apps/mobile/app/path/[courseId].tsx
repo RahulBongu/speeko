@@ -2,13 +2,24 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import Svg, { Path as SvgPath } from 'react-native-svg';
-import type { Course, Lesson, ProgressState } from '@speeko/core';
-import { LOCALE_LABEL, eligibleExercises, lessonKey } from '@speeko/core';
+import type { Course, ExperienceLevel, Lesson, ModuleBrief, ProgressState } from '@speeko/core';
+import {
+  EXPERIENCE_LEVELS,
+  EXPERIENCE_PROFILES,
+  LOCALE_LABEL,
+  buildModuleBrief,
+  eligibleExercises,
+  lessonKey,
+  normalizeExperienceLevel,
+  personalizeCoursePath,
+} from '@speeko/core';
 import { apiFetch } from '../../lib/api';
 import { loadProgress } from '../../lib/progress';
+import { readExperienceLevel, saveExperienceLevel } from '../../lib/onboarding';
 import { useOnFocus } from '../../lib/useOnFocus';
 import { AppNav } from '../../components/AppNav';
 import { Screen } from '../../components/Screen';
+import { ModuleBriefModal } from '../../components/ModuleBriefModal';
 import {
   ProgressTrack,
   SpeekoAppBar,
@@ -200,6 +211,11 @@ export default function Path() {
   const router = useRouter();
   const [course, setCourse] = useState<Course | null>(null);
   const [progress, setProgress] = useState<ProgressState | null>(null);
+  const [experience, setExperience] = useState<ExperienceLevel>('zero');
+  const [pendingBrief, setPendingBrief] = useState<{
+    brief: ModuleBrief;
+    lessonId: string;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -231,9 +247,10 @@ export default function Path() {
     setLoading(true);
     setError(null);
     try {
-      const [response, saved] = await Promise.all([
+      const [response, saved, savedLevel] = await Promise.all([
         apiFetch(`/api/courses/${courseId}`),
         loadProgress(),
+        readExperienceLevel(),
       ]);
       if (!response.ok) {
         throw new Error(
@@ -244,6 +261,7 @@ export default function Path() {
       }
       setCourse((await response.json()) as Course);
       setProgress(saved);
+      setExperience(normalizeExperienceLevel(savedLevel));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not load course.');
     } finally {
@@ -282,20 +300,33 @@ export default function Path() {
   }
 
   // Only the first lesson is open, then each lesson unlocks when the previous
-  // one is completed. This mirrors the web path exactly.
+  // one is completed — or follows the personalized order when experience != 'zero'.
   const flat = course.units.flatMap((unit) => unit.lessons);
   const completedCount = flat.filter(
     (lesson) => Boolean(progress?.completed[lessonKey(course.id, lesson.id)]),
   ).length;
-  const firstIncomplete = flat.find(
-    (lesson) => !progress?.completed[lessonKey(course.id, lesson.id)],
+  const completedSet = new Set(
+    flat
+      .filter((lesson) => Boolean(progress?.completed[lessonKey(course.id, lesson.id)]))
+      .map((l) => l.id),
   );
-  const currentId = firstIncomplete?.id ?? flat[flat.length - 1]?.id ?? null;
+  const personalized = personalizeCoursePath(course, experience, completedSet);
+  const currentId = personalized.recommendedLessonId ?? flat[flat.length - 1]?.id ?? null;
 
   function statusOf(lessonId: string): LessonState {
     if (progress?.completed[lessonKey(course!.id, lessonId)]) return 'completed';
     if (lessonId === currentId) return 'current';
+    if (experience !== 'zero' && personalized.unlockedLessonIds.has(lessonId)) return 'current';
     return 'locked';
+  }
+
+  function openBrief(originalUnitIdx: number, lessonId: string) {
+    const brief = buildModuleBrief(course!, originalUnitIdx);
+    if (!brief) {
+      router.push(`/lesson/${course!.id}/${lessonId}`);
+      return;
+    }
+    setPendingBrief({ brief, lessonId });
   }
 
   return (
@@ -320,6 +351,58 @@ export default function Path() {
         lessons complete
       </Text>
 
+      <View
+        style={{
+          borderRadius: 16,
+          borderWidth: 1.5,
+          borderColor: COLORS.line,
+          backgroundColor: COLORS.white,
+          padding: 12,
+          gap: 8,
+        }}
+      >
+        <Text style={{ fontSize: 10, fontWeight: '900', color: COLORS.muted, letterSpacing: 0.8 }}>
+          EXPERIENCE LEVEL · {EXPERIENCE_PROFILES[experience].label.toUpperCase()}
+        </Text>
+        <Text style={{ fontSize: 12, fontWeight: '600', color: COLORS.muted }}>
+          {EXPERIENCE_PROFILES[experience].description}
+        </Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+          {EXPERIENCE_LEVELS.map((lvl) => {
+            const active = experience === lvl;
+            return (
+              <Pressable
+                key={lvl}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
+                onPress={() => {
+                  setExperience(lvl);
+                  void saveExperienceLevel(lvl, course.locale);
+                }}
+                style={{
+                  borderRadius: 10,
+                  borderWidth: 1.5,
+                  borderColor: active ? COLORS.green : COLORS.line,
+                  backgroundColor: active ? COLORS.greenSoft : COLORS.cream,
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: '900',
+                    color: active ? COLORS.greenDark : COLORS.dark,
+                  }}
+                >
+                  {EXPERIENCE_PROFILES[lvl].shortLabel}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
       {course.reviewStatus === 'draft' ? (
         <View
           style={{
@@ -337,13 +420,15 @@ export default function Path() {
         </View>
       ) : null}
 
-      {course.units.map((unit, unitIndex) => {
+      {personalized.units.map((unitEntry, displayPos) => {
+        const unit = unitEntry.unit;
+        const unitIndex = unitEntry.originalIndex;
         const unitDone = unit.lessons.filter((lesson) =>
           Boolean(progress?.completed[lessonKey(course.id, lesson.id)]),
         ).length;
         const unitAllDone = unit.lessons.length > 0 && unitDone === unit.lessons.length;
-        const hasNextUnit = unitIndex < course.units.length - 1;
-        const nextUnit = hasNextUnit ? course.units[unitIndex + 1]! : null;
+        const hasNextUnit = displayPos < personalized.units.length - 1;
+        const nextUnit = hasNextUnit ? personalized.units[displayPos + 1]!.unit : null;
         const firstLesson = unit.lessons[0];
         const firstGlobalIdx = firstLesson
           ? Math.max(0, flat.findIndex((entry) => entry.id === firstLesson.id))
@@ -376,7 +461,7 @@ export default function Path() {
                   }}
                 >
                   <Text style={{ fontSize: 9, fontWeight: '900', color: COLORS.white }}>
-                    MODULE {unitIndex + 1} · UNIT {unitIndex + 1}
+                    MODULE {unitIndex + 1} · {unitEntry.trackRole === 'recommended' ? 'RECOMMENDED' : unitEntry.trackRole === 'warmup' ? 'WARMUP' : `UNIT ${unitIndex + 1}`}
                   </Text>
                 </View>
                 <Pressable
@@ -448,7 +533,13 @@ export default function Path() {
                     index={globalIndex}
                     state={lessonState}
                     accessory={progress?.equippedCosmetic ?? null}
-                    onPress={() => router.push(`/lesson/${course.id}/${lesson.id}`)}
+                    onPress={() => {
+                      if (lessonIndex === 0 && lessonState === 'current') {
+                        openBrief(unitIndex, lesson.id);
+                      } else {
+                        router.push(`/lesson/${course.id}/${lesson.id}`);
+                      }
+                    }}
                     onCurrentLayout={
                       lesson.id === currentId
                         ? (nodeY) => {
@@ -500,7 +591,7 @@ export default function Path() {
                   }}
                 >
                   {unitAllDone ? `Module ${unitIndex + 1} mastered · ` : ''}
-                  Next: Unit {unitIndex + 2} · {nextUnit.title}
+                  Next: {nextUnit.title}
                 </Text>
               </View>
             ) : null}
@@ -531,6 +622,16 @@ export default function Path() {
       </TactilePressable>
       </ScrollView>
       <AppNav active="learn" />
+      <ModuleBriefModal
+        visible={pendingBrief !== null}
+        brief={pendingBrief?.brief ?? null}
+        onClose={() => setPendingBrief(null)}
+        onContinue={() => {
+          const target = pendingBrief?.lessonId;
+          setPendingBrief(null);
+          if (target) router.push(`/lesson/${course.id}/${target}?briefed=1`);
+        }}
+      />
     </Screen>
   );
 }
