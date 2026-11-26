@@ -197,6 +197,7 @@ export default function ShopClient() {
           <div className="card flex flex-col items-center p-6 text-center">
             <Fox
               mood="happy"
+              patrol
               className="h-40 w-40"
               accessory={equippedAccessory}
             />

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { SiteHeader } from '@/components/AppHeader';
 import { Fox } from '@/components/Fox';
-import { authClient } from '@/lib/auth-client';
+import { API_URL, authClient } from '@/lib/auth-client';
 
 interface Profile {
   userId: string;
@@ -37,7 +37,7 @@ export default function ProfileClient() {
     let active = true;
     setLoading(true);
     setError(null);
-    fetch(`/api/profiles/${encodeURIComponent(username)}`, { credentials: 'include' })
+    fetch(`${API_URL}/api/profiles/${encodeURIComponent(username)}`, { credentials: 'include' })
       .then(async (response) => {
         if (!response.ok) throw new Error(`Profile could not load (status ${response.status}).`);
         return (await response.json()) as Profile;
@@ -64,7 +64,7 @@ export default function ProfileClient() {
     setFollowBusy(true);
     setFollowError(null);
     try {
-      const response = await fetch('/api/follows', {
+      const response = await fetch(`${API_URL}/api/follows`, {
         method: following ? 'DELETE' : 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

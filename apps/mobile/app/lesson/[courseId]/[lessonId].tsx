@@ -2,9 +2,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { AttemptAnswer, Course, Exercise, GradeResult, Lesson } from '@speeko/core';
+import type { AttemptAnswer, Course, Exercise, GradeResult, Lesson, ProgressState } from '@speeko/core';
 import {
   applyReviews,
+  createMascotVarietyPicker,
   eligibleExercises,
   gradeExercise,
   recordCompletion,
@@ -30,6 +31,7 @@ import {
 } from '../../../lib/exercise';
 import { COLORS } from '../../../lib/theme';
 import { playMascotVoice, stopMascotVoice, useMascotListening, useMascotSpeaking } from '../../../lib/mascot';
+import { playMobileSound, stopMobileSound } from '../../../lib/sound';
 import { stopMobileAudio } from '../../../lib/audio';
 
 type Phase = 'loading' | 'error' | 'playing' | 'feedback' | 'summary' | 'hearts';
@@ -70,10 +72,14 @@ export default function LessonPlayer() {
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
   const [awardedXp, setAwardedXp] = useState(0);
+  const [cosmetic, setCosmetic] = useState<ProgressState['equippedCosmetic']>(null);
+  const [feedbackPhrase, setFeedbackPhrase] = useState('');
+  const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Lesson conquered!');
 
   const attemptId = useRef(newAttemptId());
   const shownAt = useRef(Date.now());
   const saving = useRef(false);
+  const varietyPicker = useRef(createMascotVarietyPicker());
 
   const exercise = lesson?.exercises[index] ?? null;
   const mascotSpeaking = useMascotSpeaking();
@@ -96,7 +102,11 @@ export default function LessonPlayer() {
     setPhase('loading');
     setLoadError(null);
     try {
-      const response = await apiFetch(`/api/courses/${courseId}`);
+      const [response, savedProgress] = await Promise.all([
+        apiFetch(`/api/courses/${courseId}`),
+        loadProgress().catch(() => null),
+      ]);
+      if (savedProgress?.equippedCosmetic) setCosmetic(savedProgress.equippedCosmetic);
       if (!response.ok) throw new Error(`Lesson could not load (${response.status}).`);
       const loaded = (await response.json()) as Course;
       const found =
@@ -137,12 +147,13 @@ export default function LessonPlayer() {
     void load();
   }, [load]);
 
-  // Stop any lesson audio or mascot voice when this screen goes away, so
+  // Stop any lesson audio, SFX, or mascot voice when this screen goes away, so
   // playback never continues behind another screen or after a deep-link exit.
   useEffect(() => {
     return () => {
       void stopMobileAudio();
       void stopMascotVoice();
+      void stopMobileSound();
     };
   }, []);
 
@@ -172,7 +183,12 @@ export default function LessonPlayer() {
     setAnswers((previous) => [...previous, { exerciseId: exercise.id, input, ms: elapsed }]);
     setOutcomes((previous) => [...previous, { exerciseId: exercise.id, correct: result.correct }]);
     setGrade(result);
-    playMascotVoice(result.correct ? 'correct_answer' : 'incorrect_answer');
+    const pick = varietyPicker.current.pick(
+      result.correct ? 'correct_answer' : 'incorrect_answer',
+    );
+    setFeedbackPhrase(pick.phrase);
+    void playMobileSound(result.correct ? 'correct' : 'incorrect', pick.sfxKey);
+    void playMascotVoice(pick.reactionId, pick.audioKey);
     if (!result.correct) {
       setHearts((current) => Math.max(0, current - 1));
     }
@@ -215,7 +231,6 @@ export default function LessonPlayer() {
         await saveProgress(applyReviews(completed, reviews, Date.now()));
         setAwardedXp(localXp);
         setSaveState('local');
-        playMascotVoice('lesson_complete');
         return;
       }
 
@@ -248,7 +263,6 @@ export default function LessonPlayer() {
             : lesson.xpReward,
       );
       setSaveState(rewarded ? 'saved' : 'practice');
-      playMascotVoice('lesson_complete');
     } catch {
       setSaveError('Could not reach Speeko. The lesson is finished, but your reward was not saved yet.');
       setSaveState('error');
@@ -270,10 +284,16 @@ export default function LessonPlayer() {
   const next = useCallback(() => {
     if (phase !== 'feedback' || !lesson) return;
     if (hearts <= 0) {
+      const encouragePick = varietyPicker.current.pick('encouragement');
+      void playMascotVoice('encouragement', encouragePick.audioKey);
       setPhase('hearts');
       return;
     }
     if (index + 1 >= lesson.exercises.length) {
+      const completePick = varietyPicker.current.pick('lesson_complete');
+      setSummaryPhrase(completePick.phrase);
+      void playMobileSound('complete', completePick.sfxKey);
+      void playMascotVoice('lesson_complete', completePick.audioKey);
       setPhase('summary');
       return;
     }
@@ -316,6 +336,13 @@ export default function LessonPlayer() {
     return (
       <Screen>
         <View style={{ flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+          <Fox
+            mood="sad"
+            accessory={cosmetic}
+            speaking={mascotSpeaking}
+            style={{ width: 112, height: 112 }}
+            title="Speeko encouraging you to try again"
+          />
           <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Out of hearts</Text>
           <Text style={{ textAlign: 'center', color: COLORS.muted }}>
             This attempt is over and awarded no XP. Look at what tripped you up, then try again.
@@ -350,12 +377,16 @@ export default function LessonPlayer() {
         >
         <Fox
           mood="celebrate"
+          accessory={cosmetic}
           speaking={mascotSpeaking}
           style={{ width: 132, height: 132 }}
           title="Speeko celebrating your lesson"
         />
         <Text style={{ fontSize: 30, fontWeight: '900', color: COLORS.dark }}>
           {saveState === 'practice' ? 'Practice complete!' : 'Lesson complete!'}
+        </Text>
+        <Text style={{ color: COLORS.greenDark, fontWeight: '800', fontSize: 15, textAlign: 'center' }}>
+          {summaryPhrase}
         </Text>
         <TactileCard style={{ alignSelf: 'stretch' }} tone="white">
           <View style={{ alignItems: 'center', gap: 4 }}>
@@ -570,17 +601,25 @@ export default function LessonPlayer() {
             gap: 4,
           }}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <Fox
               mood={foxMood}
+              accessory={cosmetic}
               speaking={mascotSpeaking}
               listening={mascotListening}
-              style={{ width: 44, height: 44 }}
+              style={{ width: 52, height: 52 }}
               title="Speeko reacting to your answer"
             />
-            <Text style={{ fontWeight: '900', color: grade.correct ? COLORS.greenDark : COLORS.red }}>
-              {grade.correct ? 'Correct!' : 'Not quite'}
-            </Text>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={{ fontWeight: '900', color: grade.correct ? COLORS.greenDark : COLORS.red }}>
+                {grade.correct ? 'Correct!' : 'Not quite'}
+              </Text>
+              {feedbackPhrase ? (
+                <Text style={{ fontSize: 13, fontWeight: '700', color: COLORS.dark }}>
+                  {feedbackPhrase}
+                </Text>
+              ) : null}
+            </View>
           </View>
           {!grade.correct && grade.expected ? (
             <Text style={{ color: COLORS.dark }}>

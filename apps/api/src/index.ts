@@ -44,7 +44,7 @@ async function main() {
   await app.register(cors, {
     origin: clientOrigins,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     maxAge: 86400,
   });

@@ -87,7 +87,7 @@ Each lesson starts with **5 hearts**, one answer per exercise, and a progress ba
 - **English-keyboard typing:** Romanized answers ("namaste") are accepted next to native script; "Show letters" reveals a reading while you type.
 - **Learning path:** Units climb bottom-to-top, current lesson auto-scrolls into view.
 - **Practice modes** reuse real exercises from completed lessons: due review, trouble words, and per-unit practice. They award no XP and write no course completion, but they do move each practiced word through its spaced-repetition box.
-- **Mascot:** Speeko the fox is an original animated inline SVG on the web (limbs, breathing, expressions, talking mouth, mood transitions) with bundled original voice lines and a separate mascot-voice preference. The mobile app uses the bundled raster fox with Reanimated motion; an animated SVG/Rive asset for native is a future improvement.
+- **Mascot:** Speeko the fox is an original animated vector SVG rig on both web (CSS keyframes + dynamic shadow) and mobile (`react-native-svg` + UI-thread `react-native-reanimated` springs) with 18 bundled offline Flow Kokoro reaction lines, varied chime SFX, and independent voice/sound toggles.
 
 ## Progress and accounts
 

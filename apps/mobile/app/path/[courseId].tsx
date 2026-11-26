@@ -1,10 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import type { Course, Lesson, ProgressState } from '@speeko/core';
 import { LOCALE_LABEL, eligibleExercises, lessonKey } from '@speeko/core';
 import { apiFetch } from '../../lib/api';
 import { loadProgress } from '../../lib/progress';
+import { useOnFocus } from '../../lib/useOnFocus';
 import { AppNav } from '../../components/AppNav';
 import { Screen } from '../../components/Screen';
 import {
@@ -201,9 +202,7 @@ export default function Path() {
     }
   }, [courseId]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useOnFocus(load);
 
   if (loading) {
     return (
@@ -212,6 +211,7 @@ export default function Path() {
           <ActivityIndicator color={COLORS.green} />
           <Text style={{ fontWeight: '700', color: COLORS.muted }}>Opening the path…</Text>
         </View>
+        <AppNav active="learn" />
       </Screen>
     );
   }
@@ -227,6 +227,7 @@ export default function Path() {
           <TactileButton label="Try again" onPress={() => void load()} />
           <TactileButton label="Back" tone="cream" onPress={() => router.back()} />
         </View>
+        <AppNav active="learn" />
       </Screen>
     );
   }
@@ -414,9 +415,8 @@ export default function Path() {
           </Text>
         </View>
       </TactilePressable>
-
-      <AppNav active="learn" />
       </ScrollView>
+      <AppNav active="learn" />
     </Screen>
   );
 }

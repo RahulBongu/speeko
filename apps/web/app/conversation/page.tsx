@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { SiteHeader } from '@/components/AppHeader';
 import { Fox } from '@/components/Fox';
-import { authClient } from '@/lib/auth-client';
+import { API_URL, authClient } from '@/lib/auth-client';
 
 export default function ConversationPage() {
   const { data: session } = authClient.useSession();
@@ -12,7 +12,7 @@ export default function ConversationPage() {
 
   useEffect(() => {
     if (!session?.user.id) return;
-    fetch('/api/ai/status', { credentials: 'include' })
+    fetch(`${API_URL}/api/ai/status`, { credentials: 'include' })
       .then((response) => (response.ok ? response.json() : null))
       .then((body) => setAvailable(Boolean(body?.available)))
       .catch(() => setAvailable(false));

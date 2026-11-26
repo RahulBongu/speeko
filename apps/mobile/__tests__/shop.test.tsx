@@ -21,6 +21,10 @@ jest.mock('@react-native-async-storage/async-storage', () => {
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush, back: jest.fn(), replace: jest.fn() }),
+  useFocusEffect: (cb: () => void) => {
+    const React = require('react');
+    React.useEffect(() => cb(), [cb]);
+  },
 }));
 
 jest.mock('../lib/api', () => ({

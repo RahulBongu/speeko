@@ -19,7 +19,7 @@ export async function habitRoutes(app: FastifyInstance) {
     const userId = session.user.id;
 
     const db = getDb();
-    const [progress, events, rewards] = await Promise.all([
+    const [progress, events, rewards, freezeRows] = await Promise.all([
       readProgress(userId),
       db
         .select({
@@ -37,6 +37,11 @@ export async function habitRoutes(app: FastifyInstance) {
         })
         .from(lessonCompletionRewards)
         .where(eq(lessonCompletionRewards.userId, userId)),
+      db
+        .select({ quantity: userInventory.quantity })
+        .from(userInventory)
+        .where(and(eq(userInventory.userId, userId), eq(userInventory.itemId, 'streak-freeze')))
+        .limit(1),
     ]);
 
     const history = historyFromLessonEvents(
@@ -48,26 +53,15 @@ export async function habitRoutes(app: FastifyInstance) {
       progress.timeZone,
     );
     const questHistory = historyFromLessonEvents(rewards, progress.timeZone);
+    const purchasedFreezes = freezeRows[0]?.quantity ?? 0;
 
     const report = buildHabitReport(history, {
       asOfDay: dayKeyInTimeZone(new Date(), progress.timeZone),
       timeZone: progress.timeZone,
       dailyGoal: progress.dailyGoal,
       questHistory,
+      purchasedFreezes,
     });
-
-    const [freezeRow] = await db
-      .select({ quantity: userInventory.quantity })
-      .from(userInventory)
-      .where(and(eq(userInventory.userId, userId), eq(userInventory.itemId, 'streak-freeze')))
-      .limit(1);
-    const credits = freezeRow?.quantity ?? 0;
-    if (credits > 0) {
-      report.streak.freezesAvailable = Math.min(
-        report.streak.maxFreezes,
-        report.streak.freezesAvailable + credits,
-      );
-    }
 
     return reply.send({ habits: report });
   });

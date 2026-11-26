@@ -55,4 +55,34 @@ describe('mobile api', () => {
       }),
     );
   });
+
+  it('preserves Cookie and Content-Type when custom headers such as origin are passed', async () => {
+    const storage = require('@react-native-async-storage/async-storage');
+    storage.getItem.mockResolvedValue('better-auth.session_token=secret123');
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      headers: { get: () => 'better-auth.session_token=rotated456; Path=/; HttpOnly' },
+    });
+
+    await apiFetch('/api/lesson-completions', {
+      method: 'POST',
+      headers: { origin: 'http://localhost:3000' },
+      body: JSON.stringify({ test: true }),
+    });
+
+    expect(mockedFetch).toHaveBeenCalledWith(
+      expect.stringContaining('/api/lesson-completions'),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          Cookie: 'better-auth.session_token=secret123',
+          origin: 'http://localhost:3000',
+        }),
+      }),
+    );
+    expect(storage.setItem).toHaveBeenCalledWith(
+      'speeko.mobile.cookies',
+      'better-auth.session_token=rotated456',
+    );
+  });
 });

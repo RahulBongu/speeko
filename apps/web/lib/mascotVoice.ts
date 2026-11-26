@@ -1,11 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MASCOT_REACTIONS, type MascotReactionId } from '@speeko/core';
+import {
+  MASCOT_REACTIONS,
+  createMascotVarietyPicker,
+  type MascotReactionId,
+  type VariedReactionPick,
+} from '@speeko/core';
 
 const STORAGE_KEY = 'speeko.mascotVoiceEnabled';
 const ASSET_DIR = '/mascot';
 
+const varietyPicker = createMascotVarietyPicker();
 let enabledCache: boolean | null = null;
 
 export function isMascotVoiceEnabled(): boolean {
@@ -31,11 +37,23 @@ export function setMascotVoiceEnabled(value: boolean): void {
 
 const SOUND_PATHS: Record<string, string> = {
   correct: 'correct.mp3',
+  'correct-2': 'correct-2.mp3',
+  'correct-3': 'correct-3.mp3',
+  'correct-4': 'correct-4.mp3',
+  'correct-5': 'correct-5.mp3',
   incorrect: 'incorrect.mp3',
+  'incorrect-2': 'incorrect-2.mp3',
+  'incorrect-3': 'incorrect-3.mp3',
+  'incorrect-4': 'incorrect-4.mp3',
   complete: 'complete.mp3',
+  'complete-2': 'complete-2.mp3',
+  'complete-3': 'complete-3.mp3',
   discovery: 'discovery.mp3',
+  'discovery-2': 'discovery-2.mp3',
   streak: 'streak.mp3',
+  'streak-2': 'streak-2.mp3',
   encouragement: 'encouragement.mp3',
+  'encouragement-2': 'encouragement-2.mp3',
 };
 
 let current: HTMLAudioElement | null = null;
@@ -97,12 +115,23 @@ export function useMascotSpeaking(): boolean {
   return speaking;
 }
 
-export function playMascotVoice(reactionId: MascotReactionId): boolean {
+export function nextVariedMascotReaction(reactionId: MascotReactionId): VariedReactionPick {
+  return varietyPicker.pick(reactionId);
+}
+
+export function playMascotVoice(
+  reactionId: MascotReactionId,
+  overrideAudioKey?: string,
+): boolean {
   if (typeof window === 'undefined') return false;
   if (!isMascotVoiceEnabled()) return false;
   const reaction = MASCOT_REACTIONS[reactionId];
   if (!reaction) return false;
-  const file = SOUND_PATHS[reaction.audioKey];
+  const clipKey =
+    overrideAudioKey && SOUND_PATHS[overrideAudioKey]
+      ? overrideAudioKey
+      : varietyPicker.pickAudioKey(reactionId);
+  const file = SOUND_PATHS[clipKey] ?? SOUND_PATHS[reaction.audioKey];
   if (!file) return false;
 
   stopMascotVoice();

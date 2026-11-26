@@ -131,6 +131,23 @@ describe('streaks and freezes', () => {
     expect(streak.freezesAvailable).toBe(2);
     expect(streak.maxFreezes).toBe(2);
   });
+
+  it('uses purchased shop freezes to protect a trailing missed day and reflects them in the calendar', () => {
+    const history = days('2026-11-01', 3);
+    const protectedStreak = computeStreak(history, '2026-11-05', 1);
+    expect(protectedStreak.current).toBe(3);
+    expect(protectedStreak.freezesAvailable).toBe(0);
+    expect(protectedStreak.frozenDays).toEqual(['2026-11-04']);
+
+    const report = buildHabitReport(history, {
+      asOfDay: '2026-11-05',
+      timeZone: 'Asia/Kolkata',
+      purchasedFreezes: 2,
+    });
+    expect(report.streak.current).toBe(3);
+    expect(report.streak.freezesAvailable).toBe(1);
+    expect(report.calendar.find((day) => day.day === '2026-11-04')?.status).toBe('frozen');
+  });
 });
 
 describe('quests, calendar, and achievements', () => {

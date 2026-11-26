@@ -1,10 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import type { Course, Exercise, GradeResult, ProgressState } from '@speeko/core';
 import {
   applyReviews,
   buildDuePracticePlan,
+  createMascotVarietyPicker,
   gradeExercise,
   practiceOverview,
   reviewsForAttempt,
@@ -13,6 +14,7 @@ import { apiFetch } from '../../lib/api';
 import { loadProgress, saveProgress } from '../../lib/progress';
 import { syncProgressIfSignedIn } from '../../lib/sync';
 import { ExerciseBody } from '../../components/ExerciseBody';
+import { Fox } from '../../components/Fox';
 import { Screen } from '../../components/Screen';
 import { TactileButton, TactileCard } from '../../components/Tactile';
 import {
@@ -24,7 +26,13 @@ import {
 } from '../../lib/exercise';
 import { COLORS } from '../../lib/theme';
 import { stopMobileAudio } from '../../lib/audio';
-import { stopMascotVoice } from '../../lib/mascot';
+import {
+  playMascotVoice,
+  stopMascotVoice,
+  useMascotListening,
+  useMascotSpeaking,
+} from '../../lib/mascot';
+import { playMobileSound, stopMobileSound } from '../../lib/sound';
 
 type Phase = 'loading' | 'error' | 'empty' | 'playing' | 'feedback' | 'summary';
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
@@ -52,7 +60,12 @@ export default function PracticeRunner() {
   const [outcomes, setOutcomes] = useState<{ exerciseId: string; correct: boolean }[]>([]);
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [feedbackPhrase, setFeedbackPhrase] = useState('');
+  const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Review complete!');
 
+  const varietyPicker = useRef(createMascotVarietyPicker());
+  const mascotSpeaking = useMascotSpeaking();
+  const mascotListening = useMascotListening();
   const exercise = exercises[index] ?? null;
 
   const load = useCallback(async () => {
@@ -114,12 +127,22 @@ export default function PracticeRunner() {
     const result = gradeExercise(exercise, input);
     setOutcomes((previous) => [...previous, { exerciseId: exercise.id, correct: result.correct }]);
     setGrade(result);
+    const pick = varietyPicker.current.pick(
+      result.correct ? 'correct_answer' : 'incorrect_answer',
+    );
+    setFeedbackPhrase(pick.phrase);
+    void playMobileSound(result.correct ? 'correct' : 'incorrect', pick.sfxKey);
+    void playMascotVoice(pick.reactionId, pick.audioKey);
     setPhase('feedback');
   }, [draft, exercise, phase]);
 
   const next = useCallback(() => {
     if (phase !== 'feedback') return;
     if (index + 1 >= exercises.length) {
+      const completePick = varietyPicker.current.pick('lesson_complete');
+      setSummaryPhrase(completePick.phrase);
+      void playMobileSound('complete', completePick.sfxKey);
+      void playMascotVoice('lesson_complete', completePick.audioKey);
       setPhase('summary');
       return;
     }
@@ -161,6 +184,7 @@ export default function PracticeRunner() {
     return () => {
       void stopMobileAudio();
       void stopMascotVoice();
+      void stopMobileSound();
     };
   }, []);
 
@@ -196,6 +220,13 @@ export default function PracticeRunner() {
     return (
       <Screen>
         <View style={{ flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+          <Fox
+            mood="encouraging"
+            accessory={progress?.equippedCosmetic ?? null}
+            patrol
+            style={{ width: 96, height: 96 }}
+            title="Speeko waiting for review cards"
+          />
           <TactileCard tone="white" style={{ alignSelf: 'stretch' }}>
             <Text style={{ fontSize: 24, fontWeight: '900', color: COLORS.dark, textAlign: 'center' }}>
               Nothing to review
@@ -228,7 +259,17 @@ export default function PracticeRunner() {
             flexGrow: 1,
           }}
         >
+          <Fox
+            mood="celebrate"
+            accessory={progress?.equippedCosmetic ?? null}
+            speaking={mascotSpeaking}
+            style={{ width: 120, height: 120 }}
+            title="Speeko celebrating your review"
+          />
           <Text style={{ fontSize: 28, fontWeight: '900', color: COLORS.dark }}>Review complete!</Text>
+          <Text style={{ color: COLORS.greenDark, fontWeight: '800', fontSize: 15, textAlign: 'center' }}>
+            {summaryPhrase}
+          </Text>
           <TactileCard tone="white" style={{ alignSelf: 'stretch' }}>
             <View style={{ alignItems: 'center', gap: 4 }}>
               <Text style={{ fontSize: 18, fontWeight: '800', color: COLORS.dark }}>
@@ -337,9 +378,26 @@ export default function PracticeRunner() {
             gap: 4,
           }}
         >
-          <Text style={{ fontWeight: '900', color: grade.correct ? COLORS.greenDark : COLORS.red }}>
-            {grade.correct ? 'Correct!' : 'Not quite'}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Fox
+              mood={grade.correct ? 'happy' : 'sad'}
+              accessory={progress?.equippedCosmetic ?? null}
+              speaking={mascotSpeaking}
+              listening={mascotListening}
+              style={{ width: 48, height: 48 }}
+              title="Speeko reacting to your answer"
+            />
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={{ fontWeight: '900', color: grade.correct ? COLORS.greenDark : COLORS.red }}>
+                {grade.correct ? 'Correct!' : 'Not quite'}
+              </Text>
+              {feedbackPhrase ? (
+                <Text style={{ fontSize: 13, fontWeight: '700', color: COLORS.dark }}>
+                  {feedbackPhrase}
+                </Text>
+              ) : null}
+            </View>
+          </View>
           {!grade.correct && grade.expected ? (
             <Text style={{ color: COLORS.dark }}>
               Correct answer: <Text style={{ fontWeight: '800' }}>{grade.expected}</Text>

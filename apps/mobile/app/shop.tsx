@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { ProgressState } from '@speeko/core';
@@ -6,6 +6,7 @@ import * as Haptics from 'expo-haptics';
 import { ORIGIN, apiFetch } from '../lib/api';
 import { loadProgress, saveProgress } from '../lib/progress';
 import { syncProgress } from '../lib/sync';
+import { useOnFocus } from '../lib/useOnFocus';
 import { AppNav } from '../components/AppNav';
 import { Screen } from '../components/Screen';
 import { Fox } from '../components/Fox';
@@ -76,7 +77,7 @@ export default function Shop() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useOnFocus(load);
 
   const buy = useCallback(async (item: ShopItem) => {
     if (buying) return;
@@ -170,6 +171,7 @@ export default function Shop() {
           <ActivityIndicator color={COLORS.green} />
           <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Loading shop…</Text>
         </View>
+        <AppNav active="shop" />
       </Screen>
     );
   }
@@ -237,7 +239,13 @@ export default function Shop() {
                 {shop.freezeCredits} of 2 streak freezes ready
               </Text>
             </View>
-            <Fox mood="happy" style={{ width: 76, height: 76 }} title="Speeko in the shop" />
+            <Fox
+              mood="happy"
+              accessory={progress?.equippedCosmetic ?? null}
+              patrol
+              style={{ width: 76, height: 76 }}
+              title="Speeko in the shop"
+            />
           </View>
         </TactileCard>
 
@@ -317,9 +325,8 @@ export default function Shop() {
             </TactileCard>
           ))}
         </View>
-
-        <AppNav active="shop" />
       </ScrollView>
+      <AppNav active="shop" />
     </Screen>
   );
 }

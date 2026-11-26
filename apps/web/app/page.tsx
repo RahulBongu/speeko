@@ -22,7 +22,7 @@ import { COURSE_ORDER, LOCALE_META } from '@/lib/courses';
 import { DAILY_GOAL } from '@/lib/progress';
 import { readCompletedOnboarding } from '@/lib/onboarding';
 import { useProgress } from '@/lib/use-progress';
-import { playMascotVoice, useMascotSpeaking } from '@/lib/mascotVoice';
+import { nextVariedMascotReaction, playMascotVoice, useMascotSpeaking } from '@/lib/mascotVoice';
 
 const FEATURES = [
   {
@@ -170,9 +170,10 @@ export default function HomePage() {
   );
 
   function playDemo(demo: (typeof VOICE_DEMOS)[number]) {
-    setMascotLine(demo.line);
+    const pick = nextVariedMascotReaction(demo.id);
+    setMascotLine(pick.phrase || demo.line);
     setMascotMood(demo.mood);
-    playMascotVoice(demo.id);
+    playMascotVoice(demo.id, pick.audioKey);
     if (demoTimer.current !== null) window.clearTimeout(demoTimer.current);
     demoTimer.current = window.setTimeout(() => setMascotMood('idle'), 2600);
   }
@@ -313,7 +314,12 @@ export default function HomePage() {
               />
               <div className="relative mx-auto flex h-[296px] w-[296px] items-center justify-center rounded-[3rem] border-2 border-cream-200 bg-white shadow-card">
                 <div className="absolute inset-4 rounded-[2.4rem] bg-gradient-to-br from-speeko-50 via-cream-50 to-fox-100" />
-                <Fox mood="happy" className="relative h-[268px] w-[268px] animate-bob" />
+                <Fox
+                  mood="happy"
+                  accessory={progress?.equippedCosmetic ?? null}
+                  patrol
+                  className="relative h-[268px] w-[268px]"
+                />
               </div>
 
               {FLOATING_WORDS.map((word) => (
@@ -341,8 +347,8 @@ export default function HomePage() {
         <dl className="mx-auto grid max-w-5xl grid-cols-2 gap-y-4 px-5 py-6 sm:grid-cols-4">
           {[
             ['10', 'Indian languages'],
-            ['45', 'units to climb'],
-            ['315', 'exercises'],
+            ['46', 'units to climb'],
+            ['321', 'exercises'],
             ['3 min', 'per lesson'],
           ].map(([value, label]) => (
             <div key={label} className="text-center">
@@ -488,6 +494,8 @@ export default function HomePage() {
               />
               <Fox
                 mood={mascotMood}
+                accessory={progress?.equippedCosmetic ?? null}
+                patrol
                 speaking={mascotSpeaking}
                 className="relative h-56 w-56"
               />
@@ -500,8 +508,9 @@ export default function HomePage() {
               The fox has a voice.
             </h2>
             <p className="mt-2 max-w-lg text-sm font-semibold leading-relaxed text-bark-500">
-              Six short reaction lines are bundled with the app. Tap one to hear the same clip a
-              lesson plays after a right answer — and watch the ears, arms and tail answer back.
+              Eighteen varied reaction voice clips are bundled offline with Speeko. Tap any button —
+              even twice in a row — to hear different cheers and watch the ears, arms, tail and
+              jumps respond.
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
@@ -648,7 +657,7 @@ export default function HomePage() {
             href="/leagues"
             className="focus-ring card p-5 transition hover:-translate-y-0.5 hover:shadow-card"
           >
-            <TrophyIcon className="h-6 w-6 text-gold-600" />
+            <TrophyIcon className="h-6 w-6 text-gold-700" />
             <h3 className="mt-3 font-display text-lg font-extrabold text-bark-800">Leagues</h3>
             <p className="mt-1 text-sm font-semibold leading-relaxed text-bark-500">
               Weekly leagues keep the goal competitive without shaming anyone.

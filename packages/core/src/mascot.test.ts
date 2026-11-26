@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   MASCOT_REACTIONS,
+  createMascotVarietyPicker,
   foxMoodForReaction,
   mascotReaction,
+  pickMascotAudioKey,
   pickMascotPhrase,
   resolveFoxAnimation,
 } from './mascot.js';
@@ -95,5 +97,22 @@ describe('pickMascotPhrase', () => {
   it('normalizes negative and fractional seeds', () => {
     expect(pickMascotPhrase(MASCOT_REACTIONS.correct_answer, -3)).toBeTruthy();
     expect(pickMascotPhrase(MASCOT_REACTIONS.correct_answer, 2.9)).toBeTruthy();
+  });
+
+  it('cycles through distinct voice clips without back-to-back repeats', () => {
+    const picker = createMascotVarietyPicker(() => 0.42);
+    const seenPhrases = new Set<string>();
+    const seenAudio = new Set<string>();
+    let prevAudio: string | null = null;
+    for (let i = 0; i < MASCOT_REACTIONS.correct_answer.audioKeys.length * 2; i += 1) {
+      const pick = picker.pick('correct_answer');
+      expect(pick.audioKey).not.toBe(prevAudio);
+      prevAudio = pick.audioKey;
+      seenPhrases.add(pick.phrase);
+      seenAudio.add(pick.audioKey);
+    }
+    expect(seenPhrases.size).toBeGreaterThan(1);
+    expect(seenAudio.size).toBe(MASCOT_REACTIONS.correct_answer.audioKeys.length);
+    expect(pickMascotAudioKey(MASCOT_REACTIONS.incorrect_answer, 1)).toBe('incorrect-2');
   });
 });

@@ -67,10 +67,14 @@ describe('romanize', () => {
   it('accepts nasal endings with or without the nasal letter', () => {
     expect(romanizedEqual('माँ', 'maa')).toBe(true);
     expect(romanizedEqual('माँ', 'maan')).toBe(true);
+    expect(romanizedEqual('maa', 'माँ')).toBe(true);
+    expect(romanizedEqual('maan', 'माँ')).toBe(true);
     expect(romanizedEqual('हाँ', 'haan')).toBe(true);
     expect(romanizedEqual('हाँ', 'haa')).toBe(true);
-    // Without a nasal mark on the target the relaxed form must not apply.
+    expect(romanizedEqual('haa', 'हाँ')).toBe(true);
+    // Without a nasal mark on the Indic word the relaxed form must not apply.
     expect(romanizedEqual('मा', 'maan')).toBe(false);
+    expect(romanizedEqual('maan', 'मा')).toBe(false);
   });
 
   it('keeps the final vowel that Dravidian scripts pronounce', () => {

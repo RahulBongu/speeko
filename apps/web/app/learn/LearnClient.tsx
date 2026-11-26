@@ -246,7 +246,7 @@ export default function LearnClient() {
         </section>
 
         <section className="mt-10 flex flex-col items-center gap-4 rounded-3xl border-2 border-cream-200 bg-white p-6 text-center shadow-card sm:flex-row sm:text-left">
-          <Fox className="h-20 w-20 shrink-0" />
+          <Fox accessory={progress?.equippedCosmetic ?? null} patrol className="h-20 w-20 shrink-0" />
           <div className="flex-1">
             <h2 className="font-display text-xl font-extrabold text-bark-800">
               More lessons are on the way

@@ -6,6 +6,7 @@ import {
   accuracy as sessionAccuracy,
   buildTroublePracticePlan,
   buildUnitPracticePlan,
+  createMascotVarietyPicker,
   createSession,
   currentExercise,
   eligibleExercises,
@@ -35,6 +36,7 @@ import { readKnownSignedInUserId } from '@/lib/auth-marker';
 import { submitLessonCompletion } from '@/lib/sync';
 import { isSoundEnabled, playSound, setSoundEnabled } from '@/lib/sound';
 import { playMascotVoice, useMascotListening, useMascotSpeaking } from '@/lib/mascotVoice';
+import { useProgress } from '@/lib/use-progress';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
 import { ProgressBar } from '@/components/ProgressBar';
@@ -148,7 +150,10 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [entry, setEntry] = useState<FlatLesson | null>(null);
   const [session, setSession] = useState<SessionState | null>(null);
   const [draft, setDraft] = useState<DraftAnswer | null>(null);
-  const [soundOn, setSoundOn] = useState<boolean>(() => isSoundEnabled());
+  const [soundOn, setSoundOn] = useState<boolean>(true);
+  useEffect(() => {
+    setSoundOn(isSoundEnabled());
+  }, []);
   const toggleSound = useCallback(() => {
     const next = !soundOn;
     setSoundOn(next);
@@ -159,6 +164,11 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [grade, setGrade] = useState<GradeResult | null>(null);
   const [answeredExercise, setAnsweredExercise] = useState<Exercise | null>(null);
   const [xpGained, setXpGained] = useState(0);
+  const [feedbackPhrase, setFeedbackPhrase] = useState('');
+  const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Lesson conquered!');
+  const liveProgress = useProgress();
+  const equippedCosmetic = liveProgress?.equippedCosmetic ?? null;
+  const varietyPicker = useRef(createMascotVarietyPicker());
   const mascotSpeaking = useMascotSpeaking();
   const mascotListening = useMascotListening();
   const [showExit, setShowExit] = useState(false);
@@ -354,17 +364,26 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setAnsweredExercise(exerciseNow);
     setXpGained(next.xp - session.xp);
     setSession(next);
+    const pick = varietyPicker.current.pick(
+      result.correct ? 'correct_answer' : 'incorrect_answer',
+    );
+    setFeedbackPhrase(pick.phrase);
     setPhase('feedback');
-    playSound(result.correct ? 'correct' : 'incorrect');
-    playMascotVoice(result.correct ? 'correct_answer' : 'incorrect_answer');
+    playSound(result.correct ? 'correct' : 'incorrect', pick.sfxKey);
+    playMascotVoice(pick.reactionId, pick.audioKey);
   }, [session, draft, exerciseNow, phase]);
 
   const handleContinue = useCallback(() => {
     if (!session || !entry) return;
     if (session.finished) {
-      playSound('complete');
-      playMascotVoice('lesson_complete');
-      setPhase(session.hearts <= 0 ? 'hearts' : 'summary');
+      const lostHearts = session.hearts <= 0;
+      const finishPick = varietyPicker.current.pick(
+        lostHearts ? 'encouragement' : 'lesson_complete',
+      );
+      setSummaryPhrase(finishPick.phrase);
+      playSound(lostHearts ? 'incorrect' : 'complete', finishPick.sfxKey);
+      playMascotVoice(finishPick.reactionId, finishPick.audioKey);
+      setPhase(lostHearts ? 'hearts' : 'summary');
       return;
     }
     const nextExercise = currentExercise(session);
@@ -656,6 +675,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           postProgress={postProgress}
           nextLesson={nextLesson}
           saveState={saveState}
+          summaryPhrase={summaryPhrase}
+          accessory={equippedCosmetic}
           onRetry={retrySave}
         />
       ) : phase === 'hearts' ? (
@@ -663,6 +684,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           course={course}
           entry={entry}
           session={session}
+          accessory={equippedCosmetic}
           onRestart={restart}
         />
       ) : (
@@ -697,19 +719,21 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           <div className="mt-5 flex items-center gap-3">
             <Fox
               mood={mood}
+              accessory={equippedCosmetic}
               speaking={mascotSpeaking}
               listening={mascotListening}
-              className="hidden h-16 w-16 shrink-0 sm:block"
+              className="h-14 w-14 shrink-0 sm:h-16 sm:w-16"
             />
-            <div className="relative hidden flex-1 rounded-2xl border-2 border-cream-200 bg-white px-4 py-3 text-sm font-semibold text-bark-500 shadow-card-sm sm:block">
+            <div className="relative flex-1 rounded-2xl border-2 border-cream-200 bg-white px-4 py-2.5 text-sm font-semibold text-bark-500 shadow-card-sm">
               <span
                 aria-hidden="true"
                 className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 border-b-2 border-l-2 border-cream-200 bg-white"
               />
               {phase === 'feedback'
-                ? grade?.correct
-                  ? 'That was clean. Keep the streak moving!'
-                  : 'All good — the correction is the learning.'
+                ? feedbackPhrase ||
+                  (grade?.correct
+                    ? 'That was clean. Keep the streak moving!'
+                    : 'All good — the correction is the learning.')
                 : tip}
             </div>
           </div>
@@ -736,6 +760,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
         <FeedbackBar
           correct={grade.correct}
           expected={grade.expected}
+          phrase={feedbackPhrase}
+          accessory={equippedCosmetic}
           xpGained={xpGained}
           combo={session.combo}
           isLast={session.finished}
@@ -786,6 +812,8 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
 function FeedbackBar({
   correct,
   expected,
+  phrase,
+  accessory,
   xpGained,
   combo,
   isLast,
@@ -794,6 +822,8 @@ function FeedbackBar({
 }: {
   correct: boolean;
   expected: string | null;
+  phrase: string;
+  accessory: ProgressState['equippedCosmetic'];
   xpGained: number;
   combo: number;
   isLast: boolean;
@@ -809,15 +839,30 @@ function FeedbackBar({
     >
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-start gap-3">
-          <Fox mood={correct ? 'happy' : 'sad'} className="hidden h-14 w-14 shrink-0 animate-bob sm:block" />
+          <Fox
+            mood={correct ? 'happy' : 'sad'}
+            accessory={accessory}
+            className="h-14 w-14 shrink-0"
+          />
           <div>
-            <p
-              className={`font-display text-xl font-extrabold ${
-                correct ? 'text-speeko-800' : 'text-red-800'
-              }`}
-            >
-              {correct ? 'Correct!' : 'Not quite'}
-            </p>
+            <div className="flex flex-wrap items-baseline gap-2">
+              <p
+                className={`font-display text-xl font-extrabold ${
+                  correct ? 'text-speeko-800' : 'text-red-800'
+                }`}
+              >
+                {correct ? 'Correct!' : 'Not quite'}
+              </p>
+              {phrase ? (
+                <p
+                  className={`font-display text-sm font-bold ${
+                    correct ? 'text-speeko-700' : 'text-red-700'
+                  }`}
+                >
+                  {phrase}
+                </p>
+              ) : null}
+            </div>
             {correct ? (
               <p className="text-sm font-semibold text-speeko-700">
                 <span className="inline-block animate-pop">
@@ -859,6 +904,8 @@ function SummaryScreen({
   postProgress,
   nextLesson,
   saveState,
+  summaryPhrase,
+  accessory,
   onRetry,
 }: {
   course: Course;
@@ -867,6 +914,8 @@ function SummaryScreen({
   postProgress: ProgressState | null;
   nextLesson: FlatLesson | null;
   saveState: SaveState;
+  summaryPhrase: string;
+  accessory: ProgressState['equippedCosmetic'];
   onRetry: () => void;
 }) {
   const accuracy = sessionAccuracy(session);
@@ -912,11 +961,21 @@ function SummaryScreen({
       <div className="text-center">
         <div className="relative mx-auto h-44 w-44">
           <div className="absolute inset-0 animate-pop rounded-full bg-gradient-to-br from-fox-300/70 to-speeko-200/70 blur-xl" />
-          <Fox mood="celebrate" speaking={mascotSpeaking} className="relative h-44 w-44 animate-pop" />
+          <Fox
+            mood="celebrate"
+            accessory={accessory}
+            speaking={mascotSpeaking}
+            className="relative h-44 w-44"
+          />
         </div>
         <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-bark-800">
           {heading}
         </h1>
+        {summaryPhrase ? (
+          <p className="mt-1 font-display text-base font-extrabold text-speeko-700">
+            {summaryPhrase}
+          </p>
+        ) : null}
         <p className="mt-1 font-semibold text-bark-500">
           {subtitle} · {course.title}
         </p>
@@ -1116,11 +1175,13 @@ function OutOfHeartsScreen({
   course,
   entry,
   session,
+  accessory,
   onRestart,
 }: {
   course: Course;
   entry: FlatLesson;
   session: SessionState;
+  accessory: ProgressState['equippedCosmetic'];
   onRestart: () => void;
 }) {
   const accuracy = sessionAccuracy(session);
@@ -1131,7 +1192,7 @@ function OutOfHeartsScreen({
           <HeartIcon key={index} filled={false} className="h-7 w-7 text-bark-300" />
         ))}
       </div>
-      <Fox mood="sad" className="mt-2 h-40 w-40" />
+      <Fox mood="sad" accessory={accessory} className="mt-2 h-40 w-40" />
       <h1 className="mt-2 font-display text-4xl font-extrabold text-bark-800">Out of hearts</h1>
       <p className="mt-2 max-w-md text-sm font-semibold text-bark-500">
         Hearts keep lessons focused. Take a breath, look at what tripped you up, and try{' '}

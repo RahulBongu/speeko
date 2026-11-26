@@ -54,9 +54,14 @@ export function AudioPrompt({
       if (!audio) return;
       audio.currentTime = 0;
       setPlayingState(true);
-      void audio.play().catch(() => {
+      void audio.play().catch((err: unknown) => {
         setPlayingState(false);
-        setUnavailable(true);
+        const name = err instanceof Error ? err.name : '';
+        // Browser autoplay policies reject with NotAllowedError or AbortError
+        // before user gesture; keep the transcript hidden until media errors.
+        if (name !== 'NotAllowedError' && name !== 'AbortError') {
+          setUnavailable(true);
+        }
       });
       return;
     }

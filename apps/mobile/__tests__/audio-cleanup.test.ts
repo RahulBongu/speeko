@@ -31,6 +31,7 @@ import {
   subscribeMascotListening,
   subscribeMascotSpeaking,
 } from '../lib/mascot';
+import { playMobileSound, stopMobileSound } from '../lib/sound';
 
 beforeEach(() => {
   mockFakePlayers.length = 0;
@@ -40,6 +41,7 @@ beforeEach(() => {
 afterEach(async () => {
   await stopMobileAudio();
   await stopMascotVoice();
+  await stopMobileSound();
 });
 
 test('stopMobileAudio removes the player and its status listener', async () => {
@@ -85,4 +87,13 @@ test('stopMascotVoice clears speaking state and releases the player', async () =
 test('a missing audio id is a no-op', async () => {
   expect(await playMobileAudio('does-not-exist')).toBe(false);
   expect(mockFakePlayers).toHaveLength(0);
+});
+
+test('playMobileSound plays and stopMobileSound cleans up its player', async () => {
+  expect(await playMobileSound('correct')).toBe(true);
+  expect(mockFakePlayers).toHaveLength(1);
+  await stopMobileSound();
+  expect(mockFakePlayers[0]!.pause).toHaveBeenCalled();
+  expect(mockFakePlayers[0]!.remove).toHaveBeenCalled();
+  expect(mockListenerRemove).toHaveBeenCalled();
 });

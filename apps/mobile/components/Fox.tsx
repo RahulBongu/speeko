@@ -2,11 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AccessibilityInfo, Pressable } from 'react-native';
 import Svg, { Circle, Ellipse, Path, G, Defs, LinearGradient, Stop } from 'react-native-svg';
 import Animated, {
+  cancelAnimation,
   useSharedValue,
   useAnimatedStyle,
   useAnimatedProps,
+  withDelay,
   withRepeat,
   withSequence,
+  withSpring,
   withTiming,
   Easing,
 } from 'react-native-reanimated';
@@ -15,10 +18,10 @@ import {
   foxMoodForReaction,
   type FoxMood,
   type MascotReactionId,
+  type ProgressState,
 } from '@speeko/core';
 
 const AnimatedG = Animated.createAnimatedComponent(G);
-const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedEllipse = Animated.createAnimatedComponent(Ellipse);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -26,9 +29,11 @@ export type { FoxMood };
 
 export interface FoxProps {
   mood?: FoxMood | 'correct' | 'incorrect' | MascotReactionId;
+  accessory?: ProgressState['equippedCosmetic'];
   style?: any;
   speaking?: boolean;
   listening?: boolean;
+  patrol?: boolean;
   title?: string;
   onTap?: () => void;
 }
@@ -47,18 +52,21 @@ function isReactionId(value: unknown): value is MascotReactionId {
 }
 
 /**
- * Speeko the fox, drawn as a code-based SVG rig.
+ * Speeko the fox — Duolingo-inspired 60fps Reanimated SVG vector character
+ * matched to `design/reference/fox-mascot-reference.png`.
  *
- * Artwork follows the supplied illustration: large glossy eyes, wide cream
- * muzzle, pointed warm ears, fluffy cream-tipped tail, dark paws and a teal
- * scarf. Independent groups (tail, arms, ears, head, pupils, mouth, scarf ends)
- * are animated with Reanimated; no flattened PNG or paid rig is used.
+ * Uses spring-driven jumps with anticipation + landing squash-and-stretch,
+ * dynamic ground shadow contraction, tail wags, ear twitches, glossy tracking
+ * eyes, optional patrol hops, and full shop cosmetic rendering (`scarf`,
+ * `hat`, `glasses`).
  */
 export function Fox({
   mood = 'idle',
+  accessory = null,
   style,
   speaking = false,
   listening = false,
+  patrol = false,
   title,
   onTap,
 }: FoxProps) {
@@ -89,7 +97,9 @@ export function Fox({
     };
   }, []);
 
-  useEffect(() => { setTapped(false); }, [semanticMood, speaking, listening]);
+  useEffect(() => {
+    setTapped(false);
+  }, [semanticMood, speaking, listening]);
 
   useEffect(() => {
     if (semanticMood !== 'sad' && semanticMood !== 'incorrect') {
@@ -99,12 +109,15 @@ export function Fox({
     setEncouraging(false);
     const toEncourage = setTimeout(() => setEncouraging(true), 850);
     const back = setTimeout(() => setEncouraging(false), 2100);
-    return () => { clearTimeout(toEncourage); clearTimeout(back); };
+    return () => {
+      clearTimeout(toEncourage);
+      clearTimeout(back);
+    };
   }, [semanticMood]);
 
   useEffect(() => {
     if (!tapped) return;
-    const timer = setTimeout(() => setTapped(false), 720);
+    const timer = setTimeout(() => setTapped(false), 780);
     return () => clearTimeout(timer);
   }, [tapped]);
 
@@ -114,144 +127,327 @@ export function Fox({
   }, [onTap]);
 
   const breathe = useSharedValue(0);
-  const hop = useSharedValue(0);
-  const celebrate = useSharedValue(0);
+  const jumpY = useSharedValue(0);
+  const jumpX = useSharedValue(0);
+  const scaleX = useSharedValue(1);
+  const scaleY = useSharedValue(1);
+  const bodyTilt = useSharedValue(0);
   const tail = useSharedValue(0);
   const mouth = useSharedValue(0);
   const blink = useSharedValue(0);
   const head = useSharedValue(0);
   const ear = useSharedValue(0);
   const pupil = useSharedValue(0);
-  const leftArm = useSharedValue(-8);
-  const rightArm = useSharedValue(6);
+  const leftArm = useSharedValue(0);
+  const rightArm = useSharedValue(0);
+  const sparkle = useSharedValue(0);
 
-  const calm = useCallback((value: any, target = 0) => {
-    if (reduceMotion) value.value = target;
-  }, [reduceMotion]);
+  const calm = useCallback(
+    (value: { value: number }, target = 0) => {
+      cancelAnimation(value as any);
+      value.value = target;
+    },
+    [],
+  );
 
+  // Subtle ambient breathing
   useEffect(() => {
-    if (reduceMotion) { calm(breathe, 0); return; }
+    if (reduceMotion) {
+      calm(breathe, 0);
+      return;
+    }
     breathe.value = withRepeat(
       withSequence(
-        withTiming(1, { duration: 2100, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 2100, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1, { duration: 1900, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 1900, easing: Easing.inOut(Easing.ease) }),
       ),
       -1,
       false,
     );
   }, [reduceMotion, breathe, calm]);
 
+  // Bushy tail wag
   useEffect(() => {
-    if (reduceMotion || state.mood === 'sad') { calm(tail, 0); return; }
+    if (reduceMotion || state.mood === 'sad') {
+      calm(tail, state.mood === 'sad' ? -0.8 : 0);
+      return;
+    }
+    const speed = state.animation === 'celebrate' || state.animation === 'bounce' ? 280 : 540;
     tail.value = withRepeat(
       withSequence(
-        withTiming(1, { duration: 620, easing: Easing.inOut(Easing.ease) }),
-        withTiming(-1, { duration: 620, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1.15, { duration: speed, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-1, { duration: speed, easing: Easing.inOut(Easing.ease) }),
       ),
       -1,
       true,
     );
-  }, [reduceMotion, state.mood, tail, calm]);
+  }, [reduceMotion, state.mood, state.animation, tail, calm]);
 
+  // Duolingo-style anticipation crouch -> high parabolic leap -> squash-stretch landing
   useEffect(() => {
-    if (reduceMotion) { calm(hop, 0); calm(celebrate, 0); return; }
-    if (state.animation === 'celebrate') {
-      hop.value = withSequence(
-        withTiming(1, { duration: 300, easing: Easing.out(Easing.back(1.7)) }),
-        withTiming(0, { duration: 320, easing: Easing.in(Easing.ease) }),
-      );
-      celebrate.value = withSequence(
-        withTiming(1, { duration: 420, easing: Easing.out(Easing.back(1.5)) }),
-        withTiming(0, { duration: 460, easing: Easing.inOut(Easing.ease) }),
-      );
-    } else {
-      celebrate.value = withTiming(0, { duration: 180 });
-      if (state.animation === 'bounce') {
-        hop.value = withSequence(
-          withTiming(1, { duration: 360, easing: Easing.out(Easing.back(1.6)) }),
-          withTiming(0, { duration: 360, easing: Easing.in(Easing.ease) }),
-        );
-      } else {
-        hop.value = withTiming(0, { duration: 180 });
-      }
+    if (reduceMotion) {
+      calm(jumpY, 0);
+      calm(scaleX, 1);
+      calm(scaleY, 1);
+      calm(bodyTilt, 0);
+      calm(sparkle, state.animation === 'celebrate' ? 1 : 0);
+      return;
     }
-  }, [reduceMotion, state.animation, hop, celebrate, calm]);
 
+    if (state.animation === 'celebrate') {
+      jumpY.value = withRepeat(
+        withSequence(
+          withTiming(3, { duration: 90, easing: Easing.inOut(Easing.ease) }),
+          withSpring(-26, { damping: 9, stiffness: 220 }),
+          withTiming(2, { duration: 220, easing: Easing.in(Easing.ease) }),
+          withSpring(-16, { damping: 10, stiffness: 200 }),
+          withTiming(0, { duration: 220, easing: Easing.out(Easing.ease) }),
+        ),
+        2,
+        false,
+      );
+      scaleX.value = withRepeat(
+        withSequence(
+          withTiming(1.1, { duration: 90 }),
+          withTiming(0.93, { duration: 200 }),
+          withTiming(1.08, { duration: 110 }),
+          withTiming(1, { duration: 180 }),
+        ),
+        2,
+        false,
+      );
+      scaleY.value = withRepeat(
+        withSequence(
+          withTiming(0.9, { duration: 90 }),
+          withTiming(1.08, { duration: 200 }),
+          withTiming(0.93, { duration: 110 }),
+          withTiming(1, { duration: 180 }),
+        ),
+        2,
+        false,
+      );
+      bodyTilt.value = withRepeat(
+        withSequence(
+          withTiming(-6, { duration: 180 }),
+          withTiming(6, { duration: 200 }),
+          withTiming(0, { duration: 160 }),
+        ),
+        2,
+        false,
+      );
+      sparkle.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 420, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0.35, { duration: 420, easing: Easing.inOut(Easing.ease) }),
+        ),
+        -1,
+        true,
+      );
+    } else if (state.animation === 'bounce' || state.waving) {
+      jumpY.value = withSequence(
+        withTiming(3.5, { duration: 85 }),
+        withSpring(-20, { damping: 8, stiffness: 240 }),
+        withTiming(2, { duration: 190 }),
+        withSpring(0, { damping: 11, stiffness: 180 }),
+      );
+      scaleX.value = withSequence(
+        withTiming(1.11, { duration: 85 }),
+        withTiming(0.92, { duration: 180 }),
+        withTiming(1.07, { duration: 110 }),
+        withTiming(1, { duration: 160 }),
+      );
+      scaleY.value = withSequence(
+        withTiming(0.89, { duration: 85 }),
+        withTiming(1.09, { duration: 180 }),
+        withTiming(0.94, { duration: 110 }),
+        withTiming(1, { duration: 160 }),
+      );
+      bodyTilt.value = withSequence(
+        withTiming(-4, { duration: 160 }),
+        withTiming(4, { duration: 160 }),
+        withTiming(0, { duration: 160 }),
+      );
+      sparkle.value = withSequence(withTiming(1, { duration: 220 }), withTiming(0, { duration: 650 }));
+    } else if (state.animation === 'confused') {
+      jumpY.value = withSequence(
+        withTiming(4, { duration: 180 }),
+        withTiming(0, { duration: 300 }),
+      );
+      bodyTilt.value = withSequence(
+        withTiming(-5, { duration: 220 }),
+        withTiming(3, { duration: 220 }),
+        withTiming(0, { duration: 240 }),
+      );
+      scaleX.value = withTiming(1, { duration: 180 });
+      scaleY.value = withTiming(0.96, { duration: 220 });
+      sparkle.value = withTiming(0, { duration: 150 });
+    } else {
+      jumpY.value = withTiming(0, { duration: 180 });
+      scaleX.value = withTiming(1, { duration: 180 });
+      scaleY.value = withTiming(1, { duration: 180 });
+      bodyTilt.value = withTiming(0, { duration: 180 });
+      sparkle.value = withTiming(0, { duration: 150 });
+    }
+  }, [reduceMotion, state.animation, state.waving, jumpY, scaleX, scaleY, bodyTilt, sparkle, calm]);
+
+  // Optional lively patrol hop across header/welcome banners
   useEffect(() => {
-    if (reduceMotion) { calm(head, 0); calm(ear, 0); calm(pupil, 0); return; }
+    if (reduceMotion || !patrol || state.animation === 'confused') {
+      calm(jumpX, 0);
+      return;
+    }
+    jumpX.value = withRepeat(
+      withSequence(
+        withDelay(1400, withTiming(12, { duration: 420, easing: Easing.out(Easing.ease) })),
+        withDelay(900, withTiming(-10, { duration: 540, easing: Easing.inOut(Easing.ease) })),
+        withDelay(900, withTiming(0, { duration: 420, easing: Easing.out(Easing.ease) })),
+      ),
+      -1,
+      false,
+    );
+  }, [reduceMotion, patrol, state.animation, jumpX, calm]);
+
+  // Head + ear + eye pupil expression
+  useEffect(() => {
+    if (reduceMotion) {
+      calm(head, 0);
+      calm(ear, 0);
+      calm(pupil, 0);
+      return;
+    }
     if (state.listening) {
       head.value = withRepeat(
         withSequence(
-          withTiming(-2, { duration: 900, easing: Easing.inOut(Easing.ease) }),
-          withTiming(2, { duration: 900, easing: Easing.inOut(Easing.ease) }),
-        ), -1, true,
+          withTiming(-4, { duration: 760, easing: Easing.inOut(Easing.ease) }),
+          withTiming(2.5, { duration: 760, easing: Easing.inOut(Easing.ease) }),
+        ),
+        -1,
+        true,
       );
       ear.value = withRepeat(
-        withSequence(withTiming(-4, { duration: 1200 }), withTiming(0, { duration: 1200 })), -1, true,
+        withSequence(
+          withTiming(9, { duration: 440 }),
+          withTiming(-3, { duration: 440 }),
+        ),
+        -1,
+        true,
+      );
+      pupil.value = withTiming(1.2, { duration: 280 });
+    } else if (state.animation === 'confused') {
+      head.value = withSequence(
+        withTiming(-7, { duration: 240 }),
+        withTiming(5, { duration: 260 }),
+        withTiming(-3, { duration: 260 }),
+      );
+      ear.value = withTiming(-14, { duration: 280 });
+      pupil.value = withTiming(-1.4, { duration: 240 });
+    } else if (state.mood === 'encouraging') {
+      head.value = withRepeat(
+        withSequence(
+          withTiming(3.5, { duration: 600, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 600, easing: Easing.inOut(Easing.ease) }),
+        ),
+        2,
+        false,
+      );
+      ear.value = withTiming(4, { duration: 280 });
+      pupil.value = withTiming(0, { duration: 260 });
+    } else if (state.mood === 'happy' || state.animation === 'celebrate') {
+      head.value = withSequence(
+        withTiming(-3, { duration: 200 }),
+        withTiming(3, { duration: 220 }),
+        withTiming(0, { duration: 220 }),
+      );
+      ear.value = withSequence(
+        withTiming(11, { duration: 200 }),
+        withTiming(4, { duration: 240 }),
+      );
+      pupil.value = withTiming(0, { duration: 200 });
+    } else {
+      head.value = withTiming(0, { duration: 300 });
+      ear.value = withRepeat(
+        withSequence(
+          withDelay(2400, withTiming(7, { duration: 150 })),
+          withTiming(0, { duration: 220 }),
+        ),
+        -1,
+        false,
       );
       pupil.value = withRepeat(
-        withSequence(withTiming(1, { duration: 1200 }), withTiming(-1, { duration: 1200 })), -1, true,
+        withSequence(
+          withDelay(2200, withTiming(1.1, { duration: 450 })),
+          withDelay(900, withTiming(-1.1, { duration: 550 })),
+          withDelay(900, withTiming(0, { duration: 450 })),
+        ),
+        -1,
+        false,
       );
-    } else {
-      head.value = withTiming(state.mood === 'encouraging' ? 2 : 0, { duration: 260 });
-      ear.value = withTiming(0, { duration: 260 });
-      pupil.value = withTiming(0, { duration: 260 });
     }
-  }, [reduceMotion, state.listening, state.mood, head, ear, pupil, calm]);
+  }, [reduceMotion, state.listening, state.animation, state.mood, head, ear, pupil, calm]);
 
+  // Natural blinking + mouth movement when speaking
   useEffect(() => {
-    if (reduceMotion) { calm(mouth, 0); return; }
+    if (reduceMotion) {
+      calm(mouth, 0);
+      calm(blink, 0);
+      return;
+    }
     if (state.speaking) {
       mouth.value = withRepeat(
         withSequence(
-          withTiming(1, { duration: 170, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0, { duration: 170, easing: Easing.inOut(Easing.ease) }),
-        ), -1, false,
+          withTiming(1, { duration: 150 }),
+          withTiming(0.2, { duration: 130 }),
+        ),
+        -1,
+        true,
       );
     } else {
-      mouth.value = withTiming(0, { duration: 120 });
+      mouth.value = withTiming(0, { duration: 160 });
     }
-  }, [reduceMotion, state.speaking, mouth, calm]);
 
-  useEffect(() => {
-    if (reduceMotion || state.speaking) { calm(blink, 0); return; }
-    const timer = setInterval(() => {
-      blink.value = withSequence(
-        withTiming(1, { duration: 110, easing: Easing.in(Easing.ease) }),
-        withTiming(0, { duration: 110, easing: Easing.out(Easing.ease) }),
-      );
-    }, 3600);
-    return () => clearInterval(timer);
-  }, [reduceMotion, state.speaking, blink, calm]);
+    blink.value = withRepeat(
+      withSequence(
+        withDelay(2700, withTiming(1, { duration: 80 })),
+        withTiming(0, { duration: 95 }),
+      ),
+      -1,
+      false,
+    );
+  }, [reduceMotion, state.speaking, mouth, blink, calm]);
 
+  // Expressive arms (waving, both raised in victory, slumped when sad)
   useEffect(() => {
-    const wave = state.waving || state.animation === 'celebrate' || state.animation === 'bounce';
+    const happyJump = state.waving || state.animation === 'celebrate' || state.animation === 'bounce';
     if (reduceMotion) {
-      calm(leftArm, wave ? -92 : -8);
-      calm(rightArm, state.animation === 'celebrate' ? 88 : 6);
+      calm(leftArm, happyJump ? -24 : 0);
+      calm(rightArm, state.animation === 'celebrate' ? 88 : 0);
       return;
     }
-    if (wave || state.animation === 'celebrate') {
+    if (happyJump) {
       leftArm.value = withSequence(
-        withTiming(-92, { duration: 260, easing: Easing.out(Easing.ease) }),
-        withTiming(-72, { duration: 220, easing: Easing.inOut(Easing.ease) }),
-        withTiming(-92, { duration: 220, easing: Easing.inOut(Easing.ease) }),
-        withTiming(-8, { duration: 320, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-28, { duration: 180, easing: Easing.out(Easing.ease) }),
+        withTiming(8, { duration: 170, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-24, { duration: 170, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 280, easing: Easing.inOut(Easing.ease) }),
       );
-    } else if (state.mood === 'sad') {
-      leftArm.value = withTiming(12, { duration: 260 });
-    } else {
-      leftArm.value = withTiming(-8, { duration: 260 });
-    }
-    if (state.animation === 'celebrate') {
       rightArm.value = withSequence(
-        withTiming(88, { duration: 300, easing: Easing.out(Easing.ease) }),
-        withTiming(6, { duration: 420, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-78, { duration: 200, easing: Easing.out(Easing.ease) }),
+        withTiming(-58, { duration: 180, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 320, easing: Easing.inOut(Easing.ease) }),
       );
     } else if (state.mood === 'sad') {
-      rightArm.value = withTiming(-12, { duration: 260 });
+      leftArm.value = withTiming(18, { duration: 260 });
+      rightArm.value = withTiming(-10, { duration: 260 });
     } else {
-      rightArm.value = withTiming(6, { duration: 260 });
+      leftArm.value = withRepeat(
+        withSequence(
+          withTiming(-6, { duration: 1300, easing: Easing.inOut(Easing.ease) }),
+          withTiming(3, { duration: 1300, easing: Easing.inOut(Easing.ease) }),
+        ),
+        -1,
+        true,
+      );
+      rightArm.value = withTiming(0, { duration: 260 });
     }
   }, [reduceMotion, state.waving, state.animation, state.mood, leftArm, rightArm, calm]);
 
@@ -259,49 +455,56 @@ export function Fox({
     if (reduceMotion) return {};
     return {
       transform: [
-        { translateY: breathe.value * -2.5 + hop.value * -15 + celebrate.value * -4 },
-        { rotate: `${celebrate.value * 5}deg` },
-        { scale: 1 + breathe.value * 0.008 + hop.value * 0.02 },
+        { translateX: jumpX.value },
+        { translateY: breathe.value * -2.2 + jumpY.value },
+        { rotate: `${bodyTilt.value}deg` },
+        { scaleX: scaleX.value + breathe.value * 0.008 },
+        { scaleY: scaleY.value + breathe.value * 0.008 },
       ],
     };
   });
 
-  // Use SVG transform strings with an explicit centre instead of originX/originY.
-  // react-native-svg's web renderer maps originX/originY to a DOM
-  // `transform-origin` prop, which React warns about.
+  // Ground shadow reacts smoothly when fox jumps into air
+  const shadowProps = useAnimatedProps(() => {
+    const lift = Math.max(0, -jumpY.value);
+    const shrink = Math.max(0.55, 1 - lift / 55);
+    return {
+      rx: 64 * shrink,
+      opacity: Math.max(0.06, 0.17 * shrink),
+    };
+  });
+
   const tailProps = useAnimatedProps(() => ({
-    transform: `rotate(${tail.value * 6} 150 190)`,
+    transform: `rotate(${tail.value * 8} 152 188)`,
   }));
   const headProps = useAnimatedProps(() => ({
-    transform: `rotate(${head.value} 120 150)`,
+    transform: `rotate(${head.value} 120 144)`,
   }));
   const leftEarProps = useAnimatedProps(() => ({
-    transform: `rotate(${ear.value} 62 74)`,
+    transform: `rotate(${ear.value} 72 68)`,
   }));
   const rightEarProps = useAnimatedProps(() => ({
-    transform: `rotate(${-ear.value} 178 74)`,
+    transform: `rotate(${-ear.value} 168 68)`,
   }));
   const leftArmProps = useAnimatedProps(() => ({
-    transform: `rotate(${leftArm.value} 90 160)`,
+    transform: `rotate(${leftArm.value} 86 154)`,
   }));
   const rightArmProps = useAnimatedProps(() => ({
-    transform: `rotate(${rightArm.value} 150 160)`,
+    transform: `rotate(${rightArm.value} 148 156)`,
   }));
-  const leftPupilProps = useAnimatedProps(() => ({ cx: 94 + pupil.value * 1.6 }));
-  const rightPupilProps = useAnimatedProps(() => ({ cx: 146 - pupil.value * 1.6 }));
+  const leftPupilProps = useAnimatedProps(() => ({ cx: 97 + pupil.value * 1.8 }));
+  const rightPupilProps = useAnimatedProps(() => ({ cx: 145 + pupil.value * 1.8 }));
   const leftBlinkProps = useAnimatedProps(() => ({ ry: blink.value * 24 }));
   const rightBlinkProps = useAnimatedProps(() => ({ ry: blink.value * 24 }));
+  const sparkleProps = useAnimatedProps(() => ({ opacity: sparkle.value }));
 
-  const mouthOpenD = 'M102 136 Q120 154 138 136 Q136 160 120 164 Q104 160 102 136 Z';
-  const mouthTalkD = 'M108 138 Q120 150 132 138 Q130 156 120 158 Q110 156 108 138 Z';
-  const mouthClosedD = 'M108 138 Q120 148 132 138';
-  const mouthProps = useAnimatedProps(() => ({
-    d: mouth.value > 0.5 ? mouthTalkD : mouthClosedD,
+  const mouthTalkProps = useAnimatedProps(() => ({
+    transform: `scale(1 ${0.78 + mouth.value * 0.35}) translate(0 ${mouth.value * -2})`,
   }));
 
-  const happy = state.mood === 'happy' || state.mood === 'celebrate';
+  const happy = state.mood === 'happy' || state.mood === 'celebrate' || state.mood === 'encouraging';
   const sad = state.mood === 'sad';
-  const isCelebrate = state.animation === 'celebrate';
+  const scarfMode = accessory === 'scarf' ? 'green' : 'teal';
 
   return (
     <Pressable
@@ -316,153 +519,299 @@ export function Fox({
       <Animated.View style={[{ width: '100%', height: '100%' }, containerStyle]}>
         <Svg viewBox="0 0 240 240" width="100%" height="100%">
           <Defs>
-            <LinearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#FFB067" />
-              <Stop offset="1" stopColor="#F4761A" />
+            <LinearGradient id="mobFoxFur" x1="0" y1="0" x2="0.2" y2="1">
+              <Stop offset="0" stopColor="#FF8124" />
+              <Stop offset="0.6" stopColor="#FA640D" />
+              <Stop offset="1" stopColor="#E14B00" />
             </LinearGradient>
-            <LinearGradient id="cream" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#FFFDF6" />
-              <Stop offset="1" stopColor="#FFE6C2" />
+            <LinearGradient id="mobFoxCream" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor="#FFF5E6" />
+              <Stop offset="1" stopColor="#FCDAB0" />
+            </LinearGradient>
+            <LinearGradient id="mobFoxEar" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor="#FBE0C4" />
+              <Stop offset="1" stopColor="#F0BC90" />
             </LinearGradient>
           </Defs>
 
-          <Ellipse cx="120" cy="232" rx="68" ry="7" fill="#3F2A1D" opacity={0.09} />
+          {/* Dynamic ground shadow */}
+          <AnimatedEllipse cx="122" cy="231" ry="7.5" fill="#2A1208" animatedProps={shadowProps} />
 
-          {/* Fluffy cream-tipped tail */}
+          {/* Bushy orange + jagged cream-tip tail */}
           <AnimatedG animatedProps={tailProps}>
             <Path
-              d="M150 190 C176 197 204 189 220 166 C233 148 233 122 220 103 C216 128 204 145 186 155 C168 165 156 176 150 190 Z"
-              fill="url(#fur)"
-              stroke="#4A2B1B"
-              strokeWidth="4"
+              d="M148 188 C178 198 208 186 222 158 C234 132 230 98 214 82 C202 74 180 86 168 110 C158 130 156 164 148 188 Z"
+              fill="url(#mobFoxFur)"
+              stroke="#3B170A"
+              strokeWidth="3.5"
               strokeLinejoin="round"
             />
             <Path
-              d="M220 103 C226 116 228 130 225 145 C221 133 214 124 206 118 C214 114 219 109 220 103 Z"
-              fill="url(#cream)"
-              stroke="#4A2B1B"
-              strokeWidth="2.5"
+              d="M214 82 C226 94 231 112 228 130 L214 118 L206 130 L195 117 L184 128 C189 102 200 84 214 82 Z"
+              fill="url(#mobFoxCream)"
+              stroke="#3B170A"
+              strokeWidth="2.8"
               strokeLinejoin="round"
             />
           </AnimatedG>
 
-          {/* Dark paws and feet */}
-          <Ellipse cx="92" cy="224" rx="21" ry="11" fill="#4A2B1B" />
-          <Ellipse cx="146" cy="224" rx="21" ry="11" fill="#4A2B1B" />
-          <Path d="M80 226h8M90 229h8M100 226h8M134 226h8M144 229h8M154 226h8" stroke="#2E1A10" strokeWidth="2" strokeLinecap="round" opacity={0.7} />
-
-          {/* Body */}
-          <Ellipse cx="120" cy="184" rx="52" ry="42" fill="url(#fur)" stroke="#4A2B1B" strokeWidth="4" />
+          {/* Legs & dark chocolate boots */}
           <Path
-            d="M96 156 C104 150 136 150 144 156 L150 178 L143 176 L147 198 L137 194 L132 214 L120 206 L108 214 L103 194 L93 198 L97 176 L90 178 Z"
-            fill="url(#cream)"
+            d="M84 188 C78 202 79 218 82 224 C86 228 106 228 108 221 C110 214 108 196 106 186 Z"
+            fill="url(#mobFoxFur)"
+            stroke="#3B170A"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
+          />
+          <Path
+            d="M134 186 C132 198 134 216 136 223 C139 229 162 229 164 221 C166 213 160 198 154 188 Z"
+            fill="url(#mobFoxFur)"
+            stroke="#3B170A"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
+          />
+          {/* Left & right paws */}
+          <Path
+            d="M80 206 C86 202 98 202 106 208 L108 222 C108 230 74 232 70 223 C67 217 73 210 80 206 Z"
+            fill="#4A1C0E"
+            stroke="#2A1008"
+            strokeWidth="3.2"
+            strokeLinejoin="round"
+          />
+          <Path
+            d="M136 208 C144 202 154 202 161 206 C168 210 175 217 172 224 C168 232 136 230 136 222 Z"
+            fill="#4A1C0E"
+            stroke="#2A1008"
+            strokeWidth="3.2"
+            strokeLinejoin="round"
           />
 
-          {/* Arms */}
+          {/* Torso & fluffy cream chest patch */}
+          <Path
+            d="M86 146 C86 138 154 138 154 146 C158 172 154 202 120 204 C86 202 82 172 86 146 Z"
+            fill="url(#mobFoxFur)"
+            stroke="#3B170A"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
+          />
+          <Path
+            d="M100 150 L140 150 C142 162 146 168 139 172 L144 185 L134 183 L128 199 L120 191 L112 199 L106 183 L96 185 L101 172 C94 168 98 162 100 150 Z"
+            fill="url(#mobFoxCream)"
+          />
+
+          {/* Waving left arm + raised dark paw with pads (reference pose) */}
           <AnimatedG animatedProps={leftArmProps}>
-            <Path d="M90 160 C78 150 66 136 56 122" fill="none" stroke="#F4761A" strokeWidth="20" strokeLinecap="round" />
-            <Path d="M90 160 C78 150 66 136 56 122" fill="none" stroke="#4A2B1B" strokeWidth="4" strokeLinecap="round" opacity={0.35} />
-            <Circle cx="52" cy="116" r="16" fill="#4A2B1B" />
-            <Circle cx="45" cy="110" r="3.2" fill="#8B5A3C" />
-            <Circle cx="54" cy="106" r="3.2" fill="#8B5A3C" />
-            <Circle cx="62" cy="112" r="3.2" fill="#8B5A3C" />
-            <Circle cx="52" cy="121" r="4.5" fill="#8B5A3C" />
-          </AnimatedG>
-          <AnimatedG animatedProps={rightArmProps}>
-            <Path d="M150 160 C162 170 172 180 180 188" fill="none" stroke="#F4761A" strokeWidth="20" strokeLinecap="round" />
-            <Path d="M150 160 C162 170 172 180 180 188" fill="none" stroke="#4A2B1B" strokeWidth="4" strokeLinecap="round" opacity={0.35} />
-            <Circle cx="182" cy="192" r="15" fill="#4A2B1B" />
-            <Path d="M174 190h16" stroke="#2E1A10" strokeWidth="2.4" strokeLinecap="round" opacity={0.7} />
-          </AnimatedG>
-
-          {/* Ears */}
-          <AnimatedG animatedProps={leftEarProps}>
-            <Path d="M50 82 L38 18 Q36 10 44 14 L86 52 Z" fill="url(#fur)" stroke="#4A2B1B" strokeWidth="4" strokeLinejoin="round" />
-            <Path d="M58 70 L50 30 L78 58 Z" fill="#FFE3C6" />
-          </AnimatedG>
-          <AnimatedG animatedProps={rightEarProps}>
-            <Path d="M190 82 L202 18 Q204 10 196 14 L154 52 Z" fill="url(#fur)" stroke="#4A2B1B" strokeWidth="4" strokeLinejoin="round" />
-            <Path d="M182 70 L190 30 L162 58 Z" fill="#FFE3C6" />
-          </AnimatedG>
-
-          {/* Head */}
-          <AnimatedG animatedProps={headProps}>
             <Path
-              d="M120 40 C158 40 186 66 186 102 C186 134 160 154 120 154 C80 154 54 134 54 102 C54 66 82 40 120 40 Z"
-              fill="url(#fur)"
-              stroke="#4A2B1B"
-              strokeWidth="4"
+              d="M86 154 C72 154 58 144 50 128"
+              fill="none"
+              stroke="#3B170A"
+              strokeWidth="22"
+              strokeLinecap="round"
             />
-            <Path d="M96 44 Q108 28 120 40 Q134 26 144 44 Q132 38 120 46 Q108 38 96 44 Z" fill="#F4761A" />
-
-            {/* Wide cream muzzle */}
             <Path
-              d="M64 106 C64 94 80 90 94 96 C104 100 112 104 120 104 C128 104 136 100 146 96 C160 90 176 94 176 106 C176 128 156 144 120 144 C84 144 64 128 64 106 Z"
-              fill="url(#cream)"
-              stroke="#4A2B1B"
-              strokeWidth="3"
+              d="M86 154 C72 154 58 144 50 128"
+              fill="none"
+              stroke="url(#mobFoxFur)"
+              strokeWidth="15.5"
+              strokeLinecap="round"
+            />
+            <Circle cx="46" cy="122" r="16" fill="#4A1C0E" stroke="#2A1008" strokeWidth="3.2" />
+            <Circle cx="36" cy="109" r="4.5" fill="#4A1C0E" stroke="#2A1008" strokeWidth="2.4" />
+            <Circle cx="44" cy="105" r="4.5" fill="#4A1C0E" stroke="#2A1008" strokeWidth="2.4" />
+            <Circle cx="54" cy="107" r="4.5" fill="#4A1C0E" stroke="#2A1008" strokeWidth="2.4" />
+            <Circle cx="61" cy="114" r="4.5" fill="#4A1C0E" stroke="#2A1008" strokeWidth="2.4" />
+            <Ellipse cx="46" cy="124" rx="6" ry="5" fill="#8C5341" />
+            <Circle cx="38" cy="112" r="2" fill="#8C5341" />
+            <Circle cx="45" cy="109" r="2" fill="#8C5341" />
+            <Circle cx="53" cy="111" r="2" fill="#8C5341" />
+          </AnimatedG>
+
+          {/* Right arm on hip / raises on celebration */}
+          <AnimatedG animatedProps={rightArmProps}>
+            <Path
+              d="M148 156 C164 162 170 174 160 184"
+              fill="none"
+              stroke="#3B170A"
+              strokeWidth="22"
+              strokeLinecap="round"
+            />
+            <Path
+              d="M148 156 C164 162 170 174 160 184"
+              fill="none"
+              stroke="url(#mobFoxFur)"
+              strokeWidth="15.5"
+              strokeLinecap="round"
+            />
+            <Circle cx="155" cy="186" r="14" fill="#4A1C0E" stroke="#2A1008" strokeWidth="3.2" />
+          </AnimatedG>
+
+          {/* Bandana / Shop green knit scarf */}
+          {scarfMode === 'green' ? (
+            <G>
+              <Path
+                d="M84 139 C104 150 136 150 156 139 L161 154 C140 165 100 165 79 154 Z"
+                fill="#16A34A"
+                stroke="#14532D"
+                strokeWidth="3"
+                strokeLinejoin="round"
+              />
+              <Path d="M90 147 C110 154 130 154 150 147" fill="none" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" />
+              <Path d="M138 148 L164 176 L146 184 L130 158 Z" fill="#15803D" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
+              <Path d="M100 156 L120 178 L142 156 Z" fill="#22C55E" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
+            </G>
+          ) : (
+            <G>
+              <Path
+                d="M88 139 C104 148 136 148 152 139 L154 150 L120 176 L86 150 Z"
+                fill="#009BAE"
+                stroke="#094854"
+                strokeWidth="3"
+                strokeLinejoin="round"
+              />
+              <Path d="M94 146 L120 168 L146 146" fill="none" stroke="#1CC4D8" strokeWidth="2.5" strokeLinecap="round" opacity={0.7} />
+              <Path
+                d="M148 143 C162 141 178 146 184 154 L166 156 L176 169 L154 162 Z"
+                fill="#008C9E"
+                stroke="#094854"
+                strokeWidth="2.8"
+                strokeLinejoin="round"
+              />
+              <Circle cx="150" cy="147" r="7" fill="#007C8E" stroke="#094854" strokeWidth="2.6" />
+            </G>
+          )}
+
+          {/* Ears + dark brown tips + fluffy inner fur */}
+          <AnimatedG animatedProps={leftEarProps}>
+            <Path
+              d="M60 88 C50 62 50 30 58 20 C68 18 92 34 102 58 Z"
+              fill="url(#mobFoxFur)"
+              stroke="#3B170A"
+              strokeWidth="3.5"
               strokeLinejoin="round"
             />
-            <Path d="M52 112 L66 108 L60 120 Z" fill="url(#cream)" stroke="#4A2B1B" strokeWidth="2" strokeLinejoin="round" />
-            <Path d="M188 112 L174 108 L180 120 Z" fill="url(#cream)" stroke="#4A2B1B" strokeWidth="2" strokeLinejoin="round" />
+            <Path d="M52 44 C52 30 54 22 58 20 C66 18 78 24 88 34 L74 36 L65 30 L60 41 Z" fill="#3B170A" />
+            <Path d="M68 82 C60 62 60 44 64 36 C74 38 86 50 92 64 L80 62 L75 74 Z" fill="url(#mobFoxEar)" />
+          </AnimatedG>
+          <AnimatedG animatedProps={rightEarProps}>
+            <Path
+              d="M180 88 C190 62 190 30 182 20 C172 18 148 34 138 58 Z"
+              fill="url(#mobFoxFur)"
+              stroke="#3B170A"
+              strokeWidth="3.5"
+              strokeLinejoin="round"
+            />
+            <Path d="M188 44 C188 30 186 22 182 20 C174 18 162 24 152 34 L166 36 L175 30 L180 41 Z" fill="#3B170A" />
+            <Path d="M172 82 C180 62 180 44 176 36 C166 38 154 50 148 64 L160 62 L165 74 Z" fill="url(#mobFoxEar)" />
+          </AnimatedG>
+
+          {/* Animated Head */}
+          <AnimatedG animatedProps={headProps}>
+            {/* Rounded fox cranium */}
+            <Path
+              d="M120 42 C158 42 182 66 182 96 C182 128 154 146 120 146 C86 146 58 128 58 96 C58 66 82 42 120 42 Z"
+              fill="url(#mobFoxFur)"
+              stroke="#3B170A"
+              strokeWidth="3.5"
+              strokeLinejoin="round"
+            />
+            {/* Forehead hair tuft */}
+            <Path
+              d="M104 45 C106 32 114 28 119 37 C124 27 134 30 135 42 C127 38 116 42 104 45 Z"
+              fill="#FF8124"
+              stroke="#3B170A"
+              strokeWidth="2.8"
+              strokeLinejoin="round"
+            />
+
+            {/* Fluffy double-spiked cream cheeks */}
+            <Path
+              d="M58 98 L45 104 L57 110 L50 116 C64 132 90 146 120 146 C150 146 176 132 190 116 L183 110 L195 104 L182 98 C168 100 156 108 140 106 C131 104 126 100 120 100 C114 100 109 104 100 106 C84 108 72 100 58 98 Z"
+              fill="url(#mobFoxCream)"
+              stroke="#3B170A"
+              strokeWidth="3.3"
+              strokeLinejoin="round"
+            />
 
             {happy ? (
               <>
-                <Circle cx="74" cy="110" r="12" fill="#FF9D8A" opacity={0.5} />
-                <Circle cx="166" cy="110" r="12" fill="#FF9D8A" opacity={0.5} />
+                <Ellipse cx="75" cy="115" rx="9" ry="5" fill="#FF8C7A" opacity={0.45} />
+                <Ellipse cx="165" cy="115" rx="9" ry="5" fill="#FF8C7A" opacity={0.45} />
               </>
             ) : null}
 
-            {/* Eyes */}
-            <Ellipse cx="92" cy="96" rx="20" ry="24" fill="#FFFFFF" stroke="#4A2B1B" strokeWidth="3" />
-            <Ellipse cx="148" cy="96" rx="20" ry="24" fill="#FFFFFF" stroke="#4A2B1B" strokeWidth="3" />
-            <Circle cx={94} cy="98" r="14" fill="#7A3B16" />
-            <Circle cx={146} cy="98" r="14" fill="#7A3B16" />
-            <Circle cx="94" cy="98" r="7" fill="#2E1A10" />
-            <Circle cx="146" cy="98" r="7" fill="#2E1A10" />
-            <AnimatedCircle cx={94} cy="98" r="4" fill="#FFFFFF" animatedProps={leftPupilProps} />
-            <AnimatedCircle cx={146} cy="98" r="4" fill="#FFFFFF" animatedProps={rightPupilProps} />
-            <Circle cx="99" cy="106" r="2" fill="#FFFFFF" opacity={0.8} />
-            <Circle cx="151" cy="106" r="2" fill="#FFFFFF" opacity={0.8} />
-            <AnimatedEllipse cx="92" cy="96" rx="21" animatedProps={leftBlinkProps} fill="url(#fur)" />
-            <AnimatedEllipse cx="148" cy="96" rx="21" animatedProps={rightBlinkProps} fill="url(#fur)" />
+            {/* Glossy eyes matching reference */}
+            <Ellipse cx="96" cy="91" rx="16.5" ry="20" fill="#FFFFFF" stroke="#3B170A" strokeWidth="3.2" />
+            <Ellipse cx="144" cy="91" rx="16.5" ry="20" fill="#FFFFFF" stroke="#3B170A" strokeWidth="3.2" />
+            <AnimatedCircle cx={97} cy="92" r="12.5" fill="#3A180B" animatedProps={leftPupilProps} />
+            <AnimatedCircle cx={143} cy="92" r="12.5" fill="#3A180B" animatedProps={rightPupilProps} />
+            <Circle cx="97" cy="93" r="6.5" fill="#180A05" />
+            <Circle cx="143" cy="93" r="6.5" fill="#180A05" />
+            <Circle cx="102" cy="84" r="4.5" fill="#FFFFFF" />
+            <Circle cx="148" cy="84" r="4.5" fill="#FFFFFF" />
+            <Circle cx="93" cy="98" r="2.2" fill="#FFFFFF" opacity={0.85} />
+            <Circle cx="139" cy="98" r="2.2" fill="#FFFFFF" opacity={0.85} />
+            <AnimatedEllipse cx="96" cy="91" rx="18" animatedProps={leftBlinkProps} fill="#FA640D" />
+            <AnimatedEllipse cx="144" cy="91" rx="18" animatedProps={rightBlinkProps} fill="#FA640D" />
 
-            {/* Brows */}
-            <Path d="M76 68 Q92 58 108 68" fill="none" stroke="#4A2B1B" strokeWidth="5" strokeLinecap="round" />
-            <Path d="M132 68 Q148 58 164 68" fill="none" stroke="#4A2B1B" strokeWidth="5" strokeLinecap="round" />
-
-            {/* Nose + mouth */}
-            <Path d="M112 120 Q120 116 128 120 Q126 130 120 132 Q114 130 112 120 Z" fill="#4A2B1B" />
+            {/* Eyebrows */}
             {sad ? (
-              <Path d="M106 140 Q120 132 134 140" fill="none" stroke="#5C2A12" strokeWidth="4" strokeLinecap="round" />
-            ) : happy ? (
               <>
-                <AnimatedPath animatedProps={state.speaking ? mouthProps : {}} d={mouthOpenD} fill="#5C2A12" stroke="#4A2B1B" strokeWidth="3" strokeLinejoin="round" />
-                <Path d="M110 152 Q120 147 130 152 Q126 164 120 166 Q114 164 110 152 Z" fill="#FF8F8F" />
+                <Path d="M81 66 Q94 69 107 62" fill="none" stroke="#3B170A" strokeWidth="4.2" strokeLinecap="round" />
+                <Path d="M133 62 Q146 69 159 66" fill="none" stroke="#3B170A" strokeWidth="4.2" strokeLinecap="round" />
               </>
             ) : (
               <>
-                <AnimatedPath animatedProps={state.speaking ? mouthProps : {}} d={mouthClosedD} fill="none" stroke="#5C2A12" strokeWidth="4" strokeLinecap="round" />
-                <Path d="M111 146 Q120 151 129 146 Q120 156 111 146 Z" fill="#FF8F8F" opacity={0.85} />
+                <Path d="M80 65 Q95 57 109 64" fill="none" stroke="#3B170A" strokeWidth="4.5" strokeLinecap="round" />
+                <Path d="M131 64 Q145 57 160 65" fill="none" stroke="#3B170A" strokeWidth="4.5" strokeLinecap="round" />
               </>
+            )}
+
+            {/* Glasses cosmetic */}
+            {accessory === 'glasses' ? (
+              <G>
+                <Circle cx="96" cy="91" r="20" fill="none" stroke="#1E293B" strokeWidth="3.5" />
+                <Circle cx="144" cy="91" r="20" fill="none" stroke="#1E293B" strokeWidth="3.5" />
+                <Path d="M116 90 Q120 87 124 90" fill="none" stroke="#1E293B" strokeWidth="3.5" strokeLinecap="round" />
+              </G>
+            ) : null}
+
+            {/* Party hat perched cleanly atop head */}
+            {accessory === 'hat' ? (
+              <G>
+                <Path d="M98 46 L120 4 L142 46 Z" fill="#1CB0F6" stroke="#0B4A6F" strokeWidth="3" strokeLinejoin="round" />
+                <Path d="M107 32 L133 32" stroke="#FCD34D" strokeWidth="5" strokeLinecap="round" />
+                <Circle cx="120" cy="4" r="6" fill="#FDE047" stroke="#0B4A6F" strokeWidth="2.5" />
+              </G>
+            ) : null}
+
+            {/* Nose + cheerful mouth & tongue */}
+            <Path
+              d="M111 108 C115 105 125 105 129 108 C129 114 123 117 120 117 C117 117 111 114 111 108 Z"
+              fill="#3B170A"
+            />
+            {sad ? (
+              <Path d="M110 131 Q120 124 130 131" fill="none" stroke="#3B170A" strokeWidth="3.4" strokeLinecap="round" />
+            ) : (
+              <AnimatedG animatedProps={mouthTalkProps}>
+                <Path
+                  d="M104 122 Q120 130 136 122 C135 136 128 141 120 141 C112 141 105 136 104 122 Z"
+                  fill="#66141A"
+                  stroke="#3B170A"
+                  strokeWidth="2.8"
+                  strokeLinejoin="round"
+                />
+                <Path d="M112 132 Q120 128 128 132 Q124 139 120 139 Q116 139 112 132 Z" fill="#FA7268" />
+              </AnimatedG>
             )}
           </AnimatedG>
 
-          {/* Teal scarf with knot and tails */}
-          <G>
-            <Path d="M80 150 C96 162 144 162 160 150 L168 170 C150 184 90 184 72 170 Z" fill="#159CA6" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
-            <Path d="M96 156 C110 164 130 164 144 156 L148 164 C132 174 108 174 92 164 Z" fill="#4ABFC7" />
-            <Circle cx="160" cy="158" r="11" fill="#0E7C86" stroke="#0E6F78" strokeWidth="3" />
-            <Path d="M164 162 L196 176 L186 190 L158 174 Z" fill="#159CA6" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
-            <Path d="M158 166 L184 198 L172 202 L152 174 Z" fill="#0E7C86" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
-          </G>
-
-          {isCelebrate ? (
-            <G>
-              <Path d="M36 92 L40 102 L50 106 L40 110 L36 120 L32 110 L22 106 L32 102 Z" fill="#FBBF24" />
-              <Path d="M204 120 L207 128 L215 131 L207 134 L204 142 L201 134 L193 131 L201 128 Z" fill="#8ADD7F" />
-            </G>
-          ) : null}
+          {/* Celebratory jump sparkles */}
+          <AnimatedG animatedProps={sparkleProps}>
+            <Path d="M30 56 L33 65 L42 68 L33 71 L30 80 L27 71 L18 68 L27 65 Z" fill="#FBBF24" />
+            <Path d="M210 56 L213 65 L222 68 L213 71 L210 80 L207 71 L198 68 L207 65 Z" fill="#58CC02" />
+            <Circle cx="44" cy="40" r="4" fill="#38BDF8" />
+            <Circle cx="198" cy="42" r="4" fill="#FBBF24" />
+          </AnimatedG>
         </Svg>
       </Animated.View>
     </Pressable>

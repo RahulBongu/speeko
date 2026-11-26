@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { SiteHeader } from '@/components/AppHeader';
 import { Fox } from '@/components/Fox';
-import { authClient } from '@/lib/auth-client';
+import { API_URL, authClient } from '@/lib/auth-client';
 import { ArrowRightIcon } from '@/components/icons';
 
 interface Standing {
@@ -41,7 +41,7 @@ export default function LeaguesClient() {
     let active = true;
     setLoading(true);
     setError(null);
-    fetch('/api/leagues', { credentials: 'include' })
+    fetch(`${API_URL}/api/leagues`, { credentials: 'include' })
       .then(async (response) => {
         if (!response.ok) throw new Error(`Leagues could not load (status ${response.status}).`);
         return (await response.json()) as LeaguesState;

@@ -21,6 +21,10 @@ jest.mock('@react-native-async-storage/async-storage', () => {
 const mockReplace = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), back: jest.fn(), replace: mockReplace }),
+  useFocusEffect: (cb: () => void) => {
+    const React = require('react');
+    React.useEffect(() => cb(), [cb]);
+  },
 }));
 
 jest.mock('../lib/api', () => ({
@@ -35,10 +39,19 @@ jest.mock('../lib/sync', () => ({
 jest.mock('../lib/mascot', () => ({
   isMascotVoiceEnabled: jest.fn(() => true),
   setMascotVoiceEnabled: jest.fn(),
+  subscribeMascotVoiceEnabled: jest.fn(() => () => {}),
+  useMascotVoiceEnabled: jest.fn(() => true),
   playMascotVoice: jest.fn(async () => true),
   stopMascotVoice: jest.fn(async () => {}),
   useMascotSpeaking: jest.fn(() => false),
   useMascotListening: jest.fn(() => false),
+}));
+
+jest.mock('../lib/sound', () => ({
+  isMobileSoundEnabled: jest.fn(() => true),
+  setMobileSoundEnabled: jest.fn(),
+  playMobileSound: jest.fn(async () => true),
+  stopMobileSound: jest.fn(async () => {}),
 }));
 
 import { apiFetch, setCookie } from '../lib/api';
@@ -182,5 +195,32 @@ describe('mobile account', () => {
     expect(await screen.findByText(/Sign out failed \(500\)/)).toBeTruthy();
     expect(mockedSetCookie).not.toHaveBeenCalled();
     expect(await AsyncStorage.getItem('speeko.mobile.progress.v2')).not.toBeNull();
+  });
+
+  it('deletes the signed-in account on DELETE /api/account and clears device data', async () => {
+    await saveProgress(accountProgress());
+    mockedFetch.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path === '/api/auth/get-session') {
+        return reply(200, { user: { email: 'learner@example.com' } });
+      }
+      if (path === '/api/account' && init?.method === 'DELETE') {
+        return reply(204, {});
+      }
+      throw new Error(`Unexpected request: ${path}`);
+    });
+    mockedSync.mockResolvedValue({ progress: accountProgress(), signedIn: true });
+
+    await render(<Account />);
+    expect(await screen.findByText('learner@example.com')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Delete account'));
+    await fireEvent.press(screen.getByText('Confirm delete'));
+
+    expect(mockedFetch).toHaveBeenCalledWith(
+      '/api/account',
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+    expect(mockedSetCookie).toHaveBeenCalledWith(null);
+    expect(await AsyncStorage.getItem('speeko.mobile.progress.v2')).toBeNull();
+    expect(mockReplace).toHaveBeenCalledWith('/');
   });
 });

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 import { romanHint, type Exercise, type GradeResult } from '@speeko/core';
 import {
@@ -49,6 +49,42 @@ export function ExerciseBody({
   const [matchedLeft, setMatchedLeft] = useState<number[]>([]);
   const [playingAudio, setPlayingAudio] = useState(false);
   const [showReading, setShowReading] = useState(false);
+  const audioTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (audioTimerRef.current) {
+        clearTimeout(audioTimerRef.current);
+        audioTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      (exercise.kind === 'listenChoose' || exercise.kind === 'typeWhatYouHear') &&
+      hasMobileAudio(exercise.id) &&
+      !disabled
+    ) {
+      let active = true;
+      setPlayingAudio(true);
+      void playMobileAudio(exercise.id).then((ok) => {
+        if (!active) return;
+        if (!ok) {
+          setPlayingAudio(false);
+          return;
+        }
+        if (audioTimerRef.current) clearTimeout(audioTimerRef.current);
+        audioTimerRef.current = setTimeout(() => {
+          if (active) setPlayingAudio(false);
+        }, 3000);
+      });
+      return () => {
+        active = false;
+      };
+    }
+    return undefined;
+  }, [exercise.id, exercise.kind, disabled]);
 
   if (!isSupportedExercise(exercise)) {
     return (
@@ -86,8 +122,12 @@ export function ExerciseBody({
             onPress={async () => {
               setPlayingAudio(true);
               const ok = await playMobileAudio(exercise.id);
-              if (!ok) setPlayingAudio(false);
-              setTimeout(() => setPlayingAudio(false), 3000);
+              if (!ok) {
+                setPlayingAudio(false);
+                return;
+              }
+              if (audioTimerRef.current) clearTimeout(audioTimerRef.current);
+              audioTimerRef.current = setTimeout(() => setPlayingAudio(false), 3000);
             }}
             style={{
               alignSelf: 'center',
@@ -645,10 +685,27 @@ export function ExerciseBody({
             })}
           </View>
         </View>
-        <Text style={{ fontSize: 12, fontWeight: '800', color: COLORS.muted }}>
-          Matched {matchedCount} / {exercise.pairs.length} · Mismatches{' '}
-          {draft.kind === 'pairs' ? draft.mismatches : 0}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+          <Text style={{ fontSize: 12, fontWeight: '800', color: COLORS.muted }}>
+            Matched {matchedCount} / {exercise.pairs.length} · Mismatches{' '}
+            {draft.kind === 'pairs' ? draft.mismatches : 0}
+          </Text>
+          {!disabled && (matchedLeft.length > 0 || leftSelected !== null) ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Clear matched pairs"
+              onPress={() => {
+                setLeftSelected(null);
+                setMatchedLeft([]);
+                if (draft.kind === 'pairs') onChange({ ...draft, matched: 0 });
+              }}
+            >
+              <Text style={{ fontSize: 12, fontWeight: '800', color: COLORS.greenDark }}>
+                Reset board
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
       </View>
     );
   }

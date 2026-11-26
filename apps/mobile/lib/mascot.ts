@@ -1,15 +1,34 @@
 import { useEffect, useState } from 'react';
 import { createAudioPlayer } from 'expo-audio';
-import { MASCOT_REACTIONS, type MascotReactionId } from '@speeko/core';
+import {
+  MASCOT_REACTIONS,
+  createMascotVarietyPicker,
+  type MascotReactionId,
+  type VariedReactionPick,
+} from '@speeko/core';
 
 const AUDIO_MAP: Record<string, number> = {
   correct: require('../assets/mascot/correct.mp3'),
+  'correct-2': require('../assets/mascot/correct-2.mp3'),
+  'correct-3': require('../assets/mascot/correct-3.mp3'),
+  'correct-4': require('../assets/mascot/correct-4.mp3'),
+  'correct-5': require('../assets/mascot/correct-5.mp3'),
   incorrect: require('../assets/mascot/incorrect.mp3'),
+  'incorrect-2': require('../assets/mascot/incorrect-2.mp3'),
+  'incorrect-3': require('../assets/mascot/incorrect-3.mp3'),
+  'incorrect-4': require('../assets/mascot/incorrect-4.mp3'),
   complete: require('../assets/mascot/complete.mp3'),
+  'complete-2': require('../assets/mascot/complete-2.mp3'),
+  'complete-3': require('../assets/mascot/complete-3.mp3'),
   discovery: require('../assets/mascot/discovery.mp3'),
+  'discovery-2': require('../assets/mascot/discovery-2.mp3'),
   streak: require('../assets/mascot/streak.mp3'),
+  'streak-2': require('../assets/mascot/streak-2.mp3'),
   encouragement: require('../assets/mascot/encouragement.mp3'),
+  'encouragement-2': require('../assets/mascot/encouragement-2.mp3'),
 };
+
+const varietyPicker = createMascotVarietyPicker();
 
 let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 let currentSubscription: { remove(): void } | null = null;
@@ -36,6 +55,7 @@ function releasePlayer(): void {
 type ActiveListener = (active: boolean) => void;
 const speakingListeners = new Set<ActiveListener>();
 const listeningListeners = new Set<ActiveListener>();
+const enabledListeners = new Set<ActiveListener>();
 let speaking = false;
 let listening = false;
 
@@ -59,6 +79,11 @@ export function subscribeMascotListening(listener: ActiveListener): () => void {
   return () => listeningListeners.delete(listener);
 }
 
+export function subscribeMascotVoiceEnabled(listener: ActiveListener): () => void {
+  enabledListeners.add(listener);
+  return () => enabledListeners.delete(listener);
+}
+
 export function useMascotSpeaking(): boolean {
   const [active, setActive] = useState(speaking);
   useEffect(() => {
@@ -77,11 +102,21 @@ export function useMascotListening(): boolean {
   return active;
 }
 
+export function useMascotVoiceEnabled(): boolean {
+  const [active, setActive] = useState(enabled);
+  useEffect(() => {
+    setActive(enabled);
+    return subscribeMascotVoiceEnabled(setActive);
+  }, []);
+  return active;
+}
+
 try {
   const AsyncStorage = require('@react-native-async-storage/async-storage').default;
   AsyncStorage.getItem('speeko.mascotVoiceEnabled')
     .then((value: string | null) => {
       enabled = value === null ? true : value === '1';
+      emit(enabledListeners, enabled);
     })
     .catch(() => {});
 } catch {
@@ -94,6 +129,7 @@ export function isMascotVoiceEnabled(): boolean {
 
 export function setMascotVoiceEnabled(value: boolean): void {
   enabled = value;
+  emit(enabledListeners, value);
   try {
     const AsyncStorage = require('@react-native-async-storage/async-storage').default;
     AsyncStorage.setItem('speeko.mascotVoiceEnabled', value ? '1' : '0').catch(() => {});
@@ -102,15 +138,24 @@ export function setMascotVoiceEnabled(value: boolean): void {
   }
 }
 
-export function mascotAudioSource(reactionId: MascotReactionId): number | null {
-  const reaction = MASCOT_REACTIONS[reactionId];
-  if (!reaction) return null;
-  return AUDIO_MAP[reaction.audioKey] ?? null;
+export function nextVariedMascotReaction(reactionId: MascotReactionId): VariedReactionPick {
+  return varietyPicker.pick(reactionId);
 }
 
-export async function playMascotVoice(reactionId: MascotReactionId): Promise<boolean> {
+export function mascotAudioSource(reactionId: MascotReactionId, overrideKey?: string): number | null {
+  const reaction = MASCOT_REACTIONS[reactionId];
+  if (!reaction) return null;
+  if (overrideKey && AUDIO_MAP[overrideKey]) return AUDIO_MAP[overrideKey];
+  const nextKey = varietyPicker.pickAudioKey(reactionId);
+  return AUDIO_MAP[nextKey] ?? AUDIO_MAP[reaction.audioKey] ?? null;
+}
+
+export async function playMascotVoice(
+  reactionId: MascotReactionId,
+  overrideKey?: string,
+): Promise<boolean> {
   if (!enabled) return false;
-  const source = mascotAudioSource(reactionId);
+  const source = mascotAudioSource(reactionId, overrideKey);
   if (!source) return false;
   try {
     await stopMascotVoice();

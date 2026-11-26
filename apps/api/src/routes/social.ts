@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { and, eq, gte, ilike, inArray, or, sql } from 'drizzle-orm';
+import { and, eq, gte, inArray, or, sql } from 'drizzle-orm';
 import {
   computeStreak,
   dayKeyInTimeZone,
@@ -12,6 +12,7 @@ import {
   lessonCompletionRewards,
   lessonEvents,
   user,
+  userInventory,
   userProfiles,
 } from '../db/schema.js';
 import { readProgress } from '../progress-store.js';
@@ -101,7 +102,7 @@ async function profileWithStats(db: ReturnType<typeof getDb>, profile: typeof us
     .from(follows)
     .where(eq(follows.followerId, profile.userId));
   const progress = await readProgress(profile.userId);
-  const [events, rewards] = await Promise.all([
+  const [events, rewards, freezeRows] = await Promise.all([
     db
       .select({
         attemptId: lessonEvents.attemptId,
@@ -114,6 +115,13 @@ async function profileWithStats(db: ReturnType<typeof getDb>, profile: typeof us
       .select({ xp: lessonCompletionRewards.xp })
       .from(lessonCompletionRewards)
       .where(eq(lessonCompletionRewards.userId, profile.userId)),
+    db
+      .select({ quantity: userInventory.quantity })
+      .from(userInventory)
+      .where(
+        and(eq(userInventory.userId, profile.userId), eq(userInventory.itemId, 'streak-freeze')),
+      )
+      .limit(1),
   ]);
   const history = historyFromLessonEvents(
     events.map((event) => ({
@@ -133,7 +141,7 @@ async function profileWithStats(db: ReturnType<typeof getDb>, profile: typeof us
     displayName: profile.displayName,
     bio: profile.bio,
     xp,
-    streak: computeStreak(history, today).current,
+    streak: computeStreak(history, today, freezeRows[0]?.quantity ?? 0).current,
     lessons,
     followers: Number(followers?.count ?? 0),
     following: Number(following?.count ?? 0),

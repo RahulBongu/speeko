@@ -416,8 +416,10 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
                     href={`/lesson/${course.id}/review`}
                     icon={<RefreshIcon className="h-7 w-7" />}
                     label="Review"
-                    sub={dueCount > 0 ? `${dueCount} due` : 'Spaced practice'}
+                    sub={dueCount > 0 ? `${dueCount} due` : 'Nothing due'}
                     tone="review"
+                    locked={dueCount === 0}
+                    lockedReason="Complete a lesson first or wait until a card is due for review"
                   />
                   {isCheckpointUnit ? (
                     <PathNode
@@ -441,7 +443,12 @@ export default function CoursePathPage({ params }: { params: Promise<{ courseId:
         </div>
 
         <section className="card mt-12 flex flex-col items-center gap-4 p-6 text-center sm:flex-row sm:text-left">
-          <Fox mood={stats.allComplete ? 'celebrate' : 'idle'} className="h-20 w-20 shrink-0" />
+          <Fox
+            mood={stats.allComplete ? 'celebrate' : 'idle'}
+            accessory={progress?.equippedCosmetic ?? null}
+            patrol
+            className="h-20 w-20 shrink-0"
+          />
           <div className="flex-1">
             <h2 className="font-display text-xl font-extrabold text-bark-800">
               {stats.allComplete ? 'Course complete!' : 'Small steps, every day'}

@@ -107,6 +107,7 @@ export default function Home() {
           <Animated.View style={[styles.foxHalo, foxStyle]}>
             <Fox
               mood="happy"
+              patrol
               style={styles.fox}
               title="Speeko, the friendly fox mascot"
             />

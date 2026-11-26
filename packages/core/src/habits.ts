@@ -102,6 +102,8 @@ export interface HabitReportOptions {
    * quest progress only advances on lessons that granted a completion reward.
    */
   questHistory?: readonly HabitDay[];
+  /** Extra streak freezes held in shop inventory. */
+  purchasedFreezes?: number;
   /** Totals from a legacy snapshot, used only when history cannot supply them. */
   lifetimeXp?: number;
   lifetimeLessons?: number;
@@ -277,6 +279,7 @@ function isActive(day: HabitDay): boolean {
 export function computeStreak(
   history: readonly HabitDay[],
   asOfDay: string,
+  purchasedFreezes = 0,
 ): StreakSummary {
   if (!isDayKey(asOfDay)) throw new Error(`Invalid day key: ${asOfDay}`);
   const days = normalizeHistory(history).filter((day) => day.day <= asOfDay && isActive(day));
@@ -311,6 +314,13 @@ export function computeStreak(
       nextFreezeAt += STREAK_FREEZE_EARN_INTERVAL;
     }
     previous = entry.day;
+  }
+
+  // Purchased shop freezes count as active inventory for protecting a
+  // trailing missed day (and display), without rewriting older historical gaps.
+  const bought = Math.max(0, Math.floor(purchasedFreezes));
+  if (bought > 0) {
+    freezes = Math.min(MAX_STREAK_FREEZES, freezes + bought);
   }
 
   let current = streak;
@@ -482,7 +492,7 @@ export function buildHabitReport(
   const questDays = options.questHistory
     ? normalizeHistory(options.questHistory).filter((day) => day.day <= asOfDay)
     : days;
-  const streak = computeStreak(days, asOfDay);
+  const streak = computeStreak(days, asOfDay, options.purchasedFreezes ?? 0);
   const todayEntry = days.find((day) => day.day === asOfDay);
   const todayXp = todayEntry?.xp ?? 0;
   const { achievements, totals } = computeAchievements(

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { CalendarDay, HabitReport, ProgressState } from '@speeko/core';
@@ -11,6 +11,7 @@ import {
 } from '@speeko/core';
 import { ORIGIN, apiFetch, getCookie } from '../lib/api';
 import { loadProgress, saveProgress } from '../lib/progress';
+import { useOnFocus } from '../lib/useOnFocus';
 import { AppNav } from '../components/AppNav';
 import { Screen } from '../components/Screen';
 import { Fox } from '../components/Fox';
@@ -110,7 +111,7 @@ export default function Habits() {
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useOnFocus(load);
 
   const chooseGoal = useCallback(async (goal: number) => {
     if (goalStatus === 'saving' || !progress) return;
@@ -145,6 +146,7 @@ export default function Habits() {
           <ActivityIndicator color={COLORS.green} />
           <Text style={{ color: COLORS.muted, fontWeight: '700' }}>Reading your habit history…</Text>
         </View>
+        <AppNav active="habits" />
       </Screen>
     );
   }
@@ -209,7 +211,13 @@ export default function Habits() {
                   today&apos;s square.
                 </Text>
               </View>
-              <Fox mood="happy" style={{ width: 72, height: 72 }} title="Speeko waiting for your first lesson" />
+              <Fox
+                mood="happy"
+                accessory={progress.equippedCosmetic ?? null}
+                patrol
+                style={{ width: 72, height: 72 }}
+                title="Speeko waiting for your first lesson"
+              />
             </View>
             <TactileButton label="Find a course" tone="green" onPress={() => router.push('/learn')} style={{ marginTop: 12, alignSelf: 'stretch' }} />
           </TactileCard>
@@ -363,8 +371,8 @@ export default function Habits() {
             ? 'Quests, streaks, and the calendar are derived from verified lesson events.'
             : 'This report uses only activity saved on this device. Sign in for verified history.'}
         </Text>
-        <AppNav active="habits" />
       </ScrollView>
+      <AppNav active="habits" />
     </Screen>
   );
 }

@@ -67,9 +67,8 @@ export default function Licenses() {
             </Text>
           </View>
         ))}
-
-        <AppNav active="account" />
       </ScrollView>
+      <AppNav active="account" />
     </Screen>
   );
 }

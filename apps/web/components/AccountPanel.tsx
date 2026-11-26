@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authClient } from '@/lib/auth-client';
-import { DAILY_GOAL } from '@/lib/progress';
+import { API_URL, authClient } from '@/lib/auth-client';
+import { writeKnownSignedInUserId } from '@/lib/auth-marker';
+import { DAILY_GOAL, PROGRESS_EVENT, PROGRESS_KEY, emptyProgress } from '@/lib/progress';
 import { isSoundEnabled, setSoundEnabled } from '@/lib/sound';
 import { isMascotVoiceEnabled, setMascotVoiceEnabled } from '@/lib/mascotVoice';
 import { useProgress } from '@/lib/use-progress';
@@ -55,10 +56,15 @@ export function AccountPanel() {
   const { data: session, isPending } = authClient.useSession();
   const progress = useProgress();
   const [gemBalance, setGemBalance] = useState<number | null>(null);
-  const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
-  const [mascotOn, setMascotOn] = useState(() => isMascotVoiceEnabled());
+  const [soundOn, setSoundOn] = useState(true);
+  const [mascotOn, setMascotOn] = useState(true);
   const [verified, setVerified] = useState<VerifiedStats | null>(null);
   const [syncFailed, setSyncFailed] = useState(false);
+
+  useEffect(() => {
+    setSoundOn(isSoundEnabled());
+    setMascotOn(isMascotVoiceEnabled());
+  }, []);
 
   useEffect(() => {
     if (!session) {
@@ -75,7 +81,7 @@ export function AccountPanel() {
       .catch(() => {
         if (active) setGemBalance(null);
       });
-    fetch('/api/habits', { credentials: 'include' })
+    fetch(`${API_URL}/api/habits`, { credentials: 'include' })
       .then(async (response) => {
         if (!response.ok) throw new Error(`Habits failed with ${response.status}`);
         return (await response.json()) as {
@@ -120,7 +126,7 @@ export function AccountPanel() {
   if (!session) {
     return (
       <div className="card flex flex-col items-center gap-4 p-8 text-center">
-        <Fox className="h-20 w-20" />
+        <Fox accessory={progress?.equippedCosmetic ?? null} patrol className="h-20 w-20" />
         <h1 className="font-display text-2xl font-extrabold text-bark-800">You are learning as a guest</h1>
         <p className="max-w-sm text-sm font-semibold text-bark-500">
           Your progress lives in this browser. Create an account to keep it on every device.
@@ -303,6 +309,15 @@ export function AccountPanel() {
             className="btn-secondary"
             onClick={async () => {
               await authClient.signOut();
+              writeKnownSignedInUserId(null);
+              try {
+                window.localStorage.removeItem(PROGRESS_KEY);
+                window.dispatchEvent(
+                  new CustomEvent(PROGRESS_EVENT, { detail: emptyProgress() }),
+                );
+              } catch {
+                // ignore storage failures
+              }
               router.push('/');
               router.refresh();
             }}
@@ -319,7 +334,7 @@ export function AccountPanel() {
               if (!confirmed) return;
               let response: Response;
               try {
-                response = await fetch('/api/account', {
+                response = await fetch(`${API_URL}/api/account`, {
                   method: 'DELETE',
                   credentials: 'include',
                 });
@@ -331,8 +346,12 @@ export function AccountPanel() {
                 alert('Could not delete the account. Please try again.');
                 return;
               }
+              writeKnownSignedInUserId(null);
               try {
-                window.localStorage.removeItem('speeko.progress.v2');
+                window.localStorage.removeItem(PROGRESS_KEY);
+                window.dispatchEvent(
+                  new CustomEvent(PROGRESS_EVENT, { detail: emptyProgress() }),
+                );
               } catch {
                 // ignore storage failures
               }

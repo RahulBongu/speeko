@@ -166,6 +166,8 @@ export default function Learn() {
               </View>
               <Fox
                 mood={continueDone > 0 ? 'happy' : 'idle'}
+                accessory={progress?.equippedCosmetic ?? null}
+                patrol
                 style={{ width: 96, height: 96 }}
                 title="Speeko ready to learn"
               />
@@ -277,8 +279,8 @@ export default function Learn() {
         })}
 
         <Text style={{ fontSize: 11, color: COLORS.muted, marginTop: 6 }}>
-          Courses are generated from Speeko Studio. Every published lesson is currently marked draft,
-          pending native-speaker review.
+          Courses are generated from Speeko Studio. Every starter lesson passes automated structural
+          checks while awaiting native-speaker review.
         </Text>
       </ScrollView>
       <AppNav active="learn" />

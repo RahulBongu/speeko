@@ -437,7 +437,12 @@ export default function HabitsClient() {
 
         {empty ? (
           <section className="mt-5 flex flex-col items-center gap-4 rounded-3xl border-2 border-cream-200 bg-white p-6 text-center shadow-card-sm sm:flex-row sm:text-left">
-            <Fox mood="idle" className="h-20 w-20 shrink-0" />
+            <Fox
+              mood="idle"
+              accessory={progress?.equippedCosmetic ?? null}
+              patrol
+              className="h-20 w-20 shrink-0"
+            />
             <div className="flex-1">
               <h2 className="font-display text-xl font-extrabold text-bark-800">
                 Your calendar starts with one lesson

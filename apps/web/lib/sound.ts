@@ -1,12 +1,21 @@
 'use client';
 
+import { createMascotVarietyPicker } from '@speeko/core';
+
 const STORAGE_KEY = 'speeko.soundEnabled';
 const SOUND_FILES: Record<string, string> = {
   correct: '/sounds/correct.mp3',
+  'correct-2': '/sounds/correct-2.mp3',
+  'correct-3': '/sounds/correct-3.mp3',
+  'correct-4': '/sounds/correct-4.mp3',
   incorrect: '/sounds/incorrect.mp3',
+  'incorrect-2': '/sounds/incorrect-2.mp3',
+  'incorrect-3': '/sounds/incorrect-3.mp3',
   complete: '/sounds/complete.mp3',
+  'complete-2': '/sounds/complete-2.mp3',
 };
 
+const sfxPicker = createMascotVarietyPicker();
 let enabledCache: boolean | null = null;
 
 export function isSoundEnabled(): boolean {
@@ -32,20 +41,22 @@ export function setSoundEnabled(value: boolean): void {
 
 const activeAudio = new Map<string, HTMLAudioElement>();
 
-export function playSound(name: keyof typeof SOUND_FILES): void {
+export function playSound(
+  name: 'correct' | 'incorrect' | 'complete',
+  explicitKey?: string | null,
+): void {
   if (typeof window === 'undefined') return;
   if (!isSoundEnabled()) return;
-  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-    // Still allow sound under reduced motion; motion preference is separate.
-  }
-  const src = SOUND_FILES[name];
+  const resolvedKey =
+    explicitKey && SOUND_FILES[explicitKey] ? explicitKey : sfxPicker.pickSfxKey(name);
+  const src = SOUND_FILES[resolvedKey] ?? SOUND_FILES[name];
   if (!src) return;
   try {
-    let audio = activeAudio.get(name);
+    let audio = activeAudio.get(resolvedKey);
     if (!audio) {
       audio = new Audio(src);
       audio.preload = 'auto';
-      activeAudio.set(name, audio);
+      activeAudio.set(resolvedKey, audio);
     }
     audio.currentTime = 0;
     void audio.play().catch(() => {

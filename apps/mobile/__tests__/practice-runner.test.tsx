@@ -44,6 +44,13 @@ jest.mock('../lib/mascot', () => ({
   useMascotListening: jest.fn(() => false),
 }));
 
+jest.mock('../lib/sound', () => ({
+  isMobileSoundEnabled: jest.fn(() => true),
+  setMobileSoundEnabled: jest.fn(),
+  playMobileSound: jest.fn(async () => true),
+  stopMobileSound: jest.fn(async () => {}),
+}));
+
 jest.mock('../lib/sync', () => ({
   syncProgress: jest.fn(async () => ({ progress: null, signedIn: false })),
   syncProgressIfSignedIn: jest.fn(async () => ({ progress: null, signedIn: false, synced: false })),

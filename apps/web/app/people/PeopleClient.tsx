@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { SiteHeader } from '@/components/AppHeader';
 import { Fox } from '@/components/Fox';
-import { authClient } from '@/lib/auth-client';
+import { API_URL, authClient } from '@/lib/auth-client';
 import { SearchIcon } from '@/components/icons';
 
 interface SearchResult {
@@ -35,7 +35,9 @@ export default function PeopleClient() {
     let active = true;
     setLoading(true);
     setError(null);
-    fetch(`/api/profiles/search?q=${encodeURIComponent(debouncedQuery.trim())}`, { credentials: 'include' })
+    fetch(`${API_URL}/api/profiles/search?q=${encodeURIComponent(debouncedQuery.trim())}`, {
+      credentials: 'include',
+    })
       .then(async (response) => {
         if (!response.ok) throw new Error(`Search failed (status ${response.status}).`);
         return (await response.json()) as { results: SearchResult[] };
@@ -66,7 +68,7 @@ export default function PeopleClient() {
 
   async function toggleFollow(username: string, isFollowing: boolean) {
     try {
-      const response = await fetch('/api/follows', {
+      const response = await fetch(`${API_URL}/api/follows`, {
         method: isFollowing ? 'DELETE' : 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

@@ -240,7 +240,12 @@ export default function PracticeClient() {
           </section>
         ) : overview.hasPractice ? (
           <section className="card mt-6 flex flex-col items-center gap-4 p-6 text-center sm:flex-row sm:text-left">
-            <Fox mood="happy" className="h-24 w-24 shrink-0" />
+            <Fox
+              mood="happy"
+              accessory={progress.equippedCosmetic ?? null}
+              patrol
+              className="h-24 w-24 shrink-0"
+            />
             <div className="flex-1">
               <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-bark-500">
                 Review queue
@@ -263,7 +268,12 @@ export default function PracticeClient() {
           </section>
         ) : (
           <section className="card mt-6 flex flex-col items-center gap-4 p-6 text-center sm:flex-row sm:text-left">
-            <Fox mood="idle" className="h-24 w-24 shrink-0" />
+            <Fox
+              mood="idle"
+              accessory={progress.equippedCosmetic ?? null}
+              patrol
+              className="h-24 w-24 shrink-0"
+            />
             <div className="flex-1">
               <h2 className="font-display text-2xl font-extrabold text-bark-800">
                 Nothing to practice yet

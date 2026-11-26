@@ -472,7 +472,7 @@ function PairsBoard({
             onClick={() => tap(side, pairIndex)}
             className={`focus-ring flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl border-2 px-4 py-3 text-center font-display text-lg font-bold transition duration-150 disabled:cursor-default ${buttonClass(side, pairIndex)}`}
           >
-            <span className="script-text" lang={locale}>
+            <span className="script-text" lang={side === 'left' ? 'en' : locale}>
               {text}
             </span>
             {isMatched ? <CheckIcon className="h-4 w-4 shrink-0" /> : null}

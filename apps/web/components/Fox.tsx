@@ -1,7 +1,7 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import {
   resolveFoxAnimation,
   type FoxMood,
@@ -28,19 +28,16 @@ export interface FoxProps {
   mood?: FoxMood | 'correct' | 'incorrect' | MascotReactionId;
   className?: string;
   title?: string;
-  accessory?: 'scarf' | 'hat' | 'glasses' | null;
+  accessory?: string | null;
   speaking?: boolean;
   listening?: boolean;
+  patrol?: boolean;
   onTap?: () => void;
 }
 
 /**
- * Speeko the fox — the web counterpart of the mobile vector rig.
- *
- * Artwork follows the supplied illustration: large glossy eyes, wide cream
- * muzzle, pointed warm ears, fluffy cream-tipped tail, dark paws and a teal
- * scarf. Independent SVG groups are animated with CSS keyframes; the semantic
- * mood comes from @speeko/core so web and mobile stay in sync.
+ * Speeko the fox — Duolingo-inspired vector character faithfully matching
+ * `design/reference/fox-mascot-reference.png` and `@speeko/core`'s state machine.
  */
 export function Fox({
   mood = 'idle',
@@ -49,8 +46,14 @@ export function Fox({
   accessory = null,
   speaking = false,
   listening = false,
+  patrol = false,
   onTap,
 }: FoxProps) {
+  const uid = useId().replace(/:/g, '');
+  const furGrad = `fox-fur-${uid}`;
+  const creamGrad = `fox-cream-${uid}`;
+  const earGrad = `fox-ear-${uid}`;
+
   const [tapped, setTapped] = useState(false);
   const [encouraging, setEncouraging] = useState(false);
 
@@ -65,7 +68,9 @@ export function Fox({
     tapped,
   });
 
-  useEffect(() => { setTapped(false); }, [semanticMood, speaking, listening]);
+  useEffect(() => {
+    setTapped(false);
+  }, [semanticMood, speaking, listening]);
 
   useEffect(() => {
     if (semanticMood !== 'sad' && semanticMood !== 'incorrect') {
@@ -73,15 +78,18 @@ export function Fox({
       return;
     }
     setEncouraging(false);
-    const toEncourage = setTimeout(() => setEncouraging(true), 850);
-    const back = setTimeout(() => setEncouraging(false), 2100);
-    return () => { clearTimeout(toEncourage); clearTimeout(back); };
+    const toEncourage = window.setTimeout(() => setEncouraging(true), 850);
+    const back = window.setTimeout(() => setEncouraging(false), 2100);
+    return () => {
+      window.clearTimeout(toEncourage);
+      window.clearTimeout(back);
+    };
   }, [semanticMood]);
 
   useEffect(() => {
     if (!tapped) return;
-    const timer = setTimeout(() => setTapped(false), 720);
-    return () => clearTimeout(timer);
+    const timer = window.setTimeout(() => setTapped(false), 820);
+    return () => window.clearTimeout(timer);
   }, [tapped]);
 
   const handleTap = useCallback(() => {
@@ -89,247 +97,413 @@ export function Fox({
     onTap?.();
   }, [onTap]);
 
-  const happy = state.mood === 'happy' || state.mood === 'celebrate';
+  const decorative = !onTap && !title;
+  const happy = state.mood === 'happy' || state.mood === 'celebrate' || state.mood === 'encouraging';
   const sad = state.mood === 'sad';
   const celebrate = state.animation === 'celebrate';
-  const wave = state.waving || celebrate || state.animation === 'bounce';
+  const jumping = state.animation === 'bounce' || state.animation === 'celebrate' || state.waving;
+  const scarfMode = accessory === 'scarf' ? 'green' : 'teal';
 
-  const rootClass = celebrate
-    ? 'animate-fox-hop'
-    : happy
+  const bodyAnim = celebrate
+    ? 'animate-fox-dance'
+    : state.animation === 'bounce'
       ? 'animate-fox-hop'
-      : sad
-        ? ''
-        : 'animate-fox-breathe';
-
-  const headClass = celebrate
-    ? 'animate-fox-cheer'
-    : state.animation === 'confused'
-      ? 'animate-fox-confused'
-      : wave
-        ? 'animate-fox-wave'
-        : state.mood === 'encouraging'
+      : state.animation === 'confused'
+        ? 'animate-fox-confused'
+        : state.animation === 'nod'
           ? 'animate-fox-nod'
-          : happy || state.listening
-            ? 'animate-fox-head-bob'
-            : '';
+          : state.animation === 'wave'
+            ? 'animate-fox-hop'
+            : patrol
+              ? 'animate-fox-patrol'
+              : 'animate-fox-breathe';
 
-  const tailClass = sad ? '' : 'animate-wag';
-  const leftArmClass = wave ? 'animate-arm-cheer' : confusedOrIdle(sad, state);
-  const rightArmClass = celebrate
+  const shadowAnim =
+    jumping
+      ? 'animate-fox-shadow-hop'
+      : patrol
+        ? 'animate-fox-shadow-patrol'
+        : '';
+
+  const headAnim = state.listening
+    ? 'animate-fox-head-bob'
+    : state.mood === 'celebrate'
+      ? 'animate-fox-head-dance'
+      : state.animation === 'bounce'
+        ? 'animate-fox-cheer'
+        : '';
+
+  const leftArmAnim = state.waving
+    ? 'animate-arm-wave'
+    : celebrate || state.animation === 'bounce'
+      ? 'animate-arm-cheer'
+      : sad || state.animation === 'confused'
+        ? ''
+        : 'animate-arm-sway';
+
+  const rightArmAnim = celebrate || state.animation === 'bounce'
     ? 'animate-arm-cheer-right'
-    : wave || sad
+    : sad || state.animation === 'confused'
       ? ''
       : 'animate-arm-sway-right';
 
-  const leftEarClass = state.listening ? 'animate-ear-flick' : '';
-  const rightEarClass = state.listening ? 'animate-ear-flick-right' : '';
+  const center = (cx: number, cy: number): CSSProperties => ({
+    transformBox: 'view-box',
+    transformOrigin: `${cx}px ${cy}px`,
+  });
 
-  const headStyle: CSSProperties = { transformBox: 'view-box', transformOrigin: '120px 150px' };
-  const tailStyle: CSSProperties = { transformBox: 'view-box', transformOrigin: '150px 190px' };
-  const leftEarStyle: CSSProperties = { transformBox: 'view-box', transformOrigin: '62px 74px', transition: 'transform .3s ease' };
-  const rightEarStyle: CSSProperties = { transformBox: 'view-box', transformOrigin: '178px 74px', transition: 'transform .3s ease' };
-  const leftArmStyle: CSSProperties = { transformBox: 'view-box', transformOrigin: '90px 160px', transition: 'transform .3s ease' };
-  const rightArmStyle: CSSProperties = { transformBox: 'view-box', transformOrigin: '150px 160px', transition: 'transform .3s ease' };
-  const mouthStyle: CSSProperties = { transformBox: 'view-box', transformOrigin: '120px 140px' };
+  const tailStyle = center(152, 188);
+  const headStyle = center(120, 144);
+  const leftEarStyle = center(72, 68);
+  const rightEarStyle = center(168, 68);
+  const leftArmStyle = center(86, 154);
+  const rightArmStyle = center(148, 156);
+  const mouthStyle = center(120, 130);
+  const leftLidStyle = center(96, 91);
+  const rightLidStyle = center(144, 91);
 
   return (
     <svg
       viewBox="0 0 240 240"
-      className={`${className ?? 'h-40 w-40'} cursor-pointer`}
-      role="img"
-      aria-label={title ?? state.label}
-      onClick={handleTap}
+      className={`${className ?? 'h-32 w-32'} motion-reduce:animate-none ${
+        onTap ? 'cursor-pointer select-none focus:outline-none focus-visible:ring-4 focus-visible:ring-speeko-300 rounded-2xl' : ''
+      }`}
+      role={onTap ? 'button' : decorative ? undefined : 'img'}
+      aria-label={onTap || !decorative ? title ?? state.label : undefined}
+      aria-hidden={decorative ? true : undefined}
+      tabIndex={onTap ? 0 : undefined}
+      onClick={onTap ? handleTap : undefined}
+      onKeyDown={
+        onTap
+          ? (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handleTap();
+              }
+            }
+          : undefined
+      }
     >
+      {title && !onTap ? <title>{title}</title> : null}
       <defs>
-        <linearGradient id="fox-fur" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#FFB067" />
-          <stop offset="1" stopColor="#F4761A" />
+        <linearGradient id={furGrad} x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0%" stopColor="#FF8124" />
+          <stop offset="60%" stopColor="#FA640D" />
+          <stop offset="100%" stopColor="#E14B00" />
         </linearGradient>
-        <linearGradient id="fox-cream" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#FFFDF6" />
-          <stop offset="1" stopColor="#FFE6C2" />
+        <linearGradient id={creamGrad} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FFF5E6" />
+          <stop offset="100%" stopColor="#FCDAB0" />
         </linearGradient>
-        <radialGradient id="fox-blush" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#FF9D8A" stopOpacity="0.5" />
-          <stop offset="1" stopColor="#FF9D8A" stopOpacity="0" />
-        </radialGradient>
+        <linearGradient id={earGrad} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FBE0C4" />
+          <stop offset="100%" stopColor="#F0BC90" />
+        </linearGradient>
       </defs>
 
-      <ellipse cx="120" cy="232" rx="68" ry="7" fill="#3F2A1D" opacity="0.09" />
+      {/* Dynamic ground shadow reacting to leaps & patrols */}
+      <ellipse
+        cx="122"
+        cy="231"
+        rx="64"
+        ry="7.5"
+        fill="#2A1208"
+        opacity="0.16"
+        className={shadowAnim}
+        style={center(122, 231)}
+      />
 
-      <g className={rootClass} style={{ transformBox: 'view-box', transformOrigin: '120px 224px' }}>
-        {/* Tail */}
-        <g style={tailStyle} className={tailClass}>
+      {/* Full body Rig */}
+      <g className={bodyAnim} style={center(120, 224)}>
+        {/* Bushy fluffy orange & cream-tip tail */}
+        <g
+          className={sad ? '' : 'animate-wag'}
+          style={{ ...tailStyle, animationDuration: jumping ? '0.45s' : '1.15s' }}
+        >
           <path
-            d="M150 190 C176 197 204 189 220 166 C233 148 233 122 220 103 C216 128 204 145 186 155 C168 165 156 176 150 190 Z"
-            fill="url(#fox-fur)"
-            stroke="#4A2B1B"
-            strokeWidth="4"
+            d="M148 188 C178 198 208 186 222 158 C234 132 230 98 214 82 C202 74 180 86 168 110 C158 130 156 164 148 188 Z"
+            fill={`url(#${furGrad})`}
+            stroke="#3B170A"
+            strokeWidth="3.5"
             strokeLinejoin="round"
           />
           <path
-            d="M220 103 C226 116 228 130 225 145 C221 133 214 124 206 118 C214 114 219 109 220 103 Z"
-            fill="url(#fox-cream)"
-            stroke="#4A2B1B"
-            strokeWidth="2.5"
+            d="M214 82 C226 94 231 112 228 130 L214 118 L206 130 L195 117 L184 128 C189 102 200 84 214 82 Z"
+            fill={`url(#${creamGrad})`}
+            stroke="#3B170A"
+            strokeWidth="2.8"
             strokeLinejoin="round"
           />
         </g>
 
-        {/* Feet */}
-        <ellipse cx="92" cy="224" rx="21" ry="11" fill="#4A2B1B" />
-        <ellipse cx="146" cy="224" rx="21" ry="11" fill="#4A2B1B" />
-        <path d="M80 226h8M90 229h8M100 226h8M134 226h8M144 229h8M154 226h8" stroke="#2E1A10" strokeWidth="2" strokeLinecap="round" opacity={0.7} />
+        {/* Legs & dark chocolate paws/boots */}
+        <g className={celebrate || patrol ? 'animate-toe-tap' : ''}>
+          <path
+            d="M84 188 C78 202 79 218 82 224 C86 228 106 228 108 221 C110 214 108 196 106 186 Z"
+            fill={`url(#${furGrad})`}
+            stroke="#3B170A"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M80 206 C86 202 98 202 106 208 L108 222 C108 230 74 232 70 223 C67 217 73 210 80 206 Z"
+            fill="#4A1C0E"
+            stroke="#2A1008"
+            strokeWidth="3.2"
+            strokeLinejoin="round"
+          />
+        </g>
+        <g className={celebrate || patrol ? 'animate-toe-tap-right' : ''}>
+          <path
+            d="M134 186 C132 198 134 216 136 223 C139 229 162 229 164 221 C166 213 160 198 154 188 Z"
+            fill={`url(#${furGrad})`}
+            stroke="#3B170A"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M136 208 C144 202 154 202 161 206 C168 210 175 217 172 224 C168 232 136 230 136 222 Z"
+            fill="#4A1C0E"
+            stroke="#2A1008"
+            strokeWidth="3.2"
+            strokeLinejoin="round"
+          />
+        </g>
 
-        {/* Body */}
-        <ellipse cx="120" cy="184" rx="52" ry="42" fill="url(#fox-fur)" stroke="#4A2B1B" strokeWidth="4" />
+        {/* Torso & fluffy scalloped cream chest fur */}
         <path
-          d="M96 156 C104 150 136 150 144 156 L150 178 L143 176 L147 198 L137 194 L132 214 L120 206 L108 214 L103 194 L93 198 L97 176 L90 178 Z"
-          fill="url(#fox-cream)"
+          d="M86 146 C86 138 154 138 154 146 C158 172 154 202 120 204 C86 202 82 172 86 146 Z"
+          fill={`url(#${furGrad})`}
+          stroke="#3B170A"
+          strokeWidth="3.5"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M100 150 L140 150 C142 162 146 168 139 172 L144 185 L134 183 L128 199 L120 191 L112 199 L106 183 L96 185 L101 172 C94 168 98 162 100 150 Z"
+          fill={`url(#${creamGrad})`}
         />
 
-        {/* Arms */}
-        <g style={leftArmStyle} className={leftArmClass}>
-          <path d="M90 160 C78 150 66 136 56 122" fill="none" stroke="#F4761A" strokeWidth="20" strokeLinecap="round" />
-          <path d="M90 160 C78 150 66 136 56 122" fill="none" stroke="#4A2B1B" strokeWidth="4" strokeLinecap="round" opacity="0.35" />
-          <circle cx="52" cy="116" r="16" fill="#4A2B1B" />
-          <circle cx="45" cy="110" r="3.2" fill="#8B5A3C" />
-          <circle cx="54" cy="106" r="3.2" fill="#8B5A3C" />
-          <circle cx="62" cy="112" r="3.2" fill="#8B5A3C" />
-          <circle cx="52" cy="121" r="4.5" fill="#8B5A3C" />
-        </g>
-        <g style={rightArmStyle} className={rightArmClass}>
-          <path d="M150 160 C162 170 172 180 180 188" fill="none" stroke="#F4761A" strokeWidth="20" strokeLinecap="round" />
-          <path d="M150 160 C162 170 172 180 180 188" fill="none" stroke="#4A2B1B" strokeWidth="4" strokeLinecap="round" opacity="0.35" />
-          <circle cx="182" cy="192" r="15" fill="#4A2B1B" />
-          <path d="M174 190h16" stroke="#2E1A10" strokeWidth="2.4" strokeLinecap="round" opacity={0.7} />
-        </g>
-
-        {/* Ears */}
-        <g style={leftEarStyle} className={leftEarClass}>
-          <path d="M50 82 L38 18 Q36 10 44 14 L86 52 Z" fill="url(#fox-fur)" stroke="#4A2B1B" strokeWidth="4" strokeLinejoin="round" />
-          <path d="M58 70 L50 30 L78 58 Z" fill="#FFE3C6" />
-        </g>
-        <g style={rightEarStyle} className={rightEarClass}>
-          <path d="M190 82 L202 18 Q204 10 196 14 L154 52 Z" fill="url(#fox-fur)" stroke="#4A2B1B" strokeWidth="4" strokeLinejoin="round" />
-          <path d="M182 70 L190 30 L162 58 Z" fill="#FFE3C6" />
-        </g>
-
-        {/* Head */}
-        <g style={headStyle} className={headClass}>
+        {/* Waving Left Arm + cute paw pads (faithful to reference pose) */}
+        <g className={leftArmAnim} style={leftArmStyle}>
           <path
-            d="M120 40 C158 40 186 66 186 102 C186 134 160 154 120 154 C80 154 54 134 54 102 C54 66 82 40 120 40 Z"
-            fill="url(#fox-fur)"
-            stroke="#4A2B1B"
-            strokeWidth="4"
+            d="M86 154 C72 154 58 144 50 128"
+            fill="none"
+            stroke="#3B170A"
+            strokeWidth="22"
+            strokeLinecap="round"
           />
-          <path d="M96 44 Q108 28 120 40 Q134 26 144 44 Q132 38 120 46 Q108 38 96 44 Z" fill="#F4761A" />
-
-          {/* Muzzle */}
           <path
-            d="M64 106 C64 94 80 90 94 96 C104 100 112 104 120 104 C128 104 136 100 146 96 C160 90 176 94 176 106 C176 128 156 144 120 144 C84 144 64 128 64 106 Z"
-            fill="url(#fox-cream)"
-            stroke="#4A2B1B"
-            strokeWidth="3"
+            d="M86 154 C72 154 58 144 50 128"
+            fill="none"
+            stroke={`url(#${furGrad})`}
+            strokeWidth="15.5"
+            strokeLinecap="round"
+          />
+          <circle cx="46" cy="122" r="16" fill="#4A1C0E" stroke="#2A1008" strokeWidth="3.2" />
+          <circle cx="36" cy="109" r="4.5" fill="#4A1C0E" stroke="#2A1008" strokeWidth="2.4" />
+          <circle cx="44" cy="105" r="4.5" fill="#4A1C0E" stroke="#2A1008" strokeWidth="2.4" />
+          <circle cx="54" cy="107" r="4.5" fill="#4A1C0E" stroke="#2A1008" strokeWidth="2.4" />
+          <circle cx="61" cy="114" r="4.5" fill="#4A1C0E" stroke="#2A1008" strokeWidth="2.4" />
+          <ellipse cx="46" cy="124" rx="6" ry="5" fill="#8C5341" />
+          <circle cx="38" cy="112" r="2" fill="#8C5341" />
+          <circle cx="45" cy="109" r="2" fill="#8C5341" />
+          <circle cx="53" cy="111" r="2" fill="#8C5341" />
+        </g>
+
+        {/* Right Arm on hip / raises on victory jump */}
+        <g className={rightArmAnim} style={rightArmStyle}>
+          <path
+            d="M148 156 C164 162 170 174 160 184"
+            fill="none"
+            stroke="#3B170A"
+            strokeWidth="22"
+            strokeLinecap="round"
+          />
+          <path
+            d="M148 156 C164 162 170 174 160 184"
+            fill="none"
+            stroke={`url(#${furGrad})`}
+            strokeWidth="15.5"
+            strokeLinecap="round"
+          />
+          <circle cx="155" cy="186" r="14" fill="#4A1C0E" stroke="#2A1008" strokeWidth="3.2" />
+        </g>
+
+        {/* Bandana or Shop Green Scarf */}
+        {scarfMode === 'green' ? (
+          <g>
+            <path
+              d="M84 139 C104 150 136 150 156 139 L161 154 C140 165 100 165 79 154 Z"
+              fill="#16A34A"
+              stroke="#14532D"
+              strokeWidth="3"
+              strokeLinejoin="round"
+            />
+            <path d="M90 147 C110 154 130 154 150 147" fill="none" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" />
+            <path d="M138 148 L164 176 L146 184 L130 158 Z" fill="#15803D" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
+            <path d="M100 156 L120 178 L142 156 Z" fill="#22C55E" stroke="#14532D" strokeWidth="3" strokeLinejoin="round" />
+          </g>
+        ) : (
+          <g>
+            <path
+              d="M88 139 C104 148 136 148 152 139 L154 150 L120 176 L86 150 Z"
+              fill="#009BAE"
+              stroke="#094854"
+              strokeWidth="3"
+              strokeLinejoin="round"
+            />
+            <path d="M94 146 L120 168 L146 146" fill="none" stroke="#1CC4D8" strokeWidth="2.5" strokeLinecap="round" opacity="0.7" />
+            <path
+              d="M148 143 C162 141 178 146 184 154 L166 156 L176 169 L154 162 Z"
+              fill="#008C9E"
+              stroke="#094854"
+              strokeWidth="2.8"
+              strokeLinejoin="round"
+            />
+            <circle cx="150" cy="147" r="7" fill="#007C8E" stroke="#094854" strokeWidth="2.6" />
+          </g>
+        )}
+
+        {/* Animated Head & Ears */}
+        <g className={headAnim} style={headStyle}>
+          {/* Pointed ears with dark chocolate tips & warm inner tufts */}
+          <g className={sad ? '' : 'animate-ear-flick'} style={leftEarStyle}>
+            <path
+              d="M60 88 C50 62 50 30 58 20 C68 18 92 34 102 58 Z"
+              fill={`url(#${furGrad})`}
+              stroke="#3B170A"
+              strokeWidth="3.5"
+              strokeLinejoin="round"
+            />
+            <path d="M52 44 C52 30 54 22 58 20 C66 18 78 24 88 34 L74 36 L65 30 L60 41 Z" fill="#3B170A" />
+            <path d="M68 82 C60 62 60 44 64 36 C74 38 86 50 92 64 L80 62 L75 74 Z" fill={`url(#${earGrad})`} />
+          </g>
+          <g className={sad ? '' : 'animate-ear-flick-right'} style={rightEarStyle}>
+            <path
+              d="M180 88 C190 62 190 30 182 20 C172 18 148 34 138 58 Z"
+              fill={`url(#${furGrad})`}
+              stroke="#3B170A"
+              strokeWidth="3.5"
+              strokeLinejoin="round"
+            />
+            <path d="M188 44 C188 30 186 22 182 20 C174 18 162 24 152 34 L166 36 L175 30 L180 41 Z" fill="#3B170A" />
+            <path d="M172 82 C180 62 180 44 176 36 C166 38 154 50 148 64 L160 62 L165 74 Z" fill={`url(#${earGrad})`} />
+          </g>
+
+          {/* Rounded fox face cranium */}
+          <path
+            d="M120 42 C158 42 182 66 182 96 C182 128 154 146 120 146 C86 146 58 128 58 96 C58 66 82 42 120 42 Z"
+            fill={`url(#${furGrad})`}
+            stroke="#3B170A"
+            strokeWidth="3.5"
             strokeLinejoin="round"
           />
-          <path d="M52 112 L66 108 L60 120 Z" fill="url(#fox-cream)" stroke="#4A2B1B" strokeWidth="2" strokeLinejoin="round" />
-          <path d="M188 112 L174 108 L180 120 Z" fill="url(#fox-cream)" stroke="#4A2B1B" strokeWidth="2" strokeLinejoin="round" />
+          {/* Forehead tuft */}
+          <path
+            d="M104 45 C106 32 114 28 119 37 C124 27 134 30 135 42 C127 38 116 42 104 45 Z"
+            fill="#FF8124"
+            stroke="#3B170A"
+            strokeWidth="2.8"
+            strokeLinejoin="round"
+          />
+
+          {/* Fluffy cheek fur + cream muzzle */}
+          <path
+            d="M58 98 L45 104 L57 110 L50 116 C64 132 90 146 120 146 C150 146 176 132 190 116 L183 110 L195 104 L182 98 C168 100 156 108 140 106 C131 104 126 100 120 100 C114 100 109 104 100 106 C84 108 72 100 58 98 Z"
+            fill={`url(#${creamGrad})`}
+            stroke="#3B170A"
+            strokeWidth="3.3"
+            strokeLinejoin="round"
+          />
 
           {happy ? (
             <>
-              <circle cx="74" cy="110" r="12" fill="url(#fox-blush)" />
-              <circle cx="166" cy="110" r="12" fill="url(#fox-blush)" />
+              <ellipse cx="75" cy="115" rx="9" ry="5" fill="#FF8C7A" opacity="0.45" />
+              <ellipse cx="165" cy="115" rx="9" ry="5" fill="#FF8C7A" opacity="0.45" />
             </>
           ) : null}
 
-          {/* Eyes */}
-          <ellipse cx="92" cy="96" rx="20" ry="24" fill="#FFFFFF" stroke="#4A2B1B" strokeWidth="3" />
-          <ellipse cx="148" cy="96" rx="20" ry="24" fill="#FFFFFF" stroke="#4A2B1B" strokeWidth="3" />
-          <circle cx="94" cy="98" r="14" fill="#7A3B16" />
-          <circle cx="146" cy="98" r="14" fill="#7A3B16" />
-          <circle cx="94" cy="98" r="7" fill="#2E1A10" />
-          <circle cx="146" cy="98" r="7" fill="#2E1A10" />
-          <g className={state.listening ? 'animate-pupil-look' : ''}>
-            <circle cx="94" cy="98" r="4" fill="#FFFFFF" />
+          {/* Glossy Expressive Eyes */}
+          <ellipse cx="96" cy="91" rx="16.5" ry="20" fill="#FFFFFF" stroke="#3B170A" strokeWidth="3.2" />
+          <ellipse cx="144" cy="91" rx="16.5" ry="20" fill="#FFFFFF" stroke="#3B170A" strokeWidth="3.2" />
+          <g className={state.listening || patrol ? 'animate-pupil-look' : ''}>
+            <circle cx="97" cy="92" r="12.5" fill="#3A180B" />
+            <circle cx="97" cy="93" r="6.5" fill="#180A05" />
+            <circle cx="102" cy="84" r="4.5" fill="#FFFFFF" />
+            <circle cx="93" cy="98" r="2.2" fill="#FFFFFF" opacity="0.85" />
           </g>
-          <g className={state.listening ? 'animate-pupil-look-right' : ''}>
-            <circle cx="146" cy="98" r="4" fill="#FFFFFF" />
+          <g className={state.listening || patrol ? 'animate-pupil-look-right' : ''}>
+            <circle cx="143" cy="92" r="12.5" fill="#3A180B" />
+            <circle cx="143" cy="93" r="6.5" fill="#180A05" />
+            <circle cx="148" cy="84" r="4.5" fill="#FFFFFF" />
+            <circle cx="139" cy="98" r="2.2" fill="#FFFFFF" opacity="0.85" />
           </g>
-          <circle cx="99" cy="106" r="2" fill="#FFFFFF" opacity="0.8" />
-          <circle cx="151" cy="106" r="2" fill="#FFFFFF" opacity="0.8" />
-          {!sad ? (
-            <>
-              <g className="animate-blink" style={{ transformBox: 'view-box', transformOrigin: '92px 96px' }}>
-                <ellipse cx="92" cy="96" rx="21" ry="24" fill="url(#fox-fur)" />
-              </g>
-              <g className="animate-blink" style={{ transformBox: 'view-box', transformOrigin: '148px 96px' }}>
-                <ellipse cx="148" cy="96" rx="21" ry="24" fill="url(#fox-fur)" />
-              </g>
-            </>
-          ) : null}
+
+          {/* Animated natural blink lids (default scale-y-0 so reduced-motion keeps eyes open) */}
+          <ellipse cx="96" cy="91" rx="17" ry="20.5" fill="#FA640D" className="animate-blink scale-y-0 motion-reduce:animate-none" style={leftLidStyle} />
+          <ellipse cx="144" cy="91" rx="17" ry="20.5" fill="#FA640D" className="animate-blink scale-y-0 motion-reduce:animate-none" style={rightLidStyle} />
+
+          {/* Expressive Eyebrows */}
           {sad ? (
             <>
-              <path d="M76 68l16 6" fill="none" stroke="#8A3A12" strokeWidth="3.5" strokeLinecap="round" />
-              <path d="M164 68l-16 6" fill="none" stroke="#8A3A12" strokeWidth="3.5" strokeLinecap="round" />
-              <path d="M100 122q10 6 20 0" fill="none" stroke="#3B82B8" strokeWidth="3" strokeLinecap="round" />
+              <path d="M81 66 Q94 69 107 62" fill="none" stroke="#3B170A" strokeWidth="4.2" strokeLinecap="round" />
+              <path d="M133 62 Q146 69 159 66" fill="none" stroke="#3B170A" strokeWidth="4.2" strokeLinecap="round" />
             </>
           ) : (
             <>
-              <path d="M76 68 Q92 58 108 68" fill="none" stroke="#4A2B1B" strokeWidth="5" strokeLinecap="round" />
-              <path d="M132 68 Q148 58 164 68" fill="none" stroke="#4A2B1B" strokeWidth="5" strokeLinecap="round" />
+              <path d="M80 65 Q95 57 109 64" fill="none" stroke="#3B170A" strokeWidth="4.5" strokeLinecap="round" />
+              <path d="M131 64 Q145 57 160 65" fill="none" stroke="#3B170A" strokeWidth="4.5" strokeLinecap="round" />
             </>
           )}
 
-          {/* Nose */}
-          <path d="M112 120 Q120 116 128 120 Q126 130 120 132 Q114 130 112 120 Z" fill="#4A2B1B" />
+          {/* Reading glasses cosmetic */}
+          {accessory === 'glasses' ? (
+            <g className="stroke-bark-800" strokeWidth="3.4" fill="none">
+              <circle cx="96" cy="91" r="20" />
+              <circle cx="144" cy="91" r="20" />
+              <path d="M116 90 Q120 87 124 90" strokeLinecap="round" />
+            </g>
+          ) : null}
 
-          {/* Mouth */}
+          {/* Party hat perched cleanly atop head (never overlaps eyes) */}
+          {accessory === 'hat' ? (
+            <g>
+              <path d="M98 46 L120 4 L142 46 Z" fill="#1CB0F6" stroke="#0B4A6F" strokeWidth="3" strokeLinejoin="round" />
+              <path d="M107 32 L133 32" stroke="#FCD34D" strokeWidth="5" strokeLinecap="round" />
+              <circle cx="120" cy="4" r="6" fill="#FDE047" stroke="#0B4A6F" strokeWidth="2.5" />
+            </g>
+          ) : null}
+
+          {/* Cute Nose + Open Smile / Talking Mouth */}
+          <path
+            d="M111 108 C115 105 125 105 129 108 C129 114 123 117 120 117 C117 117 111 114 111 108 Z"
+            fill="#3B170A"
+          />
           <g className={state.speaking ? 'animate-talk' : ''} style={mouthStyle}>
             {sad ? (
-              <path d="M106 140 Q120 132 134 140" fill="none" stroke="#5C2A12" strokeWidth="4" strokeLinecap="round" />
-            ) : happy ? (
-              <>
-                <path d="M102 136 Q120 154 138 136 Q136 160 120 164 Q104 160 102 136 Z" fill="#5C2A12" stroke="#4A2B1B" strokeWidth="3" strokeLinejoin="round" />
-                <path d="M110 152 Q120 147 130 152 Q126 164 120 166 Q114 164 110 152 Z" fill="#FF8F8F" />
-              </>
+              <path d="M110 131 Q120 124 130 131" fill="none" stroke="#3B170A" strokeWidth="3.4" strokeLinecap="round" />
             ) : (
               <>
-                <path d="M108 138 Q120 148 132 138" fill="none" stroke="#5C2A12" strokeWidth="4" strokeLinecap="round" />
-                <path d="M111 146 Q120 151 129 146 Q120 156 111 146 Z" fill="#FF8F8F" opacity="0.85" />
+                <path
+                  d="M104 122 Q120 130 136 122 C135 136 128 141 120 141 C112 141 105 136 104 122 Z"
+                  fill="#66141A"
+                  stroke="#3B170A"
+                  strokeWidth="2.8"
+                  strokeLinejoin="round"
+                />
+                <path d="M112 132 Q120 128 128 132 Q124 139 120 139 Q116 139 112 132 Z" fill="#FA7268" />
               </>
             )}
           </g>
-
-          {accessory === 'glasses' ? (
-            <g className="stroke-bark-800" strokeWidth="3" fill="none">
-              <circle cx="92" cy="96" r="20" />
-              <circle cx="148" cy="96" r="20" />
-              <path d="M112 96h16" />
-            </g>
-          ) : null}
-          {accessory === 'hat' ? (
-            <g>
-              <path d="M62 92h116l-18-34H80Z" className="fill-gold-200 stroke-gold-700" strokeWidth="3" strokeLinejoin="round" />
-              <circle cx="120" cy="58" r="8" className="fill-gold-700" />
-            </g>
-          ) : null}
         </g>
 
-        {/* Teal scarf with knot and tails */}
-        <g>
-          <path d="M80 150 C96 162 144 162 160 150 L168 170 C150 184 90 184 72 170 Z" fill="#159CA6" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
-          <path d="M96 156 C110 164 130 164 144 156 L148 164 C132 174 108 174 92 164 Z" fill="#4ABFC7" />
-          <circle cx="160" cy="158" r="11" fill="#0E7C86" stroke="#0E6F78" strokeWidth="3" />
-          <path d="M164 162 L196 176 L186 190 L158 174 Z" fill="#159CA6" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
-          <path d="M158 166 L184 198 L172 202 L152 174 Z" fill="#0E7C86" stroke="#0E6F78" strokeWidth="3" strokeLinejoin="round" />
-        </g>
-
-        {celebrate ? (
+        {/* Celebration / victory jump sparkles */}
+        {jumping ? (
           <g aria-hidden="true" className="animate-sparkle">
-            <path d="M36 92 L40 102 L50 106 L40 110 L36 120 L32 110 L22 106 L32 102 Z" fill="#FBBF24" />
-            <path d="M204 120 L207 128 L215 131 L207 134 L204 142 L201 134 L193 131 L201 128 Z" fill="#8ADD7F" />
+            <path d="M30 56 L33 65 L42 68 L33 71 L30 80 L27 71 L18 68 L27 65 Z" fill="#FBBF24" />
+            <path d="M210 56 L213 65 L222 68 L213 71 L210 80 L207 71 L198 68 L207 65 Z" fill="#58CC02" />
+            <circle cx="44" cy="40" r="4" fill="#38BDF8" />
+            <circle cx="198" cy="42" r="4" fill="#FBBF24" />
           </g>
         ) : null}
       </g>
@@ -337,6 +511,4 @@ export function Fox({
   );
 }
 
-function confusedOrIdle(sad: boolean, state: ReturnType<typeof resolveFoxAnimation>): string {
-  return sad || state.animation === 'confused' ? '' : 'animate-arm-sway';
-}
+export default Fox;

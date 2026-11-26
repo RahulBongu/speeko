@@ -6,7 +6,13 @@ import * as Haptics from 'expo-haptics';
 import { ORIGIN, apiFetch, setCookie } from '../lib/api';
 import { clearProgress, loadProgress } from '../lib/progress';
 import { syncProgress } from '../lib/sync';
-import { isMascotVoiceEnabled, setMascotVoiceEnabled } from '../lib/mascot';
+import {
+  isMascotVoiceEnabled,
+  setMascotVoiceEnabled,
+  subscribeMascotVoiceEnabled,
+} from '../lib/mascot';
+import { isMobileSoundEnabled, setMobileSoundEnabled } from '../lib/sound';
+import { useOnFocus } from '../lib/useOnFocus';
 import { AppNav } from '../components/AppNav';
 import { Screen } from '../components/Screen';
 import { Fox } from '../components/Fox';
@@ -41,7 +47,18 @@ export default function Account() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [mascotVoiceOn, setMascotVoiceOn] = useState<boolean>(isMascotVoiceEnabled());
+  const [soundOn, setSoundOn] = useState<boolean>(isMobileSoundEnabled());
+
+  useEffect(() => {
+    setMascotVoiceOn(isMascotVoiceEnabled());
+    setSoundOn(isMobileSoundEnabled());
+    if (typeof subscribeMascotVoiceEnabled === 'function') {
+      return subscribeMascotVoiceEnabled(setMascotVoiceOn);
+    }
+    return undefined;
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -97,7 +114,41 @@ export default function Account() {
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useOnFocus(load);
+
+  async function deleteAccount() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    setStatus(null);
+    try {
+      const response = await apiFetch('/api/account', {
+        method: 'DELETE',
+        headers: { origin: ORIGIN },
+      });
+      if (!response.ok && response.status !== 204 && response.status !== 401) {
+        throw new Error(`Could not delete account (${response.status}).`);
+      }
+      await setCookie(null);
+      await clearProgress();
+      setSignedIn(false);
+      setEmail(null);
+      setVerified(null);
+      setConfirmDelete(false);
+      setProgress(await loadProgress());
+      setStatus('Your account and saved device progress were removed.');
+      try {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch {
+        /* non-fatal */
+      }
+      router.replace('/');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Could not delete account. Try again.');
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function signOut() {
     if (busy) return;
@@ -157,7 +208,13 @@ export default function Account() {
         <TactileCard tone="white">
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: COLORS.greenSoft, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-              <Fox mood={signedIn ? 'happy' : 'idle'} title="Speeko the fox" style={{ width: 64, height: 64 }} />
+              <Fox
+                mood={signedIn ? 'happy' : 'idle'}
+                accessory={progress?.equippedCosmetic ?? null}
+                patrol
+                title="Speeko the fox"
+                style={{ width: 64, height: 64 }}
+              />
             </View>
             <View style={{ flex: 1, gap: 3 }}>
               <Text style={{ fontSize: 10, fontWeight: '900', color: COLORS.muted, letterSpacing: 0.6 }}>
@@ -271,12 +328,89 @@ export default function Account() {
               />
             </Pressable>
           </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 }}>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={{ fontWeight: '800', color: COLORS.dark }}>Sound effects</Text>
+              <Text style={{ color: COLORS.muted, fontSize: 12 }}>Answer chimes and fanfares</Text>
+            </View>
+            <Pressable
+              accessibilityRole="switch"
+              accessibilityState={{ checked: soundOn }}
+              onPress={() => {
+                const next = !soundOn;
+                setSoundOn(next);
+                setMobileSoundEnabled(next);
+              }}
+              style={{
+                width: 52,
+                height: 30,
+                borderRadius: 15,
+                backgroundColor: soundOn ? COLORS.green : COLORS.disabled,
+                justifyContent: 'center',
+                paddingHorizontal: 3,
+              }}
+            >
+              <View
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 12,
+                  backgroundColor: COLORS.white,
+                  alignSelf: soundOn ? 'flex-end' : 'flex-start',
+                }}
+              />
+            </Pressable>
+          </View>
         </TactileCard>
 
         {signedIn ? (
-          <TactilePressable onPress={() => void signOut()} disabled={busy} tone="cream" accessibilityHint="Clears this device's saved progress">
-            <Text style={{ fontWeight: '800', color: COLORS.dark }}>{busy ? 'Signing out…' : 'Sign out and clear this device'}</Text>
-          </TactilePressable>
+          <View style={{ gap: 10 }}>
+            <TactilePressable onPress={() => void signOut()} disabled={busy} tone="cream" accessibilityHint="Clears this device's saved progress">
+              <Text style={{ fontWeight: '800', color: COLORS.dark }}>{busy ? 'Signing out…' : 'Sign out and clear this device'}</Text>
+            </TactilePressable>
+            {confirmDelete ? (
+              <TactileCard tone="cream">
+                <Text style={{ fontWeight: '800', color: COLORS.red }}>
+                  Delete account permanently?
+                </Text>
+                <Text style={{ fontSize: 12, color: COLORS.muted, marginTop: 4 }}>
+                  This erases your lessons, XP, streak, and login permanently.
+                </Text>
+                <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+                  <TactilePressable
+                    onPress={() => void deleteAccount()}
+                    disabled={busy}
+                    tone="fox"
+                    style={{ flex: 1 }}
+                  >
+                    <Text style={{ color: COLORS.white, fontWeight: '800', textAlign: 'center' }}>
+                      {busy ? 'Deleting…' : 'Confirm delete'}
+                    </Text>
+                  </TactilePressable>
+                  <TactilePressable
+                    onPress={() => setConfirmDelete(false)}
+                    disabled={busy}
+                    tone="white"
+                    style={{ flex: 1 }}
+                  >
+                    <Text style={{ color: COLORS.dark, fontWeight: '800', textAlign: 'center' }}>
+                      Cancel
+                    </Text>
+                  </TactilePressable>
+                </View>
+              </TactileCard>
+            ) : (
+              <TactilePressable
+                onPress={() => setConfirmDelete(true)}
+                disabled={busy}
+                tone="white"
+                accessibilityHint="Permanently deletes your account and data"
+              >
+                <Text style={{ fontWeight: '800', color: COLORS.red }}>Delete account</Text>
+              </TactilePressable>
+            )}
+          </View>
         ) : (
           <>
             <TactilePressable onPress={() => router.push('/sign-in')} tone="green">
@@ -287,9 +421,8 @@ export default function Account() {
             </TactilePressable>
           </>
         )}
-
-        <AppNav active="account" />
       </ScrollView>
+      <AppNav active="account" />
     </Screen>
   );
 }

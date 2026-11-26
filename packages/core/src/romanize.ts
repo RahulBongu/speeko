@@ -448,9 +448,11 @@ export function romanizedEqual(a: string, b: string): boolean {
   if (left.length === 0 || right.length === 0) return false;
   if (left === right) return true;
   // Nasalized endings are often typed without the nasal: माँ -> "maa" or
-  // "maan", हाँ -> "haa" or "haan". Only relax when the target really has a
-  // nasal mark, so ordinary words are not conflated.
+  // "maan", हाँ -> "haa" or "haan". Only relax when the Indic string really has
+  // a nasal mark, regardless of argument order (gradeExercise passes
+  // (userInput, candidate)), so ordinary words are never conflated.
   if (NASAL_MARKS.test(a) && left.replace(/[nm]$/, '') === right) return true;
+  if (NASAL_MARKS.test(b) && right.replace(/[nm]$/, '') === left) return true;
   return false;
 }
 
