@@ -202,7 +202,7 @@ export function Fox({
   return (
     <svg
       viewBox="0 0 240 240"
-      className={`${className ?? 'h-32 w-32'} motion-reduce:animate-none ${
+      className={`${className ?? 'h-32 w-32'} overflow-visible motion-reduce:animate-none ${
         onTap ? 'cursor-pointer select-none focus:outline-none focus-visible:ring-4 focus-visible:ring-speeko-300 rounded-2xl' : ''
       }`}
       role={onTap ? 'button' : decorative ? undefined : 'img'}

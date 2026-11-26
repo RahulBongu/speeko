@@ -847,12 +847,12 @@ export function Fox({
               </G>
             ) : null}
 
-            {/* Party hat perched cleanly atop head */}
+            {/* Party hat perched cleanly atop head inside 0..240 bounds */}
             {accessory === 'hat' ? (
               <G>
-                <Path d="M98 46 L120 4 L142 46 Z" fill="#1CB0F6" stroke="#0B4A6F" strokeWidth="3" strokeLinejoin="round" />
-                <Path d="M107 32 L133 32" stroke="#FCD34D" strokeWidth="5" strokeLinecap="round" />
-                <Circle cx="120" cy="4" r="6" fill="#FDE047" stroke="#0B4A6F" strokeWidth="2.5" />
+                <Path d="M98 46 L120 10 L142 46 Z" fill="#1CB0F6" stroke="#0B4A6F" strokeWidth="3" strokeLinejoin="round" />
+                <Path d="M107 34 L133 34" stroke="#FCD34D" strokeWidth="5" strokeLinecap="round" />
+                <Circle cx="120" cy="9" r="5.5" fill="#FDE047" stroke="#0B4A6F" strokeWidth="2.5" />
               </G>
             ) : null}
 
