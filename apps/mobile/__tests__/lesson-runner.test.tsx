@@ -38,6 +38,12 @@ jest.mock('../lib/audio', () => ({
 jest.mock('../lib/mascot', () => ({
   isMascotVoiceEnabled: jest.fn(() => true),
   setMascotVoiceEnabled: jest.fn(),
+  nextVariedMascotReaction: jest.fn((reactionId: string) => ({
+    reactionId,
+    phrase: reactionId === 'incorrect_answer' ? 'Not quite yet!' : 'Hurray! You nailed it!',
+    audioKey: reactionId === 'unit_complete' ? 'unit-complete' : 'correct',
+    sfxKey: null,
+  })),
   playMascotVoice: jest.fn(async () => true),
   stopMascotVoice: jest.fn(async () => {}),
   useMascotSpeaking: jest.fn(() => false),

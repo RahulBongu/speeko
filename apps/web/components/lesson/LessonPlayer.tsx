@@ -6,7 +6,6 @@ import {
   accuracy as sessionAccuracy,
   buildTroublePracticePlan,
   buildUnitPracticePlan,
-  createMascotVarietyPicker,
   createSession,
   currentExercise,
   eligibleExercises,
@@ -35,7 +34,12 @@ import { authClient } from '@/lib/auth-client';
 import { readKnownSignedInUserId } from '@/lib/auth-marker';
 import { submitLessonCompletion } from '@/lib/sync';
 import { isSoundEnabled, playSound, setSoundEnabled } from '@/lib/sound';
-import { playMascotVoice, useMascotListening, useMascotSpeaking } from '@/lib/mascotVoice';
+import {
+  nextVariedMascotReaction,
+  playMascotVoice,
+  useMascotListening,
+  useMascotSpeaking,
+} from '@/lib/mascotVoice';
 import { useProgress } from '@/lib/use-progress';
 import { Confetti } from '@/components/Confetti';
 import { Fox } from '@/components/Fox';
@@ -166,10 +170,10 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
   const [xpGained, setXpGained] = useState(0);
   const [feedbackPhrase, setFeedbackPhrase] = useState('');
   const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Lesson conquered!');
+  const [moduleCompleted, setModuleCompleted] = useState(false);
   const [lookAt, setLookAt] = useState<{ x: number; y: number } | null>(null);
   const liveProgress = useProgress();
   const equippedCosmetic = liveProgress?.equippedCosmetic ?? null;
-  const varietyPicker = useRef(createMascotVarietyPicker());
   const mascotSpeaking = useMascotSpeaking();
   const mascotListening = useMascotListening();
   const [showExit, setShowExit] = useState(false);
@@ -365,7 +369,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setAnsweredExercise(exerciseNow);
     setXpGained(next.xp - session.xp);
     setSession(next);
-    const pick = varietyPicker.current.pick(
+    const pick = nextVariedMascotReaction(
       result.correct ? 'correct_answer' : 'incorrect_answer',
     );
     setFeedbackPhrase(pick.phrase);
@@ -378,11 +382,27 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     if (!session || !entry) return;
     if (session.finished) {
       const lostHearts = session.hearts <= 0;
-      const finishPick = varietyPicker.current.pick(
-        lostHearts ? 'encouragement' : 'lesson_complete',
-      );
+      const completesModule =
+        !lostHearts &&
+        !practiceRoute &&
+        entry.unit.lessons.length > 0 &&
+        entry.unit.lessons.every(
+          (unitLesson) =>
+            unitLesson.id === entry.lesson.id ||
+            (course && liveProgress ? isLessonCompleted(liveProgress, course.id, unitLesson.id) : false),
+        );
+      setModuleCompleted(completesModule);
+      const finishReaction = lostHearts
+        ? 'encouragement'
+        : completesModule
+          ? 'unit_complete'
+          : 'lesson_complete';
+      const finishPick = nextVariedMascotReaction(finishReaction);
       setSummaryPhrase(finishPick.phrase);
-      playSound(lostHearts ? 'incorrect' : 'complete', finishPick.sfxKey);
+      playSound(
+        lostHearts ? 'incorrect' : completesModule ? 'unit_complete' : 'complete',
+        finishPick.sfxKey,
+      );
       playMascotVoice(finishPick.reactionId, finishPick.audioKey);
       setPhase(lostHearts ? 'hearts' : 'summary');
       return;
@@ -396,10 +416,11 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setGrade(null);
     setAnsweredExercise(null);
     setXpGained(0);
+    setModuleCompleted(false);
     setLookAt(null);
     shownAt.current = Date.now();
     setPhase('playing');
-  }, [session, entry]);
+  }, [session, entry, practiceRoute, course, liveProgress]);
 
   const restart = useCallback(() => {
     if (!entry) return;
@@ -411,6 +432,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     setGrade(null);
     setAnsweredExercise(null);
     setXpGained(0);
+    setModuleCompleted(false);
     setPostProgress(null);
     savedRef.current = false;
     savingRef.current = false;
@@ -566,6 +588,11 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
     }
   }, []);
 
+  // Reset moduleCompleted flag cleanly when lesson route changes
+  useEffect(() => {
+    setModuleCompleted(false);
+  }, [courseId, lessonId]);
+
   if (phase === 'loading') {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
@@ -678,6 +705,7 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
           nextLesson={nextLesson}
           saveState={saveState}
           summaryPhrase={summaryPhrase}
+          moduleCompleted={moduleCompleted}
           accessory={equippedCosmetic}
           onRetry={retrySave}
         />
@@ -743,29 +771,26 @@ export function LessonPlayer({ courseId, lessonId }: LessonPlayerProps) {
             ) : null}
           </div>
 
-          <div className="mt-5 flex items-center gap-3">
-            <Fox
-              mood={mood}
-              accessory={equippedCosmetic}
-              speaking={mascotSpeaking}
-              listening={mascotListening}
-              lookAt={phase === 'playing' ? lookAt : null}
-              combo={session.combo}
-              className="h-14 w-14 shrink-0 sm:h-16 sm:w-16"
-            />
-            <div className="relative flex-1 rounded-2xl border-2 border-cream-200 bg-white px-4 py-2.5 text-sm font-semibold text-bark-500 shadow-card-sm">
-              <span
-                aria-hidden="true"
-                className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 border-b-2 border-l-2 border-cream-200 bg-white"
+          {phase === 'playing' ? (
+            <div className="mt-5 flex items-center gap-3">
+              <Fox
+                mood={mood}
+                accessory={equippedCosmetic}
+                speaking={mascotSpeaking}
+                listening={mascotListening}
+                lookAt={lookAt}
+                combo={session.combo}
+                className="h-14 w-14 shrink-0 sm:h-16 sm:w-16"
               />
-              {phase === 'feedback'
-                ? feedbackPhrase ||
-                  (grade?.correct
-                    ? 'That was clean. Keep the streak moving!'
-                    : 'All good — the correction is the learning.')
-                : tip}
+              <div className="relative flex-1 rounded-2xl border-2 border-cream-200 bg-white px-4 py-2.5 text-sm font-semibold text-bark-500 shadow-card-sm">
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-2 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 border-b-2 border-l-2 border-cream-200 bg-white"
+                />
+                {tip}
+              </div>
             </div>
-          </div>
+          ) : null}
 
           {phase === 'playing' ? (
             <div className="mt-6 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -935,6 +960,7 @@ function SummaryScreen({
   nextLesson,
   saveState,
   summaryPhrase,
+  moduleCompleted,
   accessory,
   onRetry,
 }: {
@@ -945,6 +971,7 @@ function SummaryScreen({
   nextLesson: FlatLesson | null;
   saveState: SaveState;
   summaryPhrase: string;
+  moduleCompleted: boolean;
   accessory: ProgressState['equippedCosmetic'];
   onRetry: () => void;
 }) {
@@ -985,26 +1012,42 @@ function SummaryScreen({
   const displayXp = useCountUp(awardedXp);
   const displayAccuracy = useCountUp(Math.round(accuracy * 100));
   const displayCombo = useCountUp(session.maxCombo);
+  const unitIdx = course.units.findIndex((u) => u.id === entry.unit.id);
+  const nextUnit =
+    unitIdx >= 0 && unitIdx + 1 < course.units.length ? course.units[unitIdx + 1] : null;
+  const showModuleBanner = moduleCompleted && !isPractice && !practiceReplay;
 
   return (
     <main className="relative mx-auto w-full max-w-2xl flex-1 px-4 py-10 sm:px-6">
+      {showModuleBanner ? <Confetti /> : null}
       <div className="text-center">
         <div className="relative mx-auto h-44 w-44">
           <div className="absolute inset-0 animate-pop rounded-full bg-gradient-to-br from-fox-300/70 to-speeko-200/70 blur-xl" />
           <Fox
             mood="celebrate"
             accessory={accessory}
-            combo={session.maxCombo}
+            combo={showModuleBanner ? Math.max(5, session.maxCombo) : session.maxCombo}
             speaking={mascotSpeaking}
             className="relative h-44 w-44"
           />
         </div>
+        {showModuleBanner ? (
+          <div className="mx-auto mt-3 inline-flex items-center gap-2 rounded-full border-2 border-gold-200 bg-gold-100 px-3.5 py-1 font-display text-xs font-extrabold uppercase tracking-[0.14em] text-gold-700 animate-pop">
+            <TrophyIcon className="h-4 w-4" />
+            Module {unitIdx >= 0 ? unitIdx + 1 : entry.unit.order + 1} mastered · {entry.unit.title}
+          </div>
+        ) : null}
         <h1 className="mt-3 font-display text-4xl font-extrabold tracking-tight text-bark-800">
           {heading}
         </h1>
         {summaryPhrase ? (
           <p className="mt-1 font-display text-base font-extrabold text-speeko-700">
             {summaryPhrase}
+          </p>
+        ) : null}
+        {showModuleBanner && nextUnit ? (
+          <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-fox-700">
+            Next on the trail: Unit {unitIdx + 2} · {nextUnit.title}
           </p>
         ) : null}
         <p className="mt-1 font-semibold text-bark-500">

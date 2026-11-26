@@ -1312,6 +1312,729 @@
           ]
         }
       ]
+    },
+    {
+      "id": "hi-pilot-u6",
+      "title": "Colors & Nature",
+      "description": "Colors and the sky above.",
+      "order": 5,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Describe colors and natural sights in Hindi.",
+      "lessons": [
+        {
+          "id": "hi-pilot-u6-l1",
+          "title": "Red",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for red.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u6-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Red",
+              "options": [
+                "लाल",
+                "नीला",
+                "हरा",
+                "सूरज"
+              ],
+              "answerIndex": 0,
+              "transliteration": "laal"
+            },
+            {
+              "id": "hi-pilot-u6-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "लाल",
+              "options": [
+                "Red",
+                "Blue",
+                "Green",
+                "Sun"
+              ],
+              "answerIndex": 0,
+              "transliteration": "laal"
+            },
+            {
+              "id": "hi-pilot-u6-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"red\"",
+              "expected": [
+                "लाल"
+              ],
+              "transliteration": "laal"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u6-l2",
+          "title": "Blue",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for blue.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u6-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Blue",
+              "options": [
+                "नीला",
+                "लाल",
+                "हरा",
+                "चाँद"
+              ],
+              "answerIndex": 0,
+              "transliteration": "neela"
+            },
+            {
+              "id": "hi-pilot-u6-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "नीला",
+              "options": [
+                "Blue",
+                "Red",
+                "Green",
+                "Moon"
+              ],
+              "answerIndex": 0,
+              "transliteration": "neela"
+            },
+            {
+              "id": "hi-pilot-u6-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"blue\"",
+              "expected": [
+                "नीला"
+              ],
+              "transliteration": "neela"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u6-l3",
+          "title": "Green",
+          "order": 2,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for green.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u6-l3-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Green",
+              "options": [
+                "हरा",
+                "लाल",
+                "नीला",
+                "सूरज"
+              ],
+              "answerIndex": 0,
+              "transliteration": "haraa"
+            },
+            {
+              "id": "hi-pilot-u6-l3-e2",
+              "kind": "chooseMeaning",
+              "prompt": "हरा",
+              "options": [
+                "Green",
+                "Red",
+                "Blue",
+                "Sun"
+              ],
+              "answerIndex": 0,
+              "transliteration": "haraa"
+            },
+            {
+              "id": "hi-pilot-u6-l3-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"green\"",
+              "expected": [
+                "हरा"
+              ],
+              "transliteration": "haraa"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u6-l4",
+          "title": "Sun",
+          "order": 3,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for sun.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u6-l4-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sun",
+              "options": [
+                "सूरज",
+                "चाँद",
+                "लाल",
+                "हरा"
+              ],
+              "answerIndex": 0,
+              "transliteration": "sooraj"
+            },
+            {
+              "id": "hi-pilot-u6-l4-e2",
+              "kind": "chooseMeaning",
+              "prompt": "सूरज",
+              "options": [
+                "Sun",
+                "Moon",
+                "Red",
+                "Green"
+              ],
+              "answerIndex": 0,
+              "transliteration": "sooraj"
+            },
+            {
+              "id": "hi-pilot-u6-l4-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"sun\"",
+              "expected": [
+                "सूरज"
+              ],
+              "transliteration": "sooraj"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u6-l5",
+          "title": "Moon",
+          "order": 4,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for moon.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u6-l5-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Moon",
+              "options": [
+                "चाँद",
+                "सूरज",
+                "नीला",
+                "लाल"
+              ],
+              "answerIndex": 0,
+              "transliteration": "chaand"
+            },
+            {
+              "id": "hi-pilot-u6-l5-e2",
+              "kind": "chooseMeaning",
+              "prompt": "चाँद",
+              "options": [
+                "Moon",
+                "Sun",
+                "Blue",
+                "Red"
+              ],
+              "answerIndex": 0,
+              "transliteration": "chaand"
+            },
+            {
+              "id": "hi-pilot-u6-l5-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"moon\"",
+              "expected": [
+                "चाँद"
+              ],
+              "transliteration": "chaand"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hi-pilot-u7",
+      "title": "Time & Days",
+      "description": "Talk about morning, evening, today, and tomorrow.",
+      "order": 6,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Essential time words in Hindi.",
+      "lessons": [
+        {
+          "id": "hi-pilot-u7-l1",
+          "title": "Morning",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for morning.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u7-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Morning",
+              "options": [
+                "सुबह",
+                "शाम",
+                "आज",
+                "दिन"
+              ],
+              "answerIndex": 0,
+              "transliteration": "subah"
+            },
+            {
+              "id": "hi-pilot-u7-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "सुबह",
+              "options": [
+                "Morning",
+                "Evening",
+                "Today",
+                "Day"
+              ],
+              "answerIndex": 0,
+              "transliteration": "subah"
+            },
+            {
+              "id": "hi-pilot-u7-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"morning\"",
+              "expected": [
+                "सुबह"
+              ],
+              "transliteration": "subah"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u7-l2",
+          "title": "Evening",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for evening.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u7-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Evening",
+              "options": [
+                "शाम",
+                "सुबह",
+                "आज",
+                "कल"
+              ],
+              "answerIndex": 0,
+              "transliteration": "shaam"
+            },
+            {
+              "id": "hi-pilot-u7-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "शाम",
+              "options": [
+                "Evening",
+                "Morning",
+                "Today",
+                "Tomorrow"
+              ],
+              "answerIndex": 0,
+              "transliteration": "shaam"
+            },
+            {
+              "id": "hi-pilot-u7-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"evening\"",
+              "expected": [
+                "शाम"
+              ],
+              "transliteration": "shaam"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u7-l3",
+          "title": "Today",
+          "order": 2,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for today.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u7-l3-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Today",
+              "options": [
+                "आज",
+                "कल",
+                "सुबह",
+                "दिन"
+              ],
+              "answerIndex": 0,
+              "transliteration": "aaj"
+            },
+            {
+              "id": "hi-pilot-u7-l3-e2",
+              "kind": "chooseMeaning",
+              "prompt": "आज",
+              "options": [
+                "Today",
+                "Tomorrow",
+                "Morning",
+                "Day"
+              ],
+              "answerIndex": 0,
+              "transliteration": "aaj"
+            },
+            {
+              "id": "hi-pilot-u7-l3-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"today\"",
+              "expected": [
+                "आज"
+              ],
+              "transliteration": "aaj"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u7-l4",
+          "title": "Tomorrow",
+          "order": 3,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for tomorrow.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u7-l4-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Tomorrow",
+              "options": [
+                "कल",
+                "आज",
+                "शाम",
+                "दिन"
+              ],
+              "answerIndex": 0,
+              "transliteration": "kal"
+            },
+            {
+              "id": "hi-pilot-u7-l4-e2",
+              "kind": "chooseMeaning",
+              "prompt": "कल",
+              "options": [
+                "Tomorrow",
+                "Today",
+                "Evening",
+                "Day"
+              ],
+              "answerIndex": 0,
+              "transliteration": "kal"
+            },
+            {
+              "id": "hi-pilot-u7-l4-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"tomorrow\"",
+              "expected": [
+                "कल"
+              ],
+              "transliteration": "kal"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u7-l5",
+          "title": "Day",
+          "order": 4,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for day.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u7-l5-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Day",
+              "options": [
+                "दिन",
+                "सुबह",
+                "शाम",
+                "आज"
+              ],
+              "answerIndex": 0,
+              "transliteration": "din"
+            },
+            {
+              "id": "hi-pilot-u7-l5-e2",
+              "kind": "chooseMeaning",
+              "prompt": "दिन",
+              "options": [
+                "Day",
+                "Morning",
+                "Evening",
+                "Today"
+              ],
+              "answerIndex": 0,
+              "transliteration": "din"
+            },
+            {
+              "id": "hi-pilot-u7-l5-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"day\"",
+              "expected": [
+                "दिन"
+              ],
+              "transliteration": "din"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hi-pilot-u8",
+      "title": "Questions & Help",
+      "description": "Ask simple questions and welcome others.",
+      "order": 7,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Simple questions and helpful phrases.",
+      "lessons": [
+        {
+          "id": "hi-pilot-u8-l1",
+          "title": "Who",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for who.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u8-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Who",
+              "options": [
+                "कौन",
+                "क्या",
+                "कहाँ",
+                "मदद"
+              ],
+              "answerIndex": 0,
+              "transliteration": "kaun"
+            },
+            {
+              "id": "hi-pilot-u8-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "कौन",
+              "options": [
+                "Who",
+                "What",
+                "Where",
+                "Help"
+              ],
+              "answerIndex": 0,
+              "transliteration": "kaun"
+            },
+            {
+              "id": "hi-pilot-u8-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"who\"",
+              "expected": [
+                "कौन"
+              ],
+              "transliteration": "kaun"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u8-l2",
+          "title": "What",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for what.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u8-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "What",
+              "options": [
+                "क्या",
+                "कौन",
+                "कहाँ",
+                "स्वागत"
+              ],
+              "answerIndex": 0,
+              "transliteration": "kya"
+            },
+            {
+              "id": "hi-pilot-u8-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "क्या",
+              "options": [
+                "What",
+                "Who",
+                "Where",
+                "Welcome"
+              ],
+              "answerIndex": 0,
+              "transliteration": "kya"
+            },
+            {
+              "id": "hi-pilot-u8-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"what\"",
+              "expected": [
+                "क्या"
+              ],
+              "transliteration": "kya"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u8-l3",
+          "title": "Where",
+          "order": 2,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for where.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u8-l3-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Where",
+              "options": [
+                "कहाँ",
+                "कौन",
+                "क्या",
+                "मदद"
+              ],
+              "answerIndex": 0,
+              "transliteration": "kahaan"
+            },
+            {
+              "id": "hi-pilot-u8-l3-e2",
+              "kind": "chooseMeaning",
+              "prompt": "कहाँ",
+              "options": [
+                "Where",
+                "Who",
+                "What",
+                "Help"
+              ],
+              "answerIndex": 0,
+              "transliteration": "kahaan"
+            },
+            {
+              "id": "hi-pilot-u8-l3-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"where\"",
+              "expected": [
+                "कहाँ"
+              ],
+              "transliteration": "kahaan"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u8-l4",
+          "title": "Help",
+          "order": 3,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for help.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u8-l4-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Help",
+              "options": [
+                "मदद",
+                "स्वागत",
+                "कौन",
+                "क्या"
+              ],
+              "answerIndex": 0,
+              "transliteration": "madad"
+            },
+            {
+              "id": "hi-pilot-u8-l4-e2",
+              "kind": "chooseMeaning",
+              "prompt": "मदद",
+              "options": [
+                "Help",
+                "Welcome",
+                "Who",
+                "What"
+              ],
+              "answerIndex": 0,
+              "transliteration": "madad"
+            },
+            {
+              "id": "hi-pilot-u8-l4-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"help\"",
+              "expected": [
+                "मदद"
+              ],
+              "transliteration": "madad"
+            }
+          ]
+        },
+        {
+          "id": "hi-pilot-u8-l5",
+          "title": "Welcome",
+          "order": 4,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Practice the Hindi word for welcome.",
+          "exercises": [
+            {
+              "id": "hi-pilot-u8-l5-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Welcome",
+              "options": [
+                "स्वागत",
+                "मदद",
+                "कहाँ",
+                "कौन"
+              ],
+              "answerIndex": 0,
+              "transliteration": "swaagat"
+            },
+            {
+              "id": "hi-pilot-u8-l5-e2",
+              "kind": "chooseMeaning",
+              "prompt": "स्वागत",
+              "options": [
+                "Welcome",
+                "Help",
+                "Where",
+                "Who"
+              ],
+              "answerIndex": 0,
+              "transliteration": "swaagat"
+            },
+            {
+              "id": "hi-pilot-u8-l5-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"welcome\"",
+              "expected": [
+                "स्वागत"
+              ],
+              "transliteration": "swaagat"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

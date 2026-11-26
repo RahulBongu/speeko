@@ -393,6 +393,444 @@
           ]
         }
       ]
+    },
+    {
+      "id": "bn-starter-u5",
+      "title": "Family",
+      "description": "Mother, father, sister, brother",
+      "order": 4,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Immediate family words you hear every day.",
+      "lessons": [
+        {
+          "id": "bn-starter-u5-l1",
+          "title": "Parents",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Words for mother and father.",
+          "exercises": [
+            {
+              "id": "bn-starter-u5-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Mother",
+              "options": [
+                "মা",
+                "বাবা",
+                "বোন",
+                "ভাই"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u5-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Father",
+              "options": [
+                "বাবা",
+                "মা",
+                "বোন",
+                "ভাই"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u5-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"mother\"",
+              "expected": [
+                "মা"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "bn-starter-u5-l2",
+          "title": "Siblings",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Words for sister and brother.",
+          "exercises": [
+            {
+              "id": "bn-starter-u5-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sister",
+              "options": [
+                "বোন",
+                "ভাই",
+                "মা",
+                "বাবা"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u5-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Brother",
+              "options": [
+                "ভাই",
+                "বোন",
+                "মা",
+                "বাবা"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u5-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"brother\"",
+              "expected": [
+                "ভাই"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bn-starter-u6",
+      "title": "Food & Drink",
+      "description": "Water, tea, milk, rice, bread",
+      "order": 5,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Essential food and drink words at home or a cafe.",
+      "lessons": [
+        {
+          "id": "bn-starter-u6-l1",
+          "title": "Water & Tea",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Everyday drinks: water, tea, and milk.",
+          "exercises": [
+            {
+              "id": "bn-starter-u6-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Water",
+              "options": [
+                "জল",
+                "চা",
+                "দুধ",
+                "ভাত"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u6-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Tea",
+              "options": [
+                "চা",
+                "জল",
+                "দুধ",
+                "রুটি"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u6-l1-e3",
+              "kind": "chooseMeaning",
+              "prompt": "Milk",
+              "options": [
+                "দুধ",
+                "জল",
+                "চা",
+                "ভাত"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u6-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"water\"",
+              "expected": [
+                "জল"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "bn-starter-u6-l2",
+          "title": "Everyday Meals",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Staples on every table: rice and bread.",
+          "exercises": [
+            {
+              "id": "bn-starter-u6-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Rice",
+              "options": [
+                "ভাত",
+                "রুটি",
+                "দুধ",
+                "জল"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u6-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Bread",
+              "options": [
+                "রুটি",
+                "ভাত",
+                "চা",
+                "জল"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u6-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Rice",
+                  "ভাত"
+                ],
+                [
+                  "Bread",
+                  "রুটি"
+                ],
+                [
+                  "Tea",
+                  "চা"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bn-starter-u7",
+      "title": "Everyday Places",
+      "description": "Home, school, market, road",
+      "order": 6,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Finding your way around town.",
+      "lessons": [
+        {
+          "id": "bn-starter-u7-l1",
+          "title": "Home & School",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Two places we talk about every morning.",
+          "exercises": [
+            {
+              "id": "bn-starter-u7-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Home",
+              "options": [
+                "বাড়ি",
+                "স্কুল",
+                "বাজার",
+                "রাস্তা"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u7-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "School",
+              "options": [
+                "স্কুল",
+                "বাড়ি",
+                "বাজার",
+                "রাস্তা"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u7-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"home\"",
+              "expected": [
+                "বাড়ি"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "bn-starter-u7-l2",
+          "title": "Out & About",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Market and road essentials.",
+          "exercises": [
+            {
+              "id": "bn-starter-u7-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Market",
+              "options": [
+                "বাজার",
+                "রাস্তা",
+                "বাড়ি",
+                "স্কুল"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u7-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Road",
+              "options": [
+                "রাস্তা",
+                "বাজার",
+                "বাড়ি",
+                "স্কুল"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u7-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Home",
+                  "বাড়ি"
+                ],
+                [
+                  "Market",
+                  "বাজার"
+                ],
+                [
+                  "Road",
+                  "রাস্তা"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bn-starter-u8",
+      "title": "Colors & Time",
+      "description": "Red, blue, today, tomorrow",
+      "order": 7,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Describe colors and make plans for today or tomorrow.",
+      "lessons": [
+        {
+          "id": "bn-starter-u8-l1",
+          "title": "Bright Colors",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "First colors in conversation.",
+          "exercises": [
+            {
+              "id": "bn-starter-u8-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Red",
+              "options": [
+                "লাল",
+                "নীল",
+                "আজ",
+                "কাল"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u8-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Blue",
+              "options": [
+                "নীল",
+                "লাল",
+                "আজ",
+                "কাল"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u8-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"red\"",
+              "expected": [
+                "লাল"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "bn-starter-u8-l2",
+          "title": "Days & Plans",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Today and tomorrow.",
+          "exercises": [
+            {
+              "id": "bn-starter-u8-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Today",
+              "options": [
+                "আজ",
+                "কাল",
+                "লাল",
+                "নীল"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u8-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Tomorrow",
+              "options": [
+                "কাল",
+                "আজ",
+                "লাল",
+                "নীল"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "bn-starter-u8-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Today",
+                  "আজ"
+                ],
+                [
+                  "Tomorrow",
+                  "কাল"
+                ],
+                [
+                  "Blue",
+                  "নীল"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

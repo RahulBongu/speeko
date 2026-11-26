@@ -6,11 +6,16 @@ const SOUND_MAP: Record<string, number> = {
   'correct-2': require('../assets/sounds/correct-2.mp3'),
   'correct-3': require('../assets/sounds/correct-3.mp3'),
   'correct-4': require('../assets/sounds/correct-4.mp3'),
+  'correct-5': require('../assets/sounds/correct-5.mp3'),
   incorrect: require('../assets/sounds/incorrect.mp3'),
   'incorrect-2': require('../assets/sounds/incorrect-2.mp3'),
   'incorrect-3': require('../assets/sounds/incorrect-3.mp3'),
   complete: require('../assets/sounds/complete.mp3'),
   'complete-2': require('../assets/sounds/complete-2.mp3'),
+  'complete-3': require('../assets/sounds/complete-3.mp3'),
+  'unit-complete': require('../assets/sounds/unit-complete.mp3'),
+  'unit-complete-2': require('../assets/sounds/unit-complete-2.mp3'),
+  'unit-complete-3': require('../assets/sounds/unit-complete-3.mp3'),
 };
 
 const sfxPicker = createMascotVarietyPicker();
@@ -62,12 +67,13 @@ function releasePlayer(): void {
 }
 
 export async function playMobileSound(
-  kind: 'correct' | 'incorrect' | 'complete',
+  kind: 'correct' | 'incorrect' | 'complete' | 'unit_complete',
   explicitKey?: string | null,
 ): Promise<boolean> {
   if (!enabled) return false;
+  const fallbackKey = kind === 'unit_complete' ? 'unit-complete' : kind;
   const key = explicitKey && SOUND_MAP[explicitKey] ? explicitKey : sfxPicker.pickSfxKey(kind);
-  const source = SOUND_MAP[key] ?? SOUND_MAP[kind];
+  const source = SOUND_MAP[key] ?? SOUND_MAP[fallbackKey];
   if (!source) return false;
   try {
     releasePlayer();

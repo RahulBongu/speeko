@@ -2,12 +2,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { AttemptAnswer, Course, Exercise, GradeResult, Lesson, ProgressState } from '@speeko/core';
+import type { AttemptAnswer, Course, Exercise, GradeResult, Lesson, ProgressState, Unit } from '@speeko/core';
 import {
   applyReviews,
-  createMascotVarietyPicker,
   eligibleExercises,
   gradeExercise,
+  lessonKey,
   recordCompletion,
   reviewsForAttempt,
 } from '@speeko/core';
@@ -30,7 +30,13 @@ import {
   type DraftAnswer,
 } from '../../../lib/exercise';
 import { COLORS } from '../../../lib/theme';
-import { playMascotVoice, stopMascotVoice, useMascotListening, useMascotSpeaking } from '../../../lib/mascot';
+import {
+  nextVariedMascotReaction,
+  playMascotVoice,
+  stopMascotVoice,
+  useMascotListening,
+  useMascotSpeaking,
+} from '../../../lib/mascot';
 import { playMobileSound, stopMobileSound } from '../../../lib/sound';
 import { stopMobileAudio } from '../../../lib/audio';
 
@@ -75,13 +81,15 @@ export default function LessonPlayer() {
   const [cosmetic, setCosmetic] = useState<ProgressState['equippedCosmetic']>(null);
   const [feedbackPhrase, setFeedbackPhrase] = useState('');
   const [summaryPhrase, setSummaryPhrase] = useState('Amazing work! Lesson conquered!');
+  const [completedUnitTitle, setCompletedUnitTitle] = useState<string | null>(null);
+  const [unit, setUnit] = useState<Unit | null>(null);
+  const [priorProgress, setPriorProgress] = useState<ProgressState | null>(null);
   const [combo, setCombo] = useState(0);
   const [lookAt, setLookAt] = useState<{ x: number; y: number } | null>(null);
 
   const attemptId = useRef(newAttemptId());
   const shownAt = useRef(Date.now());
   const saving = useRef(false);
-  const varietyPicker = useRef(createMascotVarietyPicker());
 
   const exercise = lesson?.exercises[index] ?? null;
   const mascotSpeaking = useMascotSpeaking();
@@ -111,10 +119,12 @@ export default function LessonPlayer() {
       if (savedProgress?.equippedCosmetic) setCosmetic(savedProgress.equippedCosmetic);
       if (!response.ok) throw new Error(`Lesson could not load (${response.status}).`);
       const loaded = (await response.json()) as Course;
+      const foundUnit =
+        loaded.units?.find((candidateUnit) =>
+          (candidateUnit.lessons ?? []).some((candidate) => candidate.id === lessonId),
+        ) ?? null;
       const found =
-        loaded.units
-          ?.flatMap((unit) => unit.lessons ?? [])
-          .find((candidate) => candidate.id === lessonId) ?? null;
+        foundUnit?.lessons?.find((candidate) => candidate.id === lessonId) ?? null;
       if (!found) {
         throw new Error('That lesson does not exist in this course.');
       }
@@ -126,6 +136,9 @@ export default function LessonPlayer() {
         throw new Error('This lesson has no playable exercises yet.');
       }
       setCourse(loaded);
+      setUnit(foundUnit);
+      setPriorProgress(savedProgress);
+      setCompletedUnitTitle(null);
       setLesson({ ...found, exercises: playable });
       setIndex(0);
       setHearts(5);
@@ -189,7 +202,7 @@ export default function LessonPlayer() {
     setGrade(result);
     setCombo((current) => (result.correct ? current + 1 : 0));
     setLookAt(null);
-    const pick = varietyPicker.current.pick(
+    const pick = nextVariedMascotReaction(
       result.correct ? 'correct_answer' : 'incorrect_answer',
     );
     setFeedbackPhrase(pick.phrase);
@@ -290,16 +303,29 @@ export default function LessonPlayer() {
   const next = useCallback(() => {
     if (phase !== 'feedback' || !lesson) return;
     if (hearts <= 0) {
-      const encouragePick = varietyPicker.current.pick('encouragement');
+      const encouragePick = nextVariedMascotReaction('encouragement');
       void playMascotVoice('encouragement', encouragePick.audioKey);
       setPhase('hearts');
       return;
     }
     if (index + 1 >= lesson.exercises.length) {
-      const completePick = varietyPicker.current.pick('lesson_complete');
+      const completesModule =
+        Boolean(course && unit && unit.lessons.length > 0) &&
+        unit!.lessons.every(
+          (entry) =>
+            entry.id === lesson.id ||
+            Boolean(priorProgress?.completed[lessonKey(course!.id, entry.id)]),
+        );
+      setCompletedUnitTitle(completesModule && unit ? unit.title : null);
+      const completePick = nextVariedMascotReaction(
+        completesModule ? 'unit_complete' : 'lesson_complete',
+      );
       setSummaryPhrase(completePick.phrase);
-      void playMobileSound('complete', completePick.sfxKey);
-      void playMascotVoice('lesson_complete', completePick.audioKey);
+      void playMobileSound(
+        completesModule ? 'unit_complete' : 'complete',
+        completePick.sfxKey,
+      );
+      void playMascotVoice(completePick.reactionId, completePick.audioKey);
       setPhase('summary');
       return;
     }
@@ -311,7 +337,7 @@ export default function LessonPlayer() {
     setLookAt(null);
     shownAt.current = Date.now();
     setPhase('playing');
-  }, [hearts, index, lesson, phase]);
+  }, [course, hearts, index, lesson, phase, priorProgress, unit]);
 
   if (phase === 'loading') {
     return (
@@ -385,10 +411,27 @@ export default function LessonPlayer() {
         <Fox
           mood="celebrate"
           accessory={cosmetic}
+          combo={completedUnitTitle ? Math.max(5, combo) : combo}
           speaking={mascotSpeaking}
           style={{ width: 132, height: 132 }}
           title="Speeko celebrating your lesson"
         />
+        {completedUnitTitle && saveState !== 'practice' ? (
+          <View
+            style={{
+              borderRadius: 999,
+              backgroundColor: COLORS.creamDeep,
+              borderWidth: 1.5,
+              borderColor: COLORS.gold,
+              paddingHorizontal: 14,
+              paddingVertical: 5,
+            }}
+          >
+            <Text style={{ fontSize: 11, fontWeight: '900', color: COLORS.goldInk }}>
+              MODULE MASTERED · {completedUnitTitle.toUpperCase()}
+            </Text>
+          </View>
+        ) : null}
         <Text style={{ fontSize: 30, fontWeight: '900', color: COLORS.dark }}>
           {saveState === 'practice' ? 'Practice complete!' : 'Lesson complete!'}
         </Text>

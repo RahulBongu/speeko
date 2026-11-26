@@ -14,14 +14,18 @@ describe('MASCOT_REACTIONS', () => {
     expect(MASCOT_REACTIONS.correct_answer).toBeDefined();
     expect(MASCOT_REACTIONS.incorrect_answer).toBeDefined();
     expect(MASCOT_REACTIONS.lesson_complete).toBeDefined();
+    expect(MASCOT_REACTIONS.unit_complete).toBeDefined();
     expect(MASCOT_REACTIONS.discovery).toBeDefined();
     expect(MASCOT_REACTIONS.streak_milestone).toBeDefined();
     expect(MASCOT_REACTIONS.encouragement).toBeDefined();
   });
 
-  it('assigns lesson completion the highest priority', () => {
+  it('assigns lesson and unit completion highest priority', () => {
     expect(mascotReaction('lesson_complete').priority).toBeGreaterThan(
       mascotReaction('correct_answer').priority,
+    );
+    expect(mascotReaction('unit_complete').priority).toBeGreaterThan(
+      mascotReaction('lesson_complete').priority,
     );
   });
 
@@ -89,6 +93,7 @@ describe('foxMoodForReaction', () => {
     expect(foxMoodForReaction('correct_answer')).toBe('happy');
     expect(foxMoodForReaction('incorrect_answer')).toBe('sad');
     expect(foxMoodForReaction('lesson_complete')).toBe('celebrate');
+    expect(foxMoodForReaction('unit_complete')).toBe('celebrate');
     expect(foxMoodForReaction('discovery')).toBe('listening');
     expect(foxMoodForReaction('encouragement')).toBe('encouraging');
   });
@@ -121,5 +126,25 @@ describe('pickMascotPhrase', () => {
     expect(seenPhrases.size).toBeGreaterThan(1);
     expect(seenAudio.size).toBe(MASCOT_REACTIONS.correct_answer.audioKeys.length);
     expect(pickMascotAudioKey(MASCOT_REACTIONS.incorrect_answer, 1)).toBe('incorrect-2');
+  });
+
+  it('persists unit_complete shuffle bags across picker instances so module endings vary', () => {
+    let saved: string | null = null;
+    const storage = {
+      load: () => saved,
+      save: (snapshot: string) => {
+        saved = snapshot;
+      },
+    };
+    const seen = new Set<string>();
+    let prevAudio: string | null = null;
+    for (let i = 0; i < MASCOT_REACTIONS.unit_complete.audioKeys.length; i += 1) {
+      const freshPicker = createMascotVarietyPicker(() => 0.37, storage);
+      const pick = freshPicker.pick('unit_complete');
+      expect(pick.audioKey).not.toBe(prevAudio);
+      prevAudio = pick.audioKey;
+      seen.add(pick.audioKey);
+    }
+    expect(seen.size).toBe(MASCOT_REACTIONS.unit_complete.audioKeys.length);
   });
 });

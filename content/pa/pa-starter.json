@@ -393,6 +393,444 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pa-starter-u5",
+      "title": "Family",
+      "description": "Mother, father, sister, brother",
+      "order": 4,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Immediate family words you hear every day.",
+      "lessons": [
+        {
+          "id": "pa-starter-u5-l1",
+          "title": "Parents",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Words for mother and father.",
+          "exercises": [
+            {
+              "id": "pa-starter-u5-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Mother",
+              "options": [
+                "ਮਾਂ",
+                "ਪਿਤਾ",
+                "ਭੈਣ",
+                "ਭਰਾ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u5-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Father",
+              "options": [
+                "ਪਿਤਾ",
+                "ਮਾਂ",
+                "ਭੈਣ",
+                "ਭਰਾ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u5-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"mother\"",
+              "expected": [
+                "ਮਾਂ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "pa-starter-u5-l2",
+          "title": "Siblings",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Words for sister and brother.",
+          "exercises": [
+            {
+              "id": "pa-starter-u5-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sister",
+              "options": [
+                "ਭੈਣ",
+                "ਭਰਾ",
+                "ਮਾਂ",
+                "ਪਿਤਾ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u5-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Brother",
+              "options": [
+                "ਭਰਾ",
+                "ਭੈਣ",
+                "ਮਾਂ",
+                "ਪਿਤਾ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u5-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"brother\"",
+              "expected": [
+                "ਭਰਾ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pa-starter-u6",
+      "title": "Food & Drink",
+      "description": "Water, tea, milk, rice, bread",
+      "order": 5,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Essential food and drink words at home or a cafe.",
+      "lessons": [
+        {
+          "id": "pa-starter-u6-l1",
+          "title": "Water & Tea",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Everyday drinks: water, tea, and milk.",
+          "exercises": [
+            {
+              "id": "pa-starter-u6-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Water",
+              "options": [
+                "ਪਾਣੀ",
+                "ਚਾਹ",
+                "ਦੁੱਧ",
+                "ਚੌਲ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u6-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Tea",
+              "options": [
+                "ਚਾਹ",
+                "ਪਾਣੀ",
+                "ਦੁੱਧ",
+                "ਰੋਟੀ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u6-l1-e3",
+              "kind": "chooseMeaning",
+              "prompt": "Milk",
+              "options": [
+                "ਦੁੱਧ",
+                "ਪਾਣੀ",
+                "ਚਾਹ",
+                "ਚੌਲ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u6-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"water\"",
+              "expected": [
+                "ਪਾਣੀ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "pa-starter-u6-l2",
+          "title": "Everyday Meals",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Staples on every table: rice and bread.",
+          "exercises": [
+            {
+              "id": "pa-starter-u6-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Rice",
+              "options": [
+                "ਚੌਲ",
+                "ਰੋਟੀ",
+                "ਦੁੱਧ",
+                "ਪਾਣੀ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u6-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Bread",
+              "options": [
+                "ਰੋਟੀ",
+                "ਚੌਲ",
+                "ਚਾਹ",
+                "ਪਾਣੀ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u6-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Rice",
+                  "ਚੌਲ"
+                ],
+                [
+                  "Bread",
+                  "ਰੋਟੀ"
+                ],
+                [
+                  "Tea",
+                  "ਚਾਹ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pa-starter-u7",
+      "title": "Everyday Places",
+      "description": "Home, school, market, road",
+      "order": 6,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Finding your way around town.",
+      "lessons": [
+        {
+          "id": "pa-starter-u7-l1",
+          "title": "Home & School",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Two places we talk about every morning.",
+          "exercises": [
+            {
+              "id": "pa-starter-u7-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Home",
+              "options": [
+                "ਘਰ",
+                "ਸਕੂਲ",
+                "ਬਾਜ਼ਾਰ",
+                "ਸੜਕ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u7-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "School",
+              "options": [
+                "ਸਕੂਲ",
+                "ਘਰ",
+                "ਬਾਜ਼ਾਰ",
+                "ਸੜਕ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u7-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"home\"",
+              "expected": [
+                "ਘਰ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "pa-starter-u7-l2",
+          "title": "Out & About",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Market and road essentials.",
+          "exercises": [
+            {
+              "id": "pa-starter-u7-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Market",
+              "options": [
+                "ਬਾਜ਼ਾਰ",
+                "ਸੜਕ",
+                "ਘਰ",
+                "ਸਕੂਲ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u7-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Road",
+              "options": [
+                "ਸੜਕ",
+                "ਬਾਜ਼ਾਰ",
+                "ਘਰ",
+                "ਸਕੂਲ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u7-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Home",
+                  "ਘਰ"
+                ],
+                [
+                  "Market",
+                  "ਬਾਜ਼ਾਰ"
+                ],
+                [
+                  "Road",
+                  "ਸੜਕ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pa-starter-u8",
+      "title": "Colors & Time",
+      "description": "Red, blue, today, tomorrow",
+      "order": 7,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Describe colors and make plans for today or tomorrow.",
+      "lessons": [
+        {
+          "id": "pa-starter-u8-l1",
+          "title": "Bright Colors",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "First colors in conversation.",
+          "exercises": [
+            {
+              "id": "pa-starter-u8-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Red",
+              "options": [
+                "ਲਾਲ",
+                "ਨੀਲਾ",
+                "ਅੱਜ",
+                "ਕੱਲ੍ਹ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u8-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Blue",
+              "options": [
+                "ਨੀਲਾ",
+                "ਲਾਲ",
+                "ਅੱਜ",
+                "ਕੱਲ੍ਹ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u8-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"red\"",
+              "expected": [
+                "ਲਾਲ"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "pa-starter-u8-l2",
+          "title": "Days & Plans",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Today and tomorrow.",
+          "exercises": [
+            {
+              "id": "pa-starter-u8-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Today",
+              "options": [
+                "ਅੱਜ",
+                "ਕੱਲ੍ਹ",
+                "ਲਾਲ",
+                "ਨੀਲਾ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u8-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Tomorrow",
+              "options": [
+                "ਕੱਲ੍ਹ",
+                "ਅੱਜ",
+                "ਲਾਲ",
+                "ਨੀਲਾ"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "pa-starter-u8-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Today",
+                  "ਅੱਜ"
+                ],
+                [
+                  "Tomorrow",
+                  "ਕੱਲ੍ਹ"
+                ],
+                [
+                  "Blue",
+                  "ਨੀਲਾ"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

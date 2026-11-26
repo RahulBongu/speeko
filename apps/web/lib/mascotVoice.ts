@@ -9,9 +9,27 @@ import {
 } from '@speeko/core';
 
 const STORAGE_KEY = 'speeko.mascotVoiceEnabled';
+const VARIETY_STORAGE_KEY = 'speeko.mascotVariety.v1';
 const ASSET_DIR = '/mascot';
 
-const varietyPicker = createMascotVarietyPicker();
+const varietyPicker = createMascotVarietyPicker(Math.random, {
+  load: () => {
+    if (typeof window === 'undefined') return null;
+    try {
+      return window.localStorage.getItem(VARIETY_STORAGE_KEY);
+    } catch {
+      return null;
+    }
+  },
+  save: (snapshot) => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(VARIETY_STORAGE_KEY, snapshot);
+    } catch {
+      // ignore storage failures
+    }
+  },
+});
 let enabledCache: boolean | null = null;
 
 export function isMascotVoiceEnabled(): boolean {
@@ -41,13 +59,28 @@ const SOUND_PATHS: Record<string, string> = {
   'correct-3': 'correct-3.mp3',
   'correct-4': 'correct-4.mp3',
   'correct-5': 'correct-5.mp3',
+  'correct-6': 'correct-6.mp3',
+  'correct-7': 'correct-7.mp3',
+  'correct-8': 'correct-8.mp3',
+  'correct-9': 'correct-9.mp3',
   incorrect: 'incorrect.mp3',
   'incorrect-2': 'incorrect-2.mp3',
   'incorrect-3': 'incorrect-3.mp3',
   'incorrect-4': 'incorrect-4.mp3',
+  'incorrect-5': 'incorrect-5.mp3',
+  'incorrect-6': 'incorrect-6.mp3',
   complete: 'complete.mp3',
   'complete-2': 'complete-2.mp3',
   'complete-3': 'complete-3.mp3',
+  'complete-4': 'complete-4.mp3',
+  'complete-5': 'complete-5.mp3',
+  'complete-6': 'complete-6.mp3',
+  'unit-complete': 'unit-complete.mp3',
+  'unit-complete-2': 'unit-complete-2.mp3',
+  'unit-complete-3': 'unit-complete-3.mp3',
+  'unit-complete-4': 'unit-complete-4.mp3',
+  'unit-complete-5': 'unit-complete-5.mp3',
+  'unit-complete-6': 'unit-complete-6.mp3',
   discovery: 'discovery.mp3',
   'discovery-2': 'discovery-2.mp3',
   streak: 'streak.mp3',

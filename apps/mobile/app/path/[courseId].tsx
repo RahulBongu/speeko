@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import Svg, { Path as SvgPath } from 'react-native-svg';
 import type { Course, Lesson, ProgressState } from '@speeko/core';
 import { LOCALE_LABEL, eligibleExercises, lessonKey } from '@speeko/core';
 import { apiFetch } from '../../lib/api';
@@ -21,9 +22,52 @@ import { Icon } from '../../components/Icons';
 
 type LessonState = 'completed' | 'current' | 'locked';
 
-// The Stitch path snakes down the screen. Offsets repeat every four lessons so
-// the trail keeps winding without drifting off a narrow phone.
-const OFFSETS = [0, -56, 0, 56] as const;
+// Balanced centered S-curve matching Duolingo's winding progression.
+const OFFSETS = [0, 52, 0, -52] as const;
+
+function waveX(step: number): number {
+  return OFFSETS[((step % OFFSETS.length) + OFFSETS.length) % OFFSETS.length] ?? 0;
+}
+
+function MobileTrailConnector({
+  fromX,
+  toX,
+  state,
+  height = 38,
+}: {
+  fromX: number;
+  toX: number;
+  state: LessonState;
+  height?: number;
+}) {
+  const midY = height / 2;
+  const d = `M ${160 + fromX} 0 C ${160 + fromX} ${midY}, ${160 + toX} ${midY}, ${160 + toX} ${height}`;
+  const stroke =
+    state === 'completed'
+      ? COLORS.green
+      : state === 'current'
+        ? COLORS.fox
+        : '#D4C7B4';
+
+  const dash =
+    state === 'locked' ? [6, 7] : state === 'current' ? [9, 5] : null;
+
+  return (
+    <View style={{ alignItems: 'center', marginVertical: 2 }} pointerEvents="none">
+      <Svg width={320} height={height} viewBox={`0 0 320 ${height}`}>
+        <SvgPath d={d} fill="none" stroke="#EFE4D2" strokeWidth={10} strokeLinecap="round" />
+        <SvgPath
+          d={d}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={5}
+          strokeLinecap="round"
+          {...(dash ? { strokeDasharray: dash } : {})}
+        />
+      </Svg>
+    </View>
+  );
+}
 
 function PathNode({
   lesson,
@@ -56,8 +100,8 @@ function PathNode({
       style={{
         alignItems: 'center',
         alignSelf: 'center',
-        marginVertical: 8,
-        transform: [{ translateX: OFFSETS[index % OFFSETS.length]! }],
+        marginVertical: 4,
+        transform: [{ translateX: waveX(index) }],
         maxWidth: 220,
       }}
     >
@@ -293,13 +337,22 @@ export default function Path() {
         </View>
       ) : null}
 
-      {course.units
-        .map((unit, unitIndex) => ({ unit, unitIndex }))
-        .reverse()
-        .map(({ unit, unitIndex }) => {
+      {course.units.map((unit, unitIndex) => {
         const unitDone = unit.lessons.filter((lesson) =>
           Boolean(progress?.completed[lessonKey(course.id, lesson.id)]),
         ).length;
+        const unitAllDone = unit.lessons.length > 0 && unitDone === unit.lessons.length;
+        const hasNextUnit = unitIndex < course.units.length - 1;
+        const nextUnit = hasNextUnit ? course.units[unitIndex + 1]! : null;
+        const firstLesson = unit.lessons[0];
+        const firstGlobalIdx = firstLesson
+          ? Math.max(0, flat.findIndex((entry) => entry.id === firstLesson.id))
+          : 0;
+        const lastLesson = unit.lessons[unit.lessons.length - 1];
+        const lastGlobalIdx = lastLesson
+          ? Math.max(0, flat.findIndex((entry) => entry.id === lastLesson.id))
+          : 0;
+
         return (
           <View
             key={unit.id}
@@ -307,37 +360,23 @@ export default function Path() {
               unitOffsets.current[unit.id] = event.nativeEvent.layout.y;
               tryScrollToCurrent();
             }}
-            style={{ gap: 4, marginTop: 10 }}
+            style={{ gap: 2, marginTop: 8 }}
           >
-            {unitIndex > 0 ? (
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 10,
-                  fontWeight: '900',
-                  color: COLORS.muted,
-                  letterSpacing: 1.6,
-                  marginBottom: 2,
-                }}
-              >
-                ↑ CLIMB TO THE NEXT UNIT
-              </Text>
-            ) : null}
-            <TactileCard tone="green" style={{ marginBottom: 8 }}>
+            <TactileCard tone="green" style={{ marginBottom: 4 }}>
               <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                 <View
                   style={{
                     alignSelf: 'flex-start',
                     borderRadius: 999,
                     borderWidth: 1,
-                    borderColor: 'rgba(255,255,255,0.4)',
+                    borderColor: 'rgba(255,255,255,0.45)',
                     paddingHorizontal: 8,
                     paddingVertical: 2,
                     marginBottom: 6,
                   }}
                 >
                   <Text style={{ fontSize: 9, fontWeight: '900', color: COLORS.white }}>
-                    UNIT {unitIndex + 1}
+                    MODULE {unitIndex + 1} · UNIT {unitIndex + 1}
                   </Text>
                 </View>
                 <Pressable
@@ -347,8 +386,8 @@ export default function Path() {
                   style={{
                     borderRadius: 12,
                     borderWidth: 1.5,
-                    borderColor: 'rgba(255,255,255,0.5)',
-                    backgroundColor: 'rgba(255,255,255,0.15)',
+                    borderColor: 'rgba(255,255,255,0.55)',
+                    backgroundColor: 'rgba(255,255,255,0.18)',
                     paddingHorizontal: 10,
                     paddingVertical: 6,
                   }}
@@ -365,12 +404,12 @@ export default function Path() {
                 {unit.title}
               </Text>
               {unit.description ? (
-                <Text style={{ fontSize: 12, color: COLORS.greenSoft, marginTop: 2 }}>
+                <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.9)', marginTop: 2 }}>
                   {unit.description}
                 </Text>
               ) : null}
               <Text style={{ fontSize: 11, fontWeight: '800', color: COLORS.white, marginTop: 8 }}>
-                {unitDone}/{unit.lessons.length} lessons done
+                {unitDone}/{unit.lessons.length} lessons done{unitAllDone ? ' · Mastered' : ''}
               </Text>
               <View style={{ marginTop: 6 }}>
                 <ProgressTrack
@@ -381,30 +420,99 @@ export default function Path() {
               </View>
             </TactileCard>
 
-            {[...unit.lessons]
-              .reverse()
-              .map((lesson) => {
-              // Global index keeps the winding trail continuous across units.
-              const globalIndex = flat.findIndex((entry) => entry.id === lesson.id);
+            {firstLesson ? (
+              <MobileTrailConnector
+                fromX={0}
+                toX={waveX(firstGlobalIdx)}
+                state={statusOf(firstLesson.id)}
+                height={28}
+              />
+            ) : null}
+
+            {unit.lessons.map((lesson, lessonIndex) => {
+              const globalIndex = Math.max(0, flat.findIndex((entry) => entry.id === lesson.id));
+              const nextInUnit = unit.lessons[lessonIndex + 1];
+              const lessonState = statusOf(lesson.id);
+              const nextState = nextInUnit ? statusOf(nextInUnit.id) : 'locked';
+              const connectorState: LessonState =
+                lessonState === 'completed' && nextState === 'current'
+                  ? 'current'
+                  : lessonState === 'completed'
+                    ? 'completed'
+                    : 'locked';
+
               return (
-                <PathNode
-                  key={lesson.id}
-                  lesson={lesson}
-                  index={globalIndex < 0 ? 0 : globalIndex}
-                  state={statusOf(lesson.id)}
-                  accessory={progress?.equippedCosmetic ?? null}
-                  onPress={() => router.push(`/lesson/${course.id}/${lesson.id}`)}
-                  onCurrentLayout={
-                    lesson.id === currentId
-                      ? (nodeY) => {
-                          scrollTarget.current = { unitId: unit.id, nodeY };
-                          tryScrollToCurrent();
-                        }
-                      : undefined
-                  }
-                />
+                <View key={lesson.id}>
+                  <PathNode
+                    lesson={lesson}
+                    index={globalIndex}
+                    state={lessonState}
+                    accessory={progress?.equippedCosmetic ?? null}
+                    onPress={() => router.push(`/lesson/${course.id}/${lesson.id}`)}
+                    onCurrentLayout={
+                      lesson.id === currentId
+                        ? (nodeY) => {
+                            scrollTarget.current = { unitId: unit.id, nodeY };
+                            tryScrollToCurrent();
+                          }
+                        : undefined
+                    }
+                  />
+                  {nextInUnit ? (
+                    <MobileTrailConnector
+                      fromX={waveX(globalIndex)}
+                      toX={waveX(globalIndex + 1)}
+                      state={connectorState}
+                      height={36}
+                    />
+                  ) : null}
+                </View>
               );
             })}
+
+            {lastLesson ? (
+              <MobileTrailConnector
+                fromX={waveX(lastGlobalIdx)}
+                toX={0}
+                state={unitAllDone ? 'completed' : statusOf(lastLesson.id)}
+                height={30}
+              />
+            ) : null}
+
+            {hasNextUnit && nextUnit ? (
+              <View
+                style={{
+                  alignSelf: 'center',
+                  borderRadius: 18,
+                  borderWidth: 1.5,
+                  borderColor: unitAllDone ? COLORS.green : COLORS.line,
+                  backgroundColor: unitAllDone ? COLORS.greenSoft : COLORS.white,
+                  paddingHorizontal: 14,
+                  paddingVertical: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: '900',
+                    color: unitAllDone ? COLORS.greenDark : COLORS.muted,
+                    textAlign: 'center',
+                  }}
+                >
+                  {unitAllDone ? `Module ${unitIndex + 1} mastered · ` : ''}
+                  Next: Unit {unitIndex + 2} · {nextUnit.title}
+                </Text>
+              </View>
+            ) : null}
+
+            {hasNextUnit ? (
+              <MobileTrailConnector
+                fromX={0}
+                toX={0}
+                state={unitAllDone ? 'completed' : 'locked'}
+                height={26}
+              />
+            ) : null}
           </View>
         );
       })}

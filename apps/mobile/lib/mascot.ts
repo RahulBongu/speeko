@@ -13,13 +13,28 @@ const AUDIO_MAP: Record<string, number> = {
   'correct-3': require('../assets/mascot/correct-3.mp3'),
   'correct-4': require('../assets/mascot/correct-4.mp3'),
   'correct-5': require('../assets/mascot/correct-5.mp3'),
+  'correct-6': require('../assets/mascot/correct-6.mp3'),
+  'correct-7': require('../assets/mascot/correct-7.mp3'),
+  'correct-8': require('../assets/mascot/correct-8.mp3'),
+  'correct-9': require('../assets/mascot/correct-9.mp3'),
   incorrect: require('../assets/mascot/incorrect.mp3'),
   'incorrect-2': require('../assets/mascot/incorrect-2.mp3'),
   'incorrect-3': require('../assets/mascot/incorrect-3.mp3'),
   'incorrect-4': require('../assets/mascot/incorrect-4.mp3'),
+  'incorrect-5': require('../assets/mascot/incorrect-5.mp3'),
+  'incorrect-6': require('../assets/mascot/incorrect-6.mp3'),
   complete: require('../assets/mascot/complete.mp3'),
   'complete-2': require('../assets/mascot/complete-2.mp3'),
   'complete-3': require('../assets/mascot/complete-3.mp3'),
+  'complete-4': require('../assets/mascot/complete-4.mp3'),
+  'complete-5': require('../assets/mascot/complete-5.mp3'),
+  'complete-6': require('../assets/mascot/complete-6.mp3'),
+  'unit-complete': require('../assets/mascot/unit-complete.mp3'),
+  'unit-complete-2': require('../assets/mascot/unit-complete-2.mp3'),
+  'unit-complete-3': require('../assets/mascot/unit-complete-3.mp3'),
+  'unit-complete-4': require('../assets/mascot/unit-complete-4.mp3'),
+  'unit-complete-5': require('../assets/mascot/unit-complete-5.mp3'),
+  'unit-complete-6': require('../assets/mascot/unit-complete-6.mp3'),
   discovery: require('../assets/mascot/discovery.mp3'),
   'discovery-2': require('../assets/mascot/discovery-2.mp3'),
   streak: require('../assets/mascot/streak.mp3'),
@@ -28,7 +43,19 @@ const AUDIO_MAP: Record<string, number> = {
   'encouragement-2': require('../assets/mascot/encouragement-2.mp3'),
 };
 
-const varietyPicker = createMascotVarietyPicker();
+let mobileVarietyCache: string | null = null;
+const varietyPicker = createMascotVarietyPicker(Math.random, {
+  load: () => mobileVarietyCache,
+  save: (snapshot) => {
+    mobileVarietyCache = snapshot;
+    try {
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      AsyncStorage.setItem('speeko.mascotVariety.v1', snapshot).catch(() => {});
+    } catch {
+      // ignore storage errors
+    }
+  },
+});
 
 let currentPlayer: ReturnType<typeof createAudioPlayer> | null = null;
 let currentSubscription: { remove(): void } | null = null;
@@ -117,6 +144,11 @@ try {
     .then((value: string | null) => {
       enabled = value === null ? true : value === '1';
       emit(enabledListeners, enabled);
+    })
+    .catch(() => {});
+  AsyncStorage.getItem('speeko.mascotVariety.v1')
+    .then((value: string | null) => {
+      if (value) mobileVarietyCache = value;
     })
     .catch(() => {});
 } catch {

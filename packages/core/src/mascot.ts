@@ -10,6 +10,7 @@ export type MascotReactionId =
   | 'correct_answer'
   | 'incorrect_answer'
   | 'lesson_complete'
+  | 'unit_complete'
   | 'discovery'
   | 'streak_milestone'
   | 'encouragement';
@@ -146,6 +147,7 @@ export function foxMoodForReaction(reactionId: MascotReactionId): FoxMood {
     case 'incorrect_answer':
       return 'sad';
     case 'lesson_complete':
+    case 'unit_complete':
     case 'streak_milestone':
       return 'celebrate';
     case 'discovery':
@@ -180,12 +182,26 @@ export const MASCOT_REACTIONS: Record<MascotReactionId, MascotReaction> = {
       "Yes! That's the one!",
       'Crisp! Your ear is getting sharp!',
       'Unstoppable! Right on target!',
+      'Magnificent! That sounded effortless!',
+      'Right on the money! Keep soaring!',
+      'Genius pick! Clean answer!',
+      'Super sharp! Right in the groove!',
     ],
     priority: 10,
     animation: 'bounce',
     audioKey: 'correct',
-    audioKeys: ['correct', 'correct-2', 'correct-3', 'correct-4', 'correct-5'],
-    sfxKeys: ['correct', 'correct-2', 'correct-3', 'correct-4'],
+    audioKeys: [
+      'correct',
+      'correct-2',
+      'correct-3',
+      'correct-4',
+      'correct-5',
+      'correct-6',
+      'correct-7',
+      'correct-8',
+      'correct-9',
+    ],
+    sfxKeys: ['correct', 'correct-2', 'correct-3', 'correct-4', 'correct-5'],
   },
   incorrect_answer: {
     id: 'incorrect_answer',
@@ -196,11 +212,20 @@ export const MASCOT_REACTIONS: Record<MascotReactionId, MascotReaction> = {
       "Good try! You'll lock this in next time.",
       "Almost! We've got this together.",
       'No worries — every correction builds memory!',
+      'Almost had it! One quick look locks it in.',
+      'Tough round! You will nail this next time.',
     ],
     priority: 10,
     animation: 'nod',
     audioKey: 'incorrect',
-    audioKeys: ['incorrect', 'incorrect-2', 'incorrect-3', 'incorrect-4'],
+    audioKeys: [
+      'incorrect',
+      'incorrect-2',
+      'incorrect-3',
+      'incorrect-4',
+      'incorrect-5',
+      'incorrect-6',
+    ],
     sfxKeys: ['incorrect', 'incorrect-2', 'incorrect-3'],
   },
   lesson_complete: {
@@ -210,12 +235,40 @@ export const MASCOT_REACTIONS: Record<MascotReactionId, MascotReaction> = {
       'Fantastic finish! You crushed every step!',
       'Woohoo! Your skills just leveled up!',
       'Brilliant run! Every step counted!',
+      'Smooth finish! You breezed right through!',
+      'Champion run! Every exercise clicked!',
+      'Top-notch lesson! Your progress is soaring!',
     ],
     priority: 100,
     animation: 'celebrate',
     audioKey: 'complete',
-    audioKeys: ['complete', 'complete-2', 'complete-3'],
-    sfxKeys: ['complete', 'complete-2'],
+    audioKeys: ['complete', 'complete-2', 'complete-3', 'complete-4', 'complete-5', 'complete-6'],
+    sfxKeys: ['complete', 'complete-2', 'complete-3'],
+  },
+  unit_complete: {
+    id: 'unit_complete',
+    phrases: [
+      'Module complete! You mastered every lesson in this unit!',
+      'Unit conquered! Look how strong your foundation just got!',
+      'What a milestone! Ready to cross into the next module?',
+      'Whole module unlocked! That victory cheer is all yours!',
+      'Brilliant unit finish! Onward to fresh words!',
+      'Every lesson in this module cleared! Look at you climbing!',
+      'Mastery unlocked! Your fox is throwing confetti!',
+      'Outstanding module run! Next chapter awaits on the trail!',
+    ],
+    priority: 120,
+    animation: 'celebrate',
+    audioKey: 'unit-complete',
+    audioKeys: [
+      'unit-complete',
+      'unit-complete-2',
+      'unit-complete-3',
+      'unit-complete-4',
+      'unit-complete-5',
+      'unit-complete-6',
+    ],
+    sfxKeys: ['unit-complete', 'unit-complete-2', 'unit-complete-3'],
   },
   discovery: {
     id: 'discovery',
@@ -279,18 +332,79 @@ export interface VariedReactionPick {
   sfxKey: string | null;
 }
 
+export interface MascotVarietyStorage {
+  load(): string | null;
+  save(snapshot: string): void;
+}
+
+interface VarietySnapshot {
+  bags?: Record<string, number[]>;
+  lastPicked?: Record<string, number>;
+}
+
 /**
- * Stateful shuffle-bag picker so consecutive correct/incorrect answers never
- * play the same appreciation message, voice clip, or chime back-to-back.
+ * Stateful shuffle-bag picker so consecutive correct/incorrect answers and
+ * module completions never repeat the same appreciation message, voice clip,
+ * or chime back-to-back, even across separate lesson sessions when backed by
+ * storage.
  */
-export function createMascotVarietyPicker(random: () => number = Math.random) {
+export function createMascotVarietyPicker(
+  random: () => number = Math.random,
+  storage?: MascotVarietyStorage,
+) {
   const bags = new Map<string, number[]>();
   const lastPicked = new Map<string, number>();
+  let hydrated = false;
+
+  function hydrate() {
+    if (hydrated) return;
+    hydrated = true;
+    if (!storage) return;
+    try {
+      const raw = storage.load();
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as VarietySnapshot | null;
+      if (!parsed || typeof parsed !== 'object') return;
+      if (parsed.bags && typeof parsed.bags === 'object') {
+        for (const [k, arr] of Object.entries(parsed.bags)) {
+          if (Array.isArray(arr)) {
+            bags.set(
+              k,
+              arr.filter((v): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 0),
+            );
+          }
+        }
+      }
+      if (parsed.lastPicked && typeof parsed.lastPicked === 'object') {
+        for (const [k, v] of Object.entries(parsed.lastPicked)) {
+          if (typeof v === 'number' && Number.isInteger(v) && v >= 0) {
+            lastPicked.set(k, v);
+          }
+        }
+      }
+    } catch {
+      // Ignore corrupt snapshots.
+    }
+  }
+
+  function persist() {
+    if (!storage) return;
+    try {
+      const snapshot: VarietySnapshot = {
+        bags: Object.fromEntries(bags.entries()),
+        lastPicked: Object.fromEntries(lastPicked.entries()),
+      };
+      storage.save(JSON.stringify(snapshot));
+    } catch {
+      // Ignore storage write errors.
+    }
+  }
 
   function drawIndex(bucketKey: string, length: number): number {
+    hydrate();
     if (length <= 1) return 0;
-    let bag = bags.get(bucketKey);
-    if (!bag || bag.length === 0) {
+    let bag = (bags.get(bucketKey) ?? []).filter((idx) => idx >= 0 && idx < length);
+    if (bag.length === 0) {
       bag = Array.from({ length }, (_, index) => index);
       // Fisher-Yates shuffle
       for (let i = bag.length - 1; i > 0; i -= 1) {
@@ -307,10 +421,11 @@ export function createMascotVarietyPicker(random: () => number = Math.random) {
         bag[bag.length - 1] = bag[swapIdx]!;
         bag[swapIdx] = tmp;
       }
-      bags.set(bucketKey, bag);
     }
     const next = bag.pop()!;
+    bags.set(bucketKey, bag);
     lastPicked.set(bucketKey, next);
+    persist();
     return next;
   }
 
@@ -337,13 +452,15 @@ export function createMascotVarietyPicker(random: () => number = Math.random) {
       const audioIndex = drawIndex(`audio:${reactionId}`, audioPool.length);
       return audioPool[audioIndex] ?? reaction.audioKey;
     },
-    pickSfxKey(kind: 'correct' | 'incorrect' | 'complete'): string {
+    pickSfxKey(kind: 'correct' | 'incorrect' | 'complete' | 'unit_complete'): string {
       const reactionId: MascotReactionId =
         kind === 'correct'
           ? 'correct_answer'
           : kind === 'incorrect'
             ? 'incorrect_answer'
-            : 'lesson_complete';
+            : kind === 'unit_complete'
+              ? 'unit_complete'
+              : 'lesson_complete';
       const reaction = MASCOT_REACTIONS[reactionId];
       if (reaction.sfxKeys.length === 0) return kind;
       const idx = drawIndex(`sfx:${kind}`, reaction.sfxKeys.length);

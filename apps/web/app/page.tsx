@@ -78,8 +78,8 @@ const STEPS = [
     icon: <BoltIcon className="h-5 w-5" />,
   },
   {
-    title: 'Climb the path',
-    body: 'Units stack upward from the bottom. Finish the glowing lesson to unlock the next one.',
+    title: 'Follow the trail',
+    body: 'Glide smoothly from Unit 1 through every module. Finish the glowing lesson to unlock the next.',
     icon: <TrophyIcon className="h-5 w-5" />,
   },
 ];
@@ -347,8 +347,8 @@ export default function HomePage() {
         <dl className="mx-auto grid max-w-5xl grid-cols-2 gap-y-4 px-5 py-6 sm:grid-cols-4">
           {[
             ['10', 'Indian languages'],
-            ['46', 'units to climb'],
-            ['321', 'exercises'],
+            ['88', 'units to climb'],
+            ['610', 'exercises'],
             ['3 min', 'per lesson'],
           ].map(([value, label]) => (
             <div key={label} className="text-center">
@@ -419,7 +419,7 @@ export default function HomePage() {
               <ArrowRightIcon className="h-4 w-4" />
             </Link>
             <p className="text-xs font-semibold text-bark-400">
-              Unit one starts at the bottom. Each finished lesson unlocks the one above it.
+              Modules connect step by step on one winding Duolingo-style trail.
             </p>
           </div>
         </div>

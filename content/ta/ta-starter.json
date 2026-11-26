@@ -393,6 +393,444 @@
           ]
         }
       ]
+    },
+    {
+      "id": "ta-starter-u5",
+      "title": "Family",
+      "description": "Mother, father, sister, brother",
+      "order": 4,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Immediate family words you hear every day.",
+      "lessons": [
+        {
+          "id": "ta-starter-u5-l1",
+          "title": "Parents",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Words for mother and father.",
+          "exercises": [
+            {
+              "id": "ta-starter-u5-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Mother",
+              "options": [
+                "அம்மா",
+                "அப்பா",
+                "அக்கா",
+                "அண்ணன்"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u5-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Father",
+              "options": [
+                "அப்பா",
+                "அம்மா",
+                "அக்கா",
+                "அண்ணன்"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u5-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"mother\"",
+              "expected": [
+                "அம்மா"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "ta-starter-u5-l2",
+          "title": "Siblings",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 10,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Words for sister and brother.",
+          "exercises": [
+            {
+              "id": "ta-starter-u5-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Sister",
+              "options": [
+                "அக்கா",
+                "அண்ணன்",
+                "அம்மா",
+                "அப்பா"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u5-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Brother",
+              "options": [
+                "அண்ணன்",
+                "அக்கா",
+                "அம்மா",
+                "அப்பா"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u5-l2-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"brother\"",
+              "expected": [
+                "அண்ணன்"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ta-starter-u6",
+      "title": "Food & Drink",
+      "description": "Water, tea, milk, rice, bread",
+      "order": 5,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Essential food and drink words at home or a cafe.",
+      "lessons": [
+        {
+          "id": "ta-starter-u6-l1",
+          "title": "Water & Tea",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Everyday drinks: water, tea, and milk.",
+          "exercises": [
+            {
+              "id": "ta-starter-u6-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Water",
+              "options": [
+                "தண்ணீர்",
+                "தேநீர்",
+                "பால்",
+                "சாதம்"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u6-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Tea",
+              "options": [
+                "தேநீர்",
+                "தண்ணீர்",
+                "பால்",
+                "ரொட்டி"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u6-l1-e3",
+              "kind": "chooseMeaning",
+              "prompt": "Milk",
+              "options": [
+                "பால்",
+                "தண்ணீர்",
+                "தேநீர்",
+                "சாதம்"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u6-l1-e4",
+              "kind": "typeTranslation",
+              "prompt": "Type \"water\"",
+              "expected": [
+                "தண்ணீர்"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "ta-starter-u6-l2",
+          "title": "Everyday Meals",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Staples on every table: rice and bread.",
+          "exercises": [
+            {
+              "id": "ta-starter-u6-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Rice",
+              "options": [
+                "சாதம்",
+                "ரொட்டி",
+                "பால்",
+                "தண்ணீர்"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u6-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Bread",
+              "options": [
+                "ரொட்டி",
+                "சாதம்",
+                "தேநீர்",
+                "தண்ணீர்"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u6-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Rice",
+                  "சாதம்"
+                ],
+                [
+                  "Bread",
+                  "ரொட்டி"
+                ],
+                [
+                  "Tea",
+                  "தேநீர்"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ta-starter-u7",
+      "title": "Everyday Places",
+      "description": "Home, school, market, road",
+      "order": 6,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Finding your way around town.",
+      "lessons": [
+        {
+          "id": "ta-starter-u7-l1",
+          "title": "Home & School",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Two places we talk about every morning.",
+          "exercises": [
+            {
+              "id": "ta-starter-u7-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Home",
+              "options": [
+                "வீடு",
+                "பள்ளி",
+                "சந்தை",
+                "சாலை"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u7-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "School",
+              "options": [
+                "பள்ளி",
+                "வீடு",
+                "சந்தை",
+                "சாலை"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u7-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"home\"",
+              "expected": [
+                "வீடு"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "ta-starter-u7-l2",
+          "title": "Out & About",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 12,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Market and road essentials.",
+          "exercises": [
+            {
+              "id": "ta-starter-u7-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Market",
+              "options": [
+                "சந்தை",
+                "சாலை",
+                "வீடு",
+                "பள்ளி"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u7-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Road",
+              "options": [
+                "சாலை",
+                "சந்தை",
+                "வீடு",
+                "பள்ளி"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u7-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Home",
+                  "வீடு"
+                ],
+                [
+                  "Market",
+                  "சந்தை"
+                ],
+                [
+                  "Road",
+                  "சாலை"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ta-starter-u8",
+      "title": "Colors & Time",
+      "description": "Red, blue, today, tomorrow",
+      "order": 7,
+      "crownLevel": 0,
+      "reviewStatus": "automated_reviewed",
+      "guidebook": "Describe colors and make plans for today or tomorrow.",
+      "lessons": [
+        {
+          "id": "ta-starter-u8-l1",
+          "title": "Bright Colors",
+          "order": 0,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "First colors in conversation.",
+          "exercises": [
+            {
+              "id": "ta-starter-u8-l1-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Red",
+              "options": [
+                "சிவப்பு",
+                "நீலம்",
+                "இன்று",
+                "நாளை"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u8-l1-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Blue",
+              "options": [
+                "நீலம்",
+                "சிவப்பு",
+                "இன்று",
+                "நாளை"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u8-l1-e3",
+              "kind": "typeTranslation",
+              "prompt": "Type \"red\"",
+              "expected": [
+                "சிவப்பு"
+              ],
+              "acceptTypos": true
+            }
+          ]
+        },
+        {
+          "id": "ta-starter-u8-l2",
+          "title": "Days & Plans",
+          "order": 1,
+          "difficulty": "A1",
+          "xpReward": 15,
+          "reviewStatus": "automated_reviewed",
+          "guidebook": "Today and tomorrow.",
+          "exercises": [
+            {
+              "id": "ta-starter-u8-l2-e1",
+              "kind": "chooseMeaning",
+              "prompt": "Today",
+              "options": [
+                "இன்று",
+                "நாளை",
+                "சிவப்பு",
+                "நீலம்"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u8-l2-e2",
+              "kind": "chooseMeaning",
+              "prompt": "Tomorrow",
+              "options": [
+                "நாளை",
+                "இன்று",
+                "சிவப்பு",
+                "நீலம்"
+              ],
+              "answerIndex": 0
+            },
+            {
+              "id": "ta-starter-u8-l2-e3",
+              "kind": "matchPairs",
+              "prompt": "Match the pairs",
+              "pairs": [
+                [
+                  "Today",
+                  "இன்று"
+                ],
+                [
+                  "Tomorrow",
+                  "நாளை"
+                ],
+                [
+                  "Blue",
+                  "நீலம்"
+                ]
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
